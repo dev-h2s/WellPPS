@@ -1,13 +1,13 @@
-package com.wellnetworks.wellpps
+package com.wellnetworks.wellcore
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class WellPpsApplicationTests {
+class WellCoreApplicationTests {
 
-	@Test
-	fun contextLoads() {
-	}
+    @Test
+    fun contextLoads() {
+    }
 
 }

@@ -1,11 +1,11 @@
-package com.wellnetworks.wellpps
+package com.wellnetworks.wellcore
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class WellPpsApplication
+class WellCoreApplication
 
 fun main(args: Array<String>) {
-	runApplication<WellPpsApplication>(*args)
+    runApplication<WellCoreApplication>(*args)
 }

@@ -1,10 +1,14 @@
 package com.wellnetworks.wellcore.domain
 
 import java.time.ZonedDateTime
+import javax.persistence.Column
 import javax.persistence.MappedSuperclass
 
 @MappedSuperclass
 abstract class baseEntity {
-    abstract val mod_dt: ZonedDateTime
-    abstract val reg_dt: ZonedDateTime
+    @Column(name = "mod_dt")
+    var modify_datetime: ZonedDateTime = ZonedDateTime.now()
+
+    @Column(name = "reg_dt")
+    var register_datetime: ZonedDateTime = ZonedDateTime.now()
 }

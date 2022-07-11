@@ -37,7 +37,7 @@ data class Users(
 
     @Column(name = "passwd_dt")
     var create_temporary_password_datetime: ZonedDateTime,
-) {
+): baseEntity() {
     fun getUsersDTO(): usersDTO {
         return usersDTO(
             idx = this.idx,

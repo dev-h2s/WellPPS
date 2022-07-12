@@ -5,7 +5,7 @@ import javax.persistence.Column
 import javax.persistence.MappedSuperclass
 
 @MappedSuperclass
-abstract class baseEntity {
+abstract class BaseEntity {
     @Column(name = "mod_dt")
     var modify_datetime: ZonedDateTime = ZonedDateTime.now()
 

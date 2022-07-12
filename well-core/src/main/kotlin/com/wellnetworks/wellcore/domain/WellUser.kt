@@ -3,12 +3,14 @@ package com.wellnetworks.wellcore.domain
 import java.util.*
 import java.time.ZonedDateTime
 import javax.persistence.*
-import com.wellnetworks.wellcore.domain.dto.usersDTO
+import com.wellnetworks.wellcore.domain.dto.WellUserDTO
 import org.hibernate.Hibernate
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
 
 @Entity
 @Table(name = "user_tb")
-data class Users(
+data class WellUser(
     @Id
     @Column(name = "idx", length = 16, unique = true, nullable = false)
     var idx: UUID? = UUID.randomUUID(),
@@ -37,9 +39,37 @@ data class Users(
 
     @Column(name = "passwd_dt")
     var create_temporary_password_datetime: ZonedDateTime,
-): baseEntity() {
-    fun getUsersDTO(): usersDTO {
-        return usersDTO(
+): BaseEntity(), UserDetails {
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority>? {
+        return null
+    }
+
+    override fun getPassword(): String {
+        return passwordhash
+    }
+
+    override fun getUsername(): String {
+        return userid
+    }
+
+    override fun isAccountNonExpired(): Boolean {
+        return true
+    }
+
+    override fun isAccountNonLocked(): Boolean {
+        return true
+    }
+
+    override fun isCredentialsNonExpired(): Boolean {
+        return true
+    }
+
+    override fun isEnabled(): Boolean {
+        return true
+    }
+
+    fun getWellUserDTO(): WellUserDTO {
+        return WellUserDTO(
             idx = this.idx,
             userid = this.userid,
             rule = this.rule,
@@ -48,14 +78,16 @@ data class Users(
             password_expire = this.password_expire,
             password_ct = this.password_ct,
             password_certification = this.password_certification,
-            create_temporary_password_datetime = this.create_temporary_password_datetime
+            create_temporary_password_datetime = this.create_temporary_password_datetime,
+            modify_datetime = this.modify_datetime,
+            register_datetime = this.register_datetime,
         )
     }
 
     override fun equals(other: Any?): Boolean {
         if (this == other) return true
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-        other as Users
+        other as WellUser
 
         return idx != null && idx == other.idx
     }

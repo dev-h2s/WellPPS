@@ -32,9 +32,12 @@ allprojects {
     dependencies {
         val implementation by configurations
         val testImplementation by configurations
+        val testRuntimeOnly by configurations
         val queryDslVersion: String by System.getProperties()
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+        testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test")
     }
@@ -55,3 +58,4 @@ allprojects {
         useJUnitPlatform()
     }
 }
+

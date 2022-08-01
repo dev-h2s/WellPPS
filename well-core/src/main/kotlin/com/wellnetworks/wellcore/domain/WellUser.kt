@@ -1,5 +1,7 @@
 package com.wellnetworks.wellcore.domain
 
+import com.wellnetworks.wellcore.domain.converter.ListToStringConverter
+import com.wellnetworks.wellcore.domain.dto.WellUserCreateDTO
 import java.util.*
 import java.time.ZonedDateTime
 import javax.persistence.*
@@ -20,10 +22,14 @@ data class WellUser(
 
     @Column(name = "rule", nullable = false)
     @Convert(converter = RuleConverter::class)
-    var rule: RuleTypes = RuleTypes.None,
+    var rule: RuleTypes = RuleTypes.NONE,
+
+    @Column(name = "permission", nullable = true)
+    @Convert(converter = ListToStringConverter::class)
+    var permission: List<String>,
 
     @Column(name = "passwd")
-    var passwordhash: String,
+    var password_hash: String,
 
     @Column(name = "passwd_temp")
     var password_temporary: String,
@@ -45,7 +51,7 @@ data class WellUser(
     }
 
     override fun getPassword(): String {
-        return passwordhash
+        return password_hash
     }
 
     override fun getUsername(): String {
@@ -73,7 +79,8 @@ data class WellUser(
             idx = this.idx,
             userid = this.userid,
             rule = this.rule,
-            passwordhash = this.passwordhash,
+            permission = this.permission,
+            password_hash = this.password_hash,
             password_temporary = this.password_temporary,
             password_expire = this.password_expire,
             password_ct = this.password_ct,
@@ -82,6 +89,21 @@ data class WellUser(
             modify_datetime = this.modify_datetime,
             register_datetime = this.register_datetime,
         )
+    }
+
+    fun createWellUserDTO(): WellUserCreateDTO {
+        return WellUserCreateDTO(
+            userid = this.userid,
+            rule = this.rule,
+            permission = this.permission,
+            password_hash = this.password_hash,
+            modify_datetime = this.modify_datetime,
+            register_datetime = this.register_datetime,
+        )
+    }
+
+    fun checkPrmisstion(wellPermission: WellPermission): Boolean {
+        return permission.contains(wellPermission.name)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -101,9 +123,9 @@ data class WellUser(
 }
 
 enum class RuleTypes(val rule: String) {
-    None("none"),
-    Member("member"),
-    Partner("partner"),
+    NONE("none"),
+    MEMBER("member"),
+    PARTNER("partner"),
     ;
 }
 

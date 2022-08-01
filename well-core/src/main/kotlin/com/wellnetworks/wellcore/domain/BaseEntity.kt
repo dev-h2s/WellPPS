@@ -5,10 +5,10 @@ import javax.persistence.Column
 import javax.persistence.MappedSuperclass
 
 @MappedSuperclass
-abstract class BaseEntity {
+open class BaseEntity {
     @Column(name = "mod_dt")
-    var modify_datetime: ZonedDateTime = ZonedDateTime.now()
+    open var modify_datetime: ZonedDateTime = ZonedDateTime.now()
 
     @Column(name = "reg_dt")
-    var register_datetime: ZonedDateTime = ZonedDateTime.now()
+    open var register_datetime: ZonedDateTime = ZonedDateTime.now()
 }

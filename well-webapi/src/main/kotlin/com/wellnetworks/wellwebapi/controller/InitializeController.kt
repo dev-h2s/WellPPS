@@ -21,7 +21,7 @@ class InitializeController(private val userService: WellUserService, private val
     @GetMapping("system_init")
     fun systemInit(): ResponseEntity<BaseRes> {
         if (userService.dataTotalCount() == 0L) {
-            val createAdmin = WellUserCreateDTO("admin", RuleTypes.MEMBER, emptyList(), passwordEncoder.encode("admin"), ZonedDateTime.now(), ZonedDateTime.now())
+            val createAdmin = WellUserCreateDTO("kong", RuleTypes.MEMBER, emptyList(), passwordEncoder.encode("kong"), ZonedDateTime.now(), ZonedDateTime.now())
             println(createAdmin)
 
             if (userService.createUser(createAdmin) == null)

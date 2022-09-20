@@ -20,7 +20,7 @@ import java.time.ZonedDateTime
 class InitializeController(private val userService: WellUserService, private val jwtTokenProvider: JwtTokenProvider, private val passwordEncoder: PasswordEncoder) {
     @GetMapping("system_init")
     fun systemInit(): ResponseEntity<BaseRes> {
-        if (userService.dataTotalCount() == 0L) {
+        //if (userService.dataTotalCount() == 0L) {
             val createAdmin = WellUserCreateDTO("kong", RuleTypes.MEMBER, emptyList(), passwordEncoder.encode("kong"), ZonedDateTime.now(), ZonedDateTime.now())
             println(createAdmin)
 
@@ -29,8 +29,8 @@ class InitializeController(private val userService: WellUserService, private val
                 throw BaseException(BaseResponseCode.FAILED_TO_SAVE_USER)
             }
             return ResponseEntity.ok(BaseRes(HttpStatus.OK, "Initialize Complete."))
-        }
+        //}
 
-        throw BaseException(BaseResponseCode.BAD_REQUEST)
+        //throw BaseException(BaseResponseCode.BAD_REQUEST)
     }
 }

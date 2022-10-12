@@ -3,6 +3,7 @@ package com.wellnetworks.wellcore.domain
 import com.wellnetworks.wellcore.domain.converter.ListToStringConverter
 import com.wellnetworks.wellcore.domain.dto.WellMemberInfoCreateDTO
 import com.wellnetworks.wellcore.domain.dto.WellMemberInfoDTO
+import org.hibernate.annotations.ColumnDefault
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.time.ZonedDateTime

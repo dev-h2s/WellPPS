@@ -7,6 +7,7 @@ import com.wellnetworks.wellcore.repository.WellMemberInfoRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.lang.IllegalArgumentException
+import java.lang.reflect.Member
 import java.util.Optional
 import java.util.UUID
 import javax.transaction.Transactional
@@ -30,11 +31,12 @@ class WellMemberInfoService {
             member.b_account, member.b_holder, member.status, member.type, member.phone_cert, member.email_cert, member.entry_dt, member.retire_dt,
             member.retire_type, member.access, member.memo)
         try{
-
+            wellMemberInfoRepository.save(createMember)
         } catch (e: IllegalArgumentException){
             return null
         }
         return uuidMember
 
     }
+
 }

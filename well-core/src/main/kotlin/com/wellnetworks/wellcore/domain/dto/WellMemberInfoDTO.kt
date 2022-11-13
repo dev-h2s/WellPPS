@@ -5,7 +5,7 @@ import java.util.*
 
 data class WellMemberInfoDTO(
     val idx: UUID? = UUID.randomUUID(),
-    val user_idx: String,
+    val user_idx: UUID,
     val table_id: String,
     val belong: List<String>,
     val name: String,

@@ -11,36 +11,37 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-@Table(name = "member_in_tb")
-
+@Table(name = "member_in_tb", indexes =
+ [Index(name = "IX_user_idx", columnList = "user_idx ASC", unique = true),
+ Index(name = "IX_table_id", columnList = "table_id ASC")])
 data class WellMemberInfo(
     @Id
-    @Column(name = "idx", length = 16, unique = true, nullable = false)
+    @Column(name = "idx", unique = true, nullable = false)
     var idx: UUID? = UUID.randomUUID(),
 
-    @Column(name = "user_idx", length = 32, unique = true, nullable = false)
-    var user_idx: String,
+    @Column(name = "user_idx", unique = true, nullable = false)
+    var user_idx: UUID,
 
-    @Column(name = "table_id")
+    @Column(name = "table_id", length = 255)
     var table_id: String,
 
     @Column(name = "belong", nullable = false)
     @Convert(converter = ListToStringConverter::class)
     var belong : List<String>,
 
-    @Column(name = "name")
+    @Column(name = "name", length = 255)
     var name: String,
 
-    @Column(name = "email")
+    @Column(name = "email", length = 255)
     var emil: String,
 
-    @Column(name = "phone")
+    @Column(name = "phone", length = 255)
     var phone: String,
 
-    @Column(name = "well_phone")
+    @Column(name = "well_phone", length = 255)
     var well_phone: String,
 
-    @Column(name = "jumin")
+    @Column(name = "jumin", length = 255)
     var jumin: String,
 
     @Column(name = "dep")
@@ -55,20 +56,20 @@ data class WellMemberInfo(
     @Convert(converter = ListToStringConverter::class)
     var level: List<String>,
 
-    @Column(name = "addr1")
+    @Column(name = "addr1", length = 255)
     var addr1: String,
 
-    @Column(name = "addr2")
+    @Column(name = "addr2", length = 255)
     var addr2: String,
 
     @Column(name = "bank_name")
     @Convert(converter = ListToStringConverter::class)
     var bank_name: List<String>,
 
-    @Column(name = "b_account")
+    @Column(name = "b_account", length = 255)
     var b_account: String,
 
-    @Column(name = "b_holder")
+    @Column(name = "b_holder", length = 255)
     var b_holder: String,
 
     @Column(name = "status")
@@ -101,34 +102,7 @@ data class WellMemberInfo(
     @Column(name = "memo")
     var memo: String,
 
-    ): BaseEntity(), UserDetails {
-        override fun getAuthorities(): MutableCollection<out GrantedAuthority>? {
-            return null
-        }
-
-        override fun getPassword(): String {
-            return ""
-        }
-
-        override fun getUsername(): String {
-            return name
-        }
-
-        override fun isAccountNonExpired(): Boolean {
-            return true
-        }
-
-        override fun isAccountNonLocked(): Boolean {
-            return true
-        }
-
-        override fun isCredentialsNonExpired(): Boolean {
-            return true
-        }
-
-        override fun isEnabled(): Boolean {
-            return true
-        }
+    ): BaseEntity() {
 
         fun getWellMemberInfoDTO(): WellMemberInfoDTO {
             return WellMemberInfoDTO(

@@ -11,10 +11,12 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 @Entity
-@Table(name = "user_tb")
+@Table(name = "user_tb", indexes =
+  [Index(name = "IX_usr", columnList = "uid ASC", unique = true)]
+)
 data class WellUser(
     @Id
-    @Column(name = "idx", length = 16, unique = true, nullable = false)
+    @Column(name = "idx", unique = true, nullable = false)
     var idx: UUID? = UUID.randomUUID(),
 
     @Column(name = "uid", length = 32, unique = true, nullable = false)
@@ -28,10 +30,10 @@ data class WellUser(
     @Convert(converter = ListToStringConverter::class)
     var permission: List<String>,
 
-    @Column(name = "passwd")
+    @Column(name = "passwd", length = 128)
     var password_hash: String,
 
-    @Column(name = "passwd_temp")
+    @Column(name = "passwd_temp", length = 128)
     var password_temporary: String,
 
     @Column(name = "passwd_expire")

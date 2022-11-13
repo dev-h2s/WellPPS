@@ -1,5 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+buildscript {
+
+}
+
 plugins {
     val kotlinVersion: String by System.getProperties()
     val springBootVersion: String by System.getProperties()
@@ -11,7 +15,7 @@ plugins {
     kotlin("plugin.jpa") version kotlinVersion apply false
 }
 
-allprojects {
+subprojects {
 
     apply {
         plugin("kotlin")
@@ -33,13 +37,23 @@ allprojects {
         val implementation by configurations
         val testImplementation by configurations
         val testRuntimeOnly by configurations
+        val compileOnly by configurations
+        val annotationProcessor by configurations
+        val developmentOnly by configurations
         val queryDslVersion: String by System.getProperties()
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+        implementation("org.springframework.boot:spring-boot-starter-web")
+
         testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+        compileOnly("org.projectlombok:lombok")
+        annotationProcessor("org.projectlombok:lombok")
+
+        developmentOnly("org.springframework.boot:spring-boot-devtools")
     }
 
     configure<JavaPluginExtension> {
@@ -59,3 +73,54 @@ allprojects {
     }
 }
 
+project(":well-core") {
+    tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") { enabled = false }
+    tasks.named<Jar>("jar") { enabled = true }
+
+    dependencies {
+        val implementation by configurations
+        val runtimeOnly by configurations
+        implementation("org.springframework.boot:spring-boot-starter")
+        implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+        implementation("org.springframework.security:spring-security-core:5.7.5")
+        runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
+    }
+}
+
+project(":well-secure") {
+    tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") { enabled = false }
+    tasks.named<Jar>("jar") { enabled = true }
+
+    dependencies {
+        val implementation by configurations
+        val runtimeOnly by configurations
+        val testImplementation by configurations
+        implementation(project(":well-core"))
+        implementation("org.springframework.boot:spring-boot-starter-security")
+        implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+        implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+        implementation("org.springframework.session:spring-session-core")
+        implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+        runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
+        runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
+        testImplementation("org.springframework.security:spring-security-test")
+
+    }
+}
+
+project(":well-webapi") {
+    dependencies {
+        val implementation by configurations
+        val testImplementation by configurations
+        implementation(project(":well-core"))
+        implementation(project(":well-secure"))
+        implementation("org.springframework.boot:spring-boot-starter-security")
+        implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+        implementation("org.springframework.session:spring-session-core")
+        testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+        testImplementation("org.springframework.security:spring-security-test")
+    }
+
+    tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") { enabled = true }
+    tasks.named<Jar>("jar") { enabled = true }
+}

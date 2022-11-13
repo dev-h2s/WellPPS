@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.time.ZonedDateTime
+import java.util.*
 
 @RestController
 @RequestMapping
@@ -24,7 +25,8 @@ class MemberRegisterController(private val memberInfoService: WellMemberInfoServ
          * RequestBody 유효성 검사
          * */
 
-        val createMember = WellMemberInfoCreateDTO("","",emptyList(),registerMemberReq.name,"","",
+        val createMember = WellMemberInfoCreateDTO(
+            UUID.randomUUID(),"",emptyList(),registerMemberReq.name,"","",
         "","",emptyList(),emptyList(),emptyList(),"","",emptyList(),"","",
             emptyList(),emptyList(),phone_cert = false,email_cert = false,ZonedDateTime.now(),ZonedDateTime.now(),emptyList(),
             true,"", ZonedDateTime.now(), ZonedDateTime.now())

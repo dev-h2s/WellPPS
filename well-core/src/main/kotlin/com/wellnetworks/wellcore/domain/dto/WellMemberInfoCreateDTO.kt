@@ -2,9 +2,10 @@ package com.wellnetworks.wellcore.domain.dto
 
 import com.wellnetworks.wellcore.domain.RuleTypes
 import java.time.ZonedDateTime
+import java.util.*
 
 data class WellMemberInfoCreateDTO(
-    val user_idx: String,
+    val user_idx: UUID,
     val table_id: String,
     val belong: List<String>,
     val name: String,

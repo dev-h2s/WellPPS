@@ -6,58 +6,52 @@ import java.util.*
 import java.time.ZonedDateTime
 import javax.persistence.*
 import com.wellnetworks.wellcore.domain.dto.WellUserDTO
+import com.wellnetworks.wellcore.domain.enums.PermissionList
 import org.hibernate.Hibernate
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 @Entity
 @Table(name = "user_tb", indexes =
-  [Index(name = "IX_usr", columnList = "uid ASC", unique = true)]
+  [Index(name = "IX_uid", columnList = "uid ASC", unique = true)]
 )
 data class WellUser(
     @Id
     @Column(name = "idx", unique = true, nullable = false)
-    var idx: UUID? = UUID.randomUUID(),
+    var Idx: UUID? = UUID.randomUUID(),
 
     @Column(name = "uid", length = 32, unique = true, nullable = false)
-    var userid: String,
+    var UserID: String,
 
-    @Column(name = "rule", nullable = false)
-    @Convert(converter = RuleConverter::class)
-    var rule: RuleTypes = RuleTypes.NONE,
-
-    @Column(name = "permission", nullable = true)
+    @Column(name = "permissions")
     @Convert(converter = ListToStringConverter::class)
-    var permission: List<String>,
+    var Permissions: List<String>,
 
-    @Column(name = "passwd", length = 128)
-    var password_hash: String,
+    @Column(name = "pwd", length = 255, nullable = false)
+    var PasswordHash: String,
 
-    @Column(name = "passwd_temp", length = 128)
-    var password_temporary: String,
+    @Column(name = "tmp_pwd", length = 255, nullable = false)
+    var TemporaryPassword: String,
 
-    @Column(name = "passwd_expire")
-    var password_expire: ZonedDateTime,
+    @Column(name = "tmp_pwd_exp")
+    var TemporaryPasswordExpire: ZonedDateTime,
 
-    @Column(name = "passwd_ct")
-    var password_ct: Byte = 0,
+    @Column(name = "tmp_pwd_cnt")
+    var TemporaryPasswordCreateCount: Byte = 0,
 
-    @Column(name = "passwd_cert")
-    var password_certification: Boolean,
-
-    @Column(name = "passwd_dt")
-    var create_temporary_password_datetime: ZonedDateTime,
+    @Column(name = "tmp_pwd_dt")
+    var CreateTemporaryPasswordDatetime: ZonedDateTime,
 ): BaseEntity(), UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority>? {
         return null
     }
 
     override fun getPassword(): String {
-        return password_hash
+        return PasswordHash
     }
 
     override fun getUsername(): String {
-        return userid
+        return UserID
     }
 
     override fun isAccountNonExpired(): Boolean {
@@ -78,59 +72,52 @@ data class WellUser(
 
     fun getWellUserDTO(): WellUserDTO {
         return WellUserDTO(
-            idx = this.idx,
-            userid = this.userid,
-            rule = this.rule,
-            permission = this.permission,
-            password_hash = this.password_hash,
-            password_temporary = this.password_temporary,
-            password_expire = this.password_expire,
-            password_ct = this.password_ct,
-            password_certification = this.password_certification,
-            create_temporary_password_datetime = this.create_temporary_password_datetime,
-            modify_datetime = this.modify_datetime,
-            register_datetime = this.register_datetime,
+            idx = this.Idx,
+            userid = this.UserID,
+            permission = this.Permissions,
+            password_hash = this.PasswordHash,
+            password_temporary = this.TemporaryPassword,
+            password_expire = this.TemporaryPasswordExpire,
+            password_ct = this.TemporaryPasswordCreateCount,
+            create_temporary_password_datetime = this.CreateTemporaryPasswordDatetime,
+            modify_datetime = this.ModifyDatetime,
+            register_datetime = this.RegisterDatetime,
         )
     }
 
     fun createWellUserDTO(): WellUserCreateDTO {
         return WellUserCreateDTO(
-            userid = this.userid,
-            rule = this.rule,
-            permission = this.permission,
-            password_hash = this.password_hash,
-            modify_datetime = this.modify_datetime,
-            register_datetime = this.register_datetime,
+            userid = this.UserID,
+            permission = this.Permissions,
+            password_hash = this.PasswordHash,
+            modify_datetime = this.ModifyDatetime,
+            register_datetime = this.RegisterDatetime,
         )
     }
 
-    fun checkPrmisstion(wellPermission: WellPermission): Boolean {
-        return permission.contains(wellPermission.name)
+    fun checkPrmisstion(wellPermission: PermissionList): Boolean {
+        return Permissions.contains(wellPermission.name)
     }
 
     override fun equals(other: Any?): Boolean {
-        if (this == other) return true
-        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+        if (this == other) return true;
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false;
         other as WellUser
 
-        return idx != null && idx == other.idx
+        return Idx != null && Idx == other.Idx;
     }
 
-    override fun hashCode(): Int = javaClass.hashCode()
+    override fun hashCode(): Int {
+        return Idx.hashCode();
+    }
 
     @Override
     override fun toString(): String {
-        return this.userid
+        return this.UserID
     }
 }
 
-enum class RuleTypes(val rule: String) {
-    NONE("none"),
-    MEMBER("member"),
-    PARTNER("partner"),
-    ;
-}
-
+/*
 @Converter
 class RuleConverter : AttributeConverter<RuleTypes, String> {
     override fun convertToDatabaseColumn(RuleType: RuleTypes): String {
@@ -141,3 +128,4 @@ class RuleConverter : AttributeConverter<RuleTypes, String> {
         return RuleTypes.valueOf(value.uppercase())
     }
 }
+*/

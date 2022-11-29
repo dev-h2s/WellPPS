@@ -1,19 +1,21 @@
 package com.wellnetworks.wellcore.domain
 
+import com.wellnetworks.wellcore.domain.converter.*
+import com.wellnetworks.wellcore.domain.enums.*
 import org.hibernate.Hibernate
 import java.time.ZonedDateTime
 import java.util.*
 import javax.persistence.*
 
 @Entity
-@Table(name = "user_in_tb", indexes =
+@Table(name = "partner_tb", indexes =
  [Index(name = "IX_user_idx", columnList = "user_idx", unique = true),
  ])
 
-data class WellPartner (
+data class WellPartnerEntity (
     @Id
     @Column(name="idx", unique = true, nullable = false)
-    var Idx : UUID? = UUID.randomUUID(),
+    var Idx : UUID,
 
     @Column(name="user_idx", unique = true, nullable = false)
     var UserIdx: UUID,
@@ -25,7 +27,8 @@ data class WellPartner (
     var CompanyName: String,
 
     @Column(name="ctype", nullable = false)
-    var CompanyType: Byte,
+    @Convert(converter = CompanyTypeToIndexConverter::class)
+    var CompanyType: CompanyType,
 
     @Column(name="cgrp")
     var CompanyGroup: Byte,
@@ -43,7 +46,8 @@ data class WellPartner (
     var EmailOffice: String,
 
     @Column(name="rate")
-    var Rate: Byte,
+    @Convert(converter = RateTypeToIndexConverter::class)
+    var Rate: RateType,
 
     @Column(name="con_person", length = 64, nullable = false)
     var ContactPerson: String,
@@ -52,7 +56,8 @@ data class WellPartner (
     var UseAPI: Boolean,
 
     @Column(name="cstate")
-    var CompanyState: Byte,
+    @Convert(converter = CompanyStateTypeToIndexConverter::class)
+    var CompanyState: CompanyStateType,
 
     @Column(name="clevel")
     var CompanyLevel: Byte,
@@ -91,10 +96,12 @@ data class WellPartner (
     var PriorConsent: String,
 
     @Column(name="contact_type")
-    var ContactType: Byte,
+    @Convert(converter = ContactTypeToIndexConverter::class)
+    var ContactType: ContactType,
 
     @Column(name="agree", nullable = false)
-    var AgreeTerms: Byte,
+    @Convert(converter = AgreeTypeToIndexConverter::class)
+    var AgreeTerms: AgreeType,
 
     @Column(name="agree_dt", nullable = false)
     var AgreeTermsDatetime: ZonedDateTime,
@@ -112,10 +119,11 @@ data class WellPartner (
     var BankHolder: String,
 
     @Column(name="memo", length = 255)
-    var AdminMame: String,
+    var AdminMemo: String,
 
     @Column(name="j_prog")
-    var JoinPrograss: Byte,
+    @Convert(converter = ContactProgressTypeToIndexConverter::class)
+    var JoinProgress: ContactProgressType,
 
     @Column(name="contact_phone", length = 16)
     var ContactPhone: String,
@@ -130,10 +138,12 @@ data class WellPartner (
     var ContactAddress2: String,
 
     @Column(name="contact_prog")
-    var ContactProgress: Byte,
+    @Convert(converter = ContactProgressTypeToIndexConverter::class)
+    var ContactProgress: ContactProgressType,
 
     @Column(name="contact_rej")
-    var ContectReject: Byte,
+    @Convert(converter = ContactRejectTypeToIndexConverter::class)
+    var ContectReject: ContactRejectType,
 
     @Column(name="contect_approver", length = 64)
     var ContactApprover: String,
@@ -148,7 +158,7 @@ data class WellPartner (
     override fun equals(other: Any?): Boolean {
         if (this == other) return true;
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false;
-        other as WellPartner
+        other as WellPartnerEntity
 
         return Idx != null && Idx == other.Idx;
     }

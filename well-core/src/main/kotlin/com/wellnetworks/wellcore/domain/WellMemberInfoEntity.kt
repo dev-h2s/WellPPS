@@ -1,12 +1,6 @@
 package com.wellnetworks.wellcore.domain
 
-import com.wellnetworks.wellcore.domain.converter.ListToStringConverter
-import com.wellnetworks.wellcore.domain.dto.WellMemberInfoCreateDTO
-import com.wellnetworks.wellcore.domain.dto.WellMemberInfoDTO
 import org.hibernate.Hibernate
-import org.hibernate.annotations.ColumnDefault
-import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.userdetails.UserDetails
 import java.time.ZonedDateTime
 import java.util.*
 import javax.persistence.*
@@ -15,7 +9,7 @@ import javax.persistence.*
 @Table(name = "member_info_tb", indexes =
  [Index(name = "IX_user_idx", columnList = "user_idx ASC", unique = true),
  ])
-data class WellMemberInfo(
+data class WellMemberInfoEntity(
     @Id
     @Column(name = "idx", unique = true, nullable = false)
     var Idx: UUID? = UUID.randomUUID(),
@@ -100,7 +94,7 @@ data class WellMemberInfo(
     override fun equals(other: Any?): Boolean {
         if (this == other) return true;
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false;
-        other as WellPartner
+        other as WellPartnerEntity
 
         return Idx != null && Idx == other.Idx;
     }

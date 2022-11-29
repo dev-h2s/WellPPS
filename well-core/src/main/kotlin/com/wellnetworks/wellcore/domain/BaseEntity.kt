@@ -7,8 +7,8 @@ import javax.persistence.MappedSuperclass
 @MappedSuperclass
 open class BaseEntity {
     @Column(name = "mod_dt")
-    open var modify_datetime: ZonedDateTime = ZonedDateTime.now()
+    open var ModifyDatetime: ZonedDateTime = ZonedDateTime.now()
 
     @Column(name = "reg_dt")
-    open var register_datetime: ZonedDateTime = ZonedDateTime.now()
+    open var RegisterDatetime: ZonedDateTime = ZonedDateTime.now()
 }

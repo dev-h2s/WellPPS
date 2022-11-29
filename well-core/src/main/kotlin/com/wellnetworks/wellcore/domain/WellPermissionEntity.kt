@@ -1,12 +1,11 @@
 package com.wellnetworks.wellcore.domain
 
 import org.hibernate.Hibernate
-import java.security.Permission
 import javax.persistence.*;
 
 @Entity
 @Table(name = "permission_tb")
-class WellPermission (
+class WellPermissionEntity (
     @Id
     @Column(name = "pkey", length = 64, unique = true, nullable = false)
     var PermissionKey : String,
@@ -21,7 +20,7 @@ class WellPermission (
     override fun equals(other: Any?): Boolean {
         if (this == other) return true;
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-        other as WellPermission
+        other as WellPermissionEntity
 
         return PermissionKey != null && PermissionKey == other.PermissionKey;
     }

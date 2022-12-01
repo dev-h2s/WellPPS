@@ -33,7 +33,7 @@ class AuthenticationController(private val userService: WellUserService, private
 
         val user: Optional<WellUserDTO> = userService.getUserByUserID(userLoginReq.username)
 
-        if (!passwordEncoder.matches(userLoginReq.password, user.get().password_hash)) {
+        if (!passwordEncoder.matches(userLoginReq.password, user.get().Password_Hash)) {
             throw BaseException(BaseResponseCode.INVALID_PASSWORD)
         }
 

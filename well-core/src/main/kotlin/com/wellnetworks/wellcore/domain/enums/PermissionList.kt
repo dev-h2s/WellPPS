@@ -2,7 +2,7 @@ package com.wellnetworks.wellcore.domain.enums
 
 /* 데이터베이스 WellPermission 에 데이터 추가/수정/삭제 시 이 열거형 클래스에도 적용하도록 한다. */
 
-enum class PermissionList(val permitssion: String) {
+enum class PermissionList(val PermitssionKey: String) {
     PERMISSION_LOGIN("LOGIN"), // 로그인 가능
     PERMISSION_SUPERADMIN("SUPER_ADMIN"), // 최고 관리자
     PERMISSION_MEMBER("MEMBER"),  // 직원

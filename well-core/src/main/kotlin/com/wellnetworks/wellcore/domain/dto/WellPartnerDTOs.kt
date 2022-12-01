@@ -5,7 +5,7 @@ import org.hibernate.Hibernate
 import java.time.ZonedDateTime
 import java.util.UUID
 
-class WellPartnerDTOs (
+data class WellPartnerDTO (
     val Idx: UUID,
     val UserIdx: UUID,
     val TableID: String,
@@ -40,8 +40,8 @@ class WellPartnerDTOs (
     val Contact_Modify_Datetime: ZonedDateTime,
     val Use_API: Boolean,
 
-    val ParentOrganization: UUID,
-    val ChildOrganization: UUID,
+    val Organization_Parent: UUID,
+    val Organization_Child: UUID,
 
     val CEO_Name: String,
     val CEO_Telephone: String,
@@ -61,7 +61,7 @@ class WellPartnerDTOs (
 
     val Admin_Memo: String,
 
-    val JoinProgress: ContactProgressType,
+    val Join_Progress: ContactProgressType,
 
     override val Modify_Datetime: ZonedDateTime,
     override val Register_Datetime: ZonedDateTime,
@@ -74,7 +74,7 @@ class WellPartnerDTOs (
     override fun equals(other: Any?): Boolean {
         if (this == other) return true;
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false;
-        other as WellPartnerDTOs
+        other as WellPartnerDTO
 
         return Idx != null && Idx == other.Idx;
     }

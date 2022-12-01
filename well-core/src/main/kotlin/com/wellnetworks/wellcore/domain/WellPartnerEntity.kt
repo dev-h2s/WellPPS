@@ -1,6 +1,7 @@
 package com.wellnetworks.wellcore.domain
 
 import com.wellnetworks.wellcore.domain.converter.*
+import com.wellnetworks.wellcore.domain.dto.WellPartnerDTO
 import com.wellnetworks.wellcore.domain.enums.*
 import org.hibernate.Hibernate
 import java.time.ZonedDateTime
@@ -154,6 +155,57 @@ data class WellPartnerEntity (
     @Column(name="contect_moddt")
     var ContactModifyDatetime: ZonedDateTime,
     ): BaseEntity() {
+
+    fun getWellPartnerDTO(): WellPartnerDTO {
+        return WellPartnerDTO(
+            Idx = this.Idx,
+            UserIdx = this.UserIdx,
+            TableID = this.TableID,
+            Company_Name = this.CompanyName,
+            Company_Type = this.CompanyType,
+            Company_Group = this.CompanyGroup,
+            Company_State = this.CompanyState,
+            Company_Level = this.CompanyLevel,
+            Company_Address1 = this.CompanyAddress1,
+            Company_Address2 = this.CompanyAddress2,
+            Tax_Number = this.TaxNumber,
+            Tax_Email = this.TaxEmail,
+            Tax_Address1 = this.TaxAddress1,
+            Tax_Address2 = this.TaxAddress2,
+            Office_Telephone = this.TelephoneOffice,
+            Office_Email = this.EmailOffice,
+            Rate = this.Rate,
+            Contact_Person = this.ContactPerson,
+            Contact_Type = this.ContactType,
+            Contact_Phone = this.ContactPhone,
+            Contact_Datetime = this.ContactDatetime,
+            Contact_Address1 = this.ContactAddress1,
+            Contact_Address2 = this.ContactAddress2,
+            Contact_Progress = this.ContactProgress,
+            Contact_Reject = this.ContectReject,
+            Contact_Approver = this.ContactApprover,
+            Contact_Register_Datetime = this.ContactRegisterDatetime,
+            Contact_Modify_Datetime = this.ContactModifyDatetime,
+            Use_API = this.UseAPI,
+            Organization_Parent = this.ParentOrganization,
+            Organization_Child = this.ChildOrganization,
+            CEO_Name = this.CEOName,
+            CEO_Telephone = this.CEOTelephone,
+            Certification_Phone = this.CertificationPhone,
+            Certification_Email = this.CertificationEmail,
+            Prior_Consent = this.PriorConsent,
+            Agree_Terms = this.AgreeTerms,
+            Agree_Terms_Datetime = this.AgreeTermsDatetime,
+            Agree_Terms_Modify_Datetime = this.AgreeTermsModifyDatetime,
+            Bank_Name = this.BankName,
+            Bank_Account = this.BankAccount,
+            Bank_Holder = this.BankHolder,
+            Admin_Memo = this.AdminMemo,
+            Join_Progress = this.JoinProgress,
+            Modify_Datetime = this.ModifyDatetime,
+            Register_Datetime = this.RegisterDatetime,
+        )
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this == other) return true;

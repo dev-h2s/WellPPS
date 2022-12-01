@@ -1,5 +1,6 @@
 package com.wellnetworks.wellcore.domain
 
+import com.wellnetworks.wellcore.domain.dto.WellPermissionDTO
 import org.hibernate.Hibernate
 import javax.persistence.*;
 
@@ -16,6 +17,17 @@ class WellPermissionEntity (
     @Column(name = "desc")
     var Description : String,
 ): BaseEntity() {
+
+
+    fun getWellPermisionDTO(): WellPermissionDTO {
+        return WellPermissionDTO(
+            Key = this.PermissionKey,
+            Name = this.KeyName,
+            Description = this.Description,
+            Modify_Datetime = this.ModifyDatetime,
+            Register_Datetime = this.RegisterDatetime,
+        )
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this == other) return true;

@@ -5,9 +5,10 @@ import java.util.*
 import java.time.ZonedDateTime
 import javax.persistence.*
 import com.wellnetworks.wellcore.domain.dto.*
-import com.wellnetworks.wellcore.domain.enums.PermissionList
+import com.wellnetworks.wellcore.domain.enums.*
 import org.hibernate.Hibernate
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 @Entity
@@ -41,8 +42,12 @@ data class WellUserEntity(
     @Column(name = "tmp_pwd_dt")
     var TemporaryPasswordCreateDatetime: ZonedDateTime,
 ): BaseEntity(), UserDetails {
-    override fun getAuthorities(): MutableCollection<out GrantedAuthority>? {
-        return null
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
+        var authorities: MutableList<GrantedAuthority> = ArrayList()
+        for (permission in PermissionsKeysStringList) {
+            authorities.add(SimpleGrantedAuthority(permission))
+        }
+        return authorities
     }
 
     override fun getPassword(): String {
@@ -86,8 +91,8 @@ data class WellUserEntity(
         )
     }
 
-    fun createWellUserDTO(): WellUserDTO_Create {
-        return WellUserDTO_Create(
+    fun createWellUserDTO(): WellUserDTOCreate {
+        return WellUserDTOCreate(
             UserID = this.UserID,
             PermissionsKeysStringList = this.PermissionsKeysStringList,
             Password_Hash = this.PasswordHash,

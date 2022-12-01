@@ -1,8 +1,7 @@
 package com.wellnetworks.wellcore.service
 
 import com.wellnetworks.wellcore.domain.WellUserEntity
-import com.wellnetworks.wellcore.domain.dto.WellUserCreateDTO
-import com.wellnetworks.wellcore.domain.dto.WellUserDTO
+import com.wellnetworks.wellcore.domain.dto.*
 import com.wellnetworks.wellcore.repository.WellUserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -26,11 +25,11 @@ class WellUserService {
     }
 
     @Transactional
-    fun createUser(user: WellUserCreateDTO): UUID? {
+    fun createUser(user: WellUserDTOCreate): UUID? {
         val uuidUser = UUID.randomUUID()
         val createUser = WellUserEntity(uuidUser,
-            user.userid, user.rule, user.permission, user.password_hash,
-            "", ZonedDateTime.now(), 0, false, ZonedDateTime.now())
+            user.UserID, user.PermissionsKeysStringList, user.Password_Hash,
+            "", ZonedDateTime.now(), 0, ZonedDateTime.now())
         try {
             wellUserRepository.save(createUser)
         } catch (e: IllegalArgumentException) {

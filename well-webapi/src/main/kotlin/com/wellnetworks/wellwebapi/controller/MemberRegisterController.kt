@@ -1,6 +1,6 @@
 package com.wellnetworks.wellwebapi.controller
 
-import com.wellnetworks.wellcore.domain.dto.WellMemberInfoCreateDTO
+import com.wellnetworks.wellcore.domain.dto.*
 import com.wellnetworks.wellcore.service.WellMemberInfoService
 import com.wellnetworks.wellwebapi.exception.BaseException
 import com.wellnetworks.wellwebapi.exception.BaseResponseCode
@@ -25,7 +25,7 @@ class MemberRegisterController(private val memberInfoService: WellMemberInfoServ
          * RequestBody 유효성 검사
          * */
 
-        val createMember = WellMemberInfoCreateDTO(
+        val createMember = WellMemberInfoDTO_Create(
             UUID.randomUUID(),"",emptyList(),registerMemberReq.name,"","",
         "","",emptyList(),emptyList(),emptyList(),"","",emptyList(),"","",
             emptyList(),emptyList(),phone_cert = false,email_cert = false,ZonedDateTime.now(),ZonedDateTime.now(),emptyList(),

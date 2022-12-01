@@ -1,8 +1,7 @@
 package com.wellnetworks.wellcore.service
 
 import com.wellnetworks.wellcore.domain.WellMemberInfoEntity
-import com.wellnetworks.wellcore.domain.dto.WellMemberInfoCreateDTO
-import com.wellnetworks.wellcore.domain.dto.WellMemberInfoDTO
+import com.wellnetworks.wellcore.domain.dto.*
 import com.wellnetworks.wellcore.repository.WellMemberInfoRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -23,12 +22,16 @@ class WellMemberInfoService {
     }
 
     @Transactional
-    fun createMember(member: WellMemberInfoCreateDTO): UUID? {
+    fun createMember(member: WellMemberInfoDTO): UUID? {
         val uuidMember = UUID.randomUUID()
-        val createMember = WellMemberInfoEntity(uuidMember, member.user_idx, member.table_id, member.belong, member.name, member.email,
-            member.phone, member.well_phone, member.jumin, member.dep, member.pos, member.level, member.addr1, member.addr2, member.bank_name,
-            member.b_account, member.b_holder, member.status, member.type, member.phone_cert, member.email_cert, member.entry_dt, member.retire_dt,
-            member.retire_type, member.access, member.memo)
+        val createMember = WellMemberInfoEntity(uuidMember,
+            member.User_Idx, member.Table_ID, member.Current_Employment, member.Name, member.Email,
+            member.Phone_Private, member.Phone_Work, member.Registration_Number,
+            member.Department, member.Job_Position, member.Level,
+            member.Home_Address1, member.Home_Address2, member.Bank_Name, member.Bank_Account, member.Bank_Holder,
+            member.Employment_State, member.Job_Type, member.Certification_Phone, member.Certification_Email,
+            member.Entry_Datetime, member.Employment_Quit_Datetime, member.Employment_Quit_Type,
+            member.Access, member.Memo)
         try{
             wellMemberInfoRepository.save(createMember)
         } catch (e: IllegalArgumentException){

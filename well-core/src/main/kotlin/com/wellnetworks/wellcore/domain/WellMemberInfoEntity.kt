@@ -15,121 +15,121 @@ import javax.persistence.*
 data class WellMemberInfoEntity(
     @Id
     @Column(name = "idx", unique = true, nullable = false)
-    var Idx: UUID,
+    var idx: UUID,
 
     @Column(name = "user_idx", unique = true, nullable = false)
-    var UserIdx: UUID,
+    var userIdx: UUID,
 
     @Column(name = "tbl_id", length = 16)
-    var TableID: String,
+    var tableID: String,
 
     @Column(name = "belong", nullable = false)
     @Convert(converter = CurrentEmploymentTypeToIndexConverter::class)
-    var CurrentEmployment : CurrentEmploymentType,
+    var currentEmployment : CurrentEmploymentType,
 
     @Column(name = "name", length = 64, nullable = false)
-    var Name: String,
+    var name: String,
 
     @Column(name = "mail", length = 320, nullable = false)
-    var Email: String,
+    var email: String,
 
     @Column(name = "phone_private", length = 16)
-    var PhonePrivate: String,
+    var phonePrivate: String,
 
     @Column(name = "phone_work", length = 16)
-    var PhoneWork: String,
+    var phoneWork: String,
 
     @Column(name = "reg_num", length = 16)
-    var RegistrationNumber: String,
+    var registrationNumber: String,
 
     @Column(name = "dep")
     @Convert(converter = DepartmentTypeToIndexConverter::class)
-    var Department: DepartmentType,
+    var department: DepartmentType,
 
     @Column(name = "pos")
     @Convert(converter = JobPositionTypeToIndexConverter::class)
-    var JobPosition: JobPositionType,
+    var jobPosition: JobPositionType,
 
     @Column(name = "level")
-    var Level: Byte,
+    var level: Byte,
 
     @Column(name = "home_addr1", length = 255)
-    var HomeAddress1: String,
+    var homeAddress1: String,
 
     @Column(name = "home_addr2", length = 255)
-    var HomeAddress2: String,
+    var homeAddress2: String,
 
     @Column(name = "b_name", length = 64)
-    var BankName: String,
+    var bankName: String,
 
     @Column(name = "b_account", length = 64)
-    var BankAccount: String,
+    var bankAccount: String,
 
     @Column(name = "b_holder", length = 64)
-    var BankHolder: String,
+    var bankHolder: String,
 
     @Column(name = "state")
     @Convert(converter = EmploymentStateTypeToIndexConverter::class)
-    var EmploymentState: EmploymentStateType,
+    var employmentState: EmploymentStateType,
 
     @Column(name = "j_type")
     @Convert(converter = JobTypeToIndexConverter::class)
-    var JobType: JobType,
+    var jobType: JobType,
 
     @Column(name = "phone_cert")
-    var CertificationPhone: Boolean,
+    var certificationPhone: Boolean,
 
     @Column(name = "email_cert")
-    var CertificationEmail: Boolean,
+    var certificationEmail: Boolean,
 
     @Column(name = "entry_dt")
-    var EntryDatetime: ZonedDateTime,
+    var entryDatetime: ZonedDateTime,
 
     @Column(name = "retire_dt")
-    var EmploymentQuitDatetime: ZonedDateTime,
+    var employmentQuitDatetime: ZonedDateTime,
 
     @Column(name = "retire_type")
     @Convert(converter = EmploymentQuitTypeToIndexConverter::class)
-    var EmploymentQuitType: EmploymentQuitType,
+    var employmentQuitType: EmploymentQuitType,
 
     @Column(name = "access")
-    var Access: Boolean,
+    var access: Boolean,
 
     @Column(name = "memo")
-    var Memo: String,
+    var memo: String,
 
     ): BaseEntity() {
 
     fun getWellMemberInfoDTO(): WellMemberInfoDTO {
         return WellMemberInfoDTO(
-            Idx = this.Idx,
-            User_Idx = this.UserIdx,
-            Table_ID = this.TableID,
-            Current_Employment = this.CurrentEmployment,
-            Name = this.Name,
-            Email = this.Email,
-            Phone_Private = this.PhonePrivate,
-            Phone_Work = this.PhoneWork,
-            Registration_Number = this.RegistrationNumber,
-            Department = this.Department,
-            Job_Position = this.JobPosition,
-            Level = this.Level,
-            Home_Address1 = this.HomeAddress1,
-            Home_Address2 = this.HomeAddress2,
-            Bank_Name = this.BankName,
-            Bank_Account = this.BankAccount,
-            Bank_Holder = this.BankHolder,
-            Employment_State = this.EmploymentState,
-            Job_Type = this.JobType,
-            Certification_Phone = this.CertificationPhone,
-            Certification_Email = this.CertificationEmail,
-            Entry_Datetime = this.EntryDatetime,
-            Employment_Quit_Datetime = this.EmploymentQuitDatetime,
-            Employment_Quit_Type = this.EmploymentQuitType,
-            Access = this.Access,
-            Memo = this.Memo,
-            Modify_Datetime = this.ModifyDatetime,
-            Register_Datetime = this.RegisterDatetime,
+            Idx = this.idx,
+            User_Idx = this.userIdx,
+            Table_ID = this.tableID,
+            Current_Employment = this.currentEmployment,
+            Name = this.name,
+            Email = this.email,
+            Phone_Private = this.phonePrivate,
+            Phone_Work = this.phoneWork,
+            Registration_Number = this.registrationNumber,
+            Department = this.department,
+            Job_Position = this.jobPosition,
+            Level = this.level,
+            Home_Address1 = this.homeAddress1,
+            Home_Address2 = this.homeAddress2,
+            Bank_Name = this.bankName,
+            Bank_Account = this.bankAccount,
+            Bank_Holder = this.bankHolder,
+            Employment_State = this.employmentState,
+            Job_Type = this.jobType,
+            Certification_Phone = this.certificationPhone,
+            Certification_Email = this.certificationEmail,
+            Entry_Datetime = this.entryDatetime,
+            Employment_Quit_Datetime = this.employmentQuitDatetime,
+            Employment_Quit_Type = this.employmentQuitType,
+            Access = this.access,
+            Memo = this.memo,
+            Modify_Datetime = this.modifyDatetime,
+            Register_Datetime = this.registerDatetime,
         )
  1   }
 
@@ -138,15 +138,15 @@ data class WellMemberInfoEntity(
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false;
         other as WellPartnerEntity
 
-        return Idx != null && Idx == other.Idx;
+        return idx != null && idx == other.idx;
     }
 
     override fun hashCode(): Int {
-        return Idx.hashCode();
+        return idx.hashCode();
     }
 
     override fun toString(): String {
-        return Name;
+        return name;
     }
 
 }

@@ -9,23 +9,23 @@ import javax.persistence.*;
 class WellPermissionEntity (
     @Id
     @Column(name = "pkey", length = 64, unique = true, nullable = false)
-    var PermissionKey : String,
+    var permissionKey : String,
 
     @Column(name = "name", length = 32, nullable = false)
-    var KeyName : String,
+    var keyName : String,
 
     @Column(name = "desc")
-    var Description : String,
+    var description : String,
 ): BaseEntity() {
 
 
     fun getWellPermisionDTO(): WellPermissionDTO {
         return WellPermissionDTO(
-            Key = this.PermissionKey,
-            Name = this.KeyName,
-            Description = this.Description,
-            Modify_Datetime = this.ModifyDatetime,
-            Register_Datetime = this.RegisterDatetime,
+            Key = this.permissionKey,
+            Name = this.keyName,
+            Description = this.description,
+            Modify_Datetime = this.modifyDatetime,
+            Register_Datetime = this.registerDatetime,
         )
     }
 
@@ -34,14 +34,14 @@ class WellPermissionEntity (
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
         other as WellPermissionEntity
 
-        return PermissionKey != null && PermissionKey == other.PermissionKey;
+        return permissionKey != null && permissionKey == other.permissionKey;
     }
 
     override fun hashCode(): Int {
-        return PermissionKey.hashCode();
+        return permissionKey.hashCode();
     }
 
     override fun toString(): String {
-        return this.KeyName;
+        return this.keyName;
     }
 }

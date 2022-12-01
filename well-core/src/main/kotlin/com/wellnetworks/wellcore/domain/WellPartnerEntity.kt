@@ -16,194 +16,194 @@ import javax.persistence.*
 data class WellPartnerEntity (
     @Id
     @Column(name="idx", unique = true, nullable = false)
-    var Idx : UUID,
+    var idx : UUID,
 
     @Column(name="user_idx", unique = true, nullable = false)
-    var UserIdx: UUID,
+    var userIdx: UUID,
 
     @Column(name="tbl_id", length = 16, nullable = false)
-    var TableID: String,
+    var tableID: String,
 
     @Column(name="cname", length = 64, nullable = false)
-    var CompanyName: String,
+    var companyName: String,
 
     @Column(name="ctype", nullable = false)
     @Convert(converter = CompanyTypeToIndexConverter::class)
-    var CompanyType: CompanyType,
+    var companyType: CompanyType,
 
     @Column(name="cgrp")
-    var CompanyGroup: Byte,
+    var companyGroup: Byte,
 
     @Column(name="tax_num", length = 16, nullable = false)
-    var TaxNumber: String,
+    var taxNumber: String,
 
     @Column(name="tax_mail", length = 320, nullable = false)
-    var TaxEmail: String,
+    var taxEmail: String,
 
     @Column(name="ctel", length = 16, nullable = false)
-    var TelephoneOffice: String,
+    var telephoneOffice: String,
 
     @Column(name="cmail", length = 320, nullable = false)
-    var EmailOffice: String,
+    var emailOffice: String,
 
     @Column(name="rate")
     @Convert(converter = RateTypeToIndexConverter::class)
-    var Rate: RateType,
+    var rate: RateType,
 
     @Column(name="con_person", length = 64, nullable = false)
-    var ContactPerson: String,
+    var contactPerson: String,
 
     @Column(name="use_api", nullable = false)
-    var UseAPI: Boolean,
+    var useAPI: Boolean,
 
     @Column(name="cstate")
     @Convert(converter = CompanyStateTypeToIndexConverter::class)
-    var CompanyState: CompanyStateType,
+    var companyState: CompanyStateType,
 
     @Column(name="clevel")
-    var CompanyLevel: Byte,
+    var companyLevel: Byte,
 
     @Column(name="parent_org")
-    var ParentOrganization: UUID,
+    var parentOrganization: UUID,
 
     @Column(name="child_org")
-    var ChildOrganization: UUID,
+    var childOrganization: UUID,
 
     @Column(name="ceo_name", length = 64)
-    var CEOName: String,
+    var ceoName: String,
 
     @Column(name="ceo_tel", length = 16)
-    var CEOTelephone: String,
+    var ceoTelephone: String,
 
     @Column(name="phone_cert")
-    var CertificationPhone: Boolean,
+    var certificationPhone: Boolean,
 
     @Column(name="email_cert")
-    var CertificationEmail: Boolean,
+    var certificationEmail: Boolean,
 
     @Column(name="tax_addr1", length = 255)
-    var TaxAddress1: String,
+    var taxAddress1: String,
 
     @Column(name="tax_addr2", length = 255)
-    var TaxAddress2: String,
+    var taxAddress2: String,
 
     @Column(name="caddr1", length = 255)
-    var CompanyAddress1: String,
+    var companyAddress1: String,
 
     @Column(name="caddr2", length = 255)
-    var CompanyAddress2: String,
+    var companyAddress2: String,
 
     @Column(name="priconsent", length = 16)
-    var PriorConsent: String,
+    var priorConsent: String,
 
     @Column(name="contact_type")
     @Convert(converter = ContactTypeToIndexConverter::class)
-    var ContactType: ContactType,
+    var contactType: ContactType,
 
     @Column(name="agree", nullable = false)
     @Convert(converter = AgreeTypeToIndexConverter::class)
-    var AgreeTerms: AgreeType,
+    var agreeTerms: AgreeType,
 
     @Column(name="agree_dt", nullable = false)
-    var AgreeTermsDatetime: ZonedDateTime,
+    var agreeTermsDatetime: ZonedDateTime,
 
     @Column(name="agree_mod", nullable = false)
-    var AgreeTermsModifyDatetime: ZonedDateTime,
+    var agreeTermsModifyDatetime: ZonedDateTime,
 
     @Column(name="b_name", length = 64)
-    var BankName: String,
+    var bankName: String,
 
     @Column(name="b_account", length = 64)
-    var BankAccount: String,
+    var bankAccount: String,
 
     @Column(name="b_holder", length = 64)
-    var BankHolder: String,
+    var bankHolder: String,
 
     @Column(name="memo", length = 255)
-    var AdminMemo: String,
+    var adminMemo: String,
 
     @Column(name="j_prog")
     @Convert(converter = ContactProgressTypeToIndexConverter::class)
-    var JoinProgress: ContactProgressType,
+    var joinProgress: ContactProgressType,
 
     @Column(name="contact_phone", length = 16)
-    var ContactPhone: String,
+    var contactPhone: String,
 
     @Column(name="contact_dt")
-    var ContactDatetime: ZonedDateTime,
+    var contactDatetime: ZonedDateTime,
 
     @Column(name="contact_addr1", length = 255)
-    var ContactAddress1: String,
+    var contactAddress1: String,
 
     @Column(name="contact_addr2", length = 255)
-    var ContactAddress2: String,
+    var contactAddress2: String,
 
     @Column(name="contact_prog")
     @Convert(converter = ContactProgressTypeToIndexConverter::class)
-    var ContactProgress: ContactProgressType,
+    var contactProgress: ContactProgressType,
 
     @Column(name="contact_rej")
     @Convert(converter = ContactRejectTypeToIndexConverter::class)
-    var ContectReject: ContactRejectType,
+    var contectReject: ContactRejectType,
 
     @Column(name="contect_approver", length = 64)
-    var ContactApprover: String,
+    var contactApprover: String,
 
     @Column(name="contect_regdt")
-    var ContactRegisterDatetime: ZonedDateTime,
+    var contactRegisterDatetime: ZonedDateTime,
 
     @Column(name="contect_moddt")
-    var ContactModifyDatetime: ZonedDateTime,
+    var contactModifyDatetime: ZonedDateTime,
     ): BaseEntity() {
 
     fun getWellPartnerDTO(): WellPartnerDTO {
         return WellPartnerDTO(
-            Idx = this.Idx,
-            UserIdx = this.UserIdx,
-            TableID = this.TableID,
-            Company_Name = this.CompanyName,
-            Company_Type = this.CompanyType,
-            Company_Group = this.CompanyGroup,
-            Company_State = this.CompanyState,
-            Company_Level = this.CompanyLevel,
-            Company_Address1 = this.CompanyAddress1,
-            Company_Address2 = this.CompanyAddress2,
-            Tax_Number = this.TaxNumber,
-            Tax_Email = this.TaxEmail,
-            Tax_Address1 = this.TaxAddress1,
-            Tax_Address2 = this.TaxAddress2,
-            Office_Telephone = this.TelephoneOffice,
-            Office_Email = this.EmailOffice,
-            Rate = this.Rate,
-            Contact_Person = this.ContactPerson,
-            Contact_Type = this.ContactType,
-            Contact_Phone = this.ContactPhone,
-            Contact_Datetime = this.ContactDatetime,
-            Contact_Address1 = this.ContactAddress1,
-            Contact_Address2 = this.ContactAddress2,
-            Contact_Progress = this.ContactProgress,
-            Contact_Reject = this.ContectReject,
-            Contact_Approver = this.ContactApprover,
-            Contact_Register_Datetime = this.ContactRegisterDatetime,
-            Contact_Modify_Datetime = this.ContactModifyDatetime,
-            Use_API = this.UseAPI,
-            Organization_Parent = this.ParentOrganization,
-            Organization_Child = this.ChildOrganization,
-            CEO_Name = this.CEOName,
-            CEO_Telephone = this.CEOTelephone,
-            Certification_Phone = this.CertificationPhone,
-            Certification_Email = this.CertificationEmail,
-            Prior_Consent = this.PriorConsent,
-            Agree_Terms = this.AgreeTerms,
-            Agree_Terms_Datetime = this.AgreeTermsDatetime,
-            Agree_Terms_Modify_Datetime = this.AgreeTermsModifyDatetime,
-            Bank_Name = this.BankName,
-            Bank_Account = this.BankAccount,
-            Bank_Holder = this.BankHolder,
-            Admin_Memo = this.AdminMemo,
-            Join_Progress = this.JoinProgress,
-            Modify_Datetime = this.ModifyDatetime,
-            Register_Datetime = this.RegisterDatetime,
+            Idx = this.idx,
+            UserIdx = this.userIdx,
+            TableID = this.tableID,
+            Company_Name = this.companyName,
+            Company_Type = this.companyType,
+            Company_Group = this.companyGroup,
+            Company_State = this.companyState,
+            Company_Level = this.companyLevel,
+            Company_Address1 = this.companyAddress1,
+            Company_Address2 = this.companyAddress2,
+            Tax_Number = this.taxNumber,
+            Tax_Email = this.taxEmail,
+            Tax_Address1 = this.taxAddress1,
+            Tax_Address2 = this.taxAddress2,
+            Office_Telephone = this.telephoneOffice,
+            Office_Email = this.emailOffice,
+            Rate = this.rate,
+            Contact_Person = this.contactPerson,
+            Contact_Type = this.contactType,
+            Contact_Phone = this.contactPhone,
+            Contact_Datetime = this.contactDatetime,
+            Contact_Address1 = this.contactAddress1,
+            Contact_Address2 = this.contactAddress2,
+            Contact_Progress = this.contactProgress,
+            Contact_Reject = this.contectReject,
+            Contact_Approver = this.contactApprover,
+            Contact_Register_Datetime = this.contactRegisterDatetime,
+            Contact_Modify_Datetime = this.contactModifyDatetime,
+            Use_API = this.useAPI,
+            Organization_Parent = this.parentOrganization,
+            Organization_Child = this.childOrganization,
+            CEO_Name = this.ceoName,
+            CEO_Telephone = this.ceoTelephone,
+            Certification_Phone = this.certificationPhone,
+            Certification_Email = this.certificationEmail,
+            Prior_Consent = this.priorConsent,
+            Agree_Terms = this.agreeTerms,
+            Agree_Terms_Datetime = this.agreeTermsDatetime,
+            Agree_Terms_Modify_Datetime = this.agreeTermsModifyDatetime,
+            Bank_Name = this.bankName,
+            Bank_Account = this.bankAccount,
+            Bank_Holder = this.bankHolder,
+            Admin_Memo = this.adminMemo,
+            Join_Progress = this.joinProgress,
+            Modify_Datetime = this.modifyDatetime,
+            Register_Datetime = this.registerDatetime,
         )
     }
 
@@ -212,14 +212,14 @@ data class WellPartnerEntity (
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false;
         other as WellPartnerEntity
 
-        return Idx != null && Idx == other.Idx;
+        return idx != null && idx == other.idx;
     }
 
     override fun hashCode(): Int {
-        return Idx.hashCode();
+        return idx.hashCode();
     }
 
     override fun toString(): String {
-        return CompanyName;
+        return companyName;
     }
 }

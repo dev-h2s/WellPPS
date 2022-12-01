@@ -16,12 +16,12 @@ class WellUserService {
     lateinit var wellUserRepository: WellUserRepository
 
     fun getUserByUserID(userid: String): Optional<WellUserDTO> {
-        val user = wellUserRepository.findByUserid(userid)
+        val user = wellUserRepository.findByUserID(userid)
         return user.map { it.getWellUserDTO() }
     }
 
     fun existByUserID(userid: String): Boolean {
-        return wellUserRepository.existsByUserid(userid)
+        return wellUserRepository.existsByUserID(userid)
     }
 
     @Transactional

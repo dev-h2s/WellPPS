@@ -24,9 +24,9 @@ class MemberRegisterController(private val memberInfoService: WellMemberInfoServ
         /**
          * RequestBody 유효성 검사
          * */
-
-        val createMember = WellMemberInfoDTO_Create(
-            UUID.randomUUID(),"",emptyList(),registerMemberReq.name,"","",
+/*
+        val createMember = WellMemberInfoDTOCreate(
+            "",emptyList(),registerMemberReq.name,"","",
         "","",emptyList(),emptyList(),emptyList(),"","",emptyList(),"","",
             emptyList(),emptyList(),phone_cert = false,email_cert = false,ZonedDateTime.now(),ZonedDateTime.now(),emptyList(),
             true,"", ZonedDateTime.now(), ZonedDateTime.now())
@@ -35,6 +35,8 @@ class MemberRegisterController(private val memberInfoService: WellMemberInfoServ
         if (memberInfoService.createMember(createMember) == null) {
             throw BaseException(BaseResponseCode.FAILED_TO_SAVE_USER)
         }
+
+ */
         return ResponseEntity.ok(BaseRes(HttpStatus.OK, "register Member OK"))
     }
 }

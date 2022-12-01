@@ -33,23 +33,9 @@ data class WellUserDTO (
 }
 
 data class WellUserDTOCreate (
-    val Idx: UUID? = UUID.randomUUID(),
     val UserID: String,
     val PermissionsKeysStringList: List<String>,
     val Password_Hash: String,
     override val Modify_Datetime: ZonedDateTime = ZonedDateTime.now(),
     override val Register_Datetime: ZonedDateTime = ZonedDateTime.now(),
-): BaseDTO(Modify_Datetime, Register_Datetime) {
-
-    override fun hashCode(): Int {
-        return Idx.hashCode();
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this == other) return true;
-        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false;
-        other as WellUserDTOCreate
-
-        return Idx != null && Idx == other.Idx;
-    }
-}
+): BaseDTO(Modify_Datetime, Register_Datetime)

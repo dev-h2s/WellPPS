@@ -22,7 +22,7 @@ class WellMemberInfoService {
     }
 
     @Transactional
-    fun createMember(member: WellMemberInfoDTO): UUID? {
+    fun createMember(member: WellMemberInfoDTOCreate): UUID? {
         val uuidMember = UUID.randomUUID()
         val createMember = WellMemberInfoEntity(uuidMember,
             member.User_Idx, member.Table_ID, member.Current_Employment, member.Name, member.Email,

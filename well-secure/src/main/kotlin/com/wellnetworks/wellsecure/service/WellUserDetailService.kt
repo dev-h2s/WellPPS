@@ -16,6 +16,6 @@ class WellUserDetailService: UserDetailsService {
     lateinit var wellUserRepository: WellUserRepository
 
     override fun loadUserByUsername(username: String): UserDetails {
-        return wellUserRepository.findByUserid(username).get()
+        return wellUserRepository.findByUserID(username).get()
     }
 }

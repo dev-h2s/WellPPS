@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository
 import java.util.*
 
 interface WellPartnerRepository: CrudRepository<WellPartnerEntity, String> {
-    fun findByUseridx(uuid: UUID): Optional<WellPartnerEntity>
+    fun findByCompanyName(partnerName: String): Optional<WellPartnerEntity>
 }

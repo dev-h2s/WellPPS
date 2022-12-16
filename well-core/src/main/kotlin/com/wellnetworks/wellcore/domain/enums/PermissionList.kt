@@ -7,6 +7,7 @@ enum class PermissionList(val PermitssionKey: String) {
     PERMISSION_SUPERADMIN("SUPER_ADMIN"), // 최고 관리자
     PERMISSION_MEMBER("MEMBER"),  // 직원
     PERMISSION_PARTNER("PARTNER"), // 거래처
+    PERMISSION_SINGUP_SCREENING("SINGUP_SCREENING"), // 회원가입 심사
     PERMISSION_PASSWORD_CHANGE("PWD_CHG"), // 패스워드 변경 필요
     PERMISSION_USE_TEMPORARY_PASSWORD("TMP_PWD"), // 임시 패스워드 발급 상태
 }

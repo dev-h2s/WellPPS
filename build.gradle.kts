@@ -44,6 +44,8 @@ subprojects {
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
         implementation("org.springframework.boot:spring-boot-starter-web")
+        implementation("io.github.microutils:kotlin-logging-jvm:3.0.2")
+        implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.+")
 
         testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
@@ -115,6 +117,7 @@ project(":well-webapi") {
         implementation(project(":well-core"))
         implementation(project(":well-secure"))
         implementation("org.springframework.boot:spring-boot-starter-security")
+        implementation("org.springframework.boot:spring-boot-starter-data-jpa")
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
         implementation("org.springframework.session:spring-session-core")
         testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")

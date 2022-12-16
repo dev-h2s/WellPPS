@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -21,10 +22,10 @@ import java.util.*
 @RestController
 @RequestMapping("/init")
 class InitializeController(private val userService: WellUserService, private val jwtTokenProvider: JwtTokenProvider, private val passwordEncoder: PasswordEncoder) {
-    @GetMapping("create_admin")
+    @PostMapping("create_admin")
     fun createAdmin(@RequestBody createAdminReq: CreateAdminReq): ResponseEntity<BaseRes> {
         if (userService.dataTotalCount() == 0L) {
-            var permissions: List<String> = listOf (
+            val permissions: List<String> = listOf (
                 PermissionList.PERMISSION_SUPERADMIN.PermitssionKey,
                 PermissionList.PERMISSION_LOGIN.PermitssionKey,
             )

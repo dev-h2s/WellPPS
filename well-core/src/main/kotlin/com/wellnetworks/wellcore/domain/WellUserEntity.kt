@@ -27,8 +27,8 @@ data class WellUserEntity(
     @Convert(converter = ListToStringConverter::class)
     var permissionsKeysStringList: List<String>,
 
-    @Column(name = "pwd", length = 255, nullable = false)
-    var passwordHash: String,
+    @Column(name = "pwd", length = 255, nullable = true)
+    var passwordHash: String?,
 
     @Column(name = "tmp_pwd", length = 255, nullable = false)
     var temporaryPassword: String,
@@ -52,7 +52,7 @@ data class WellUserEntity(
 
     override fun getPassword(): String {
         // Todo : 임시 패스워드 발급 상태인지 퍼미션 확인 후 조건에 맞게 처리.
-        return passwordHash
+        return passwordHash ?: ""
     }
 
     override fun getUsername(): String {

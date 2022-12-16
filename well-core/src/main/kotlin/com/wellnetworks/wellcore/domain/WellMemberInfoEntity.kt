@@ -17,8 +17,8 @@ data class WellMemberInfoEntity(
     @Column(name = "idx", unique = true, nullable = false)
     var idx: UUID,
 
-    @Column(name = "user_idx", unique = true, nullable = false)
-    var userIdx: UUID,
+    @Column(name = "user_idx", unique = true, nullable = true)
+    var userIdx: UUID?,
 
     @Column(name = "tbl_id", length = 16)
     var tableID: String,
@@ -100,10 +100,9 @@ data class WellMemberInfoEntity(
 
     ): BaseEntity() {
 
-    fun getWellMemberInfoDTO(): WellMemberInfoDTO {
+    fun toDto(): WellMemberInfoDTO {
         return WellMemberInfoDTO(
             Idx = this.idx,
-            User_Idx = this.userIdx,
             Table_ID = this.tableID,
             Current_Employment = this.currentEmployment,
             Name = this.name,
@@ -132,6 +131,33 @@ data class WellMemberInfoEntity(
             Register_Datetime = this.registerDatetime,
         )
  1   }
+
+    fun fromDto(dto: WellMemberInfoDTO) {
+        this.tableID = dto.Table_ID
+        this.currentEmployment = dto.Current_Employment
+        this.name = dto.Name
+        this.email = dto.Email
+        this.phonePrivate = dto.Phone_Private
+        this.phoneWork = dto.Phone_Work
+        this.registrationNumber = dto.Registration_Number
+        this.department = dto.Department
+        this.jobPosition = dto.Job_Position
+        this.level = dto.Level
+        this.homeAddress1 = dto.Home_Address1
+        this.homeAddress2 = dto.Home_Address2
+        this.bankName = dto.Bank_Name
+        this.bankAccount = dto.Bank_Account
+        this.bankHolder = dto.Bank_Holder
+        this.employmentState = dto.Employment_State
+        this.jobType = dto.Job_Type
+        this.certificationPhone = dto.Certification_Phone
+        this.certificationEmail = dto.Certification_Email
+        this.entryDatetime = dto.Entry_Datetime
+        this.employmentQuitDatetime = dto.Employment_Quit_Datetime
+        this.employmentQuitType = dto.Employment_Quit_Type
+        this.access = dto.Access
+        this.memo = dto.Memo
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this == other) return true;

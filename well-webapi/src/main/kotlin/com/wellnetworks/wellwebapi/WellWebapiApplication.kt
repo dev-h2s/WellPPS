@@ -1,10 +1,13 @@
 package com.wellnetworks.wellwebapi
 
+import mu.KotlinLogging
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import org.springframework.context.annotation.ComponentScan
+
+private val logger = KotlinLogging.logger {}
 
 @SpringBootApplication(scanBasePackages = ["com.wellnetworks"])
+//@EnableGlobalMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
 //@ComponentScan(basePackages = ["com.wellnetworks.wellcore", "com.wellnetworks.wellsecure"])
 class WellWebapiApplication
 

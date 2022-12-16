@@ -35,7 +35,7 @@ class SecurityConfig() {
             .and()
             .authorizeRequests()
             .antMatchers("/api/**").authenticated()
-            .antMatchers("/register/**", "/login/**", "/logout/**").permitAll()
+            .antMatchers("/signup/**", "/login/**", "/logout/**", "/init/**").permitAll()
         return http.build()
     }
 }

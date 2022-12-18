@@ -3,7 +3,6 @@ package com.wellnetworks.wellwebapi.controller.init
 import com.wellnetworks.wellcore.domain.dto.*
 import com.wellnetworks.wellcore.domain.enums.PermissionList
 import com.wellnetworks.wellcore.service.WellUserService
-import com.wellnetworks.wellsecure.jwt.JwtTokenProvider
 import com.wellnetworks.wellwebapi.exception.BaseException
 import com.wellnetworks.wellwebapi.exception.BaseResponseCode
 import com.wellnetworks.wellwebapi.request.init.CreateAdminReq
@@ -21,7 +20,7 @@ import java.util.*
 
 @RestController
 @RequestMapping("/init")
-class InitializeController(private val userService: WellUserService, private val jwtTokenProvider: JwtTokenProvider, private val passwordEncoder: PasswordEncoder) {
+class InitializeController(private val userService: WellUserService, private val passwordEncoder: PasswordEncoder) {
     @PostMapping("create_admin")
     fun createAdmin(@RequestBody createAdminReq: CreateAdminReq): ResponseEntity<BaseRes> {
         if (userService.dataTotalCount() == 0L) {

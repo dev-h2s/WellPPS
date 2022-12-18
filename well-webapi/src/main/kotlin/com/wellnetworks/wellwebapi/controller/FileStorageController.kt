@@ -17,9 +17,7 @@ import java.util.UUID
 import javax.servlet.http.HttpServletRequest
 
 @RequestMapping("/file")
-class FileStorageController {
-    @Autowired
-    lateinit var wellFileStorageService: WellFileStorageService
+class FileStorageController(private var wellFileStorageService: WellFileStorageService) {
 
     @GetMapping("image.do")
     fun attachPublicImage(@RequestParam(required = true) idx: String): ResponseEntity<out Any> {

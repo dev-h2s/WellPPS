@@ -2,17 +2,10 @@ package com.wellnetworks.wellwebapi.controller
 
 import com.wellnetworks.wellcore.domain.dto.WellPartnerDTOSignup
 import com.wellnetworks.wellcore.domain.dto.WellPermissionDTO
-import com.wellnetworks.wellcore.domain.dto.WellUserDTO
 import com.wellnetworks.wellcore.service.WellPartnerService
 import com.wellnetworks.wellcore.service.WellUserService
-import com.wellnetworks.wellsecure.jwt.JwtTokenProvider
-import com.wellnetworks.wellsecure.service.WellUserDetailService
-import com.wellnetworks.wellwebapi.exception.BaseException
-import com.wellnetworks.wellwebapi.exception.BaseResponseCode
-import com.wellnetworks.wellwebapi.request.UserLoginReq
 import com.wellnetworks.wellwebapi.response.BaseListRes
 import com.wellnetworks.wellwebapi.response.BaseRes
-import com.wellnetworks.wellwebapi.response.UserLoginRes
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -32,8 +25,8 @@ import kotlin.math.sign
 @RequestMapping("/")
 abstract class AuthenticationController(
     private val userService: WellUserService, private val partnerService: WellPartnerService,
-    private val jwtTokenProvider: JwtTokenProvider, private val passwordEncoder: PasswordEncoder) {
-
+    private val passwordEncoder: PasswordEncoder) {
+/*
     @PostMapping("login")
     fun login(@RequestBody userLoginReq: UserLoginReq): ResponseEntity<UserLoginRes> {
         if (!userService.existByUserID(userLoginReq.username)) {
@@ -48,7 +41,7 @@ abstract class AuthenticationController(
 
         val userLoginRes: UserLoginRes = UserLoginRes(HttpStatus.OK, "", jwtTokenProvider.createToken(userLoginReq.username))
         return ResponseEntity.ok(userLoginRes)
-    }
+    }*/
 
     @PostMapping("signup", consumes = [ MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE])
     fun signup(@RequestBody signupPartner: WellPartnerDTOSignup, @RequestPart("file") files: List<MultipartFile>): ResponseEntity<BaseRes> {

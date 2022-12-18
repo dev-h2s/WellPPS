@@ -2,6 +2,7 @@ package com.wellnetworks.wellwebapi
 
 import mu.KotlinLogging
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.boot.runApplication
 
 private val logger = KotlinLogging.logger {}
@@ -12,5 +13,10 @@ private val logger = KotlinLogging.logger {}
 class WellWebapiApplication
 
 fun main(args: Array<String>) {
-	runApplication<WellWebapiApplication>(*args)
+	configureApplication(SpringApplicationBuilder()).run(*args)
+//	runApplication<WellWebapiApplication>(*args)
+}
+
+fun configureApplication(builder: SpringApplicationBuilder): SpringApplicationBuilder {
+	return builder.sources(WellWebapiApplication::class.java)
 }

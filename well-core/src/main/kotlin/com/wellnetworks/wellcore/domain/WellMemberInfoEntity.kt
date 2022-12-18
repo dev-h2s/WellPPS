@@ -10,15 +10,12 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "member_info_tb", indexes =
- [Index(name = "IX_user_idx", columnList = "user_idx ASC", unique = true),
+ [Index(name = "IX_tid", columnList = "tbl_id ASC", unique = false),
  ])
 data class WellMemberInfoEntity(
     @Id
     @Column(name = "idx", unique = true, nullable = false)
     var idx: UUID,
-
-    @Column(name = "user_idx", unique = true, nullable = true)
-    var userIdx: UUID?,
 
     @Column(name = "tbl_id", length = 16)
     var tableID: String,
@@ -76,10 +73,10 @@ data class WellMemberInfoEntity(
     @Convert(converter = JobTypeToIndexConverter::class)
     var jobType: JobType,
 
-    @Column(name = "phone_cert")
+    @Column(name = "phone_cert", columnDefinition = "bit")
     var certificationPhone: Boolean,
 
-    @Column(name = "email_cert")
+    @Column(name = "email_cert", columnDefinition = "bit")
     var certificationEmail: Boolean,
 
     @Column(name = "entry_dt")
@@ -92,7 +89,7 @@ data class WellMemberInfoEntity(
     @Convert(converter = EmploymentQuitTypeToIndexConverter::class)
     var employmentQuitType: EmploymentQuitType,
 
-    @Column(name = "access")
+    @Column(name = "access", columnDefinition = "bit")
     var access: Boolean,
 
     @Column(name = "memo")

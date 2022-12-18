@@ -33,7 +33,9 @@ class WellFileStorageService {
     lateinit var uploadDirectory: String
 
     fun getOneDownload(idx: UUID, isPublic: Boolean, permissions: List<String>? = null): Optional<WellFileStorageDTO> {
-        var fileItem = wellFileStorageRepository.findFirstByIdxAndPublic(idx, isPublic)
+        var fileItem = if (isPublic)
+            wellFileStorageRepository.findFirstByIdxAndPublicTrue(idx)
+        else wellFileStorageRepository.findFirstByIdxAndPublicFalse(idx)
 
         if (fileItem.isEmpty) {
             return Optional.empty()
@@ -57,7 +59,9 @@ class WellFileStorageService {
     }
 
     fun existByIdx(idx: UUID, isPublic: Boolean): Boolean {
-        return wellFileStorageRepository.existsByIdxAndPublic(idx, isPublic)
+        return if (isPublic)
+            wellFileStorageRepository.existsByIdxAndPublicTrue(idx)
+        else wellFileStorageRepository.existsByIdxAndPublicFalse(idx)
     }
 
     fun getFile(fileData: WellFileStorageDTO): Result<Resource> =

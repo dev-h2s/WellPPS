@@ -172,9 +172,9 @@ data class WellPartnerDTO (
     val Join_Progress: ContactProgressType,
 
     @JsonIgnore
-    override var Modify_Datetime: ZonedDateTime,
+    override var Modify_Datetime: ZonedDateTime?,
     @JsonIgnore
-    override val Register_Datetime: ZonedDateTime,
+    override val Register_Datetime: ZonedDateTime?,
 ): BaseDTO(Modify_Datetime, Register_Datetime) {
 
     override fun hashCode(): Int {
@@ -296,9 +296,9 @@ data class WellPartnerDTOCreate @JsonCreator constructor (
     val Join_Progress: ContactProgressType,
 
     @JsonIgnore
-    override val Modify_Datetime: ZonedDateTime,
+    override val Modify_Datetime: ZonedDateTime?,
     @JsonIgnore
-    override val Register_Datetime: ZonedDateTime,
+    override val Register_Datetime: ZonedDateTime?,
 ): BaseDTO(Modify_Datetime, Register_Datetime)
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -333,7 +333,7 @@ data class WellPartnerDTOSignup (
     val Agree_Terms: AgreeType,
 
     @JsonIgnore
-    override val Modify_Datetime: ZonedDateTime,
+    override val Modify_Datetime: ZonedDateTime?,
     @JsonIgnore
-    override val Register_Datetime: ZonedDateTime,
+    override val Register_Datetime: ZonedDateTime?,
 ): BaseDTO(Modify_Datetime, Register_Datetime)

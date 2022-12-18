@@ -7,6 +7,8 @@ import javax.persistence.*
 import com.wellnetworks.wellcore.domain.dto.*
 import com.wellnetworks.wellcore.domain.enums.*
 import org.hibernate.Hibernate
+import org.hibernate.annotations.ColumnDefault
+import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
@@ -23,7 +25,7 @@ data class WellUserEntity(
     @Column(name = "uid", length = 32, unique = true, nullable = false)
     var userID: String,
 
-    @Column(name = "permissions")
+    @Column(name = "permissions", nullable = true)
     @Convert(converter = ListToStringConverter::class)
     var permissionsKeysStringList: List<String>,
 
@@ -33,14 +35,15 @@ data class WellUserEntity(
     @Column(name = "tmp_pwd", length = 255, nullable = false)
     var temporaryPassword: String,
 
-    @Column(name = "tmp_pwd_exp")
-    var temporaryPasswordExpire: ZonedDateTime,
+    @Column(name = "tmp_pwd_exp", nullable = true)
+    var temporaryPasswordExpire: ZonedDateTime?,
 
     @Column(name = "tmp_pwd_cnt")
+    @ColumnDefault("0")
     var temporaryPasswordCreateCount: Byte = 0,
 
-    @Column(name = "tmp_pwd_dt")
-    var temporaryPasswordCreateDatetime: ZonedDateTime,
+    @Column(name = "tmp_pwd_dt", nullable = true)
+    var temporaryPasswordCreateDatetime: ZonedDateTime?,
 ): BaseEntity(), UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         var authorities: MutableList<GrantedAuthority> = ArrayList()

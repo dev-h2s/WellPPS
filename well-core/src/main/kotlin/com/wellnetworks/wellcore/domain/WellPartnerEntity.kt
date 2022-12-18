@@ -18,7 +18,7 @@ data class WellPartnerEntity (
     @Column(name="idx", unique = true, nullable = false)
     var idx : UUID,
 
-    @Column(name="pcode", unique = true, nullable = true)
+    @Column(name="pcode", length = 32, unique = true, nullable = true)
     var pCode: String?,
 
     @Column(name="tbl_id", length = 16, nullable = false)
@@ -56,7 +56,7 @@ data class WellPartnerEntity (
     @Column(name="con_person", length = 64, nullable = true)
     var contactPerson: String?,
 
-    @Column(name="use_api", nullable = false)
+    @Column(name="use_api", columnDefinition = "bit", nullable = false)
     var useAPI: Boolean,
 
     @Column(name="cstate")
@@ -81,10 +81,10 @@ data class WellPartnerEntity (
     @Column(name="ceo_idcard", nullable = true)
     var ceoIDCardFile: UUID?,
 
-    @Column(name="phone_cert")
+    @Column(name="phone_cert", columnDefinition = "bit")
     var certificationPhone: Boolean,
 
-    @Column(name="email_cert")
+    @Column(name="email_cert", columnDefinition = "bit")
     var certificationEmail: Boolean,
 
     @Column(name="tax_addr1", length = 255, nullable = true)
@@ -125,7 +125,7 @@ data class WellPartnerEntity (
     @Column(name="b_holder", length = 64, nullable = true)
     var bankHolder: String?,
 
-    @Column(name="memo", length = 255, nullable = true)
+    @Column(name="memo", nullable = true)
     var adminMemo: String?,
 
     @Column(name="j_prog")
@@ -150,15 +150,15 @@ data class WellPartnerEntity (
 
     @Column(name="contact_rej")
     @Convert(converter = ContactRejectTypeToIndexConverter::class)
-    var contectReject: ContactRejectType,
+    var contactReject: ContactRejectType,
 
-    @Column(name="contect_approver", length = 64, nullable = true)
+    @Column(name="contact_approver", length = 64, nullable = true)
     var contactApprover: String?,
 
-    @Column(name="contect_regdt", nullable = true)
+    @Column(name="contact_regdt", nullable = true)
     var contactRegisterDatetime: ZonedDateTime?,
 
-    @Column(name="contect_moddt", nullable = true)
+    @Column(name="contact_moddt", nullable = true)
     var contactModifyDatetime: ZonedDateTime?,
     ): BaseEntity() {
 
@@ -205,7 +205,7 @@ data class WellPartnerEntity (
         Contact_Address1 = this.contactAddress1,
         Contact_Address2 = this.contactAddress2,
         Contact_Progress = this.contactProgress,
-        Contact_Reject = this.contectReject,
+        Contact_Reject = this.contactReject,
         Contact_Approver = this.contactApprover,
         Contact_Register_Datetime = this.contactRegisterDatetime,
         Contact_Modify_Datetime = this.contactModifyDatetime,
@@ -274,7 +274,7 @@ data class WellPartnerEntity (
         this.contactAddress1 = dto.Contact_Address1
         this.contactAddress2 = dto.Contact_Address2
         this.contactProgress = dto.Contact_Progress
-        this.contectReject = dto.Contact_Reject
+        this.contactReject = dto.Contact_Reject
         this.contactApprover = dto.Contact_Approver
         this.contactRegisterDatetime = dto.Contact_Register_Datetime
         this.contactModifyDatetime = dto.Contact_Modify_Datetime

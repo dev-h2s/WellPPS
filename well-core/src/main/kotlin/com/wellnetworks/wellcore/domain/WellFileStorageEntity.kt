@@ -8,7 +8,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "file_tb", indexes = [
-    Index(name = "IX_tid", columnList = "tid ASC", unique = false),
+    Index(name = "IX_tid", columnList = "tbl_id ASC", unique = false),
 ])
 data class WellFileStorageEntity (
     // 파일 이름은 UUID 를 사용.
@@ -35,11 +35,11 @@ data class WellFileStorageEntity (
     var fileDescription: String?,
 
     // 물리 파일이 삭제되어 없을 경우.
-    @Column(name="isunlink", )
-    var isLinkError: Boolean,
+    @Column(name="isunlink", columnDefinition = "bit")
+    var linkError: Boolean,
 
-    @Column(name="ispub")
-    var isPublic: Boolean,
+    @Column(name="ispub", columnDefinition = "bit")
+    var public: Boolean,
 
     @Column(name = "permissions")
     @Convert(converter = ListToStringConverter::class)
@@ -49,11 +49,11 @@ data class WellFileStorageEntity (
     var fileSize: Long,
 
     // 파일의 확장자. (소문자로 캐스팅)
-    @Column(name="fext", nullable = true)
+    @Column(name="fext", length = 16, nullable = true)
     var fileExtension: String?,
 
     @Column(name="dcnt", nullable = false)
-    var fileDownloadCount: Int,
+    var fileDownloadCount: Long,
 
 ): BaseEntity() {
     fun getWellFileStorageDTO(): WellFileStorageDTO {
@@ -64,8 +64,8 @@ data class WellFileStorageEntity (
             Create_YYYYMM = this.createYYYYMM,
             FileName = this.fileName,
             FileDescription = this.fileDescription,
-            isLinkError = this.isLinkError,
-            isPublic = this.isPublic,
+            isLinkError = this.linkError,
+            isPublic = this.public,
             PermissionsKeysStringList = this.permissionsKeysStringList,
             FileSize = this.fileSize,
             FileExtension = this.fileExtension,

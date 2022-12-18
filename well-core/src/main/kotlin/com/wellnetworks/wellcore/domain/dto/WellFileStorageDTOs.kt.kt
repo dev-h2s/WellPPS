@@ -17,9 +17,9 @@ data class WellFileStorageDTO (
     val PermissionsKeysStringList: List<String>?,
     var FileSize: Long,
     var FileExtension: String?,
-    var FileDownloadCount: Int,
-    override val Modify_Datetime: ZonedDateTime,
-    override val Register_Datetime: ZonedDateTime,
+    var FileDownloadCount: Long,
+    override val Modify_Datetime: ZonedDateTime?,
+    override val Register_Datetime: ZonedDateTime?,
 ): BaseDTO(Modify_Datetime, Register_Datetime) {
     override fun hashCode(): Int {
         return Idx.hashCode()

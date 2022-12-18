@@ -56,7 +56,7 @@ class WellMemberInfoService {
             val userIdx: UUID = wellUserService.createUser(user) ?: throw Exception("사용자 데이터 생성에 실패하였습니다.")
 
             val createMember = WellMemberInfoEntity(
-                userIdx, null,
+                userIdx,
                 member.Table_ID, member.Current_Employment, member.Name, member.Email,
                 member.Phone_Private, member.Phone_Work, member.Registration_Number,
                 member.Department, member.Job_Position, member.Level,

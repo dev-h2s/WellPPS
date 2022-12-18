@@ -28,9 +28,9 @@ data class WellUserDTO (
     @JsonProperty("tpwt")
     val Temporary_Password_Create_Datetime: ZonedDateTime?,
     @JsonIgnore
-    override val Modify_Datetime: ZonedDateTime,
+    override val Modify_Datetime: ZonedDateTime?,
     @JsonIgnore
-    override val Register_Datetime: ZonedDateTime,
+    override val Register_Datetime: ZonedDateTime?,
 ): BaseDTO(Modify_Datetime, Register_Datetime) {
 
     override fun hashCode(): Int {

@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PostAuthorize
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -25,9 +26,9 @@ import java.util.*
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 class MemberController(private var memberInfoService: WellMemberInfoService) {
     @GetMapping("member/{id}")
-    @PostAuthorize("isAuthenticated() and" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey)")
+    @PreAuthorize("isAuthenticated() and" +
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
     fun getMember(@PathVariable id: String): ResponseEntity<BaseItemRes<WellMemberInfoDTO>> {
         val uuidIdx: UUID
         try {
@@ -45,9 +46,9 @@ class MemberController(private var memberInfoService: WellMemberInfoService) {
     }
 
     @GetMapping("member")
-    @PostAuthorize("isAuthenticated() and" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey)")
+    @PreAuthorize("isAuthenticated() and" +
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
     fun getMemberList(
         @RequestParam("size", defaultValue = "10") size: Int,
         @RequestParam("page", defaultValue = "0") page: Int,
@@ -65,9 +66,9 @@ class MemberController(private var memberInfoService: WellMemberInfoService) {
     }
 
     @PostMapping("member")
-    @PostAuthorize("isAuthenticated() and" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey)")
+    @PreAuthorize("isAuthenticated() and" +
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
     fun createMember(@RequestBody objUserPartner: ObjectNode): ResponseEntity<BaseRes> {
         val mapper = ObjectMapper()
 
@@ -85,9 +86,9 @@ class MemberController(private var memberInfoService: WellMemberInfoService) {
     }
 
     @PutMapping("member")
-    @PostAuthorize("isAuthenticated() and" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey)")
+    @PreAuthorize("isAuthenticated() and" +
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
     fun updateMember(@RequestBody member: WellMemberInfoDTO): ResponseEntity<BaseRes> {
         if (!memberInfoService.updateMember(member))
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

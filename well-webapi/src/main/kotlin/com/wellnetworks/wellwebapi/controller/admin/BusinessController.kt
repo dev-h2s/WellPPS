@@ -1,7 +1,9 @@
 package com.wellnetworks.wellwebapi.controller.admin
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.treeToValue
 import com.wellnetworks.wellcore.domain.dto.WellPartnerColumnsName
 import com.wellnetworks.wellcore.domain.dto.WellPartnerDTO
@@ -61,8 +63,8 @@ class BusinessController(private var partnerService: WellPartnerService) {
 
     @GetMapping("business")
     @PreAuthorize("isAuthenticated() and" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey)")
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
     fun getPartnerList(
         @RequestParam("std", required = false) @DateTimeFormat(pattern = "yyyyMMdd") startDate: Date?,
         @RequestParam("edt", required = false) @DateTimeFormat(pattern = "yyyyMMdd") endDate: Date?,
@@ -104,22 +106,24 @@ class BusinessController(private var partnerService: WellPartnerService) {
     }
 
     @PostMapping("business",
-        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE],
-        produces = [MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE])
-    @PostAuthorize("isAuthenticated() and" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey)")
-    fun createPartner(@RequestBody objUserPartner: ObjectNode, @RequestPart("file") files: List<MultipartFile>): ResponseEntity<BaseRes> {
-        val mapper = ObjectMapper()
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE])
+    @PreAuthorize("isAuthenticated() and" +
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
+    fun createPartner(@RequestPart("user") userJsonString: String,
+                      @RequestPart("partner") partnerJsonString: String,
+                      @RequestPart("file") files: List<MultipartFile>
+    ): ResponseEntity<BaseRes> {
+        val mapper = jacksonObjectMapper()
 
         try {
-            val user = mapper.treeToValue<WellUserDTOCreate>(objUserPartner.get("user"))
-            val partner = mapper.treeToValue<WellPartnerDTOCreate>(objUserPartner.get("partner"))
+            val user = mapper.readValue(userJsonString, WellUserDTOCreate::class.java)
+            val partner = mapper.readValue(partnerJsonString, WellPartnerDTOCreate::class.java)
 
             if (!partnerService.creaetPartner(user, partner, files))
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(BaseRes(HttpStatus.INTERNAL_SERVER_ERROR, "파트너 추가 실패"))
         } catch (e: Exception) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseRes(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseRes(HttpStatus.BAD_REQUEST, e.message ?: "잘못된 요청입니다."))
         }
 
         return ResponseEntity.ok(BaseRes(HttpStatus.OK, "파트너 추가 성공"))
@@ -135,9 +139,9 @@ class BusinessController(private var partnerService: WellPartnerService) {
 */
 
     @PutMapping("business")
-    @PostAuthorize("isAuthenticated() and" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey)")
+    @PreAuthorize("isAuthenticated() and" +
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
     fun updatePartner(@RequestBody partner: WellPartnerDTO, @RequestPart("file") files: List<MultipartFile>): ResponseEntity<BaseRes> {
         if (!partnerService.updatePartner(partner, files))
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

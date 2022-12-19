@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
 import java.io.FileNotFoundException
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.time.ZonedDateTime
@@ -103,7 +104,8 @@ class WellFileStorageService {
         )
 
         try {
-            file.transferTo(Paths.get(uploadDirectory).resolve(fileName))
+            Files.createDirectories(Paths.get(uploadDirectory).resolve("$tableID/$createYYYYMM/"))
+            file.transferTo(Paths.get(uploadDirectory).resolve(fileName).toAbsolutePath().toFile())
             wellFileStorageRepository.save(createFileEntity)
         } catch (e: Exception) {
             return null;

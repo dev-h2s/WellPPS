@@ -213,9 +213,9 @@ data class WellPartnerDTOCreate @JsonCreator constructor (
     val Company_Address2: String?,
 
     @JsonProperty("txrfn")
-    val Tax_Registration_DocumentFileName: String,
+    val Tax_Registration_DocumentFileName: String?,
     @JsonProperty("txrd")
-    val Tax_Registration_DocumentFile: UUID,
+    val Tax_Registration_DocumentFile: UUID?,
     @JsonProperty("txnm")
     val Tax_Number: String?,
     @JsonProperty("txem")
@@ -263,9 +263,9 @@ data class WellPartnerDTOCreate @JsonCreator constructor (
     val Organization_Child: UUID?,
 
     @JsonProperty("ceoin")
-    val CEO_IDCard_FileName: String,
+    val CEO_IDCard_FileName: String?,
     @JsonProperty("ceoi")
-    val CEO_IDCard_File: UUID,
+    val CEO_IDCard_File: UUID?,
     @JsonProperty("ceon")
     val CEO_Name: String,
     @JsonProperty("ceot")

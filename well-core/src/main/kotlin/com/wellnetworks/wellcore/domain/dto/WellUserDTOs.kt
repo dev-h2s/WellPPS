@@ -53,7 +53,7 @@ data class WellUserDTOCreate(
     @JsonProperty("pkey")
     val PermissionsKeysStringList: List<String>,
     @JsonProperty("pwd")
-    val Password_Hash: String?,
+    val Password_Hash: String? = null,
     @JsonIgnore
     override val Modify_Datetime: ZonedDateTime = ZonedDateTime.now(),
     @JsonIgnore

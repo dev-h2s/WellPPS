@@ -16,8 +16,10 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PostAuthorize
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
+import javax.print.attribute.standard.Media
 
 @RestController
 @RequestMapping("/admin/hr/")
@@ -37,9 +40,9 @@ import java.util.*
 class BusinessController(private var partnerService: WellPartnerService) {
 
     @GetMapping("business/{id}")
-    @PostAuthorize("isAuthenticated() and" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN) and" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER)")
+    @PreAuthorize("isAuthenticated() and" +
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
     fun getPartner(@PathVariable id: String): ResponseEntity<BaseItemRes<WellPartnerDTO>> {
         val uuidIdx: UUID
         try {
@@ -57,9 +60,9 @@ class BusinessController(private var partnerService: WellPartnerService) {
     }
 
     @GetMapping("business")
-    @PostAuthorize("isAuthenticated() and" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN) and" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER)")
+    @PreAuthorize("isAuthenticated() and" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey)")
     fun getPartnerList(
         @RequestParam("std", required = false) @DateTimeFormat(pattern = "yyyyMMdd") startDate: Date?,
         @RequestParam("edt", required = false) @DateTimeFormat(pattern = "yyyyMMdd") endDate: Date?,
@@ -100,10 +103,12 @@ class BusinessController(private var partnerService: WellPartnerService) {
             partnerList.content, partnerList.number, partnerList.totalElements, partnerList.totalPages))
     }
 
-    @PostMapping("business")
+    @PostMapping("business",
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE])
     @PostAuthorize("isAuthenticated() and" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN) and" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER)")
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey)")
     fun createPartner(@RequestBody objUserPartner: ObjectNode, @RequestPart("file") files: List<MultipartFile>): ResponseEntity<BaseRes> {
         val mapper = ObjectMapper()
 
@@ -131,8 +136,8 @@ class BusinessController(private var partnerService: WellPartnerService) {
 
     @PutMapping("business")
     @PostAuthorize("isAuthenticated() and" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN) and" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER)")
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey)")
     fun updatePartner(@RequestBody partner: WellPartnerDTO, @RequestPart("file") files: List<MultipartFile>): ResponseEntity<BaseRes> {
         if (!partnerService.updatePartner(partner, files))
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

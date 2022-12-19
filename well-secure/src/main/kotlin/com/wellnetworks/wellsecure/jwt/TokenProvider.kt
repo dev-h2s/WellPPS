@@ -58,6 +58,7 @@ class TokenProvider(
             val principal = User(userDetail.username, "", userDetail.authorities)
             UsernamePasswordAuthenticationToken(principal, token, userDetail.authorities)
         } catch (e: Exception) {
+            println(e.message)
             return null
         }
     }

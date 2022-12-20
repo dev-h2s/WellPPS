@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="WellWebapiApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="ACTIVE_PROFILES" value="local, console-logging" />
+    <option name="DEBUG_MODE" value="true" />
+    <module name="WellPPS.well-webapi.main" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.wellnetworks.wellwebapi.WellWebapiApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

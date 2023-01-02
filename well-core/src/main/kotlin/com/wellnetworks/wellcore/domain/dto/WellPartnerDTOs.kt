@@ -73,6 +73,8 @@ data class WellPartnerDTO (
     val Company_Name: String?,
     @JsonProperty("ctyp")
     val Company_Type: CompanyType,
+    @JsonProperty("ctyp_str")
+    val Company_Type_String: String?,
     @JsonProperty("cgrp")
     val Company_Group: Byte?,
     @JsonProperty("cste")

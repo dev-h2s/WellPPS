@@ -3,17 +3,20 @@ package com.wellnetworks.wellwebapi.controller.admin
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.databind.ser.Serializers.Base
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.treeToValue
 import com.wellnetworks.wellcore.domain.dto.WellPartnerColumnsName
 import com.wellnetworks.wellcore.domain.dto.WellPartnerDTO
 import com.wellnetworks.wellcore.domain.dto.WellPartnerDTOCreate
 import com.wellnetworks.wellcore.domain.dto.WellUserDTOCreate
+import com.wellnetworks.wellcore.domain.enums.CompanyStateType
 import com.wellnetworks.wellcore.service.utils.SearchCriteria
 import com.wellnetworks.wellcore.service.WellPartnerService
 import com.wellnetworks.wellwebapi.response.BaseItemRes
 import com.wellnetworks.wellwebapi.response.BaseListRes
 import com.wellnetworks.wellwebapi.response.BaseRes
+import com.wellnetworks.wellwebapi.response.PartnerCntRes
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.format.annotation.DateTimeFormat
@@ -149,4 +152,24 @@ class BusinessController(private var partnerService: WellPartnerService) {
 
         return ResponseEntity.ok(BaseRes(HttpStatus.OK, "업데이트 성공"))
     }
+
+    @GetMapping("business/cnt")
+    @PreAuthorize("isAuthenticated() and" +
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
+    fun cntPartner(): ResponseEntity<PartnerCntRes> {
+
+        val cnt = partnerService.companyTypeCount()
+        val regCnt = cnt.regCount
+        val tempCnt = cnt.tempCount
+        val watchCnt = cnt.watchCount
+        val susCnt = cnt.susCount
+
+        return ResponseEntity.ok(
+            PartnerCntRes(
+                regCnt, tempCnt, watchCnt, susCnt
+            )
+        )
+    }
+
 }

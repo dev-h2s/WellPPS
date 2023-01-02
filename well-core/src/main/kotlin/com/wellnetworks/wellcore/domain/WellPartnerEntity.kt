@@ -185,6 +185,7 @@ data class WellPartnerEntity (
         TableID = this.tableID,
         Company_Name = this.companyName,
         Company_Type = this.companyType,
+        Company_Type_String = this.companyType.toString(),
         Company_Group = this.companyGroup,
         Company_State = this.companyState,
         Company_Level = this.companyLevel,

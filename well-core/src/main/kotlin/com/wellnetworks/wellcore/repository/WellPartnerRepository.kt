@@ -1,6 +1,8 @@
 package com.wellnetworks.wellcore.repository
 
 import com.wellnetworks.wellcore.domain.WellPartnerEntity
+import com.wellnetworks.wellcore.domain.enums.CompanyStateType
+import com.wellnetworks.wellcore.domain.enums.CompanyType
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
@@ -12,4 +14,6 @@ interface WellPartnerRepository: CrudRepository<WellPartnerEntity, String>, JpaS
     fun findByIdx(idx: UUID): Optional<WellPartnerEntity>
     fun findAll(pageable: Pageable): Page<WellPartnerEntity>
     fun findByCompanyName(partnerName: String): Optional<WellPartnerEntity>
+
+    fun countByCompanyState(companyState: CompanyStateType): Long
 }

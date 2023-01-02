@@ -12,13 +12,11 @@ import com.wellnetworks.wellcore.service.utils.WellServiceUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 import java.time.ZonedDateTime
 import java.util.*
-import javax.persistence.criteria.Predicate
 
 
 @Component
@@ -45,6 +43,18 @@ class WellPartnerService {
         return wellPartnerRepository.findAll(
             WellServiceUtil.Specification<WellPartnerEntity>(searchKeyword), pageable)
             .map { it.toDto() }
+    }
+
+    data class cTypeCount(val regCount: Long, val tempCount: Long, val watchCount: Long, val susCount: Long)
+
+    fun companyTypeCount(): cTypeCount {
+        val regCnt = wellPartnerRepository.countByCompanyState(CompanyStateType.COMPANY_STATE_TYPE_REGISTERED)
+        val tmpCnt =
+            wellPartnerRepository.countByCompanyState(CompanyStateType.COMPANY_STATE_TYPE_TEMPORARY_REGISTRATION)
+        val watchCnt = wellPartnerRepository.countByCompanyState(CompanyStateType.COMPANY_STATE_TYPE_WATCH)
+        val susCnt = wellPartnerRepository.countByCompanyState(CompanyStateType.COMPANY_STATE_TYPE_SUSPENSION)
+
+        return cTypeCount(regCnt, tmpCnt, watchCnt, susCnt)
     }
 
     // 회원가입을 통한 파트너 등록

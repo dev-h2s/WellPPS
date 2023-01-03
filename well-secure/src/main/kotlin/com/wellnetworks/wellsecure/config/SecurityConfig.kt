@@ -39,6 +39,7 @@ class SecurityConfig(
             .antMatchers("/api/**").permitAll()
             .antMatchers("/", "/**", "/init/**").permitAll()
             .antMatchers("/admin/hr/business/**").permitAll()
+            .antMatchers("/file/**").permitAll()
             .anyRequest().authenticated()
             .and()
             .addFilter(JwtAuthenticationFilter(authenticationManager, securityProperties, tokenProvider))

@@ -63,7 +63,7 @@ enum class WellPartnerColumnsName(val columnsName: String) {
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class WellPartnerDTO (
     @JsonProperty("idx")
-    val Idx: UUID,
+    val Idx: String,
     @JsonProperty("p")
     val P_Code: String?,
     @JsonProperty("tid")
@@ -89,7 +89,7 @@ data class WellPartnerDTO (
     @JsonProperty("txrfn")
     val Tax_Registration_DocumentFileName: String?,
     @JsonProperty("txrd")
-    val Tax_RegistrationDocumentFile: UUID?,
+    val Tax_RegistrationDocumentFileIdx: String?,
     @JsonProperty("txnm")
     val Tax_Number: String?,
     @JsonProperty("txem")
@@ -132,14 +132,14 @@ data class WellPartnerDTO (
     val Use_API: Boolean,
 
     @JsonProperty("orgp")
-    val Organization_Parent: UUID?,
+    val Organization_Parent: String?,
     @JsonProperty("orgc")
-    val Organization_Child: UUID?,
+    val Organization_Child: String?,
 
     @JsonProperty("ceoin")
     val CEO_IDCard_FileName: String?,
     @JsonProperty("ceoi")
-    val CEO_IDCard_File: UUID?,
+    val CEO_IDCard_FileIdx: String?,
     @JsonProperty("ceon")
     val CEO_Name: String,
     @JsonProperty("ceot")
@@ -216,8 +216,8 @@ data class WellPartnerDTOCreate @JsonCreator constructor (
 
     @JsonProperty("txrfn")
     val Tax_Registration_DocumentFileName: String?,
-    @JsonProperty("txrd")
-    val Tax_Registration_DocumentFile: UUID?,
+//    @JsonProperty("txrd")
+//    val Tax_Registration_DocumentFile: String?,
     @JsonProperty("txnm")
     val Tax_Number: String?,
     @JsonProperty("txem")
@@ -260,14 +260,14 @@ data class WellPartnerDTOCreate @JsonCreator constructor (
     val Use_API: Boolean,
 
     @JsonProperty("orgp")
-    val Organization_Parent: UUID?,
+    val Organization_Parent: String?,
     @JsonProperty("orgc")
-    val Organization_Child: UUID?,
+    val Organization_Child: String?,
 
     @JsonProperty("ceoin")
     val CEO_IDCard_FileName: String?,
-    @JsonProperty("ceoi")
-    val CEO_IDCard_File: UUID?,
+//    @JsonProperty("ceoi")
+//    val CEO_IDCard_File: String?,
     @JsonProperty("ceon")
     val CEO_Name: String,
     @JsonProperty("ceot")

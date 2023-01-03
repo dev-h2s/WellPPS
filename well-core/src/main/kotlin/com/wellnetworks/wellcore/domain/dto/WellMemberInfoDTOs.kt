@@ -11,7 +11,7 @@ import java.util.*
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class WellMemberInfoDTO(
     @JsonProperty("idx")
-    val Idx: UUID,
+    val Idx: String,
     @JsonProperty("tid")
     val Table_ID: String,
     @JsonProperty("cure")

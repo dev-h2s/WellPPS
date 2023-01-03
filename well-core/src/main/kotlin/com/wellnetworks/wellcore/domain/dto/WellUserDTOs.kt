@@ -12,7 +12,7 @@ import org.hibernate.Hibernate
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class WellUserDTO (
     @JsonProperty("idx")
-    val Idx: UUID,
+    val Idx: String,
     @JsonProperty("uid")
     val UserID: String,
     @JsonProperty("pkey")
@@ -42,7 +42,7 @@ data class WellUserDTO (
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false;
         other as WellUserDTO
 
-        return Idx != null && Idx == other.Idx;
+        return Idx != null && Idx.uppercase() == other.Idx.uppercase();
     }
 }
 

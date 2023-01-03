@@ -13,21 +13,23 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 import javax.servlet.http.HttpServletRequest
 
+@RestController
 @RequestMapping("/file")
 class FileStorageController(private var wellFileStorageService: WellFileStorageService) {
 
     @GetMapping("image.do")
     fun attachPublicImage(@RequestParam(required = true) idx: String): ResponseEntity<out Any> {
-        var idx = UUID.fromString(idx)
+        var uuidIdx = UUID.fromString(idx).toString().uppercase()
 
-        if (!wellFileStorageService.existByIdx(idx, true)) {
+        if (!wellFileStorageService.existByIdx(uuidIdx, true)) {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(BaseRes(HttpStatus.EXPECTATION_FAILED, "File not found."))
         }
 
-        var imageFile = wellFileStorageService.getOneDownload(idx, true)
+        var imageFile = wellFileStorageService.getOneDownload(uuidIdx, true)
         if (imageFile.isEmpty)
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(BaseRes(HttpStatus.EXPECTATION_FAILED, "File not found."))
 
@@ -43,13 +45,13 @@ class FileStorageController(private var wellFileStorageService: WellFileStorageS
 
     @GetMapping("download.do")
     fun downloadPublicFile(@RequestParam(required = true) idx: String): ResponseEntity<out Any> {
-        var idx = UUID.fromString(idx)
+        var uuidIdx = UUID.fromString(idx).toString().uppercase()
 
-        if (!wellFileStorageService.existByIdx(idx, true)) {
+        if (!wellFileStorageService.existByIdx(uuidIdx, true)) {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(BaseRes(HttpStatus.EXPECTATION_FAILED, "File not found."))
         }
 
-        var imageFile = wellFileStorageService.getOneDownload(idx, true)
+        var imageFile = wellFileStorageService.getOneDownload(uuidIdx, true)
         if (imageFile.isEmpty)
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(BaseRes(HttpStatus.EXPECTATION_FAILED, "File not found."))
 
@@ -66,15 +68,15 @@ class FileStorageController(private var wellFileStorageService: WellFileStorageS
 
     @GetMapping("attachImage.do")
     fun attachImage(@RequestParam(required = true) idx: String, auth: Authentication): ResponseEntity<out Any> {
-        var idx = UUID.fromString(idx)
+        var uuidIdx = UUID.fromString(idx).toString().uppercase()
 
-        if (!wellFileStorageService.existByIdx(idx, true)) {
+        if (!wellFileStorageService.existByIdx(uuidIdx, false)) {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(BaseRes(HttpStatus.EXPECTATION_FAILED, "File not found."))
         }
 
         var userPermission = auth.authorities.map { it.authority }.toList()
 
-        var imageFile = wellFileStorageService.getOneDownload(idx, true, userPermission)
+        var imageFile = wellFileStorageService.getOneDownload(uuidIdx, false, userPermission)
         if (imageFile.isEmpty)
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(BaseRes(HttpStatus.EXPECTATION_FAILED, "File not found."))
 
@@ -90,15 +92,15 @@ class FileStorageController(private var wellFileStorageService: WellFileStorageS
 
     @GetMapping("fileDownload.do")
     fun downloadFile(@RequestParam(required = true) idx: String, auth: Authentication): ResponseEntity<out Any> {
-        var idx = UUID.fromString(idx)
+        var uuidIdx = UUID.fromString(idx).toString().uppercase()
 
-        if (!wellFileStorageService.existByIdx(idx, true)) {
+        if (!wellFileStorageService.existByIdx(uuidIdx, false)) {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(BaseRes(HttpStatus.EXPECTATION_FAILED, "File not found."))
         }
 
         var userPermission = auth.authorities.map { it.authority }.toList()
 
-        var imageFile = wellFileStorageService.getOneDownload(idx, true, userPermission)
+        var imageFile = wellFileStorageService.getOneDownload(uuidIdx, false, userPermission)
         if (imageFile.isEmpty)
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(BaseRes(HttpStatus.EXPECTATION_FAILED, "File not found."))
 

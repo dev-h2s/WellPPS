@@ -15,8 +15,8 @@ import javax.persistence.*
 
 data class WellPartnerEntity (
     @Id
-    @Column(name="idx", unique = true, nullable = false)
-    var idx : UUID,
+    @Column(name="idx", columnDefinition = "uniqueidentifier", unique = true, nullable = false)
+    var idx : String,
 
     @Column(name="pcode", length = 32, unique = true, nullable = true)
     var pCode: String?,
@@ -35,7 +35,7 @@ data class WellPartnerEntity (
     var companyGroup: Byte?,
 
     @Column(name="tax_regdoc", nullable = true)
-    var taxRegistrationDocFile: UUID?,
+    var taxRegistrationDocFileIdx: String?,
 
     @Column(name="tax_num", length = 16, nullable = true)
     var taxNumber: String?,
@@ -67,10 +67,10 @@ data class WellPartnerEntity (
     var companyLevel: Byte?,
 
     @Column(name="parent_org", nullable = true)
-    var parentOrganization: UUID?,
+    var parentOrganization: String?,
 
     @Column(name="child_org", nullable = true)
-    var childOrganization: UUID?,
+    var childOrganization: String?,
 
     @Column(name="ceo_name", length = 64)
     var ceoName: String,
@@ -79,7 +79,7 @@ data class WellPartnerEntity (
     var ceoTelephone: String,
 
     @Column(name="ceo_idcard", nullable = true)
-    var ceoIDCardFile: UUID?,
+    var ceoIDCardFileIdx: String?,
 
     @Column(name="phone_cert", columnDefinition = "bit")
     var certificationPhone: Boolean,
@@ -167,7 +167,7 @@ data class WellPartnerEntity (
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false;
         other as WellPartnerEntity
 
-        return idx != null && idx == other.idx;
+        return idx != null && idx.uppercase() == other.idx.uppercase();
     }
 
     override fun hashCode(): Int {
@@ -180,7 +180,7 @@ data class WellPartnerEntity (
 
 
     fun toDto(): WellPartnerDTO = WellPartnerDTO(
-        Idx = this.idx,
+        Idx = this.idx.uppercase(),
         P_Code = this.pCode,
         TableID = this.tableID,
         Company_Name = this.companyName,
@@ -191,7 +191,7 @@ data class WellPartnerEntity (
         Company_Level = this.companyLevel,
         Company_Address1 = this.companyAddress1,
         Company_Address2 = this.companyAddress2,
-        Tax_RegistrationDocumentFile = this.taxRegistrationDocFile,
+        Tax_RegistrationDocumentFileIdx = this.taxRegistrationDocFileIdx?.uppercase(),
         Tax_Number = this.taxNumber,
         Tax_Email = this.taxEmail,
         Tax_Address1 = this.taxAddress1,
@@ -211,9 +211,9 @@ data class WellPartnerEntity (
         Contact_Register_Datetime = this.contactRegisterDatetime,
         Contact_Modify_Datetime = this.contactModifyDatetime,
         Use_API = this.useAPI,
-        Organization_Parent = this.parentOrganization,
-        Organization_Child = this.childOrganization,
-        CEO_IDCard_File = this.ceoIDCardFile,
+        Organization_Parent = this.parentOrganization?.uppercase(),
+        Organization_Child = this.childOrganization?.uppercase(),
+        CEO_IDCard_FileIdx = this.ceoIDCardFileIdx?.uppercase(),
         CEO_Name = this.ceoName,
         CEO_Telephone = this.ceoTelephone,
         Certification_Phone = this.certificationPhone,
@@ -239,7 +239,7 @@ data class WellPartnerEntity (
         this.companyName = dto.Company_Name
         this.companyType = dto.Company_Type
         this.companyGroup = dto.Company_Group
-        this.taxRegistrationDocFile = dto.Tax_RegistrationDocumentFile
+        this.taxRegistrationDocFileIdx = dto.Tax_RegistrationDocumentFileIdx?.uppercase()
         this.taxNumber = dto.Tax_Number
         this.taxEmail = dto.Tax_Email
         this.telephoneOffice = dto.Office_Telephone
@@ -249,11 +249,11 @@ data class WellPartnerEntity (
         this.useAPI = dto.Use_API
         this.companyState = dto.Company_State
         this.companyLevel = dto.Company_Level
-        this.parentOrganization = dto.Organization_Parent
-        this.childOrganization = dto.Organization_Child
+        this.parentOrganization = dto.Organization_Parent?.uppercase()
+        this.childOrganization = dto.Organization_Child?.uppercase()
         this.ceoName = dto.CEO_Name
         this.ceoTelephone = dto.CEO_Telephone
-        this.ceoIDCardFile = dto.CEO_IDCard_File
+        this.ceoIDCardFileIdx = dto.CEO_IDCard_FileIdx?.uppercase()
         this.certificationPhone = dto.Certification_Phone
         this.certificationEmail = dto.Certification_Email
         this.taxAddress1 = dto.Tax_Address1

@@ -44,14 +44,14 @@ import javax.print.attribute.standard.Media
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 class BusinessController(private var partnerService: WellPartnerService) {
 
-    @GetMapping("business/{id}")
+    @GetMapping("business/partner/{id}")
     @PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
             " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
     fun getPartner(@PathVariable id: String): ResponseEntity<BaseItemRes<WellPartnerDTO>> {
-        val uuidIdx: UUID
+        val uuidIdx: String
         try {
-            uuidIdx = UUID.fromString(id)
+            uuidIdx = UUID.fromString(id).toString().uppercase()
         }catch (e: Exception) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseItemRes(HttpStatus.BAD_REQUEST, "문서 번호가 잘못되었습니다."))
         }
@@ -153,7 +153,7 @@ class BusinessController(private var partnerService: WellPartnerService) {
         return ResponseEntity.ok(BaseRes(HttpStatus.OK, "업데이트 성공"))
     }
 
-    @GetMapping("business/cnt")
+    @GetMapping("business/count")
     @PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
             " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")

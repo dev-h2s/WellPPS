@@ -30,7 +30,7 @@ class WellPartnerService {
     @Autowired
     private lateinit var wellFileStorageService: WellFileStorageService
 
-    fun getPartnerByIdx(idx: UUID): Optional<WellPartnerDTO> {
+    fun getPartnerByIdx(idx: String): Optional<WellPartnerDTO> {
         val partner = wellPartnerRepository.findByIdx(idx)
         return partner.map { it.toDto() }
     }
@@ -60,7 +60,7 @@ class WellPartnerService {
     // 회원가입을 통한 파트너 등록
     @Transactional(rollbackFor = [Exception::class])
     fun signupPartner(partner: WellPartnerDTOSignup, files: List<MultipartFile>): Boolean {
-        var userID = UUID.randomUUID()
+        var userID = UUID.randomUUID().toString().uppercase()
 
         val createPartner = WellPartnerEntity(
             userID, null, TableIDList.PARTNER.TableID,
@@ -90,9 +90,9 @@ class WellPartnerService {
                 if (fileID == null) return false
 
                 if (file.originalFilename == partner.Tax_Registration_DocumentFileName) {
-                    createPartner.taxRegistrationDocFile = fileID
+                    createPartner.taxRegistrationDocFileIdx = fileID
                 } else if (file.originalFilename == partner.CEO_IDCard_FileName) {
-                    createPartner.ceoIDCardFile = fileID
+                    createPartner.ceoIDCardFileIdx = fileID
                 }
             }
 
@@ -107,7 +107,7 @@ class WellPartnerService {
     @Transactional(rollbackFor = [Exception::class])
     fun creaetPartner(user: WellUserDTOCreate, partner: WellPartnerDTOCreate, files: List<MultipartFile>): Boolean {
         try {
-            var userIdx: UUID = wellUserService.createUser(user) ?: throw Exception("사용자 데이터 생성에 실패하였습니다.")
+            var userIdx: String = wellUserService.createUser(user) ?: throw Exception("사용자 데이터 생성에 실패하였습니다.")
 
             val createPartner = WellPartnerEntity(
                 userIdx, partner.P_Code, TableIDList.PARTNER.TableID,
@@ -129,14 +129,14 @@ class WellPartnerService {
             )
 
             for(file in files) {
-                var fileID: UUID? =
+                var fileID: String? =
                     wellFileStorageService.saveFile(TableIDList.PARTNER.TableID, userIdx, null, false, permissions, file)
                         ?: return false
 
                 if (file.originalFilename == partner.Tax_Registration_DocumentFileName) {
-                    createPartner.taxRegistrationDocFile = fileID
+                    createPartner.taxRegistrationDocFileIdx = fileID
                 } else if (file.originalFilename == partner.CEO_IDCard_FileName) {
-                    createPartner.ceoIDCardFile = fileID
+                    createPartner.ceoIDCardFileIdx = fileID
                 }
             }
 
@@ -158,15 +158,15 @@ class WellPartnerService {
 
             // 파일이 변경되었으면 삭제 후 새 파일 업로드.
             for (file in files) {
-                var fileID: UUID? = wellFileStorageService.saveFile(TableIDList.PARTNER.TableID, currentEntity.idx, null, false, permissions, file)
+                var fileID: String? = wellFileStorageService.saveFile(TableIDList.PARTNER.TableID, currentEntity.idx, null, false, permissions, file)
                     ?: throw Exception("파트너 업데이트에 실패하였습니다.")
 
                 if (file.originalFilename == partner.Tax_Registration_DocumentFileName) {
-                    if (currentEntity.taxRegistrationDocFile != null)   wellFileStorageService.deleteFile(currentEntity.taxRegistrationDocFile!!)
-                    currentEntity.taxRegistrationDocFile = fileID
+                    if (currentEntity.taxRegistrationDocFileIdx != null)   wellFileStorageService.deleteFile(currentEntity.taxRegistrationDocFileIdx!!)
+                    currentEntity.taxRegistrationDocFileIdx = fileID
                 } else if (file.originalFilename == partner.CEO_IDCard_FileName) {
-                    if (currentEntity.ceoIDCardFile != null)   wellFileStorageService.deleteFile(currentEntity.ceoIDCardFile!!)
-                    currentEntity.ceoIDCardFile = fileID
+                    if (currentEntity.ceoIDCardFileIdx != null)   wellFileStorageService.deleteFile(currentEntity.ceoIDCardFileIdx!!)
+                    currentEntity.ceoIDCardFileIdx = fileID
                 }
             }
 

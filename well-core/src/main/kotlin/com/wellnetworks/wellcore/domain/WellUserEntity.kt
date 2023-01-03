@@ -19,8 +19,8 @@ import org.springframework.security.core.userdetails.UserDetails
 )
 data class WellUserEntity(
     @Id
-    @Column(name = "idx", unique = true, nullable = false)
-    var idx: UUID,
+    @Column(name = "idx", columnDefinition = "uniqueidentifier", unique = true, nullable = false)
+    var idx: String,
 
     @Column(name = "uid", length = 32, unique = true, nullable = false)
     var userID: String,
@@ -81,7 +81,7 @@ data class WellUserEntity(
 
     fun getWellUserDTO(): WellUserDTO {
         return WellUserDTO(
-            Idx = this.idx,
+            Idx = this.idx.uppercase(),
             UserID = this.userID,
             PermissionsKeysStringList = this.permissionsKeysStringList,
             Password_Hash = this.passwordHash,
@@ -103,7 +103,7 @@ data class WellUserEntity(
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false;
         other as WellUserEntity
 
-        return idx != null && idx == other.idx;
+        return idx != null && idx.uppercase() == other.idx.uppercase();
     }
 
     override fun hashCode(): Int {

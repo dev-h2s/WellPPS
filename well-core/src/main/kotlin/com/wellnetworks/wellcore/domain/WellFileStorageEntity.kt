@@ -3,7 +3,6 @@ package com.wellnetworks.wellcore.domain
 import com.wellnetworks.wellcore.domain.converter.ListToStringConverter
 import com.wellnetworks.wellcore.domain.dto.WellFileStorageDTO
 import org.hibernate.Hibernate
-import java.util.UUID
 import javax.persistence.*
 
 @Entity
@@ -13,15 +12,15 @@ import javax.persistence.*
 data class WellFileStorageEntity (
     // 파일 이름은 UUID 를 사용.
     @Id
-    @Column(name = "idx", unique = true, nullable = false)
-    var idx: UUID,
+    @Column(name = "idx", columnDefinition = "uniqueidentifier", unique = true, nullable = false)
+    var idx: String,
 
     // 테이블 ID와 날자는 파일의 물리적 경로에 사용. (ex: /{tableID}/{cym}/{idx})
     @Column(name="tbl_id", length = 16, nullable = false)
     var tableID: String,
 
-    @Column(name="wrt", nullable = false)
-    var writer: UUID,
+    @Column(name="wrt", columnDefinition = "uniqueidentifier", nullable = false)
+    var writer: String,
 
     // 데이터는 YYYYMM 으로 숫자만 등록
     @Column(name="cym", length = 6, nullable = false)
@@ -58,9 +57,9 @@ data class WellFileStorageEntity (
 ): BaseEntity() {
     fun getWellFileStorageDTO(): WellFileStorageDTO {
         return WellFileStorageDTO(
-            Idx = this.idx,
+            Idx = this.idx.uppercase(),
             TableID = this.tableID,
-            Writer = this.writer,
+            Writer = this.writer.uppercase(),
             Create_YYYYMM = this.createYYYYMM,
             FileName = this.fileName,
             FileDescription = this.fileDescription,

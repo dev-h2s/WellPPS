@@ -5,10 +5,10 @@ import org.springframework.data.repository.CrudRepository
 import java.util.*
 
 interface WellFileStorageRepository: CrudRepository<WellFileStorageEntity, String> {
-    fun findFirstByIdx(idx: UUID): Optional<WellFileStorageEntity>
-    fun findFirstByIdxAndPublicTrue(idx: UUID): Optional<WellFileStorageEntity>
-    fun findFirstByIdxAndPublicFalse(idx: UUID): Optional<WellFileStorageEntity>
-    fun existsByIdxAndPublicTrue(idx: UUID): Boolean
-    fun existsByIdxAndPublicFalse(idx: UUID): Boolean
-    fun deleteByIdx(idx: UUID): Optional<WellFileStorageEntity>
+    fun findFirstByIdx(idx: String): Optional<WellFileStorageEntity>
+    fun findFirstByIdxAndPublicTrue(idx: String): Optional<WellFileStorageEntity>
+    fun findFirstByIdxAndPublicFalse(idx: String): Optional<WellFileStorageEntity>
+    fun existsByIdxAndPublicTrue(idx: String): Boolean
+    fun existsByIdx(idx: String): Boolean
+    fun deleteByIdx(idx: String): Optional<WellFileStorageEntity>
 }

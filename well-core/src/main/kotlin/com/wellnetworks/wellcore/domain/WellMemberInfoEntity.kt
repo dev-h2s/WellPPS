@@ -14,8 +14,8 @@ import javax.persistence.*
  ])
 data class WellMemberInfoEntity(
     @Id
-    @Column(name = "idx", unique = true, nullable = false)
-    var idx: UUID,
+    @Column(name = "idx", columnDefinition = "uniqueidentifier", unique = true, nullable = false)
+    var idx: String,
 
     @Column(name = "tbl_id", length = 16)
     var tableID: String,
@@ -99,7 +99,7 @@ data class WellMemberInfoEntity(
 
     fun toDto(): WellMemberInfoDTO {
         return WellMemberInfoDTO(
-            Idx = this.idx,
+            Idx = this.idx.uppercase(),
             Table_ID = this.tableID,
             Current_Employment = this.currentEmployment,
             Name = this.name,
@@ -161,7 +161,7 @@ data class WellMemberInfoEntity(
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false;
         other as WellPartnerEntity
 
-        return idx != null && idx == other.idx;
+        return idx != null && idx.uppercase() == other.idx.uppercase();
     }
 
     override fun hashCode(): Int {

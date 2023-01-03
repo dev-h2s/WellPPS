@@ -9,7 +9,7 @@ import java.util.Optional
 import java.util.UUID
 
 interface WellUserRepository: CrudRepository<WellUserEntity, String>, JpaSpecificationExecutor<WellUserEntity> {
-    fun findByIdx(idx: UUID): Optional<WellUserEntity>
+    fun findByIdx(idx: String): Optional<WellUserEntity>
     fun findAll(pageable: Pageable): Page<WellUserEntity>
     fun findByUserID(userID: String): Optional<WellUserEntity>
     fun existsByUserID(userID: String): Boolean

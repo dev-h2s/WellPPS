@@ -30,9 +30,9 @@ class MemberController(private var memberInfoService: WellMemberInfoService) {
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
             " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
     fun getMember(@PathVariable id: String): ResponseEntity<BaseItemRes<WellMemberInfoDTO>> {
-        val uuidIdx: UUID
+        val uuidIdx: String
         try {
-            uuidIdx = UUID.fromString(id)
+            uuidIdx = UUID.fromString(id).toString().uppercase()
         } catch (e: Exception) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseItemRes(HttpStatus.BAD_REQUEST, "문서 번호가 잘못되었습니다."))
         }

@@ -30,8 +30,8 @@ class WellMemberInfoService {
     @Autowired
     private lateinit var wellFileStorageService: WellFileStorageService
 
-    fun getMemberByIdx(idx: UUID): Optional<WellMemberInfoDTO> {
-        val member = wellMemberInfoRepository.findByIdx(idx)
+    fun getMemberByIdx(idx: String): Optional<WellMemberInfoDTO> {
+        val member = wellMemberInfoRepository.findByIdx(idx.uppercase())
         return member.map { it.toDto() }
     }
 
@@ -53,7 +53,7 @@ class WellMemberInfoService {
     @Transactional(rollbackFor = [Exception::class])
     fun createMember(user: WellUserDTOCreate, member: WellMemberInfoDTOCreate): Boolean {
         try {
-            val userIdx: UUID = wellUserService.createUser(user) ?: throw Exception("사용자 데이터 생성에 실패하였습니다.")
+            val userIdx: String = wellUserService.createUser(user) ?: throw Exception("사용자 데이터 생성에 실패하였습니다.")
 
             val createMember = WellMemberInfoEntity(
                 userIdx,

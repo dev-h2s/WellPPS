@@ -6,9 +6,9 @@ import java.time.ZonedDateTime
 import java.util.UUID
 
 data class WellFileStorageDTO (
-    var Idx: UUID,
+    var Idx: String,
     var TableID: String,
-    var Writer: UUID,
+    var Writer: String,
     var Create_YYYYMM: String,
     var FileName: String,
     var FileDescription: String?,

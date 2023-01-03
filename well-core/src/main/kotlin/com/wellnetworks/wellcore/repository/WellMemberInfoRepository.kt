@@ -9,7 +9,7 @@ import java.util.*
 
 interface WellMemberInfoRepository: CrudRepository<WellMemberInfoEntity, String>, JpaSpecificationExecutor<WellMemberInfoEntity> {
 
-    fun findByIdx(idx: UUID): Optional<WellMemberInfoEntity>
+    fun findByIdx(idx: String): Optional<WellMemberInfoEntity>
     fun findAll(pageable: Pageable): Page<WellMemberInfoEntity>
     fun findByName(name: String) : Optional<WellMemberInfoEntity>
 

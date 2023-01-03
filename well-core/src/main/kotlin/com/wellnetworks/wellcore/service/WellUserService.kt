@@ -33,8 +33,8 @@ class WellUserService {
     }
 
     @Transactional
-    fun createUser(user: WellUserDTOCreate): UUID? {
-        val uuidUser = UUID.randomUUID()
+    fun createUser(user: WellUserDTOCreate): String? {
+        val uuidUser = UUID.randomUUID().toString().uppercase()
         val createUser = WellUserEntity(uuidUser,
             user.UserID, user.PermissionsKeysStringList, user.Password_Hash,
             "", ZonedDateTime.now(), 0, ZonedDateTime.now())

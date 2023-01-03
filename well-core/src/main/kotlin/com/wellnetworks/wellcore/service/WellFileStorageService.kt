@@ -33,21 +33,25 @@ class WellFileStorageService {
     @Value("\${well.filestorage.directory}")
     lateinit var uploadDirectory: String
 
-    fun getOneDownload(idx: UUID, isPublic: Boolean, permissions: List<String>? = null): Optional<WellFileStorageDTO> {
+    fun getOneDownload(idx: String, isPublic: Boolean, permissions: List<String>? = null): Optional<WellFileStorageDTO> {
         var fileItem = if (isPublic)
-            wellFileStorageRepository.findFirstByIdxAndPublicTrue(idx)
-        else wellFileStorageRepository.findFirstByIdxAndPublicFalse(idx)
+            wellFileStorageRepository.findFirstByIdxAndPublicTrue(idx.uppercase())
+        else wellFileStorageRepository.findFirstByIdx(idx.uppercase())
 
         if (fileItem.isEmpty) {
             return Optional.empty()
         }
 
-        if (isPublic) {
+        if (fileItem.get().public) {
             return fileItem.map { it.getWellFileStorageDTO() }
         }
 
         if (permissions.isNullOrEmpty() || fileItem.get().permissionsKeysStringList.isNullOrEmpty()) {
             return Optional.empty()
+        }
+
+        if (permissions.contains(PermissionList.PERMISSION_SUPERADMIN.PermitssionKey)) {
+            return fileItem.map { it.getWellFileStorageDTO() }
         }
 
         for(item in fileItem.get().permissionsKeysStringList!!) {
@@ -59,10 +63,12 @@ class WellFileStorageService {
         return Optional.empty()
     }
 
-    fun existByIdx(idx: UUID, isPublic: Boolean): Boolean {
-        return if (isPublic)
-            wellFileStorageRepository.existsByIdxAndPublicTrue(idx)
-        else wellFileStorageRepository.existsByIdxAndPublicFalse(idx)
+    fun existByIdx(idx: String, isPublic: Boolean): Boolean {
+        if (isPublic) {
+            return wellFileStorageRepository.existsByIdxAndPublicTrue(idx)
+        } else {
+            return wellFileStorageRepository.existsByIdx(idx)
+        }
     }
 
     fun getFile(fileData: WellFileStorageDTO): Result<Resource> =
@@ -82,11 +88,11 @@ class WellFileStorageService {
 
 
     @Transactional(rollbackFor = [Exception::class])
-    fun saveFile(tableID: String, writer: UUID, fileDescription: String?, isPublic: Boolean, permissions: List<String>?, file: MultipartFile?): UUID? {
+    fun saveFile(tableID: String, writer: String, fileDescription: String?, isPublic: Boolean, permissions: List<String>?, file: MultipartFile?): String? {
         if (file == null) return null;
         if (file.originalFilename == null) return null;
 
-        var fileIdx = UUID.randomUUID()
+        var fileIdx = UUID.randomUUID().toString()
         var formaterYYYYMM = DateTimeFormatter.ofPattern("yyyyMM")
         var createYYYYMM = ZonedDateTime.now().format(formaterYYYYMM)
         var orgName = file.originalFilename!!
@@ -100,7 +106,7 @@ class WellFileStorageService {
         // Todo: permissions 에 기본 권한 필터링 하도록 추가.
 
         var createFileEntity = WellFileStorageEntity(
-            fileIdx, tableID,  writer, createYYYYMM, orgName, fileDescription, false, isPublic, permissions, fileSize, ext, 0
+            fileIdx.uppercase(), tableID,  writer.uppercase(), createYYYYMM, orgName, fileDescription, false, isPublic, permissions, fileSize, ext, 0
         )
 
         try {
@@ -114,9 +120,9 @@ class WellFileStorageService {
     }
 
     @Transactional(rollbackFor = [Exception::class])
-    fun deleteFile(fileIdx: UUID): Boolean {
+    fun deleteFile(fileIdx: String): Boolean {
         try {
-            val deleteFileEnitty = wellFileStorageRepository.findFirstByIdx(fileIdx).orElse(null) ?: return false
+            val deleteFileEnitty = wellFileStorageRepository.findFirstByIdx(fileIdx.uppercase()).orElse(null) ?: return false
 
             var fileName =
                 deleteFileEnitty.tableID + "/" + deleteFileEnitty.createYYYYMM + "/" + fileIdx.toString() + "." + (deleteFileEnitty.fileExtension
@@ -124,7 +130,7 @@ class WellFileStorageService {
             val file = File(Paths.get(uploadDirectory).resolve(fileName).toString())
             val result = file.delete()
             if (result) {
-                wellFileStorageRepository.deleteByIdx(fileIdx)
+                wellFileStorageRepository.deleteByIdx(fileIdx.uppercase())
             }
         } catch (e: Exception) {
             return false

@@ -46,6 +46,17 @@ class WellPartnerService {
             WellServiceUtil.Specification<WellPartnerEntity>(searchKeyword), pageable)
             .map { it.toDto() }
     }
+    data class cTypeCount(val regCount: Long, val tempCount: Long, val watchCount: Long, val susCount: Long)
+
+    fun companyTypeCount(): cTypeCount {
+        val regCnt = wellPartnerRepository.countByCompanyState(CompanyStateType.COMPANY_STATE_TYPE_REGISTERED)
+        val tmpCnt =
+            wellPartnerRepository.countByCompanyState(CompanyStateType.COMPANY_STATE_TYPE_TEMPORARY_REGISTRATION)
+        val watchCnt = wellPartnerRepository.countByCompanyState(CompanyStateType.COMPANY_STATE_TYPE_WATCH)
+        val susCnt = wellPartnerRepository.countByCompanyState(CompanyStateType.COMPANY_STATE_TYPE_SUSPENSION)
+
+        return cTypeCount(regCnt, tmpCnt, watchCnt, susCnt)
+    }
 
     // 회원가입을 통한 파트너 등록
     @Transactional(rollbackFor = [Exception::class])

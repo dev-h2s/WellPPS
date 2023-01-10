@@ -47,6 +47,8 @@ class SecurityConfig(
 //            .and()
             .logout()
             .logoutUrl("/logout")
+            .logoutSuccessUrl("/login")
+            .invalidateHttpSession(true)
             .deleteCookies("JSESSIONID", "remember-me")
         return http.build()
     }

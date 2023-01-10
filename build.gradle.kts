@@ -9,14 +9,13 @@ plugins {
     val springBootVersion: String by System.getProperties()
     id("org.springframework.boot") version springBootVersion apply false
     id("io.spring.dependency-management") version "1.0.11.RELEASE" apply false
+    id("application")
     kotlin("jvm") version kotlinVersion apply false
     kotlin("kapt") version kotlinVersion apply false
     kotlin("plugin.spring") version kotlinVersion apply false
     kotlin("plugin.jpa") version kotlinVersion apply false
 }
-
 subprojects {
-
     apply {
         plugin("kotlin")
         plugin("org.jetbrains.kotlin.jvm")
@@ -70,9 +69,9 @@ subprojects {
         }
     }
 
-    tasks.withType<Test> {
-        useJUnitPlatform()
-    }
+//    tasks.withType<Test> {
+//        useJUnitPlatform()
+//    }
 }
 
 project(":well-core") {
@@ -126,6 +125,14 @@ project(":well-webapi") {
         testImplementation("org.springframework.security:spring-security-test")
     }
 
+    tasks.withType<Jar> {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+
     tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") { enabled = true }
     tasks.named<Jar>("jar") { enabled = true }
+}
+
+application {
+    mainClass.set("com.wellnetworks.wellwebapi.WellWebapiApplication")
 }

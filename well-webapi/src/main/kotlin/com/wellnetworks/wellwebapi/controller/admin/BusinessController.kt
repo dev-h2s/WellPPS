@@ -153,7 +153,7 @@ class BusinessController(private var partnerService: WellPartnerService) {
         return ResponseEntity.ok(BaseRes(HttpStatus.OK, "업데이트 성공"))
     }
 
-    @GetMapping("business/cnt")
+    @GetMapping("partner/count")
     @PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
             " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")

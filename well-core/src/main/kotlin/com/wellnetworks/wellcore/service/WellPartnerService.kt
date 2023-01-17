@@ -58,6 +58,14 @@ class WellPartnerService {
         return cTypeCount(regCnt, tmpCnt, watchCnt, susCnt)
     }
 
+    data class ptnUnattachedCount(val taxIdxCount:Long, val contractIdxCount:Long)
+    fun partnerUnattachedTaxCount(): ptnUnattachedCount {
+        val taxUnattachedCount = wellPartnerRepository.countByTaxRegistrationDocFileIdxIsNull()
+        val contractUnattachedCount = wellPartnerRepository.countByContractDocFileIdxIsNull()
+
+        return ptnUnattachedCount(taxUnattachedCount, contractUnattachedCount)
+    }
+
     // 회원가입을 통한 파트너 등록
     @Transactional(rollbackFor = [Exception::class])
     fun signupPartner(partner: WellPartnerDTOSignup, files: List<MultipartFile>): Boolean {
@@ -67,7 +75,7 @@ class WellPartnerService {
             userID, null, TableIDList.PARTNER.TableID,
             null, CompanyType.COMPANY_TYPE_UNKNOWN, null,
             null, partner.Tax_Number, partner.Tax_Email,
-            null, null, RateType.RATE_TYPE_UNKNOWN, null, false,
+            null, null, null, RateType.RATE_TYPE_UNKNOWN, null, false,
             CompanyStateType.COMPANY_STATE_TYPE_TEMPORARY_REGISTRATION,
             null, null, null,
             partner.CEO_Name, partner.CEO_Telephone, null, false, false,
@@ -114,6 +122,7 @@ class WellPartnerService {
                 userIdx, partner.P_Code, TableIDList.PARTNER.TableID,
                 partner.Company_Name, partner.Company_Type, partner.Company_Group,
                 null, partner.Tax_Number, partner.Tax_Email,
+                null,
                 partner.Office_Telephone, partner.Office_Email, partner.Rate, partner.Contact_Person, partner.Use_API,
                 partner.Company_State, partner.Company_Level, partner.Organization_Parent, partner.Organization_Child,
                 partner.CEO_Name, partner.CEO_Telephone, null, partner.Certification_Phone, partner.Certification_Email,

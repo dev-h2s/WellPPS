@@ -15,4 +15,12 @@ interface WellPartnerRepository: CrudRepository<WellPartnerEntity, String>, JpaS
     fun findByCompanyName(partnerName: String): Optional<WellPartnerEntity>
 
     fun countByCompanyState(companyState: CompanyStateType): Long
+
+    fun countByTaxRegistrationDocFileIdxAndContractDocFileIdx(taxRegistrationDocFileIdx: String, contractDocFileIdx: String): Long
+
+    fun countByTaxRegistrationDocFileIdx(taxRegistrationDocFileIdx: String) : Long
+
+    fun countByTaxRegistrationDocFileIdxIsNull() : Long
+
+    fun countByContractDocFileIdxIsNull() : Long
 }

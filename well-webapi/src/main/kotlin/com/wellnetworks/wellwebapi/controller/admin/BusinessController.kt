@@ -1,29 +1,19 @@
 package com.wellnetworks.wellwebapi.controller.admin
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ObjectNode
-import com.fasterxml.jackson.databind.ser.Serializers.Base
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.treeToValue
 import com.wellnetworks.wellcore.domain.dto.WellPartnerColumnsName
 import com.wellnetworks.wellcore.domain.dto.WellPartnerDTO
 import com.wellnetworks.wellcore.domain.dto.WellPartnerDTOCreate
 import com.wellnetworks.wellcore.domain.dto.WellUserDTOCreate
-import com.wellnetworks.wellcore.domain.enums.CompanyStateType
 import com.wellnetworks.wellcore.service.utils.SearchCriteria
 import com.wellnetworks.wellcore.service.WellPartnerService
-import com.wellnetworks.wellwebapi.response.BaseItemRes
-import com.wellnetworks.wellwebapi.response.BaseListRes
-import com.wellnetworks.wellwebapi.response.BaseRes
-import com.wellnetworks.wellwebapi.response.PartnerCntRes
+import com.wellnetworks.wellwebapi.response.*
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.prepost.PostAuthorize
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.web.bind.annotation.GetMapping
@@ -37,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
-import javax.print.attribute.standard.Media
 
 @RestController
 @RequestMapping("/admin/hr/")
@@ -157,7 +146,7 @@ class BusinessController(private var partnerService: WellPartnerService) {
     @PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
             " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
-    fun cntPartner(): ResponseEntity<PartnerCntRes> {
+    fun cntPartner(): ResponseEntity<PartnerCompanyTypeCountRes> {
 
         val cnt = partnerService.companyTypeCount()
         val regCnt = cnt.regCount
@@ -166,8 +155,26 @@ class BusinessController(private var partnerService: WellPartnerService) {
         val susCnt = cnt.susCount
 
         return ResponseEntity.ok(
-            PartnerCntRes(
+            PartnerCompanyTypeCountRes(
                 regCnt, tempCnt, watchCnt, susCnt
+            )
+        )
+    }
+
+    @GetMapping("partner/tax_unattached_count")
+/*    @PreAuthorize("isAuthenticated() and" +
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")*/
+    fun taxUnattachedCount(): ResponseEntity<PartnerUnattachedCountRes> {
+
+        val count = partnerService.partnerUnattachedTaxCount()
+        val taxCount = count.taxIdxCount
+        val contractCount = count.contractIdxCount
+
+
+        return ResponseEntity.ok(
+            PartnerUnattachedCountRes(
+                taxCount, contractCount
             )
         )
     }

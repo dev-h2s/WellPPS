@@ -43,6 +43,9 @@ data class WellPartnerEntity (
     @Column(name="tax_mail", length = 320, nullable = true)
     var taxEmail: String?,
 
+    @Column(name="contract_regdoc", nullable = true)
+    var contractDocFileIdx: String?,
+
     @Column(name="ctel", length = 16, nullable = true)
     var telephoneOffice: String?,
 
@@ -199,6 +202,8 @@ data class WellPartnerEntity (
         Office_Telephone = this.telephoneOffice,
         Office_Email = this.emailOffice,
         Rate = this.rate,
+        Contract_DocFileIdx = this.contractDocFileIdx?.uppercase(),
+        Contract_DocumentFileName = null,
         Contact_Person = this.contactPerson,
         Contact_Type = this.contactType,
         Contact_Phone = this.contactPhone,
@@ -242,6 +247,7 @@ data class WellPartnerEntity (
         this.taxRegistrationDocFileIdx = dto.Tax_RegistrationDocumentFileIdx?.uppercase()
         this.taxNumber = dto.Tax_Number
         this.taxEmail = dto.Tax_Email
+        this.contractDocFileIdx = dto.Contract_DocFileIdx?.uppercase()
         this.telephoneOffice = dto.Office_Telephone
         this.emailOffice = dto.Office_Email
         this.rate = dto.Rate

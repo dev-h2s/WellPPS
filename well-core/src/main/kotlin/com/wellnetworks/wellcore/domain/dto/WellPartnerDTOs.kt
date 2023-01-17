@@ -25,6 +25,7 @@ enum class WellPartnerColumnsName(val columnsName: String) {
     Tax_Email("taxEmail"),
     Tax_Address1("taxAddress1"),
     Tax_Address2("taxAddress2"),
+    Contract_DocFileIdx("contractDocFile"),
     Office_Telephone("telephoneOffice"),
     Office_Email("emailOffice"),
     Rate("rate"),
@@ -98,6 +99,11 @@ data class WellPartnerDTO (
     val Tax_Address1: String?,
     @JsonProperty("txa2")
     val Tax_Address2: String?,
+
+    @JsonProperty("confn")
+    val Contract_DocumentFileName: String?,
+    @JsonProperty("conrd")
+    val Contract_DocFileIdx: String?,
 
     @JsonProperty("otel")
     val Office_Telephone: String?,

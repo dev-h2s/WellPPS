@@ -161,7 +161,7 @@ class BusinessController(private var partnerService: WellPartnerService) {
         )
     }
 
-    @GetMapping("partner/tax_unattached_count")
+    @GetMapping("partner/unattached_count")
 /*    @PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
             " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")*/

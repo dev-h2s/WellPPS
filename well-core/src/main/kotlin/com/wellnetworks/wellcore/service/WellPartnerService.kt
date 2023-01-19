@@ -68,22 +68,23 @@ class WellPartnerService {
 
     // 회원가입을 통한 파트너 등록
     @Transactional(rollbackFor = [Exception::class])
-    fun signupPartner(partner: WellPartnerDTOSignup, files: List<MultipartFile>): Boolean {
-        var userID = UUID.randomUUID().toString().uppercase()
+    fun signupPartner(user: WellUserDTOCreate, signup: WellPartnerDTOSignup, files: List<MultipartFile>): Boolean {
+
+        var userID: String = wellUserService.createUser(user) ?: throw Exception("사용자 데이터 생성에 실패하였습니다.")
 
         val createPartner = WellPartnerEntity(
-            userID, null, TableIDList.PARTNER.TableID,
+            userID, user.UserID, TableIDList.PARTNER.TableID,
             null, CompanyType.COMPANY_TYPE_UNKNOWN, null,
-            null, partner.Tax_Number, partner.Tax_Email,
+            null, signup.Tax_Number, signup.Tax_Email,
             null, null, null, RateType.RATE_TYPE_UNKNOWN, null, false,
             CompanyStateType.COMPANY_STATE_TYPE_TEMPORARY_REGISTRATION,
             null, null, null,
-            partner.CEO_Name, partner.CEO_Telephone, null, false, false,
+            signup.CEO_Name, signup.CEO_Telephone, null, false, false,
             null, null, null, null, null, ContactType.CONTACT_TYPE_UNKNOWN,
-            partner.Agree_Terms, ZonedDateTime.now(), null,
+            signup.Agree_Terms, ZonedDateTime.now(), null,
             null, null, null, null,
             ContactProgressType.CONTACT_PROGRESS_TYPE_WAITING,
-            partner.CEO_Telephone, null, null, null,
+            signup.CEO_Telephone, null, null, null,
             ContactProgressType.CONTACT_PROGRESS_TYPE_UNKNOWN,
             ContactRejectType.CONTACT_REJECT_TYPE_UNKNOWN,
             null, null, null
@@ -98,9 +99,9 @@ class WellPartnerService {
                 val fileID = wellFileStorageService.saveFile(TableIDList.PARTNER.TableID, userID, null, false, permissions, file)
                 if (fileID == null) return false
 
-                if (file.originalFilename == partner.Tax_Registration_DocumentFileName) {
+                if (file.originalFilename == signup.Tax_Registration_DocumentFileName) {
                     createPartner.taxRegistrationDocFileIdx = fileID
-                } else if (file.originalFilename == partner.CEO_IDCard_FileName) {
+                } else if (file.originalFilename == signup.CEO_IDCard_FileName) {
                     createPartner.ceoIDCardFileIdx = fileID
                 }
             }

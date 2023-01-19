@@ -43,8 +43,10 @@ class SecurityConfig(
             .antMatchers("/api/**").permitAll()
             .antMatchers("/", "/**", "/init/**").permitAll()
             .antMatchers("/admin/hr/business/**").permitAll()
+            .antMatchers("/admin/hr/partner/**").permitAll()
             .antMatchers("/file/**").permitAll()
             .antMatchers("/login").permitAll()
+            .antMatchers("/signup").permitAll()
             .antMatchers("/**").permitAll() //그외 나머지 요청은 누구나 접근 가능
             .anyRequest().authenticated()
             .and()

@@ -311,8 +311,8 @@ data class WellPartnerDTOCreate @JsonCreator constructor (
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class WellPartnerDTOSignup (
-    @JsonProperty("idx")
-    val Idx: UUID,
+    //@JsonProperty("idx")
+    //val Idx: UUID?=null,
 
     @JsonProperty("ceon")
     val CEO_Name: String,
@@ -327,18 +327,21 @@ data class WellPartnerDTOSignup (
     val Tax_Email: String,
 
     @JsonProperty("txrfn")
-    val Tax_Registration_DocumentFileName: String,
-    @JsonProperty("txrd")
-    val Tax_Registration_DocumentFile: UUID,
+    val Tax_Registration_DocumentFileName: String?,
+    //@JsonProperty("txrd")
+    //val Tax_Registration_DocumentFile: UUID,
     @JsonProperty("ceoin")
-    val CEO_IDCard_FileName: String,
-    @JsonProperty("ceoi")
-    val CEO_IDCard_File: UUID,
+    val CEO_IDCard_FileName: String?,
+    //@JsonProperty("ceoi")
+    //val CEO_IDCard_File: UUID,
 
     @JsonProperty("cttp")
     val Contact_Type: ContactType,
     @JsonProperty("agtm")
     val Agree_Terms: AgreeType,
+
+    @JsonProperty("jpro")
+    val Join_Progress: ContactProgressType,
 
     @JsonIgnore
     override val Modify_Datetime: ZonedDateTime?,

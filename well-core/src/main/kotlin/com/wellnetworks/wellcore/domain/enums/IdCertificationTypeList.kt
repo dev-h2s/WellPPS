@@ -8,7 +8,7 @@ interface IIdCertificationType {
 
 enum class IdCertificationType : IIdCertificationType{
     ID_CERTIFICATION_TYPE_UNKNOWN {
-        override fun index() = -1
+        override fun index() = 0
         override val key: String
         get() = "ID_CERTIFICATION_TYPE_UNKNOWN"
 

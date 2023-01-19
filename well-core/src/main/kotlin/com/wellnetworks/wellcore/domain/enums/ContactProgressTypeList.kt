@@ -8,7 +8,7 @@ interface IContactProgressType {
 
 enum class ContactProgressType : IContactProgressType {
     CONTACT_PROGRESS_TYPE_UNKNOWN {
-        override fun index() = -1
+        override fun index() = 0
         override val key: String
             get() = "CONTACT_PROGRESS_TYPE_UNKNOWN"
 

@@ -8,7 +8,7 @@ interface IJobPositionType {
 
 enum class JobPositionType : IJobPositionType {
     JOB_POSITION_TYPE_UNKNOWN {
-        override fun index() = -1
+        override fun index() = 0
         override val key: String
             get() = "JOB_POSITION_TYPE_UNKNOWN"
 

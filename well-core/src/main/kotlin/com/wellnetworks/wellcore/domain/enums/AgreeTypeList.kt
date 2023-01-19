@@ -8,7 +8,7 @@ interface IAgreeType {
 
 enum class AgreeType : IAgreeType {
     AGREE_TYPE_UNKNOWN {
-        override fun index() = -1
+        override fun index() = 0
         override val key: String
             get() = "AGREE_TYPE_UNKNOWN"
 

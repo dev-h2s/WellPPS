@@ -8,7 +8,7 @@ interface IEmploymentStateType {
 
 enum class EmploymentStateType : IEmploymentStateType {
     EMPLOYMENT_STATE_TYPE_UNKNOWN {
-        override fun index() = -1
+        override fun index() = 0
         override val key: String
             get() = "EMPLOYMENT_STATE_TYPE_UNKNOWN"
 

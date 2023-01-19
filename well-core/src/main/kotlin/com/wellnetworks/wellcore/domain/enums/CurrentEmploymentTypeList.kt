@@ -8,7 +8,7 @@ interface ICurrentEmploymentType {
 
 enum class CurrentEmploymentType : ICurrentEmploymentType{
     CURRENT_EMPLOYMENT_TYPE_UNKNOWN {
-        override fun index() = -1
+        override fun index() = 0
         override val key: String
         get() = "CURRENT_EMPLOYMENT_TYPE_UNKNOWN"
 

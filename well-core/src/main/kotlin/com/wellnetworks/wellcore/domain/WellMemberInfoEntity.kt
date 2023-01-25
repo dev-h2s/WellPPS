@@ -92,6 +92,21 @@ data class WellMemberInfoEntity(
     @Column(name = "access", columnDefinition = "bit")
     var access: Boolean,
 
+    @Column(name="file1_idx", nullable = true)
+    var file1Idx: String?,
+
+    @Column(name="file2_idx", nullable = true)
+    var file2Idx: String?,
+
+    @Column(name="file3_idx", nullable = true)
+    var file3Idx: String?,
+
+    @Column(name="file4_idx", nullable = true)
+    var file4Idx: String?,
+
+    @Column(name="file5_idx", nullable = true)
+    var file5Idx: String?,
+
     @Column(name = "memo")
     var memo: String,
 
@@ -123,6 +138,11 @@ data class WellMemberInfoEntity(
             Employment_Quit_Datetime = this.employmentQuitDatetime,
             Employment_Quit_Type = this.employmentQuitType,
             Access = this.access,
+            Member_File1_idx = this.file1Idx.toString().uppercase(),
+            Member_File2_idx = this.file2Idx.toString().uppercase(),
+            Member_File3_idx = this.file3Idx.toString().uppercase(),
+            Member_File4_idx = this.file4Idx.toString().uppercase(),
+            Member_File5_idx = this.file5Idx.toString().uppercase(),
             Memo = this.memo,
             Modify_Datetime = this.modifyDatetime,
             Register_Datetime = this.registerDatetime,
@@ -153,6 +173,11 @@ data class WellMemberInfoEntity(
         this.employmentQuitDatetime = dto.Employment_Quit_Datetime
         this.employmentQuitType = dto.Employment_Quit_Type
         this.access = dto.Access
+        this.file1Idx = dto.Member_File1_idx?.uppercase()
+        this.file2Idx = dto.Member_File2_idx?.uppercase()
+        this.file3Idx = dto.Member_File3_idx?.uppercase()
+        this.file4Idx = dto.Member_File4_idx?.uppercase()
+        this.file5Idx = dto.Member_File5_idx?.uppercase()
         this.memo = dto.Memo
     }
 

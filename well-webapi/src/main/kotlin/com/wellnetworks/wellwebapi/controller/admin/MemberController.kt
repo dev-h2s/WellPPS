@@ -19,6 +19,7 @@ import org.springframework.security.access.prepost.PostAuthorize
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
 @RestController
@@ -69,12 +70,18 @@ class MemberController(private var memberInfoService: WellMemberInfoService) {
     @PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
             " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
-    fun createMember(@RequestBody objUserPartner: ObjectNode): ResponseEntity<BaseRes> {
+    fun createMember(@RequestPart("user") userJsonString: String,
+                     @RequestPart("member") memberJsonString: String,
+                     @RequestPart("file") files: List<MultipartFile>
+    ): ResponseEntity<BaseRes> {
         val mapper = ObjectMapper()
 
         try {
-            val user = mapper.treeToValue<WellUserDTOCreate>(objUserPartner.get("user"))
-            val member = mapper.treeToValue<WellMemberInfoDTOCreate>(objUserPartner.get("member"))
+            // val user = mapper.treeToValue<WellUserDTOCreate>(objUserPartner.get("user"))
+            // val member = mapper.treeToValue<WellMemberInfoDTOCreate>(objUserPartner.get("member"))
+
+            val user = mapper.readValue(userJsonString, WellUserDTOCreate::class.java)
+            val member = mapper.readValue(memberJsonString, WellMemberInfoDTOCreate::class.java)
 
             if (!memberInfoService.createMember(user, member))
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(BaseRes(HttpStatus.INTERNAL_SERVER_ERROR, "맴버 추가 실패"))

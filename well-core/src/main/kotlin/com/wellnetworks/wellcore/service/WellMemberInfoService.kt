@@ -63,7 +63,8 @@ class WellMemberInfoService {
                 member.Home_Address1, member.Home_Address2, member.Bank_Name, member.Bank_Account, member.Bank_Holder,
                 member.Employment_State, member.Job_Type, member.Certification_Phone, member.Certification_Email,
                 member.Entry_Datetime, member.Employment_Quit_Datetime, member.Employment_Quit_Type,
-                member.Access, member.Memo
+                member.Access, member.Member_File1_idx, member.Member_File2_idx, member.Member_File3_idx,
+                member.Member_File4_idx, member.Member_File5_idx, member.Memo
             )
 
             wellMemberInfoRepository.save(createMember)

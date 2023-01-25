@@ -58,6 +58,18 @@ data class WellMemberInfoDTO(
     val Employment_Quit_Type: EmploymentQuitType,
     @JsonProperty("accs")
     val Access: Boolean,
+
+    @JsonProperty("file1")
+    val Member_File1_idx: String,
+    @JsonProperty("file2")
+    val Member_File2_idx: String,
+    @JsonProperty("file3")
+    val Member_File3_idx: String,
+    @JsonProperty("file4")
+    val Member_File4_idx: String,
+    @JsonProperty("file5")
+    val Member_File5_idx: String,
+
     @JsonProperty("memo")
     val Memo: String,
     @JsonIgnore
@@ -127,6 +139,18 @@ data class WellMemberInfoDTOCreate(
     val Employment_Quit_Type: EmploymentQuitType,
     @JsonProperty("accs")
     val Access: Boolean,
+
+    @JsonProperty("file1")
+    val Member_File1_idx: String,
+    @JsonProperty("file2")
+    val Member_File2_idx: String,
+    @JsonProperty("file3")
+    val Member_File3_idx: String,
+    @JsonProperty("file4")
+    val Member_File4_idx: String,
+    @JsonProperty("file5")
+    val Member_File5_idx: String,
+
     @JsonProperty("memo")
     val Memo: String,
     @JsonIgnore

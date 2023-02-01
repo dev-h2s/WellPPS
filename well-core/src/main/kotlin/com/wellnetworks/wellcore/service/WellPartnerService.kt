@@ -1,12 +1,10 @@
 package com.wellnetworks.wellcore.service
 
 import com.wellnetworks.wellcore.domain.WellPartnerEntity
-import com.wellnetworks.wellcore.domain.dto.WellPartnerDTO
-import com.wellnetworks.wellcore.domain.dto.WellPartnerDTOCreate
-import com.wellnetworks.wellcore.domain.dto.WellPartnerDTOSignup
-import com.wellnetworks.wellcore.domain.dto.WellUserDTOCreate
+import com.wellnetworks.wellcore.domain.dto.*
 import com.wellnetworks.wellcore.domain.enums.*
 import com.wellnetworks.wellcore.repository.WellPartnerRepository
+import com.wellnetworks.wellcore.repository.WellUserRepository
 import com.wellnetworks.wellcore.service.utils.SearchCriteria
 import com.wellnetworks.wellcore.service.utils.WellServiceUtil
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,8 +30,16 @@ class WellPartnerService {
     @Autowired
     private lateinit var wellFileStorageService: WellFileStorageService
 
+    @Autowired
+    private lateinit var wellUserRepository: WellUserRepository
     fun getPartnerByIdx(idx: String): Optional<WellPartnerDTO> {
         val partner = wellPartnerRepository.findByIdx(idx)
+        return partner.map { it.toDto() }
+    }
+    @Transactional(rollbackFor = [Exception::class])
+    fun deletePartnerById(idx: String): Optional<WellPartnerDTO> {
+        val partner = wellPartnerRepository.deleteByIdx(idx)
+        //var user = wellUserRepository.deleteByIdx(idx)
         return partner.map { it.toDto() }
     }
 
@@ -80,7 +86,7 @@ class WellPartnerService {
             CompanyStateType.COMPANY_STATE_TYPE_TEMPORARY_REGISTRATION,
             null, null, null,
             signup.CEO_Name, signup.CEO_Telephone, null, false, false,
-            null, null, null, null, null, ContactType.CONTACT_TYPE_UNKNOWN,
+            null, null, null, null, null, signup.Contact_Type,
             signup.Agree_Terms, ZonedDateTime.now(), null,
             null, null, null, null,
             ContactProgressType.CONTACT_PROGRESS_TYPE_WAITING,
@@ -159,9 +165,9 @@ class WellPartnerService {
     }
 
     @Transactional(rollbackFor = [Exception::class])
-    fun updatePartner(partner: WellPartnerDTO, files: List<MultipartFile>): Boolean {
+    fun updatePartner(partner: WellPartnerDTOUpdate, files: List<MultipartFile>): Boolean {
         try {
-            val currentEntity = wellPartnerRepository.findByIdx(partner.Idx).orElse(null) ?: return false
+            val currentEntity = wellPartnerRepository.findByIdx(partner.Idx.toString().uppercase()).orElse(null) ?: return false
 
             val permissions: List<String> = listOf (
                 PermissionList.PERMISSION_SINGUP_SCREENING.PermitssionKey,
@@ -175,13 +181,16 @@ class WellPartnerService {
                 if (file.originalFilename == partner.Tax_Registration_DocumentFileName) {
                     if (currentEntity.taxRegistrationDocFileIdx != null)   wellFileStorageService.deleteFile(currentEntity.taxRegistrationDocFileIdx!!)
                     currentEntity.taxRegistrationDocFileIdx = fileID
-                } else if (file.originalFilename == partner.CEO_IDCard_FileName) {
+                }  else if (file.originalFilename == partner.Contract_DocumentFileName) {
+                    if (currentEntity.contractDocFileIdx != null) wellFileStorageService.deleteFile(currentEntity.contractDocFileIdx!!)
+                    currentEntity.contractDocFileIdx = fileID
+                }  else if (file.originalFilename == partner.CEO_IDCard_FileName) {
                     if (currentEntity.ceoIDCardFileIdx != null)   wellFileStorageService.deleteFile(currentEntity.ceoIDCardFileIdx!!)
                     currentEntity.ceoIDCardFileIdx = fileID
                 }
             }
 
-            currentEntity.fromDto(partner)
+            currentEntity.updateDto(partner)
             currentEntity.modifyDatetime = ZonedDateTime.now()
 
             wellPartnerRepository.save(currentEntity)

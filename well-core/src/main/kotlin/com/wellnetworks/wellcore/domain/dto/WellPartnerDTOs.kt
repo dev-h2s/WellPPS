@@ -1,5 +1,6 @@
 package com.wellnetworks.wellcore.domain.dto
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
@@ -61,7 +62,7 @@ enum class WellPartnerColumnsName(val columnsName: String) {
     Register_Datetime("registerDatetime"),
 }
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonInclude(JsonInclude.Include.NON_NULL)
 data class WellPartnerDTO (
     @JsonProperty("idx")
     val Idx: String,
@@ -161,9 +162,9 @@ data class WellPartnerDTO (
 
     @JsonProperty("agtm")
     val Agree_Terms: AgreeType,
-    @JsonProperty("agtd")
+    @JsonProperty("agtdt")
     val Agree_Terms_Datetime: ZonedDateTime,
-    @JsonProperty("agtm")
+    @JsonProperty("agtmdt")
     val Agree_Terms_Modify_Datetime: ZonedDateTime?,
 
     @JsonProperty("bnam")
@@ -314,37 +315,116 @@ data class WellPartnerDTOSignup (
     //@JsonProperty("idx")
     //val Idx: UUID?=null,
 
-    @JsonProperty("ceon")
+    @JsonProperty("ceo_name")
     val CEO_Name: String,
-    @JsonProperty("ceot")
+    @JsonProperty("ceo_tel")
     val CEO_Telephone: String,
-
-
-    @JsonProperty("txnm")
+    @JsonProperty("tax_number")
     val Tax_Number: String,
-
-    @JsonProperty("txem")
+    @JsonProperty("tax_email")
     val Tax_Email: String,
-
-    @JsonProperty("txrfn")
+    @JsonProperty("tax_file_name")
     val Tax_Registration_DocumentFileName: String?,
     //@JsonProperty("txrd")
     //val Tax_Registration_DocumentFile: UUID,
-    @JsonProperty("ceoin")
+    @JsonProperty("idcard_file_name")
     val CEO_IDCard_FileName: String?,
     //@JsonProperty("ceoi")
     //val CEO_IDCard_File: UUID,
-
-    @JsonProperty("cttp")
+    @JsonProperty("con_type")
     val Contact_Type: ContactType,
-    @JsonProperty("agtm")
-    val Agree_Terms: AgreeType,
-
-    @JsonProperty("jpro")
+    @JsonProperty("con_progress")
     val Join_Progress: ContactProgressType,
-
+    @JsonProperty("agree_type")
+    val Agree_Terms: AgreeType,
     @JsonIgnore
     override val Modify_Datetime: ZonedDateTime?,
+    @JsonIgnore
+    override val Register_Datetime: ZonedDateTime?,
+): BaseDTO(Modify_Datetime, Register_Datetime)
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+data class WellPartnerDTOUpdate @JsonCreator constructor (
+    @JsonProperty("idx")
+    val Idx: String?,
+    @JsonProperty("c_name")
+    val Company_Name: String?,
+    @JsonProperty("c_type")
+    val Company_Type: CompanyType?,
+    @JsonProperty("c_group")
+    val Company_Group: Byte?,
+    @JsonProperty("c_rate")
+    val Rate: RateType?,
+    @JsonProperty("contact_person")
+    val Contact_Person : String?,
+    @JsonProperty("use_api")
+    val Use_API: Boolean,
+    @JsonProperty("contact_datetime")
+    val Contact_Datetime: ZonedDateTime?,
+    @JsonProperty("c_state")
+    val Company_State: CompanyStateType?,
+    @JsonProperty("c_level")
+    val Company_Level: Byte?,
+    @JsonProperty("parent_idx")
+    val Organization_Parent: String?,
+    @JsonProperty("child_idx")
+    val Organization_Child: String?,
+    @JsonProperty("ceo_name")
+    val CEO_Name: String?,
+    @JsonProperty("ceo_tel")
+    val CEO_Telephone: String?,
+    @JsonProperty("office_tel")
+    val Office_Telephone: String?,
+    @JsonProperty("office_email")
+    val Office_Email: String?,
+    @JsonProperty("phone_cert")
+    val Certification_Phone: Boolean?,
+    @JsonProperty("email_cert")
+    val Certification_Email: Boolean?,
+    @JsonProperty("bank_name")
+    val Bank_Name: String?,
+    @JsonProperty("bank_account")
+    val Bank_Account: String?,
+    @JsonProperty("bank_holder")
+    val Bank_Holder: String?,
+    @JsonProperty("tax_number")
+    val Tax_Number: String?,
+    @JsonProperty("tax_email")
+    val Tax_Email: String?,
+    @JsonProperty("Prior_approval_number")
+    val Prior_Consent: String?,
+    @JsonProperty("tax_addr1")
+    val Tax_Address1: String?,
+    @JsonProperty("tax_addr2")
+    val Tax_Address2: String?,
+    @JsonProperty("com_addr1")
+    val Company_Address1: String?,
+    @JsonProperty("com_addr2")
+    val Company_Address2: String?,
+    @JsonProperty("agree_type")
+    val Agree_Terms: AgreeType?,
+    @JsonProperty("agree_date")
+    val Agree_Terms_Datetime: ZonedDateTime?,
+    @JsonProperty("agree_mod_date")
+    val Agree_Terms_Modify_Datetime: ZonedDateTime?,
+    @JsonProperty("tax_file_idx")
+    val Tax_RegistrationDocumentFileIdx: String?,
+    @JsonProperty("contract_file_idx")
+    val Contract_DocFileIdx: String?,
+    @JsonProperty("idcard_file_idx")
+    val CEO_IDCard_FileIdx: String?,
+    @JsonProperty("tax_file_name")
+    val Tax_Registration_DocumentFileName: String?,
+    @JsonProperty("contract_file_name")
+    val Contract_DocumentFileName: String?,
+    @JsonProperty("idcard_file_name")
+    val CEO_IDCard_FileName: String?,
+    @JsonProperty("memo")
+    val Admin_Memo: String?,
+
+    @JsonIgnore
+    override var Modify_Datetime: ZonedDateTime?,
     @JsonIgnore
     override val Register_Datetime: ZonedDateTime?,
 ): BaseDTO(Modify_Datetime, Register_Datetime)

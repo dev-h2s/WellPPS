@@ -2,6 +2,7 @@ package com.wellnetworks.wellcore.domain
 
 import com.wellnetworks.wellcore.domain.converter.*
 import com.wellnetworks.wellcore.domain.dto.WellPartnerDTO
+import com.wellnetworks.wellcore.domain.dto.WellPartnerDTOUpdate
 import com.wellnetworks.wellcore.domain.enums.*
 import org.hibernate.Hibernate
 import java.time.ZonedDateTime
@@ -285,5 +286,43 @@ data class WellPartnerEntity (
         this.contactApprover = dto.Contact_Approver
         this.contactRegisterDatetime = dto.Contact_Register_Datetime
         this.contactModifyDatetime = dto.Contact_Modify_Datetime
+    }
+
+    fun updateDto(dto: WellPartnerDTOUpdate) {
+        if (dto.Company_Name != null) this.companyName = dto.Company_Name
+        if (dto.Company_Type != null) this.companyType = dto.Company_Type //거래처구분:딜러,판매점,충전점,기타제휴사,기관,영업팀
+        if (dto.Company_Group != null) this.companyGroup = dto.Company_Group
+        if (dto.Rate != null) this.rate = dto.Rate //충전할인율:개통점,충전점,API
+        if (dto.Contact_Person != null) this.contactPerson = dto.Contact_Person //영업담당자
+        if (dto.Use_API != null) this.useAPI = dto.Use_API
+        if (dto.Contact_Datetime != null) this.contactDatetime = dto.Contact_Datetime //가입승인일자
+        if (dto.Company_State != null) this.companyState = dto.Company_State //거래유무
+        if (dto.Company_Level != null) this.companyLevel = dto.Company_Level
+        if (dto.Organization_Parent != null) this.parentOrganization = dto.Organization_Parent?.uppercase() //상부점
+        if (dto.Organization_Child != null) this.childOrganization = dto.Organization_Child?.uppercase() //하부점
+        if (dto.CEO_Name != null) this.ceoName = dto.CEO_Name
+        if (dto.CEO_Telephone != null) this.ceoTelephone = dto.CEO_Telephone
+        if (dto.Office_Telephone != null) this.telephoneOffice = dto.Office_Telephone
+        if (dto.Office_Email != null) this.emailOffice = dto.Office_Email
+        if (dto.Certification_Phone != null) this.certificationPhone = dto.Certification_Phone
+        if (dto.Certification_Email != null) this.certificationEmail = dto.Certification_Email
+        if (dto.Bank_Account != null) this.bankAccount = dto.Bank_Account
+        if (dto.Bank_Holder != null) this.bankHolder = dto.Bank_Holder
+        if (dto.Bank_Name != null) this.bankName = dto.Bank_Name
+        if (dto.Tax_Number != null) this.taxNumber = dto.Tax_Number
+        if (dto.Tax_Email != null) this.taxEmail = dto.Tax_Email
+        if (dto.Prior_Consent != null) this.priorConsent = dto.Prior_Consent //사전승낙번호
+        if (dto.Tax_Address1 != null) this.taxAddress1 = dto.Tax_Address1
+        if (dto.Tax_Address2 != null) this.taxAddress2 = dto.Tax_Address2
+        if (dto.Company_Address1 != null) this.companyAddress1 = dto.Company_Address1
+        if (dto.Company_Address2 != null) this.companyAddress2 = dto.Company_Address2
+        if (dto.Agree_Terms != null) this.agreeTerms = dto.Agree_Terms
+        if (dto.Agree_Terms_Datetime != null) this.agreeTermsDatetime = dto.Agree_Terms_Datetime
+        if (dto.Agree_Terms_Modify_Datetime != null) this.agreeTermsModifyDatetime = dto.Agree_Terms_Modify_Datetime
+        if (dto.Tax_RegistrationDocumentFileIdx != null) this.taxRegistrationDocFileIdx = dto.Tax_RegistrationDocumentFileIdx?.uppercase()
+        if (dto.Contract_DocFileIdx != null) this.contractDocFileIdx = dto.Contract_DocFileIdx?.uppercase()
+        if (dto.CEO_IDCard_FileIdx != null) this.ceoIDCardFileIdx = dto.CEO_IDCard_FileIdx?.uppercase()
+        if (dto.Admin_Memo != null) this.adminMemo = dto.Admin_Memo
+
     }
 }

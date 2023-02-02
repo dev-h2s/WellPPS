@@ -1,5 +1,6 @@
 package com.wellnetworks.wellcore.repository
 
+import com.wellnetworks.wellcore.domain.WellPartnerEntity
 import org.springframework.data.repository.CrudRepository
 import com.wellnetworks.wellcore.domain.WellUserEntity
 import org.springframework.data.domain.Page
@@ -13,5 +14,6 @@ interface WellUserRepository: CrudRepository<WellUserEntity, String>, JpaSpecifi
     fun findAll(pageable: Pageable): Page<WellUserEntity>
     fun findByUserID(userID: String): Optional<WellUserEntity>
     fun existsByUserID(userID: String): Boolean
+    fun deleteByIdx(idx: String): Optional<Int>
 
 }

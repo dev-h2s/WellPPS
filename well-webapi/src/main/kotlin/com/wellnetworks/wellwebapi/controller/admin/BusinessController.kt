@@ -16,6 +16,11 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 @RestController
@@ -48,8 +53,8 @@ class BusinessController(private var partnerService: WellPartnerService) {
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
             " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
     fun getPartnerList(
-        @RequestParam("std", required = false) @DateTimeFormat(pattern = "yyyyMMdd") startDate: Date?,
-        @RequestParam("edt", required = false) @DateTimeFormat(pattern = "yyyyMMdd") endDate: Date?,
+        @RequestParam("std", required = false) startDate: String?,
+        @RequestParam("edt", required = false) endDate: String?,
         @RequestParam("p", required = false) pCode: String?,
         @RequestParam("pnam", required = false) partnerName: String?,
         @RequestParam("ptyp", required = false) partnerType: String?,
@@ -69,9 +74,16 @@ class BusinessController(private var partnerService: WellPartnerService) {
         val searchKeywords: MutableList<SearchCriteria> = mutableListOf()
 
         val pageable: Pageable = PageRequest.of(page, size)
+        val dtFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
 
-        if (startDate != null) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Register_Datetime.columnsName, ">", startDate))
-        if (endDate != null) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Register_Datetime.columnsName, "<", endDate))
+        if (!startDate.isNullOrEmpty()) {
+            val startDateParse = LocalDate.parse(startDate, dtFormatter).atStartOfDay(ZoneId.systemDefault());
+            searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Register_Datetime.columnsName, ">", startDateParse.toInstant()))
+        }
+        if (!endDate.isNullOrEmpty()) {
+            val endDateParse = LocalDate.parse(endDate, dtFormatter).atStartOfDay(ZoneId.systemDefault());
+            searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Register_Datetime.columnsName, "<", endDateParse.toInstant()))
+        }
         if (!pCode.isNullOrEmpty()) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.P_Code.columnsName, "=", pCode))
         if (!partnerName.isNullOrEmpty()) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Company_Name.columnsName, "%", partnerName))
         if (!partnerType.isNullOrEmpty()) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Company_Type.columnsName, "=", partnerType))
@@ -112,34 +124,37 @@ class BusinessController(private var partnerService: WellPartnerService) {
     }
 
     @DeleteMapping("business/{id}")
-    @PostAuthorize("isAuthenticated() and" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN) and" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER)")
-    fun deletePartner(@PathVariable id: String) : ResponseEntity<BaseItemRes<WellPartnerDTO>> {
+    @PreAuthorize("isAuthenticated() and" +
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
+    fun deletePartner(@PathVariable id: String) : ResponseEntity<BaseRes> {
         val uuidIdx: String
 
         try{
             uuidIdx = UUID.fromString(id).toString()
         }catch (e: java.lang.Exception){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseItemRes(HttpStatus.BAD_REQUEST, "문서 번호가 잘못되었습니다."))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseRes(HttpStatus.BAD_REQUEST, "문서 번호가 잘못되었습니다."))
         }
-        val partner = partnerService.deletePartnerById(uuidIdx)
 
-        if (partner.isEmpty)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(BaseItemRes(HttpStatus.NOT_FOUND, "$id 데이터를 찾을 수 없습니다."))
+        try {
+            partnerService.deletePartnerById(uuidIdx)
+        } catch (e: Exception) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(BaseRes(HttpStatus.NOT_FOUND, "$id 데이터를 찾을 수 없습니다."))
+        }
 
-        return ResponseEntity.ok(BaseItemRes(HttpStatus.OK, "", partner.get()))
+        return ResponseEntity.ok(BaseRes(HttpStatus.OK, "delete ok"))
     }
 
 
     @PutMapping("business")
     @PreAuthorize("isAuthenticated() and" +
-            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
+        " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
+        " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
 
     //(@PathVariable id: String): ResponseEntity<BaseItemRes<WellPartnerDTO>> {
     //fun updatePartner(@RequestPart("partner") partner: String, @RequestPart("file") files: List<MultipartFile>): ResponseEntity<BaseRes> {
-    fun updatePartner(@RequestPart("partner") partner: String, @RequestPart("file") files: List<MultipartFile>): ResponseEntity<BaseRes> {
+    fun updatePartner(@RequestPart("partner") partner: String, @RequestPart("file", required = false) files: List<MultipartFile>?): ResponseEntity<BaseRes> {
 
         val mapper = jacksonObjectMapper()
 

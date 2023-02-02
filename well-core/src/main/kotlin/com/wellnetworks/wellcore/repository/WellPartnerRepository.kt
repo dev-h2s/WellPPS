@@ -23,4 +23,6 @@ interface WellPartnerRepository: CrudRepository<WellPartnerEntity, String>, JpaS
     fun countByTaxRegistrationDocFileIdxIsNull() : Long
 
     fun countByContractDocFileIdxIsNull() : Long
+
+    fun deleteByIdx(idx: String): Optional<Int>
 }

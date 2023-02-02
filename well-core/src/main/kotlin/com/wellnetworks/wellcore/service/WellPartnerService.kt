@@ -37,10 +37,15 @@ class WellPartnerService {
         return partner.map { it.toDto() }
     }
     @Transactional(rollbackFor = [Exception::class])
-    fun deletePartnerById(idx: String): Optional<WellPartnerDTO> {
+    fun deletePartnerById(idx: String) {
         val partner = wellPartnerRepository.deleteByIdx(idx)
-        //var user = wellUserRepository.deleteByIdx(idx)
-        return partner.map { it.toDto() }
+        var user = wellUserRepository.deleteByIdx(idx)
+
+        if (partner.get() == 1 && user.get() == 1) {
+            return
+        }
+
+        throw Exception("delete count not match.")
     }
 
     fun searchPartner(pageable: Pageable, searchKeyword: List<SearchCriteria>? = null): Page<WellPartnerDTO> {
@@ -165,7 +170,7 @@ class WellPartnerService {
     }
 
     @Transactional(rollbackFor = [Exception::class])
-    fun updatePartner(partner: WellPartnerDTOUpdate, files: List<MultipartFile>): Boolean {
+    fun updatePartner(partner: WellPartnerDTOUpdate, files: List<MultipartFile>?): Boolean {
         try {
             val currentEntity = wellPartnerRepository.findByIdx(partner.Idx.toString().uppercase()).orElse(null) ?: return false
 
@@ -174,19 +179,30 @@ class WellPartnerService {
             )
 
             // 파일이 변경되었으면 삭제 후 새 파일 업로드.
-            for (file in files) {
-                var fileID: String? = wellFileStorageService.saveFile(TableIDList.PARTNER.TableID, currentEntity.idx, null, false, permissions, file)
-                    ?: throw Exception("파트너 업데이트에 실패하였습니다.")
+            if (files != null) {
+                for (file in files) {
+                    var fileID: String? = wellFileStorageService.saveFile(
+                        TableIDList.PARTNER.TableID,
+                        currentEntity.idx,
+                        null,
+                        false,
+                        permissions,
+                        file
+                    )
+                        ?: throw Exception("파트너 업데이트에 실패하였습니다.")
 
-                if (file.originalFilename == partner.Tax_Registration_DocumentFileName) {
-                    if (currentEntity.taxRegistrationDocFileIdx != null)   wellFileStorageService.deleteFile(currentEntity.taxRegistrationDocFileIdx!!)
-                    currentEntity.taxRegistrationDocFileIdx = fileID
-                }  else if (file.originalFilename == partner.Contract_DocumentFileName) {
-                    if (currentEntity.contractDocFileIdx != null) wellFileStorageService.deleteFile(currentEntity.contractDocFileIdx!!)
-                    currentEntity.contractDocFileIdx = fileID
-                }  else if (file.originalFilename == partner.CEO_IDCard_FileName) {
-                    if (currentEntity.ceoIDCardFileIdx != null)   wellFileStorageService.deleteFile(currentEntity.ceoIDCardFileIdx!!)
-                    currentEntity.ceoIDCardFileIdx = fileID
+                    if (file.originalFilename == partner.Tax_Registration_DocumentFileName) {
+                        if (currentEntity.taxRegistrationDocFileIdx != null) wellFileStorageService.deleteFile(
+                            currentEntity.taxRegistrationDocFileIdx!!
+                        )
+                        currentEntity.taxRegistrationDocFileIdx = fileID
+                    } else if (file.originalFilename == partner.Contract_DocumentFileName) {
+                        if (currentEntity.contractDocFileIdx != null) wellFileStorageService.deleteFile(currentEntity.contractDocFileIdx!!)
+                        currentEntity.contractDocFileIdx = fileID
+                    } else if (file.originalFilename == partner.CEO_IDCard_FileName) {
+                        if (currentEntity.ceoIDCardFileIdx != null) wellFileStorageService.deleteFile(currentEntity.ceoIDCardFileIdx!!)
+                        currentEntity.ceoIDCardFileIdx = fileID
+                    }
                 }
             }
 

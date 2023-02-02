@@ -178,7 +178,7 @@ data class WellMemberInfoEntity(
         this.file3Idx = dto.Member_File3_idx?.uppercase()
         this.file4Idx = dto.Member_File4_idx?.uppercase()
         this.file5Idx = dto.Member_File5_idx?.uppercase()
-        this.memo = dto.Memo
+        this.memo = dto.Memo.toString()
     }
 
     override fun equals(other: Any?): Boolean {

@@ -31,7 +31,12 @@ class WellUserService {
     fun existByUserID(userid: String): Boolean {
         return wellUserRepository.existsByUserID(userid)
     }
-
+/*
+    fun deleteUserById(idx: String): Optional<WellPartnerDTO> {
+        val partner = wellUserRepository.deleteByIdx(idx)
+        return partner.map { it.toDto() }
+    }
+*/
     @Transactional
     fun createUser(user: WellUserDTOCreate): String? {
         val uuidUser = UUID.randomUUID().toString().uppercase()

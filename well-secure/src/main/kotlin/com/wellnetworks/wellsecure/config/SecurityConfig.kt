@@ -64,7 +64,7 @@ class SecurityConfig(
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource = UrlBasedCorsConfigurationSource().also {
         cors -> CorsConfiguration().apply {
-            allowedOrigins = listOf("*")
+            allowedOrigins = listOf("*", "*/*")
             //allowedOrigins = listOf("http://welldev.iptime.org:8888")
             allowedMethods = listOf("POST", "PUT", "DELETE", "GET", "OPTIONS", "HEAD")
             allowedHeaders = listOf("*"/*

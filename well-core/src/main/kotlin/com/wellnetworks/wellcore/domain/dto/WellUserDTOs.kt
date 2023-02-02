@@ -1,8 +1,6 @@
 package com.wellnetworks.wellcore.domain.dto
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.*
 import com.wellnetworks.wellcore.domain.WellUserEntity
 import java.time.ZonedDateTime
 import java.util.*

@@ -4,6 +4,8 @@ import com.wellnetworks.wellcore.domain.WellMemberInfoEntity
 import com.wellnetworks.wellcore.domain.dto.WellMemberInfoDTO
 import com.wellnetworks.wellcore.domain.dto.WellMemberInfoDTOCreate
 import com.wellnetworks.wellcore.domain.dto.WellUserDTOCreate
+import com.wellnetworks.wellcore.domain.enums.EmploymentQuitType
+import com.wellnetworks.wellcore.domain.enums.TableIDList
 import com.wellnetworks.wellcore.repository.WellMemberInfoRepository
 import com.wellnetworks.wellcore.service.utils.SearchCriteria
 import com.wellnetworks.wellcore.service.utils.WellServiceUtil
@@ -57,14 +59,15 @@ class WellMemberInfoService {
 
             val createMember = WellMemberInfoEntity(
                 userIdx,
-                member.Table_ID, member.Current_Employment, member.Name, member.Email,
-                member.Phone_Private, member.Phone_Work, member.Registration_Number,
-                member.Department, member.Job_Position, member.Level,
-                member.Home_Address1, member.Home_Address2, member.Bank_Name, member.Bank_Account, member.Bank_Holder,
+                TableIDList.MEMBER.TableID, member.Current_Employment, member.Name, member.Email ?:"",
+                member.Phone_Private?:"", member.Phone_Work ?: "", member.Registration_Number ?:"",
+                member.Department, member.Job_Position, member.Level ?: 0,
+                member.Home_Address1 ?: "", member.Home_Address2 ?: "", member.Bank_Name ?: "",
+                member.Bank_Account ?: "", member.Bank_Holder ?: "",
                 member.Employment_State, member.Job_Type, member.Certification_Phone, member.Certification_Email,
-                member.Entry_Datetime, member.Employment_Quit_Datetime, member.Employment_Quit_Type,
+                member.Entry_Datetime, member.Employment_Quit_Datetime, member.Employment_Quit_Type ?: EmploymentQuitType.EMPLOYMENT_QUIT_TYPE_UNKNOWN,
                 member.Access, member.Member_File1_idx, member.Member_File2_idx, member.Member_File3_idx,
-                member.Member_File4_idx, member.Member_File5_idx, member.Memo
+                member.Member_File4_idx, member.Member_File5_idx, member.Memo ?:""
             )
 
             wellMemberInfoRepository.save(createMember)

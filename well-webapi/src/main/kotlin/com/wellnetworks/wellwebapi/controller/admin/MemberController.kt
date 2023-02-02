@@ -1,7 +1,11 @@
 package com.wellnetworks.wellwebapi.controller.admin
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.treeToValue
 import com.wellnetworks.wellcore.domain.dto.WellMemberInfoDTO
 import com.wellnetworks.wellcore.domain.dto.WellMemberInfoDTOCreate
@@ -71,10 +75,12 @@ class MemberController(private var memberInfoService: WellMemberInfoService) {
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
             " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
     fun createMember(@RequestPart("user") userJsonString: String,
-                     @RequestPart("member") memberJsonString: String,
-                     @RequestPart("file") files: List<MultipartFile>
+                     @RequestPart("member") memberJsonString: String
+                     //@RequestPart("file") files: List<MultipartFile>
     ): ResponseEntity<BaseRes> {
-        val mapper = ObjectMapper()
+        val mapper = jacksonObjectMapper();
+        mapper.registerModule(JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         try {
             // val user = mapper.treeToValue<WellUserDTOCreate>(objUserPartner.get("user"))

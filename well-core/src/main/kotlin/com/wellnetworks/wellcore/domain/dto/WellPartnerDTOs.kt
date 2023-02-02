@@ -66,118 +66,118 @@ enum class WellPartnerColumnsName(val columnsName: String) {
 data class WellPartnerDTO (
     @JsonProperty("idx")
     val Idx: String,
-    @JsonProperty("p")
+    @JsonProperty("pcode")
     val P_Code: String?,
-    @JsonProperty("tid")
+    @JsonProperty("table_id")
     val TableID: String,
 
-    @JsonProperty("cnam")
+    @JsonProperty("c_name")
     val Company_Name: String?,
-    @JsonProperty("ctyp")
+    @JsonProperty("c_type")
     val Company_Type: CompanyType,
-    @JsonProperty("ctyp_str")
+    @JsonProperty("c_type_string")
     val Company_Type_String: String?,
-    @JsonProperty("cgrp")
+    @JsonProperty("c_group")
     val Company_Group: Byte?,
-    @JsonProperty("cste")
+    @JsonProperty("c_state")
     val Company_State: CompanyStateType,
-    @JsonProperty("clvl")
+    @JsonProperty("c_level")
     val Company_Level: Byte?,
-    @JsonProperty("cad1")
+    @JsonProperty("c_addr1")
     val Company_Address1: String?,
-    @JsonProperty("cad2")
+    @JsonProperty("c_addr2")
     val Company_Address2: String?,
 
-    @JsonProperty("txrfn")
+    @JsonProperty("tax_file_name")
     val Tax_Registration_DocumentFileName: String?,
-    @JsonProperty("txrd")
+    @JsonProperty("tax_file_idx")
     val Tax_RegistrationDocumentFileIdx: String?,
-    @JsonProperty("txnm")
+    @JsonProperty("tax_number")
     val Tax_Number: String?,
-    @JsonProperty("txem")
+    @JsonProperty("tax_email")
     val Tax_Email: String?,
-    @JsonProperty("txa1")
+    @JsonProperty("t_addr1")
     val Tax_Address1: String?,
-    @JsonProperty("txa2")
+    @JsonProperty("t_addr2")
     val Tax_Address2: String?,
 
-    @JsonProperty("confn")
+    @JsonProperty("contract_file_name")
     val Contract_DocumentFileName: String?,
-    @JsonProperty("conrd")
+    @JsonProperty("contract_file_idx")
     val Contract_DocFileIdx: String?,
 
-    @JsonProperty("otel")
+    @JsonProperty("office_tel")
     val Office_Telephone: String?,
-    @JsonProperty("oeml")
+    @JsonProperty("office_email")
     val Office_Email: String?,
-    @JsonProperty("rat")
+    @JsonProperty("c_rate")
     val Rate: RateType,
 
-    @JsonProperty("ctps")
+    @JsonProperty("con_person")
     val Contact_Person : String?,
-    @JsonProperty("cttp")
+    @JsonProperty("con_type")
     val Contact_Type: ContactType,
-    @JsonProperty("ctph")
+    @JsonProperty("con_phone")
     val Contact_Phone: String?,
-    @JsonProperty("ctdt")
+    @JsonProperty("con_dt")
     val Contact_Datetime: ZonedDateTime?,
-    @JsonProperty("cta1")
+    @JsonProperty("con_addr1")
     val Contact_Address1: String?,
-    @JsonProperty("cta2")
+    @JsonProperty("con_addr2")
     val Contact_Address2: String?,
-    @JsonProperty("ctpg")
-    val Contact_Progress: ContactProgressType,
-    @JsonProperty("ctrj")
+    @JsonProperty("con_progress")
+    val Contact_Progress: ContactProgressType, //방문요청 진행도
+    @JsonProperty("con_reject")
     val Contact_Reject: ContactRejectType,
-    @JsonProperty("ctap")
+    @JsonProperty("con_approver") //검수자
     val Contact_Approver: String?,
-    @JsonProperty("ctrd")
+    @JsonProperty("con_reg_dt")
     val Contact_Register_Datetime: ZonedDateTime?,
-    @JsonProperty("ctmd")
+    @JsonProperty("con_mod_dt")
     val Contact_Modify_Datetime: ZonedDateTime?,
-    @JsonProperty("uapi")
+    @JsonProperty("use_api")
     val Use_API: Boolean,
 
-    @JsonProperty("orgp")
+    @JsonProperty("parent_idx")
     val Organization_Parent: String?,
-    @JsonProperty("orgc")
+    @JsonProperty("child_idx")
     val Organization_Child: String?,
 
-    @JsonProperty("ceoin")
+    @JsonProperty("idcard_file_name")
     val CEO_IDCard_FileName: String?,
-    @JsonProperty("ceoi")
+    @JsonProperty("idcard_file_idx")
     val CEO_IDCard_FileIdx: String?,
-    @JsonProperty("ceon")
+    @JsonProperty("ceo_name")
     val CEO_Name: String,
-    @JsonProperty("ceot")
+    @JsonProperty("ceo_tel")
     val CEO_Telephone: String,
 
-    @JsonProperty("crtp")
+    @JsonProperty("phone_cert")
     val Certification_Phone: Boolean,
-    @JsonProperty("crte")
+    @JsonProperty("email_cert")
     val Certification_Email: Boolean,
 
-    @JsonProperty("pcst")
+    @JsonProperty("prior_approval_number")
     val Prior_Consent: String?,
 
-    @JsonProperty("agtm")
+    @JsonProperty("agree_type")
     val Agree_Terms: AgreeType,
-    @JsonProperty("agtdt")
+    @JsonProperty("agree_reg_dt")
     val Agree_Terms_Datetime: ZonedDateTime,
-    @JsonProperty("agtmdt")
+    @JsonProperty("agree_mod_dt")
     val Agree_Terms_Modify_Datetime: ZonedDateTime?,
 
-    @JsonProperty("bnam")
+    @JsonProperty("bank_name")
     val Bank_Name: String?,
-    @JsonProperty("bacc")
+    @JsonProperty("bank_account")
     val Bank_Account: String?,
-    @JsonProperty("bhld")
+    @JsonProperty("bank_holder")
     val Bank_Holder: String?,
 
-    @JsonProperty("admm")
+    @JsonProperty("memo")
     val Admin_Memo: String?,
 
-    @JsonProperty("jpro")
+    @JsonProperty("join_progress")
     val Join_Progress: ContactProgressType,
 
     @JsonIgnore
@@ -201,107 +201,107 @@ data class WellPartnerDTO (
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class WellPartnerDTOCreate @JsonCreator constructor (
-    @JsonProperty("tid")
-    val TableID: String,
-    @JsonProperty("p")
+    @JsonProperty("table_id")
+    val TableID: String?,
+    @JsonProperty("pcode")
     val P_Code: String,
 
-    @JsonProperty("cnam")
-    val Company_Name: String?,
-    @JsonProperty("ctyp")
+    @JsonProperty("c_name")
+    val Company_Name: String,
+    @JsonProperty("c_type")
     val Company_Type: CompanyType,
-    @JsonProperty("cgrp")
+    @JsonProperty("c_group")
     val Company_Group: Byte?,
-    @JsonProperty("cste")
+    @JsonProperty("c_state")
     val Company_State: CompanyStateType,
-    @JsonProperty("clvl")
+    @JsonProperty("c_level")
     val Company_Level: Byte?,
-    @JsonProperty("cad1")
+    @JsonProperty("c_addr1")
     val Company_Address1: String?,
-    @JsonProperty("cad2")
+    @JsonProperty("c_addr2")
     val Company_Address2: String?,
 
-    @JsonProperty("txrfn")
+    @JsonProperty("tax_file_name")
     val Tax_Registration_DocumentFileName: String?,
-//    @JsonProperty("txrd")
+//    @JsonProperty("tax_file_idx")
 //    val Tax_Registration_DocumentFile: String?,
-    @JsonProperty("txnm")
+    @JsonProperty("tax_number")
     val Tax_Number: String?,
-    @JsonProperty("txem")
+    @JsonProperty("tax_email")
     val Tax_Email: String?,
-    @JsonProperty("txa1")
+    @JsonProperty("t_addr1")
     val Tax_Address1: String?,
-    @JsonProperty("txa2")
+    @JsonProperty("t_addr2")
     val Tax_Address2: String?,
 
-    @JsonProperty("otel")
+    @JsonProperty("office_tel")
     val Office_Telephone: String?,
-    @JsonProperty("oeml")
+    @JsonProperty("office_email")
     val Office_Email: String?,
-    @JsonProperty("rat")
+    @JsonProperty("rate")
     val Rate: RateType,
 
-    @JsonProperty("ctps")
+    @JsonProperty("con_person")
     val Contact_Person : String?,
-    @JsonProperty("cttp")
+    @JsonProperty("con_type")
     val Contact_Type: ContactType,
-    @JsonProperty("ctph")
+    @JsonProperty("con_phone")
     val Contact_Phone: String?,
-    @JsonProperty("ctdt")
+    @JsonProperty("con_dt")
     val Contact_Datetime: ZonedDateTime?,
-    @JsonProperty("cta1")
+    @JsonProperty("con_addr1")
     val Contact_Address1: String?,
-    @JsonProperty("cta2")
+    @JsonProperty("con_addr2")
     val Contact_Address2: String?,
-    @JsonProperty("ctpg")
+    @JsonProperty("con_progress")
     val Contact_Progress: ContactProgressType,
-    @JsonProperty("ctrj")
+    @JsonProperty("con_reject")
     val Contact_Reject: ContactRejectType,
-    @JsonProperty("ctap")
+    @JsonProperty("con_approver")
     val Contact_Approver: String?,
-    @JsonProperty("ctrd")
+    @JsonProperty("con_reg_dt")
     val Contact_Register_Datetime: ZonedDateTime?,
-    @JsonProperty("ctmd")
+    @JsonProperty("con_mod_dt")
     val Contact_Modify_Datetime: ZonedDateTime?,
-    @JsonProperty("uapi")
+    @JsonProperty("use_api")
     val Use_API: Boolean,
 
-    @JsonProperty("orgp")
+    @JsonProperty("parent_idx")
     val Organization_Parent: String?,
-    @JsonProperty("orgc")
+    @JsonProperty("child_idx")
     val Organization_Child: String?,
 
-    @JsonProperty("ceoin")
+    @JsonProperty("idcard_file_name")
     val CEO_IDCard_FileName: String?,
-//    @JsonProperty("ceoi")
+//    @JsonProperty("idcard_file_idx")
 //    val CEO_IDCard_File: String?,
-    @JsonProperty("ceon")
+    @JsonProperty("ceo_name")
     val CEO_Name: String,
-    @JsonProperty("ceot")
+    @JsonProperty("ceo_tel")
     val CEO_Telephone: String,
 
-    @JsonProperty("crtp")
+    @JsonProperty("phone_cert")
     val Certification_Phone: Boolean,
-    @JsonProperty("crte")
+    @JsonProperty("email_cert")
     val Certification_Email: Boolean,
 
-    @JsonProperty("pcst")
+    @JsonProperty("prior_approval_number")
     val Prior_Consent: String?,
 
-    @JsonProperty("agtm")
+    @JsonProperty("agree_type")
     val Agree_Terms: AgreeType,
 
-    @JsonProperty("bnam")
+    @JsonProperty("bank_name")
     val Bank_Name: String?,
-    @JsonProperty("bacc")
+    @JsonProperty("bank_account")
     val Bank_Account: String?,
-    @JsonProperty("bhld")
+    @JsonProperty("bank_holder")
     val Bank_Holder: String?,
 
-    @JsonProperty("admm")
+    @JsonProperty("memo")
     val Admin_Memo: String?,
 
-    @JsonProperty("jpro")
+    @JsonProperty("join_progress")
     val Join_Progress: ContactProgressType,
 
     @JsonIgnore
@@ -333,8 +333,8 @@ data class WellPartnerDTOSignup (
     //val CEO_IDCard_File: UUID,
     @JsonProperty("con_type")
     val Contact_Type: ContactType,
-    @JsonProperty("con_progress")
-    val Join_Progress: ContactProgressType,
+    @JsonProperty("join_progress")
+    val Join_Progress: ContactProgressType, //회원가입진행도
     @JsonProperty("agree_type")
     val Agree_Terms: AgreeType,
     @JsonIgnore
@@ -392,15 +392,15 @@ data class WellPartnerDTOUpdate @JsonCreator constructor (
     val Tax_Number: String?,
     @JsonProperty("tax_email")
     val Tax_Email: String?,
-    @JsonProperty("Prior_approval_number")
+    @JsonProperty("prior_approval_number")
     val Prior_Consent: String?,
-    @JsonProperty("tax_addr1")
+    @JsonProperty("t_addr1")
     val Tax_Address1: String?,
-    @JsonProperty("tax_addr2")
+    @JsonProperty("t_addr2")
     val Tax_Address2: String?,
-    @JsonProperty("com_addr1")
+    @JsonProperty("c_addr1")
     val Company_Address1: String?,
-    @JsonProperty("com_addr2")
+    @JsonProperty("c_addr2")
     val Company_Address2: String?,
     @JsonProperty("agree_type")
     val Agree_Terms: AgreeType?,

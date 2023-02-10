@@ -7,7 +7,7 @@ import javax.persistence.Converter
 @Converter
 class ContactRejectTypeToIndexConverter : AttributeConverter<ContactRejectType, Byte> {
     override fun convertToDatabaseColumn(attribute: ContactRejectType?): Byte {
-        if (attribute == null) return -1
+        if (attribute == null) return 0
 
         return attribute.index().toByte()
     }

@@ -7,7 +7,7 @@ import javax.persistence.Converter
 @Converter
 class EmploymentQuitTypeToIndexConverter : AttributeConverter<EmploymentQuitType, Byte> {
     override fun convertToDatabaseColumn(attribute: EmploymentQuitType?): Byte {
-        if (attribute == null) return -1
+        if (attribute == null) return 0
 
         return attribute.index().toByte()
     }

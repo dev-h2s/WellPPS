@@ -7,7 +7,7 @@ import javax.persistence.Converter
 @Converter
 class CompanyStateTypeToIndexConverter : AttributeConverter<CompanyStateType, Byte> {
     override fun convertToDatabaseColumn(attribute: CompanyStateType?): Byte {
-        if (attribute == null) return -1
+        if (attribute == null) return 0
 
         return attribute.index().toByte()
     }

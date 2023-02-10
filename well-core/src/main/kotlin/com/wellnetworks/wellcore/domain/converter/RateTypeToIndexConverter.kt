@@ -7,7 +7,7 @@ import javax.persistence.Converter
 @Converter
 class RateTypeToIndexConverter : AttributeConverter<RateType, Byte> {
     override fun convertToDatabaseColumn(attribute: RateType?): Byte {
-        if (attribute == null) return -1
+        if (attribute == null) return 0
 
         return attribute.index().toByte()
     }

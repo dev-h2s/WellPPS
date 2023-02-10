@@ -66,7 +66,10 @@ class MemberController(private var memberInfoService: WellMemberInfoService) {
 
         val memberList = memberInfoService.searchMember(pageable, searchKeywords)
 
-        return ResponseEntity.ok(BaseListRes<WellMemberInfoDTO>(HttpStatus.OK, "",
+        //return ResponseEntity.ok(BaseListRes<WellMemberInfoDTO>(HttpStatus.OK, "",
+        //    memberList.content, memberList.number, memberList.totalElements, memberList.totalPages))
+
+        return ResponseEntity.ok(BaseListRes(HttpStatus.OK, "",
             memberList.content, memberList.number, memberList.totalElements, memberList.totalPages))
     }
 

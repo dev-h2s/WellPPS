@@ -10,16 +10,16 @@ enum class EmploymentQuitType : IEmploymentQuitType {
     EMPLOYMENT_QUIT_TYPE_UNKNOWN {
         override fun index() = 0
         override val key: String
-            get() = ""
+            get() = "EMPLOYMENT_QUIT_TYPE_UNKNOWN"
 
         override fun toString(): String {
-            return ""
+            return "알수없음"
         }
     },
     EMPLOYMENT_QUIT_TYPE_VOLUNTARY_TERMINATION {
         override fun index() = 1
         override val key: String
-            get() = ""
+            get() = "EMPLOYMENT_QUIT_TYPE_VOLUNTARY_TERMINATION"
 
         override fun toString(): String {
             return "자진퇴사"
@@ -37,7 +37,7 @@ enum class EmploymentQuitType : IEmploymentQuitType {
     EMPLOYMENT_QUIT_TYPE_CONTRACT_EXPIRATION {
         override fun index() = 3
         override val key: String
-            get() = ""
+            get() = "EMPLOYMENT_QUIT_TYPE_CONTRACT_EXPIRATION"
 
         override fun toString(): String {
             return "계약만료"
@@ -46,7 +46,7 @@ enum class EmploymentQuitType : IEmploymentQuitType {
     EMPLOYMENT_QUIT_TYPE_ADVICE_TO_RESIGN {
         override fun index() = 4
         override val key: String
-        get() = ""
+        get() = "EMPLOYMENT_QUIT_TYPE_ADVICE_TO_RESIGN"
 
         override fun toString(): String {
             return "권고사직"
@@ -55,7 +55,7 @@ enum class EmploymentQuitType : IEmploymentQuitType {
     EMPLOYMENT_QUIT_TYPE_RETIREMENT {
         override fun index() = 5
         override val key: String
-            get() = ""
+            get() = "EMPLOYMENT_QUIT_TYPE_RETIREMENT"
 
         override fun toString(): String {
             return "은퇴"

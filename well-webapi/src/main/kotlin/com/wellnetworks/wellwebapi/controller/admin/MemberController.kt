@@ -121,13 +121,30 @@ class MemberController(private var memberInfoService: WellMemberInfoService) {
         }
 
         return ResponseEntity.ok(BaseRes(HttpStatus.OK, "업데이트 성공"))
-        /*
-        if (!partnerService.updatePartner(partner, files))
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(BaseRes(HttpStatus.INTERNAL_SERVER_ERROR, "업데이트 실패"))
 
-        return ResponseEntity.ok(BaseRes(HttpStatus.OK, "업데이트 성공"))
-         */
 
+    }
+
+    @DeleteMapping("member/{id}")
+    @PreAuthorize("isAuthenticated() and" +
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
+    fun deletePartner(@PathVariable id: String) : ResponseEntity<BaseRes> {
+        val uuidIdx: String
+
+        try{
+            uuidIdx = UUID.fromString(id).toString()
+        }catch (e: java.lang.Exception){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseRes(HttpStatus.BAD_REQUEST, "문서 번호가 잘못되었습니다."))
+        }
+
+        try {
+            memberInfoService.deleteMemberById(uuidIdx)
+        } catch (e: Exception) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(BaseRes(HttpStatus.NOT_FOUND, "$id 데이터를 찾을 수 없습니다."))
+        }
+
+        return ResponseEntity.ok(BaseRes(HttpStatus.OK, "delete ok"))
     }
 }

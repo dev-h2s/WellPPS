@@ -6,6 +6,7 @@ import com.wellnetworks.wellcore.domain.enums.EmploymentQuitType
 import com.wellnetworks.wellcore.domain.enums.PermissionList
 import com.wellnetworks.wellcore.domain.enums.TableIDList
 import com.wellnetworks.wellcore.repository.WellMemberInfoRepository
+import com.wellnetworks.wellcore.repository.WellUserRepository
 import com.wellnetworks.wellcore.service.utils.SearchCriteria
 import com.wellnetworks.wellcore.service.utils.WellServiceUtil
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,6 +32,8 @@ class WellMemberInfoService {
     @Autowired
     private lateinit var wellFileStorageService: WellFileStorageService
 
+    @Autowired
+    private lateinit var wellUserRepository: WellUserRepository
     fun getMemberByIdx(idx: String): Optional<WellMemberInfoDTO> {
         val member = wellMemberInfoRepository.findByIdx(idx.uppercase())
         return member.map { it.toDto() }
@@ -127,5 +130,17 @@ class WellMemberInfoService {
         }
 
         return true
+    }
+
+    @Transactional(rollbackFor = [Exception::class])
+    fun deleteMemberById(idx: String) {
+        val member = wellMemberInfoRepository.deleteByIdx(idx)
+        var user = wellUserRepository.deleteByIdx(idx)
+
+        if (member.get() == 1 && user.get() == 1) {
+            return
+        }
+
+        throw Exception("delete count not match.")
     }
 }

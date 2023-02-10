@@ -12,5 +12,6 @@ interface WellMemberInfoRepository: CrudRepository<WellMemberInfoEntity, String>
     fun findByIdx(idx: String): Optional<WellMemberInfoEntity>
     fun findAll(pageable: Pageable): Page<WellMemberInfoEntity>
     fun findByName(name: String) : Optional<WellMemberInfoEntity>
+    fun deleteByIdx(idx: String): Optional<Int>
 
 }

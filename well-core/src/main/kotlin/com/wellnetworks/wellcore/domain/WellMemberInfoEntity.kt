@@ -79,11 +79,11 @@ data class WellMemberInfoEntity(
     @Column(name = "email_cert", columnDefinition = "bit")
     var certificationEmail: Boolean,
 
-    @Column(name = "entry_dt")
-    var entryDatetime: ZonedDateTime,
+    @Column(name = "entry_dt", nullable = true)
+    var entryDatetime: ZonedDateTime?,
 
-    @Column(name = "retire_dt")
-    var employmentQuitDatetime: ZonedDateTime,
+    @Column(name = "retire_dt", nullable = true)
+    var employmentQuitDatetime: ZonedDateTime?,
 
     @Column(name = "retire_type")
     @Convert(converter = EmploymentQuitTypeToIndexConverter::class)

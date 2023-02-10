@@ -55,9 +55,9 @@ data class WellMemberInfoDTO(
     @JsonProperty("email_cert")
     val Certification_Email: Boolean,
     @JsonProperty("entry_dt")
-    val Entry_Datetime: ZonedDateTime,
+    val Entry_Datetime: ZonedDateTime?,
     @JsonProperty("quit_dt")
-    val Employment_Quit_Datetime: ZonedDateTime,
+    val Employment_Quit_Datetime: ZonedDateTime?,
     @JsonProperty("quti_type")
     val Employment_Quit_Type: EmploymentQuitType,
     @JsonProperty("access")
@@ -98,7 +98,7 @@ data class WellMemberInfoDTO(
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class WellMemberInfoDTOCreate(
-    @JsonProperty("tid")
+    @JsonProperty("table_id")
     val Table_ID: String?,
     @JsonProperty("emp_current")
     val Current_Employment: CurrentEmploymentType, //소속회사
@@ -107,7 +107,7 @@ data class WellMemberInfoDTOCreate(
     @JsonProperty("mail")
     val Email: String?,
     @JsonProperty("phone_pri")
-    val Phone_Private: String?,
+    val Phone_Private: String,
     @JsonProperty("phone_work")
     val Phone_Work: String?,
     @JsonProperty("jumin")
@@ -134,13 +134,13 @@ data class WellMemberInfoDTOCreate(
     val Job_Type: JobType, //고용형태
     @JsonProperty("phone_cert")
     val Certification_Phone: Boolean,
-    @JsonProperty("phone_cert")
+    @JsonProperty("email_cert")
     val Certification_Email: Boolean,
     @JsonProperty("entry_dt")
-    val Entry_Datetime: ZonedDateTime,
+    val Entry_Datetime: ZonedDateTime?,
     @JsonProperty("quit_dt")
-    val Employment_Quit_Datetime: ZonedDateTime,
-    @JsonProperty("quti_type")
+    val Employment_Quit_Datetime: ZonedDateTime?,
+    @JsonProperty("quit_type")
     val Employment_Quit_Type: EmploymentQuitType?,
     @JsonProperty("access")
     val Access: Boolean,

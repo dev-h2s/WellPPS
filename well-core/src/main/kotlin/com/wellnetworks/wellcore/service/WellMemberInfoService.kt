@@ -58,14 +58,14 @@ class WellMemberInfoService {
             val userIdx: String = wellUserService.createUser(user) ?: throw Exception("사용자 데이터 생성에 실패하였습니다.")
 
             val createMember = WellMemberInfoEntity(
-                userIdx,
-                TableIDList.MEMBER.TableID, member.Current_Employment, member.Name, member.Email ?:"",
+                userIdx, TableIDList.MEMBER.TableID, member.Current_Employment, member.Name, member.Email ?:"",
                 member.Phone_Private?:"", member.Phone_Work ?: "", member.Registration_Number ?:"",
                 member.Department, member.Job_Position, member.Level ?: 0,
                 member.Home_Address1 ?: "", member.Home_Address2 ?: "", member.Bank_Name ?: "",
                 member.Bank_Account ?: "", member.Bank_Holder ?: "",
                 member.Employment_State, member.Job_Type, member.Certification_Phone, member.Certification_Email,
-                member.Entry_Datetime, member.Employment_Quit_Datetime, member.Employment_Quit_Type ?: EmploymentQuitType.EMPLOYMENT_QUIT_TYPE_UNKNOWN,
+                null, null,
+                member.Employment_Quit_Type ?: EmploymentQuitType.EMPLOYMENT_QUIT_TYPE_UNKNOWN,
                 member.Access, member.Member_File1_idx, member.Member_File2_idx, member.Member_File3_idx,
                 member.Member_File4_idx, member.Member_File5_idx, member.Memo ?:""
             )

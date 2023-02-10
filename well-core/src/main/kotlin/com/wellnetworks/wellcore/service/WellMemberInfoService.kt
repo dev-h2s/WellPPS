@@ -1,10 +1,9 @@
 package com.wellnetworks.wellcore.service
 
 import com.wellnetworks.wellcore.domain.WellMemberInfoEntity
-import com.wellnetworks.wellcore.domain.dto.WellMemberInfoDTO
-import com.wellnetworks.wellcore.domain.dto.WellMemberInfoDTOCreate
-import com.wellnetworks.wellcore.domain.dto.WellUserDTOCreate
+import com.wellnetworks.wellcore.domain.dto.*
 import com.wellnetworks.wellcore.domain.enums.EmploymentQuitType
+import com.wellnetworks.wellcore.domain.enums.PermissionList
 import com.wellnetworks.wellcore.domain.enums.TableIDList
 import com.wellnetworks.wellcore.repository.WellMemberInfoRepository
 import com.wellnetworks.wellcore.service.utils.SearchCriteria
@@ -79,11 +78,46 @@ class WellMemberInfoService {
     }
 
     @Transactional(rollbackFor = [Exception::class])
-    fun updateMember(member: WellMemberInfoDTO): Boolean {
+    fun updateMember(member: WellMemberDTOUpdate, files: List<MultipartFile>?): Boolean {
         try {
-            val currentEntity = wellMemberInfoRepository.findByIdx(member.Idx).orElse(null) ?: return false
+            val currentEntity = wellMemberInfoRepository.findByIdx(member.Idx.uppercase()).orElse(null) ?: return false
 
-            currentEntity.fromDto(member)
+            val permissions: List<String> = listOf (
+                PermissionList.PERMISSION_MEMBER_SCREENING.PermitssionKey,
+            )
+
+            // 파일이 변경되었으면 삭제 후 새 파일 업로드.
+            if (files != null) {
+                for (file in files) {
+                    var fileID: String? = wellFileStorageService.saveFile(
+                        TableIDList.MEMBER.TableID,
+                        currentEntity.idx,
+                        null,
+                        false,
+                        permissions,
+                        file
+                    )
+                        ?: throw Exception("파트너 업데이트에 실패하였습니다.")
+
+                    if (file.originalFilename == member.Member_File1_idx) {
+                        if (currentEntity.file1Idx != null) wellFileStorageService.deleteFile(currentEntity.file1Idx!!)
+                        currentEntity.file1Idx = fileID
+                        } else if (file.originalFilename == member.Member_File2_idx) {
+                            if (currentEntity.file2Idx != null) wellFileStorageService.deleteFile(currentEntity.file2Idx!!)
+                            currentEntity.file2Idx = fileID
+                        } else if (file.originalFilename == member.Member_File3_idx) {
+                            if (currentEntity.file3Idx != null) wellFileStorageService.deleteFile(currentEntity.file3Idx!!)
+                            currentEntity.file3Idx = fileID
+                        }else if (file.originalFilename == member.Member_File4_idx) {
+                        if (currentEntity.file4Idx != null) wellFileStorageService.deleteFile(currentEntity.file4Idx!!)
+                            currentEntity.file4Idx = fileID
+                        }else if (file.originalFilename == member.Member_File5_idx) {
+                            if (currentEntity.file5Idx != null) wellFileStorageService.deleteFile(currentEntity.file5Idx!!)
+                            currentEntity.file5Idx = fileID
+                        }
+                }
+            }
+            currentEntity.updateDto(member)
             currentEntity.modifyDatetime = ZonedDateTime.now()
 
             wellMemberInfoRepository.save(currentEntity)

@@ -1,9 +1,6 @@
 package com.wellnetworks.wellcore.domain.dto
 
-import com.fasterxml.jackson.annotation.JsonFormat
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.*
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer
 import com.wellnetworks.wellcore.domain.enums.*
@@ -158,6 +155,76 @@ data class WellMemberInfoDTOCreate(
 
     @JsonProperty("memo")
     val Memo: String?,
+    @JsonIgnore
+    override val Modify_Datetime: ZonedDateTime?,
+    @JsonIgnore
+    override val Register_Datetime: ZonedDateTime?,
+): BaseDTO(Modify_Datetime, Register_Datetime)
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+data class WellMemberDTOUpdate @JsonCreator constructor (
+    @JsonProperty("idx")
+    val Idx: String,
+    @JsonProperty("emp_current")
+    val Current_Employment: CurrentEmploymentType?,
+    @JsonProperty("name")
+    val Name: String?,
+    @JsonProperty("mail")
+    val Email: String?,
+    @JsonProperty("phone_pri")
+    val Phone_Private: String?,
+    @JsonProperty("phone_work")
+    val Phone_Work: String?,
+    @JsonProperty("jumin")
+    val Registration_Number: String?,
+    @JsonProperty("home_addr1")
+    val Home_Address1: String?,
+    @JsonProperty("home_addr2")
+    val Home_Address2: String?,
+    @JsonProperty("bank_name")
+    val Bank_Name: String?,
+    @JsonProperty("bank_account")
+    val Bank_Account: String?,
+    @JsonProperty("bank_holder")
+    val Bank_Holder: String?,
+    @JsonProperty("dep")
+    val Department: DepartmentType?,
+    @JsonProperty("pos")
+    val Job_Position: JobPositionType?,
+    @JsonProperty("level")
+    val Level: Byte?,
+    @JsonProperty("emp_state")
+    val Employment_State: EmploymentStateType?,
+    @JsonProperty("emp_type")
+    val Job_Type: JobType?,
+    @JsonProperty("phone_cert")
+    val Certification_Phone: Boolean?,
+    @JsonProperty("email_cert")
+    val Certification_Email: Boolean?,
+    @JsonProperty("entry_dt")
+    val Entry_Datetime: ZonedDateTime?,
+    @JsonProperty("quit_dt")
+    val Employment_Quit_Datetime: ZonedDateTime?,
+    @JsonProperty("quit_type")
+    val Employment_Quit_Type: EmploymentQuitType?,
+    @JsonProperty("access")
+    val Access: Boolean?,
+
+    @JsonProperty("file1")
+    val Member_File1_idx: String?,
+    @JsonProperty("file2")
+    val Member_File2_idx: String?,
+    @JsonProperty("file3")
+    val Member_File3_idx: String?,
+    @JsonProperty("file4")
+    val Member_File4_idx: String?,
+    @JsonProperty("file5")
+    val Member_File5_idx: String?,
+
+    @JsonProperty("memo")
+    val Memo: String?,
+
     @JsonIgnore
     override val Modify_Datetime: ZonedDateTime?,
     @JsonIgnore

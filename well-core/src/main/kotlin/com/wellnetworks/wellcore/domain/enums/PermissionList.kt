@@ -10,4 +10,5 @@ enum class PermissionList(val PermitssionKey: String) {
     PERMISSION_SINGUP_SCREENING("ROLE_SINGUP_SCREENING"), // 회원가입 심사
     PERMISSION_PASSWORD_CHANGE("ROLE_PWD_CHG"), // 패스워드 변경 필요
     PERMISSION_USE_TEMPORARY_PASSWORD("ROLE_TMP_PWD"), // 임시 패스워드 발급 상태
+    PERMISSION_MEMBER_SCREENING("ROLE_MEMBER_SCREENING"), // 사원관리 수정 권한
 }

@@ -7,9 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.treeToValue
-import com.wellnetworks.wellcore.domain.dto.WellMemberInfoDTO
-import com.wellnetworks.wellcore.domain.dto.WellMemberInfoDTOCreate
-import com.wellnetworks.wellcore.domain.dto.WellUserDTOCreate
+import com.wellnetworks.wellcore.domain.dto.*
 import com.wellnetworks.wellcore.service.utils.SearchCriteria
 import com.wellnetworks.wellcore.service.WellMemberInfoService
 import com.wellnetworks.wellwebapi.response.BaseItemRes
@@ -105,11 +103,31 @@ class MemberController(private var memberInfoService: WellMemberInfoService) {
     @PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
             " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
-    fun updateMember(@RequestBody member: WellMemberInfoDTO): ResponseEntity<BaseRes> {
-        if (!memberInfoService.updateMember(member))
+
+    //(@PathVariable id: String): ResponseEntity<BaseItemRes<WellPartnerDTO>> {
+    //fun updatePartner(@RequestPart("partner") partner: String, @RequestPart("file") files: List<MultipartFile>): ResponseEntity<BaseRes> {
+    fun updateMember(@RequestPart("member") member: String, @RequestPart("file", required = false) files: List<MultipartFile>?): ResponseEntity<BaseRes> {
+
+        val mapper = jacksonObjectMapper()
+
+        try {
+            val member = mapper.readValue(member, WellMemberDTOUpdate::class.java)
+
+            if (!memberInfoService.updateMember(member, files))
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(BaseRes(HttpStatus.INTERNAL_SERVER_ERROR, "업데이트 실패"))
+
+        } catch (e: Exception) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseRes(HttpStatus.BAD_REQUEST, e.message ?: "잘못된 요청입니다."))
+        }
+
+        return ResponseEntity.ok(BaseRes(HttpStatus.OK, "업데이트 성공"))
+        /*
+        if (!partnerService.updatePartner(partner, files))
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(BaseRes(HttpStatus.INTERNAL_SERVER_ERROR, "업데이트 실패"))
 
         return ResponseEntity.ok(BaseRes(HttpStatus.OK, "업데이트 성공"))
+         */
+
     }
 }

@@ -1,7 +1,9 @@
 package com.wellnetworks.wellcore.domain
 
 import com.wellnetworks.wellcore.domain.converter.*
+import com.wellnetworks.wellcore.domain.dto.WellMemberDTOUpdate
 import com.wellnetworks.wellcore.domain.dto.WellMemberInfoDTO
+import com.wellnetworks.wellcore.domain.dto.WellPartnerDTOUpdate
 import com.wellnetworks.wellcore.domain.enums.*
 import org.hibernate.Hibernate
 import java.time.ZonedDateTime
@@ -195,6 +197,37 @@ data class WellMemberInfoEntity(
 
     override fun toString(): String {
         return name;
+    }
+
+    fun updateDto (dto: WellMemberDTOUpdate) {
+        if (dto.Name != null) this.name = dto.Name
+        if (dto.Current_Employment != null) this.currentEmployment = dto.Current_Employment //소속회사
+        if (dto.Department != null) this.department = dto.Department
+        if (dto.Job_Position != null) this.jobPosition = dto.Job_Position // 직책
+        if (dto.Employment_State != null) this.employmentState = dto.Employment_State //재직상태 : 재직, 퇴사
+        if (dto.Job_Type != null) this.jobType = dto.Job_Type //고용형태 : 정규직
+        if (dto.Entry_Datetime != null) this.entryDatetime = dto.Entry_Datetime //입사일자
+        if (dto.Employment_Quit_Datetime != null) this.employmentQuitDatetime = dto.Employment_Quit_Datetime //퇴사일자
+        if (dto.Employment_Quit_Type != null) this.employmentQuitType = dto.Employment_Quit_Type //퇴사사유
+        if (dto.Registration_Number != null) this.registrationNumber = dto.Registration_Number //주민등록번호
+        if (dto.Phone_Private != null) this.phonePrivate = dto.Phone_Private
+        if (dto.Certification_Phone != null) this.certificationPhone = dto.Certification_Phone
+        if (dto.Certification_Email != null) this.certificationEmail = dto.Certification_Email
+        if (dto.Phone_Work != null) this.phoneWork = dto.Phone_Work
+        if (dto.Email != null) this.email = dto.Email
+        if (dto.Bank_Account != null) this.bankAccount = dto.Bank_Account
+        if (dto.Bank_Holder != null) this.bankHolder = dto.Bank_Holder
+        if (dto.Bank_Name != null) this.bankName = dto.Bank_Name
+        if (dto.Home_Address1 != null) this.homeAddress1 = dto.Home_Address1
+        if (dto.Home_Address2 != null) this.homeAddress2 = dto.Home_Address2
+        if (dto.Access != null) this.access = dto.Access
+        if (dto.Level != null) this.level = dto.Level
+        if (dto.Member_File1_idx != null) this.file1Idx = dto.Member_File1_idx
+        if (dto.Member_File2_idx != null) this.file2Idx = dto.Member_File2_idx
+        if (dto.Member_File3_idx != null) this.file3Idx = dto.Member_File3_idx
+        if (dto.Member_File4_idx != null) this.file4Idx = dto.Member_File4_idx
+        if (dto.Member_File5_idx != null) this.file5Idx = dto.Member_File5_idx
+        if (dto.Memo != null) this.memo = dto.Memo
     }
 
 }

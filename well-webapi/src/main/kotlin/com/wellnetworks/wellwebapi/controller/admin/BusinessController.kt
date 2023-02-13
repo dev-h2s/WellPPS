@@ -16,10 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
+import java.time.*
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -77,12 +74,12 @@ class BusinessController(private var partnerService: WellPartnerService) {
         val dtFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
 
         if (!startDate.isNullOrEmpty()) {
-            val startDateParse = LocalDate.parse(startDate, dtFormatter).atStartOfDay(ZoneId.systemDefault());
-            searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Register_Datetime.columnsName, ">", startDateParse.toInstant()))
+            val startDateParse = LocalDate.parse("$startDate", dtFormatter).atStartOfDay(ZoneId.systemDefault())
+            searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Register_Datetime.columnsName, ">", ZonedDateTime.ofInstant(startDateParse.toInstant(), ZoneOffset.UTC)))
         }
         if (!endDate.isNullOrEmpty()) {
             val endDateParse = LocalDate.parse(endDate, dtFormatter).atStartOfDay(ZoneId.systemDefault());
-            searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Register_Datetime.columnsName, "<", endDateParse.toInstant()))
+            searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Register_Datetime.columnsName, "<", ZonedDateTime.ofInstant(endDateParse.toInstant(), ZoneOffset.UTC)))
         }
         if (!pCode.isNullOrEmpty()) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.P_Code.columnsName, "=", pCode))
         if (!partnerName.isNullOrEmpty()) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Company_Name.columnsName, "%", partnerName))

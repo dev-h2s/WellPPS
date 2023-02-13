@@ -1,6 +1,7 @@
 package com.wellnetworks.wellcore.service.utils
 
 import org.springframework.data.jpa.domain.Specification
+import java.time.ZonedDateTime
 import javax.persistence.criteria.Predicate
 
 class WellServiceUtil {
@@ -16,17 +17,33 @@ class WellServiceUtil {
                             )
                         )
                     } else if (keyword.Operation.equals(">", true)) {
-                        predicates.add(
-                            criteriaBuilder.greaterThanOrEqualTo(
-                                root.get(keyword.Key), keyword.value.toString()
+                        if (keyword.value is ZonedDateTime) {
+                            predicates.add(
+                                criteriaBuilder.greaterThanOrEqualTo(
+                                    root.get(keyword.Key), (keyword.value as ZonedDateTime)
+                                )
                             )
-                        )
+                        } else {
+                            predicates.add(
+                                criteriaBuilder.greaterThanOrEqualTo(
+                                    root.get(keyword.Key), keyword.value.toString()
+                                )
+                            )
+                        }
                     } else if (keyword.Operation.equals("<", true)) {
-                        predicates.add(
-                            criteriaBuilder.lessThanOrEqualTo(
-                                root.get(keyword.Key), keyword.value.toString()
+                        if (keyword.value is ZonedDateTime) {
+                            predicates.add(
+                                criteriaBuilder.greaterThanOrEqualTo(
+                                    root.get(keyword.Key), (keyword.value as ZonedDateTime)
+                                )
                             )
-                        )
+                        } else {
+                            predicates.add(
+                                criteriaBuilder.lessThanOrEqualTo(
+                                    root.get(keyword.Key), keyword.value.toString()
+                                )
+                            )
+                        }
                     } else if (keyword.Operation.equals("%", true)) {
                         predicates.add(
                             criteriaBuilder.like(

@@ -33,7 +33,7 @@ class WellServiceUtil {
                     } else if (keyword.Operation.equals("<", true)) {
                         if (keyword.value is ZonedDateTime) {
                             predicates.add(
-                                criteriaBuilder.greaterThanOrEqualTo(
+                                criteriaBuilder.lessThanOrEqualTo(
                                     root.get(keyword.Key), (keyword.value as ZonedDateTime)
                                 )
                             )

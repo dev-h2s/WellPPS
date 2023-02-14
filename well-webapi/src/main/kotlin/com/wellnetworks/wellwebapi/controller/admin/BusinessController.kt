@@ -1,5 +1,6 @@
 package com.wellnetworks.wellwebapi.controller.admin
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.wellnetworks.wellcore.domain.dto.*
 import com.wellnetworks.wellcore.service.utils.SearchCriteria
@@ -71,15 +72,29 @@ class BusinessController(private var partnerService: WellPartnerService) {
         val searchKeywords: MutableList<SearchCriteria> = mutableListOf()
 
         val pageable: Pageable = PageRequest.of(page, size)
-        val dtFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
+        val dtStartFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
+        val dtEndFormatter = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss.SSSSSSS")
 
         if (!startDate.isNullOrEmpty()) {
-            val startDateParse = LocalDate.parse("$startDate", dtFormatter).atStartOfDay(ZoneId.systemDefault())
-            searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Register_Datetime.columnsName, ">", ZonedDateTime.ofInstant(startDateParse.toInstant(), ZoneOffset.UTC)))
+            val startDateParse = LocalDate.parse(startDate, dtStartFormatter).atStartOfDay(ZoneId.systemDefault())
+            searchKeywords.add(
+                SearchCriteria(
+                    WellPartnerColumnsName.Register_Datetime.columnsName,
+                    ">",
+                    ZonedDateTime.ofInstant(startDateParse.toInstant(), ZoneOffset.UTC)
+                )
+            )
         }
         if (!endDate.isNullOrEmpty()) {
-            val endDateParse = LocalDate.parse(endDate, dtFormatter).atStartOfDay(ZoneId.systemDefault());
-            searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Register_Datetime.columnsName, "<", ZonedDateTime.ofInstant(endDateParse.toInstant(), ZoneOffset.UTC)))
+            val endDateParse =
+                LocalDateTime.parse("$endDate 23:59:59.9999999", dtEndFormatter).atZone(ZoneId.systemDefault());
+            searchKeywords.add(
+                SearchCriteria(
+                    WellPartnerColumnsName.Register_Datetime.columnsName,
+                    "<",
+                    ZonedDateTime.ofInstant(endDateParse.toInstant(), ZoneOffset.UTC)
+                )
+            )
         }
         if (!pCode.isNullOrEmpty()) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.P_Code.columnsName, "=", pCode))
         if (!partnerName.isNullOrEmpty()) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Company_Name.columnsName, "%", partnerName))
@@ -153,7 +168,7 @@ class BusinessController(private var partnerService: WellPartnerService) {
     //fun updatePartner(@RequestPart("partner") partner: String, @RequestPart("file") files: List<MultipartFile>): ResponseEntity<BaseRes> {
     fun updatePartner(@RequestPart("partner") partner: String, @RequestPart("file", required = false) files: List<MultipartFile>?): ResponseEntity<BaseRes> {
 
-        val mapper = jacksonObjectMapper()
+        val mapper = jacksonObjectMapper().registerModule(JavaTimeModule())
 
         try {
             val partner = mapper.readValue(partner, WellPartnerDTOUpdate::class.java)

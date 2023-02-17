@@ -44,10 +44,22 @@ class WellServiceUtil {
                                 )
                             )
                         }
-                    } else if (keyword.Operation.equals("%", true)) {
+                    } else if (keyword.Operation.equals("%%", true)) {
                         predicates.add(
                             criteriaBuilder.like(
-                                root.get(keyword.Key), "%" + keyword.value + "%"
+                                root.get(keyword.Key), "%${keyword.value}%"
+                            )
+                        )
+                    } else if (keyword.Operation.equals("^%", true)) {
+                        predicates.add(
+                            criteriaBuilder.like(
+                                root.get(keyword.Key), "%${keyword.value}"
+                            )
+                        )
+                    } else if (keyword.Operation.equals("%$", true)) {
+                        predicates.add(
+                            criteriaBuilder.like(
+                                root.get(keyword.Key), "${keyword.value}%"
                             )
                         )
                     }

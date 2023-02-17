@@ -3,6 +3,8 @@ package com.wellnetworks.wellwebapi.controller.admin
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.wellnetworks.wellcore.domain.dto.*
+import com.wellnetworks.wellcore.domain.enums.CompanyStateType
+import com.wellnetworks.wellcore.domain.enums.CompanyType
 import com.wellnetworks.wellcore.service.utils.SearchCriteria
 import com.wellnetworks.wellcore.service.WellPartnerService
 import com.wellnetworks.wellwebapi.response.*
@@ -55,7 +57,7 @@ class BusinessController(private var partnerService: WellPartnerService) {
         @RequestParam("to_date", required = false) endDate: String?,
         @RequestParam("pcode", required = false) pCode: String?,
         @RequestParam("c_name", required = false) partnerName: String?,
-        @RequestParam("c_type", required = false) partnerType: String?,
+        @RequestParam("c_type", required = false) partnerType: Int?,
 //        @RequestParam("dtyp", required = false) discountType: String?,
         @RequestParam("con_person", required = false) manager: String?,
         @RequestParam("ceo_name", required = false) ceoName: String?,
@@ -97,12 +99,12 @@ class BusinessController(private var partnerService: WellPartnerService) {
             )
         }
         if (!pCode.isNullOrEmpty()) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.P_Code.columnsName, "=", pCode))
-        if (!partnerName.isNullOrEmpty()) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Company_Name.columnsName, "%", partnerName))
-        if (!partnerType.isNullOrEmpty()) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Company_Type.columnsName, "=", partnerType))
+        if (!partnerName.isNullOrEmpty()) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Company_Name.columnsName, "%%", partnerName))
+        if (partnerType != null) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Company_Type.columnsName, "=", CompanyType.from(partnerType!!)!!))
         if (!manager.isNullOrEmpty()) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Contact_Person.columnsName, "=", manager))
         if (!ceoName.isNullOrEmpty()) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.CEO_Name.columnsName, "=", ceoName))
         if (!ceoTelephone.isNullOrEmpty()) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.CEO_Telephone.columnsName, "=", ceoTelephone))
-        if (status != null) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Company_State.columnsName, "=", status))
+        if (status != null) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Company_State.columnsName, "=", CompanyStateType.from(status!!)!!))
 
         val partnerList = partnerService.searchPartner(pageable, searchKeywords)
 
@@ -224,6 +226,28 @@ class BusinessController(private var partnerService: WellPartnerService) {
         return ResponseEntity.ok(
             PartnerUnattachedCountRes(
                 taxCount, contractCount
+            )
+        )
+    }
+
+    @GetMapping("partner/param_companytype")
+    @PreAuthorize("isAuthenticated() and" +
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
+    fun paramCompanyType(): ResponseEntity<BaseListRes<ParamEnumItemRes>> {
+        var paramCompanyTypeList : MutableList<ParamEnumItemRes> = mutableListOf()
+        for (item in CompanyType.values()) {
+            paramCompanyTypeList.add(ParamEnumItemRes(
+                item.index(),
+                item.key,
+                item.toString()
+            ))
+        }
+
+        return ResponseEntity.ok(
+            BaseListRes<ParamEnumItemRes>(
+                HttpStatus.OK, "",
+                paramCompanyTypeList,
             )
         )
     }

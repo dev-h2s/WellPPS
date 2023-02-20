@@ -207,7 +207,6 @@ class WellPartnerService {
             }
 
             currentEntity.updateDto(partner)
-            currentEntity.modifyDatetime = ZonedDateTime.now()
 
             wellPartnerRepository.save(currentEntity)
         } catch (e: Exception) {

@@ -323,6 +323,6 @@ data class WellPartnerEntity (
         if (dto.Contract_DocFileIdx != null) this.contractDocFileIdx = dto.Contract_DocFileIdx?.uppercase()
         if (dto.CEO_IDCard_FileIdx != null) this.ceoIDCardFileIdx = dto.CEO_IDCard_FileIdx?.uppercase()
         if (dto.Admin_Memo != null) this.adminMemo = dto.Admin_Memo
-
+        modifyDatetime = ZonedDateTime.now()
     }
 }

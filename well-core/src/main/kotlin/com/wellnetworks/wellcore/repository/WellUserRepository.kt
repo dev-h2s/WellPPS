@@ -12,6 +12,7 @@ import java.util.UUID
 interface WellUserRepository: CrudRepository<WellUserEntity, String>, JpaSpecificationExecutor<WellUserEntity> {
     fun findByIdx(idx: String): Optional<WellUserEntity>
     fun findAll(pageable: Pageable): Page<WellUserEntity>
+    fun countByGroupPermissionKey(gkey: String): Long
     fun findByUserID(userID: String): Optional<WellUserEntity>
     fun existsByUserID(userID: String): Boolean
     fun deleteByIdx(idx: String): Optional<Int>

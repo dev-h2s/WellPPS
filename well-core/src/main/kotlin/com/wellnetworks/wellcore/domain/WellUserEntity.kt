@@ -15,7 +15,8 @@ import org.springframework.security.core.userdetails.UserDetails
 
 @Entity
 @Table(name = "user_tb", indexes =
-  [Index(name = "IX_uid", columnList = "uid ASC", unique = true)]
+  [Index(name = "IX_uid", columnList = "uid ASC", unique = true),
+   Index(name = "IX_gkey", columnList = "gkey ASC", unique = false)]
 )
 data class WellUserEntity(
     @Id

@@ -3,6 +3,7 @@ package com.wellnetworks.wellcore.service
 import com.wellnetworks.wellcore.domain.WellGroupEntity
 import com.wellnetworks.wellcore.domain.dto.WellGroupDTO
 import com.wellnetworks.wellcore.repository.WellGroupRepository
+import com.wellnetworks.wellcore.repository.WellUserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -14,6 +15,9 @@ import java.util.*
 class WellGroupService {
     @Autowired
     private lateinit var wellGroupRepository: WellGroupRepository
+
+    @Autowired
+    private lateinit var wellUserRepository: WellUserRepository
 
     fun getGroupByIdx(groupKey: String): Optional<WellGroupDTO> {
         val group = wellGroupRepository.findByGroupPermissionKey(groupKey)
@@ -69,6 +73,10 @@ class WellGroupService {
         var _groupKey = groupKey.uppercase()
         if (_groupKey.indexOf("GROUP_") < 0) {
             _groupKey = "GROUP_$_groupKey"
+        }
+
+        if (wellUserRepository.countByGroupPermissionKey(_groupKey) > 0) {
+            throw Exception("User exists in group.")
         }
 
         val res = wellGroupRepository.deleteByGroupPermissionKey(_groupKey)

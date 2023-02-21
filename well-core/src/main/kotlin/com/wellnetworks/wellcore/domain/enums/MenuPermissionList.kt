@@ -81,3 +81,34 @@ enum class MenuPermissionList(val GroupPermitssionKey: String) {
 
 
 }
+
+class MenuPermissionUtil {
+    companion object {
+        fun BuildPermissionString(menuPermission: MenuPermissionList, action: MenuPermissionTypeList) : String {
+            return "${menuPermission.GroupPermitssionKey}_${action.GroupPermissionTypeKey}"
+        }
+
+        fun ParsePermissionString(GroupPermissionString: String): Pair<MenuPermissionList, MenuPermissionTypeList>? {
+            var splitPermissionString = GroupPermissionString.uppercase().split('_').toMutableList()
+
+            if (splitPermissionString.isNullOrEmpty()) return null
+
+            var menuPermissionType: MenuPermissionTypeList;
+            try {
+                menuPermissionType = MenuPermissionTypeList.valueOf(splitPermissionString.last())
+                splitPermissionString.removeAt(splitPermissionString.lastIndex)
+            } catch (e: Exception) {
+                return null
+            }
+
+            var menuPermission: MenuPermissionList;
+            try {
+                menuPermission = MenuPermissionList.valueOf(splitPermissionString.joinToString("_"))
+            } catch (e: Exception) {
+                return null
+            }
+
+            return Pair(menuPermission, menuPermissionType)
+        }
+    }
+}

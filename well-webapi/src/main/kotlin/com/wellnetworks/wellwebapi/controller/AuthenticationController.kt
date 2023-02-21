@@ -1,10 +1,7 @@
 package com.wellnetworks.wellwebapi.controller
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.wellnetworks.wellcore.domain.dto.WellPartnerDTOCreate
-import com.wellnetworks.wellcore.domain.dto.WellPartnerDTOSignup
-import com.wellnetworks.wellcore.domain.dto.WellPermissionDTO
-import com.wellnetworks.wellcore.domain.dto.WellUserDTOCreate
+import com.wellnetworks.wellcore.domain.dto.*
 import com.wellnetworks.wellcore.service.WellPartnerService
 import com.wellnetworks.wellcore.service.WellUserService
 import com.wellnetworks.wellwebapi.response.BaseListRes
@@ -13,6 +10,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PostAuthorize
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -105,11 +103,13 @@ class AuthenticationController(
         return ResponseEntity.ok(BaseRes(HttpStatus.OK, "회원가입 요청 성공"))
     }
 
-    @GetMapping("permission_list")
+    @GetMapping("permission")
     @PostAuthorize("isAuthenticated()")
     fun getPermissionList(): ResponseEntity<BaseListRes<WellPermissionDTO>> {
-        return ResponseEntity.ok(BaseListRes<WellPermissionDTO>(HttpStatus.OK, "",
-            userService.getPermissionList()))
+        return ResponseEntity.ok(
+            BaseListRes<WellPermissionDTO>(
+                HttpStatus.OK, "",
+                userService.getPermissionList())
+        )
     }
-
 }

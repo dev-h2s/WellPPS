@@ -125,10 +125,10 @@ class BusinessController(private var partnerService: WellPartnerService) {
         val mapper = jacksonObjectMapper()
 
         try {
-            val user = mapper.readValue(userJsonString, WellUserDTOCreate::class.java)
-            val partner = mapper.readValue(partnerJsonString, WellPartnerDTOCreate::class.java)
+            val userObj = mapper.readValue(userJsonString, WellUserDTOCreate::class.java)
+            val partnerObj = mapper.readValue(partnerJsonString, WellPartnerDTOCreate::class.java)
 
-            if (!partnerService.creaetPartner(user, partner, files))
+            if (!partnerService.creaetPartner(userObj, partnerObj, files))
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(BaseRes(HttpStatus.INTERNAL_SERVER_ERROR, "파트너 추가 실패"))
         } catch (e: Exception) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseRes(HttpStatus.BAD_REQUEST, e.message ?: "잘못된 요청입니다."))
@@ -157,7 +157,7 @@ class BusinessController(private var partnerService: WellPartnerService) {
                     .body(BaseRes(HttpStatus.NOT_FOUND, "$id 데이터를 찾을 수 없습니다."))
         }
 
-        return ResponseEntity.ok(BaseRes(HttpStatus.OK, "delete ok"))
+        return ResponseEntity.ok(BaseRes(HttpStatus.OK, "삭제 성공"))
     }
 
 
@@ -173,9 +173,9 @@ class BusinessController(private var partnerService: WellPartnerService) {
         val mapper = jacksonObjectMapper().registerModule(JavaTimeModule())
 
         try {
-            val partner = mapper.readValue(partner, WellPartnerDTOUpdate::class.java)
+            val partnerObj = mapper.readValue(partner, WellPartnerDTOUpdate::class.java)
 
-            if (!partnerService.updatePartner(partner, files))
+            if (!partnerService.updatePartner(partnerObj, files))
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(BaseRes(HttpStatus.INTERNAL_SERVER_ERROR, "업데이트 실패"))
 
         } catch (e: Exception) {

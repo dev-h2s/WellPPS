@@ -28,7 +28,7 @@ class InitializeController(private val userService: WellUserService, private val
                 PermissionList.PERMISSION_SUPERADMIN.PermitssionKey,
                 PermissionList.PERMISSION_LOGIN.PermitssionKey,
             )
-            val createAdmin = WellUserDTOCreate(createAdminReq.username, permissions,
+            val createAdmin = WellUserDTOCreate(createAdminReq.username, null, permissions,
                 passwordEncoder.encode(createAdminReq.password))
             println(createAdmin)
 

@@ -7,7 +7,7 @@ import org.springframework.data.repository.CrudRepository
 import java.util.Optional
 
 interface WellGroupRepository: CrudRepository<WellGroupEntity, String> {
-    fun findByIdx(idx: String): Optional<WellGroupEntity>
+    fun findByGroupPermissionKey (groupPermissionKey: String): Optional<WellGroupEntity>
     fun findAll(pageable: Pageable): Page<WellGroupEntity>
-    fun deleteByIdx(idx: String): Optional<Int>
+    fun deleteByGroupPermissionKey(groupPermissionKey: String): Optional<Int>
 }

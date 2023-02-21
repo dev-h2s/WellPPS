@@ -13,6 +13,8 @@ data class WellUserDTO (
     val Idx: String,
     @JsonProperty("uid")
     val UserID: String,
+    @JsonProperty("gidx")
+    val GroupPermissionIdx: String?,
     @JsonProperty("pkey")
     val PermissionsKeysStringList: List<String>,
     @JsonProperty("pwdh")
@@ -48,6 +50,8 @@ data class WellUserDTO (
 data class WellUserDTOCreate(
     @JsonProperty("uid")
     val UserID: String,
+    @JsonProperty("gidx")
+    val GroupPermissionIdx: String? = null,
     @JsonProperty("pkey")
     val PermissionsKeysStringList: List<String>,
     @JsonProperty("pwd")

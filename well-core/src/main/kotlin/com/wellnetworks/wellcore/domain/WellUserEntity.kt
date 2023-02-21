@@ -29,6 +29,9 @@ data class WellUserEntity(
     @Convert(converter = ListToStringConverter::class)
     var permissionsKeysStringList: List<String>,
 
+    @Column(name = "gkey", length = 32, unique = false, nullable = true)
+    var groupPermissionKey: String?,
+
     @Column(name = "pwd", length = 255, nullable = true)
     var passwordHash: String?,
 
@@ -83,6 +86,7 @@ data class WellUserEntity(
         return WellUserDTO(
             Idx = this.idx.uppercase(),
             UserID = this.userID,
+            GroupPermissionIdx = this.groupPermissionKey?.uppercase(),
             PermissionsKeysStringList = this.permissionsKeysStringList,
             Password_Hash = this.passwordHash,
             Temporary_Password = this.temporaryPassword,

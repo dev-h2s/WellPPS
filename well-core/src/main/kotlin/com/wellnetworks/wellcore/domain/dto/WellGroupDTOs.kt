@@ -8,14 +8,14 @@ import java.time.ZonedDateTime
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class WellGroupDTO (
-    @JsonProperty("idx")
-    val Idx: String,
+    @JsonProperty("gkey")
+    val GroupKey: String,
 
     @JsonProperty("label")
     val Label: String,
 
     @JsonProperty("pkey")
-    val PermissionKeysStringList: List<String>,
+    val GroupPermissionKeysStringList: List<String>,
 
     @JsonProperty("desc")
     val Description: String?,
@@ -25,8 +25,9 @@ data class WellGroupDTO (
     @JsonIgnore
     override val Register_Datetime: ZonedDateTime?,
 ) : BaseDTO(Modify_Datetime, Register_Datetime) {
+
     override fun hashCode(): Int {
-        return Idx.hashCode();
+        return GroupKey.hashCode();
     }
 
     override fun equals(other: Any?): Boolean {
@@ -34,6 +35,6 @@ data class WellGroupDTO (
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false;
         other as WellUserDTO
 
-        return Idx != null && Idx.uppercase() == other.Idx.uppercase();
+        return GroupKey != null && GroupKey.uppercase() == other.Idx.uppercase();
     }
 }

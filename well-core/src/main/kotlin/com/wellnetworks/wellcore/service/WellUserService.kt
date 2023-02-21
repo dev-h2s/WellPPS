@@ -41,8 +41,8 @@ class WellUserService {
     fun createUser(user: WellUserDTOCreate): String? {
         val uuidUser = UUID.randomUUID().toString().uppercase()
         val createUser = WellUserEntity(uuidUser,
-            user.UserID, user.PermissionsKeysStringList, user.Password_Hash,
-            "", ZonedDateTime.now(), 0, ZonedDateTime.now())
+            user.UserID, user.PermissionsKeysStringList, user.GroupPermissionIdx?.uppercase(),
+            user.Password_Hash, "", ZonedDateTime.now(), 0, ZonedDateTime.now())
         try {
             wellUserRepository.save(createUser)
         } catch (e: IllegalArgumentException) {

@@ -15,8 +15,8 @@ class WellGroupService {
     @Autowired
     private lateinit var wellGroupRepository: WellGroupRepository
 
-    fun getGroupByIdx(idx: String): Optional<WellGroupDTO> {
-        val group = wellGroupRepository.findByIdx(idx)
+    fun getGroupByIdx(groupKey: String): Optional<WellGroupDTO> {
+        val group = wellGroupRepository.findByGroupPermissionKey(groupKey)
         return group.map { it.toDto() }
     }
 
@@ -27,10 +27,14 @@ class WellGroupService {
     @Transactional
     fun createGroup(group: WellGroupDTO): Boolean {
         try {
-            var uuidGroup = UUID.randomUUID().toString().uppercase()
+            var _groupKey = group.GroupKey.uppercase()
+            if (_groupKey.indexOf("GROUP_") < 0) {
+                _groupKey = "GROUP_$_groupKey"
+            }
 
             var entity = WellGroupEntity(
-                uuidGroup, group.Label, group.PermissionKeysStringList, group.Description,
+                _groupKey, group.Label,
+                group.GroupPermissionKeysStringList, group.Description,
             )
 
             var res = wellGroupRepository.save(entity)
@@ -44,7 +48,12 @@ class WellGroupService {
     @Transactional
     fun updateGroup(group: WellGroupDTO): Boolean {
         try {
-            val currentEntity = wellGroupRepository.findByIdx(group.Idx.toString().uppercase()).orElse(null) ?: return false
+            var _groupKey = group.GroupKey.uppercase()
+            if (_groupKey.indexOf("GROUP_") < 0) {
+                _groupKey = "GROUP_$_groupKey"
+            }
+
+            val currentEntity = wellGroupRepository.findByGroupPermissionKey(_groupKey).orElse(null) ?: return false
 
             currentEntity.updateDto(group)
             wellGroupRepository.save(currentEntity)
@@ -56,8 +65,13 @@ class WellGroupService {
     }
 
     @Transactional
-    fun deleteGroup(idx: String) {
-        val res = wellGroupRepository.deleteByIdx(idx.uppercase())
+    fun deleteGroup(groupKey: String) {
+        var _groupKey = groupKey.uppercase()
+        if (_groupKey.indexOf("GROUP_") < 0) {
+            _groupKey = "GROUP_$_groupKey"
+        }
+
+        val res = wellGroupRepository.deleteByGroupPermissionKey(_groupKey)
 
         if (res.get() == 1) {
             return

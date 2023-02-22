@@ -4,6 +4,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.wellnetworks.wellcore.domain.dto.WellGroupDTO
 import com.wellnetworks.wellcore.domain.dto.WellPermissionDTO
+import com.wellnetworks.wellcore.domain.enums.MenuPermissionUtil
 import com.wellnetworks.wellcore.service.WellGroupService
 import com.wellnetworks.wellwebapi.response.BaseListRes
 import com.wellnetworks.wellwebapi.response.BaseRes
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.*
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 class GroupController(private var groupService: WellGroupService) {
 
-
+    val menuPermissionListAll = MenuPermissionUtil.BuildPermissionStringAll()
 
 
     @GetMapping("group")
@@ -50,7 +51,11 @@ class GroupController(private var groupService: WellGroupService) {
         try {
             val groupObj = mapper.readValue(group, WellGroupDTO::class.java)
 
-            // Todo: Check GroupPermission
+            for (groupPermissionKeysString in groupObj.GroupPermissionKeysStringList) {
+                if (!menuPermissionListAll.contains(groupPermissionKeysString)) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseRes(HttpStatus.BAD_REQUEST, e.message ?: "잘못된 요청입니다."))
+                }
+            }
 
             if (!groupService.createGroup(groupObj))
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(BaseRes(HttpStatus.INTERNAL_SERVER_ERROR, "그룹 추가 실패"))
@@ -71,7 +76,11 @@ class GroupController(private var groupService: WellGroupService) {
         try {
             val groupObj = mapper.readValue(group, WellGroupDTO::class.java)
 
-            // Todo: Check GroupPermission
+            for (groupPermissionKeysString in groupObj.GroupPermissionKeysStringList) {
+                if (!menuPermissionListAll.contains(groupPermissionKeysString)) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseRes(HttpStatus.BAD_REQUEST, e.message ?: "잘못된 요청입니다."))
+                }
+            }
 
             if (!groupService.updateGroup(groupObj))
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(BaseRes(HttpStatus.INTERNAL_SERVER_ERROR, "업데이트 실패"))

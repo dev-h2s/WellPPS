@@ -53,7 +53,7 @@ class GroupController(private var groupService: WellGroupService) {
 
             for (groupPermissionKeysString in groupObj.GroupPermissionKeysStringList) {
                 if (!menuPermissionListAll.contains(groupPermissionKeysString)) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseRes(HttpStatus.BAD_REQUEST, e.message ?: "잘못된 요청입니다."))
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseRes(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."))
                 }
             }
 
@@ -78,7 +78,7 @@ class GroupController(private var groupService: WellGroupService) {
 
             for (groupPermissionKeysString in groupObj.GroupPermissionKeysStringList) {
                 if (!menuPermissionListAll.contains(groupPermissionKeysString)) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseRes(HttpStatus.BAD_REQUEST, e.message ?: "잘못된 요청입니다."))
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseRes(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."))
                 }
             }
 

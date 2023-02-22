@@ -84,6 +84,18 @@ enum class MenuPermissionList(val GroupPermitssionKey: String) {
 
 class MenuPermissionUtil {
     companion object {
+        fun BuildPermissionStringAll(): List<String> {
+            var permissionStringList: MutableList<String> = mutableListOf()
+
+            for (menuPermission in MenuPermissionList.values()) {
+                for (menuPermissionType in MenuPermissionTypeList.values()) {
+                    permissionStringList.add(BuildPermissionString(menuPermission, menuPermissionType))
+                }
+            }
+
+            return permissionStringList.toList()
+        }
+
         fun BuildPermissionString(menuPermission: MenuPermissionList, action: MenuPermissionTypeList) : String {
             return "${menuPermission.GroupPermitssionKey}_${action.GroupPermissionTypeKey}"
         }

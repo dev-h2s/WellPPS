@@ -3,18 +3,16 @@ package com.wellnetworks.wellwebapi.controller.admin
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.wellnetworks.wellcore.domain.dto.*
-import com.wellnetworks.wellcore.domain.enums.CompanyStateType
-import com.wellnetworks.wellcore.domain.enums.CompanyType
+import com.wellnetworks.wellcore.domain.enums.*
 import com.wellnetworks.wellcore.service.utils.SearchCriteria
 import com.wellnetworks.wellcore.service.WellPartnerService
+import com.wellnetworks.wellsecure.service.WellPermissionChecker
 import com.wellnetworks.wellwebapi.response.*
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
-import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.prepost.PostAuthorize
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.web.bind.annotation.*
@@ -31,7 +29,8 @@ class BusinessController(private var partnerService: WellPartnerService) {
     @GetMapping("business/{id}")
     @PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey)) or" +
+            " hasRole(MenuPermissionUtil.Companion.BuildPermissionString(MENU_PERMISSION_PARTNER, MENU_PERMISSION_TYPE_READ))" )
     fun getPartner(@PathVariable id: String): ResponseEntity<BaseItemRes<WellPartnerDTO>> {
         val uuidIdx: String
         try {
@@ -49,9 +48,11 @@ class BusinessController(private var partnerService: WellPartnerService) {
     }
 
     @GetMapping("business")
+    @WellPermissionChecker([PermissionKey.PERMISSION_LOGIN])
     @PreAuthorize("isAuthenticated() and" +
-            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).SUPER_ADMIN.name) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).MEMBER.name) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.MenuPermissionUtil).Companion.BuildPermissionString(MENU_PERMISSION_PARTNER, MENU_PERMISSION_TYPE_READ)) )")
     fun getPartnerList(
         @RequestParam("from_date", required = false) startDate: String?,
         @RequestParam("to_date", required = false) endDate: String?,

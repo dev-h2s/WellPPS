@@ -101,8 +101,8 @@ class WellPartnerService {
             null, null, null
         )
 
-        val permissions: List<String> = listOf (
-            PermissionList.PERMISSION_SINGUP_SCREENING.PermitssionKey,
+        val permissions: List<String> = listOf(
+            PermissionKey.SIGNUP_SCREENING,
         )
 
         try {
@@ -147,7 +147,7 @@ class WellPartnerService {
             )
 
             val permissions: List<String> = listOf (
-                PermissionList.PERMISSION_SINGUP_SCREENING.PermitssionKey,
+                PermissionKey.MEMBER_SCREENING,
             )
 
             for(file in files) {
@@ -175,7 +175,7 @@ class WellPartnerService {
             val currentEntity = wellPartnerRepository.findByIdx(partner.Idx.toString().uppercase()).orElse(null) ?: return false
 
             val permissions: List<String> = listOf (
-                PermissionList.PERMISSION_SINGUP_SCREENING.PermitssionKey,
+                PermissionKey.MEMBER_SCREENING,
             )
 
             // 파일이 변경되었으면 삭제 후 새 파일 업로드.

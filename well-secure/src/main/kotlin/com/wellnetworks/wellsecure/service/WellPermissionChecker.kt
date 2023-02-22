@@ -9,7 +9,7 @@ import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import java.util.*
 import javax.servlet.http.HttpServletRequest
-
+/*
 @Target(AnnotationTarget.FUNCTION)
 annotation class WellPermissionChecker(val value: Array<String>)
 
@@ -41,3 +41,4 @@ class WellPermissionCheckerAspect {
         return servletRequestAttributes.request
     }
 }
+*/

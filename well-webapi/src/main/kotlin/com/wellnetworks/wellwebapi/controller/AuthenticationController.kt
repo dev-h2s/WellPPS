@@ -104,7 +104,7 @@ class AuthenticationController(
     }
 
     @GetMapping("permission")
-    @PostAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
     fun getPermissionList(): ResponseEntity<BaseListRes<WellPermissionDTO>> {
         return ResponseEntity.ok(
             BaseListRes<WellPermissionDTO>(

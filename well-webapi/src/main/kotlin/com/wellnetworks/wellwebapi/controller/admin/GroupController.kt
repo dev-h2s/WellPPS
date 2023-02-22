@@ -27,8 +27,8 @@ class GroupController(private var groupService: WellGroupService) {
 
     @GetMapping("group")
     @PreAuthorize("isAuthenticated() and" +
-            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
     fun getGroupPermissionList(
         @RequestParam("size", defaultValue = "10") size: Int,
         @RequestParam("page", defaultValue = "0") page: Int,
@@ -43,8 +43,8 @@ class GroupController(private var groupService: WellGroupService) {
 
     @PostMapping("group")
     @PreAuthorize("isAuthenticated() and" +
-            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
     fun createGroupPermission(@RequestPart("group") group: String): ResponseEntity<BaseRes> {
         val mapper = jacksonObjectMapper()
 
@@ -52,6 +52,7 @@ class GroupController(private var groupService: WellGroupService) {
             val groupObj = mapper.readValue(group, WellGroupDTO::class.java)
 
             for (groupPermissionKeysString in groupObj.GroupPermissionKeysStringList) {
+
                 if (!menuPermissionListAll.contains(groupPermissionKeysString)) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseRes(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."))
                 }
@@ -68,8 +69,8 @@ class GroupController(private var groupService: WellGroupService) {
 
     @PutMapping("group")
     @PreAuthorize("isAuthenticated() and" +
-            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
     fun updateGroupPermission(@RequestPart("group") group: String): ResponseEntity<BaseRes> {
         val mapper = jacksonObjectMapper().registerModule(JavaTimeModule())
 
@@ -94,8 +95,8 @@ class GroupController(private var groupService: WellGroupService) {
 
     @DeleteMapping("group/{gkey}")
     @PreAuthorize("isAuthenticated() and" +
-            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
     fun deleteGroupPermission(@PathVariable gkey: String): ResponseEntity<BaseRes> {
         try {
             groupService.deleteGroup(gkey);

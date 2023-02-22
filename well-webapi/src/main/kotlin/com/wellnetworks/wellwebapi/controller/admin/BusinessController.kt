@@ -6,7 +6,6 @@ import com.wellnetworks.wellcore.domain.dto.*
 import com.wellnetworks.wellcore.domain.enums.*
 import com.wellnetworks.wellcore.service.utils.SearchCriteria
 import com.wellnetworks.wellcore.service.WellPartnerService
-import com.wellnetworks.wellsecure.service.WellPermissionChecker
 import com.wellnetworks.wellwebapi.response.*
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
@@ -28,8 +27,8 @@ class BusinessController(private var partnerService: WellPartnerService) {
 
     @GetMapping("business/{id}")
     @PreAuthorize("isAuthenticated() and" +
-            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey)) or" +
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER)) or" +
             " hasRole(MenuPermissionUtil.Companion.BuildPermissionString(MENU_PERMISSION_PARTNER, MENU_PERMISSION_TYPE_READ))" )
     fun getPartner(@PathVariable id: String): ResponseEntity<BaseItemRes<WellPartnerDTO>> {
         val uuidIdx: String
@@ -48,11 +47,11 @@ class BusinessController(private var partnerService: WellPartnerService) {
     }
 
     @GetMapping("business")
-    @WellPermissionChecker([PermissionKey.PERMISSION_LOGIN])
-    @PreAuthorize("isAuthenticated() and" +
-            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).SUPER_ADMIN.name) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).MEMBER.name) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.MenuPermissionUtil).Companion.BuildPermissionString(MENU_PERMISSION_PARTNER, MENU_PERMISSION_TYPE_READ)) )")
+    //@WellPermissionChecker([PermissionKey.PERMISSION_LOGIN])
+/*    @PreAuthorize("isAuthenticated() and" +
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.MenuPermissionUtil).Companion.BuildPermissionString(MENU_PERMISSION_PARTNER, MENU_PERMISSION_TYPE_READ)) )")*/
     fun getPartnerList(
         @RequestParam("from_date", required = false) startDate: String?,
         @RequestParam("to_date", required = false) endDate: String?,
@@ -77,6 +76,9 @@ class BusinessController(private var partnerService: WellPartnerService) {
         val pageable: Pageable = PageRequest.of(page, size)
         val dtStartFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
         val dtEndFormatter = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss.SSSSSSS")
+
+        val PermissionKeyList = PermissionKey.asMap()
+        print(PermissionKeyList)
 
         if (!startDate.isNullOrEmpty()) {
             val startDateParse = LocalDate.parse(startDate, dtStartFormatter).atStartOfDay(ZoneId.systemDefault())
@@ -117,8 +119,8 @@ class BusinessController(private var partnerService: WellPartnerService) {
     @PostMapping("business",
         consumes = [MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("isAuthenticated() and" +
-            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
     fun createPartner(@RequestPart("user") userJsonString: String,
                       @RequestPart("partner") partnerJsonString: String,
                       @RequestPart("file") files: List<MultipartFile>
@@ -140,8 +142,8 @@ class BusinessController(private var partnerService: WellPartnerService) {
 
     @DeleteMapping("business/{id}")
     @PreAuthorize("isAuthenticated() and" +
-            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
     fun deletePartner(@PathVariable id: String) : ResponseEntity<BaseRes> {
         val uuidIdx: String
 
@@ -164,8 +166,8 @@ class BusinessController(private var partnerService: WellPartnerService) {
 
     @PutMapping("business")
     @PreAuthorize("isAuthenticated() and" +
-        " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
-        " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
+        " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
+        " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
 
     //(@PathVariable id: String): ResponseEntity<BaseItemRes<WellPartnerDTO>> {
     //fun updatePartner(@RequestPart("partner") partner: String, @RequestPart("file") files: List<MultipartFile>): ResponseEntity<BaseRes> {
@@ -196,8 +198,8 @@ class BusinessController(private var partnerService: WellPartnerService) {
 
     @GetMapping("partner/count")
 /*    @PreAuthorize("isAuthenticated() and" +
-            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")*/
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")*/
     fun cntPartner(): ResponseEntity<PartnerCompanyTypeCountRes> {
 
         val cnt = partnerService.companyTypeCount()
@@ -215,8 +217,8 @@ class BusinessController(private var partnerService: WellPartnerService) {
 
     @GetMapping("partner/unattached_count")
 /*    @PreAuthorize("isAuthenticated() and" +
-            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")*/
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")*/
     fun taxUnattachedCount(): ResponseEntity<PartnerUnattachedCountRes> {
 
         val count = partnerService.partnerUnattachedTaxCount()
@@ -233,8 +235,8 @@ class BusinessController(private var partnerService: WellPartnerService) {
 
     @GetMapping("partner/param_companytype")
     @PreAuthorize("isAuthenticated() and" +
-            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
+            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN.permitssionKey) or" +
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER.permitssionKey))")
     fun paramCompanyType(): ResponseEntity<BaseListRes<ParamEnumItemRes>> {
         var paramCompanyTypeList : MutableList<ParamEnumItemRes> = mutableListOf()
         for (item in CompanyType.values()) {

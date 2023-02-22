@@ -3,7 +3,7 @@ package com.wellnetworks.wellcore.service
 import com.wellnetworks.wellcore.domain.WellMemberInfoEntity
 import com.wellnetworks.wellcore.domain.dto.*
 import com.wellnetworks.wellcore.domain.enums.EmploymentQuitType
-import com.wellnetworks.wellcore.domain.enums.PermissionList
+import com.wellnetworks.wellcore.domain.enums.PermissionKey
 import com.wellnetworks.wellcore.domain.enums.TableIDList
 import com.wellnetworks.wellcore.repository.WellMemberInfoRepository
 import com.wellnetworks.wellcore.repository.WellUserRepository
@@ -86,7 +86,7 @@ class WellMemberInfoService {
             val currentEntity = wellMemberInfoRepository.findByIdx(member.Idx.uppercase()).orElse(null) ?: return false
 
             val permissions: List<String> = listOf (
-                PermissionList.PERMISSION_MEMBER_SCREENING.PermitssionKey,
+                PermissionKey.MEMBER_SCREENING,
             )
 
             // 파일이 변경되었으면 삭제 후 새 파일 업로드.

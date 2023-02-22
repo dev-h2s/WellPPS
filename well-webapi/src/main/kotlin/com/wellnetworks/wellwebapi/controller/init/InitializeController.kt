@@ -1,7 +1,7 @@
 package com.wellnetworks.wellwebapi.controller.init
 
 import com.wellnetworks.wellcore.domain.dto.*
-import com.wellnetworks.wellcore.domain.enums.PermissionList
+import com.wellnetworks.wellcore.domain.enums.PermissionKey
 import com.wellnetworks.wellcore.service.WellUserService
 import com.wellnetworks.wellwebapi.exception.BaseException
 import com.wellnetworks.wellwebapi.exception.BaseResponseCode
@@ -25,8 +25,8 @@ class InitializeController(private val userService: WellUserService, private val
     fun createAdmin(@RequestBody createAdminReq: CreateAdminReq): ResponseEntity<BaseRes> {
         if (userService.dataTotalCount() == 0L) {
             val permissions: List<String> = listOf (
-                PermissionList.PERMISSION_SUPERADMIN.PermitssionKey,
-                PermissionList.PERMISSION_LOGIN.PermitssionKey,
+                PermissionKey.SUPER_ADMIN,
+                PermissionKey.LOGIN,
             )
             val createAdmin = WellUserDTOCreate(createAdminReq.username, null, permissions,
                 passwordEncoder.encode(createAdminReq.password))

@@ -2,7 +2,7 @@ package com.wellnetworks.wellcore.service
 
 import com.wellnetworks.wellcore.domain.WellFileStorageEntity
 import com.wellnetworks.wellcore.domain.dto.WellFileStorageDTO
-import com.wellnetworks.wellcore.domain.enums.PermissionList
+import com.wellnetworks.wellcore.domain.enums.PermissionKey
 import com.wellnetworks.wellcore.repository.WellFileStorageRepository
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
@@ -50,7 +50,7 @@ class WellFileStorageService {
             return Optional.empty()
         }
 
-        if (permissions.contains(PermissionList.PERMISSION_SUPERADMIN.PermitssionKey)) {
+        if (permissions.contains(PermissionKey.SUPER_ADMIN)) {
             return fileItem.map { it.getWellFileStorageDTO() }
         }
 

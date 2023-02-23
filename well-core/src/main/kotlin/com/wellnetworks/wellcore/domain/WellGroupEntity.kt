@@ -4,7 +4,7 @@ import com.wellnetworks.wellcore.domain.converter.ListToStringConverter
 import com.wellnetworks.wellcore.domain.dto.WellGroupDTO
 import org.hibernate.Hibernate
 import java.time.ZonedDateTime
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity
 @Table(name = "user_group_list_tb")

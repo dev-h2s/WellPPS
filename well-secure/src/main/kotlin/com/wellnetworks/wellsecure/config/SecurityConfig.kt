@@ -38,19 +38,7 @@ class SecurityConfig(
             .and()
 //            .formLogin().disable()
 //            .httpBasic().disable()
-            .authorizeRequests()
             //.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-            .antMatchers("/api/**").permitAll()
-            .antMatchers("/", "/**", "/init/**").permitAll()
-            .antMatchers("/admin/hr/business/**").permitAll()
-            .antMatchers("/admin/hr/partner/**").permitAll()
-            .antMatchers("/file/**").permitAll()
-            .antMatchers("/login").permitAll()
-            .antMatchers("/logout").permitAll()
-            .antMatchers("/signup").permitAll()
-            .antMatchers("/**").permitAll() //그외 나머지 요청은 누구나 접근 가능
-            .anyRequest().authenticated()
-            .and()
             .addFilter(JwtAuthenticationFilter(authenticationManager, securityProperties, tokenProvider))
             .addFilter(JwtAuthorizationFilter(authenticationManager, securityProperties, tokenProvider))
 //            .and()
@@ -59,6 +47,20 @@ class SecurityConfig(
             .logoutSuccessUrl("/login")
             .invalidateHttpSession(true)
             .deleteCookies("JSESSIONID", "remember-me")
+
+        http.authorizeHttpRequests()
+            .requestMatchers("/init/**",).permitAll()
+            .requestMatchers("/api/**").permitAll()
+            .requestMatchers("/", "/**", "/init/**").permitAll()
+            .requestMatchers("/admin/hr/business/**").permitAll()
+            .requestMatchers("/admin/hr/partner/**").permitAll()
+            .requestMatchers("/file/**").permitAll()
+            .requestMatchers("/login").permitAll()
+            .requestMatchers("/logout").permitAll()
+            .requestMatchers("/signup").permitAll()
+            .requestMatchers("/**").permitAll() //그외 나머지 요청은 누구나 접근 가능
+            .anyRequest().authenticated()
+
         return http.build()
     }
 

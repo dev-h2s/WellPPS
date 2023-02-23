@@ -2,7 +2,7 @@ package com.wellnetworks.wellcore.service.utils
 
 import org.springframework.data.jpa.domain.Specification
 import java.time.ZonedDateTime
-import javax.persistence.criteria.Predicate
+import jakarta.persistence.criteria.Predicate
 
 class WellServiceUtil {
     companion object {

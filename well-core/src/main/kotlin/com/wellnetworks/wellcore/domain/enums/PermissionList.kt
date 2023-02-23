@@ -1,12 +1,12 @@
 package com.wellnetworks.wellcore.domain.enums
 
+import java.lang.annotation.RetentionPolicy
 import kotlin.reflect.full.companionObject
-import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.memberProperties
-import kotlin.reflect.full.valueParameters
 
 /* 데이터베이스 WellPermission 에 데이터 추가/수정/삭제 시 이 열거형 클래스에도 적용하도록 한다. */
 
+@Target
 annotation class PermissionKey {
     companion object {
         const val LOGIN = "ROLE_LOGIN" // 로그인 가능

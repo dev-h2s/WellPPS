@@ -1,8 +1,8 @@
 package com.wellnetworks.wellcore.domain
 
+import jakarta.persistence.Column
+import jakarta.persistence.MappedSuperclass
 import java.time.ZonedDateTime
-import javax.persistence.Column
-import javax.persistence.MappedSuperclass
 
 @MappedSuperclass
 open class BaseEntity {

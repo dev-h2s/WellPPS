@@ -85,7 +85,7 @@ project(":well-core") {
         val runtimeOnly by configurations
         implementation("org.springframework.boot:spring-boot-starter")
         implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-        implementation("org.springframework.security:spring-security-core:5.7.5")
+        implementation("org.springframework.security:spring-security-core")
         runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
     }
 }
@@ -102,6 +102,7 @@ project(":well-secure") {
         implementation("org.springframework.boot:spring-boot-starter-security")
         implementation("org.springframework.boot:spring-boot-starter-data-jpa")
         implementation("org.springframework.boot:spring-boot-starter-validation")
+        implementation("org.springframework.security:spring-security-core")
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
         implementation("org.springframework.session:spring-session-core")
         implementation("io.jsonwebtoken:jjwt-api:0.11.5")

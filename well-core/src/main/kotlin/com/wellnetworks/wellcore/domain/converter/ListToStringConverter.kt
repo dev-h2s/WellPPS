@@ -1,8 +1,8 @@
 package com.wellnetworks.wellcore.domain.converter
 
 import org.apache.tomcat.util.buf.StringUtils
-import javax.persistence.AttributeConverter
-import javax.persistence.Converter
+import jakarta.persistence.AttributeConverter
+import jakarta.persistence.Converter
 
 @Converter(autoApply = true)
 class ListToStringConverter(): AttributeConverter<List<String>, String> {

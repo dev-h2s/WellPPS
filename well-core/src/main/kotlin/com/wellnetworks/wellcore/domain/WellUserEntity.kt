@@ -3,7 +3,7 @@ package com.wellnetworks.wellcore.domain
 import com.wellnetworks.wellcore.domain.converter.ListToStringConverter
 import java.util.*
 import java.time.ZonedDateTime
-import javax.persistence.*
+import jakarta.persistence.*
 import com.wellnetworks.wellcore.domain.dto.*
 import com.wellnetworks.wellcore.domain.enums.*
 import org.hibernate.Hibernate

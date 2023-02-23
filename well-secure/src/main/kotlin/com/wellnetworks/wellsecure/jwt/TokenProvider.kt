@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 import java.security.Key
 import java.text.SimpleDateFormat
 import java.util.*
-import javax.annotation.PostConstruct
+import jakarta.annotation.PostConstruct
 
 @Component
 class TokenProvider(

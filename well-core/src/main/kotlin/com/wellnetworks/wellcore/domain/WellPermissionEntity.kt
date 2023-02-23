@@ -2,7 +2,7 @@ package com.wellnetworks.wellcore.domain
 
 import com.wellnetworks.wellcore.domain.dto.WellPermissionDTO
 import org.hibernate.Hibernate
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "permission_tb")

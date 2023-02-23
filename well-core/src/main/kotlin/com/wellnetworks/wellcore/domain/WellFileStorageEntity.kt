@@ -2,8 +2,8 @@ package com.wellnetworks.wellcore.domain
 
 import com.wellnetworks.wellcore.domain.converter.ListToStringConverter
 import com.wellnetworks.wellcore.domain.dto.WellFileStorageDTO
+import jakarta.persistence.*
 import org.hibernate.Hibernate
-import javax.persistence.*
 
 @Entity
 @Table(name = "file_tb", indexes = [

@@ -1,8 +1,8 @@
 package com.wellnetworks.wellcore.domain.converter
 
 import com.wellnetworks.wellcore.domain.enums.EmploymentQuitType
-import javax.persistence.AttributeConverter
-import javax.persistence.Converter
+import jakarta.persistence.AttributeConverter
+import jakarta.persistence.Converter
 
 @Converter
 class EmploymentQuitTypeToIndexConverter : AttributeConverter<EmploymentQuitType, Byte> {

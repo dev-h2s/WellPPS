@@ -8,7 +8,6 @@ import org.springframework.boot.runApplication
 private val logger = KotlinLogging.logger {}
 
 @SpringBootApplication(scanBasePackages = ["com.wellnetworks"])
-//@EnableGlobalMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
 //@ComponentScan(basePackages = ["com.wellnetworks.wellcore", "com.wellnetworks.wellsecure"])
 class WellWebapiApplication
 

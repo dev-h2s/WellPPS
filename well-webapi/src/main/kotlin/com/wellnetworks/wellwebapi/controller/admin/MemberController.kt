@@ -26,7 +26,6 @@ import java.util.*
 
 @RestController
 @RequestMapping("/admin/hr/")
-@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 class MemberController(private var memberInfoService: WellMemberInfoService) {
     @GetMapping("member/{id}")
     @PreAuthorize("isAuthenticated() and" +

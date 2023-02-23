@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/admin/hr/")
-@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 class GroupController(private var groupService: WellGroupService) {
 
     val menuPermissionListAll = MenuPermissionUtil.BuildPermissionStringAll()

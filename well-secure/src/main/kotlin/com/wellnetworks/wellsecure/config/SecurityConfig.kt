@@ -21,7 +21,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 class SecurityConfig(
     val securityProperties: SecurityProperties,
     val authenticationManager: AppAuthenticationManager,

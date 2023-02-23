@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.time.*
@@ -22,14 +22,12 @@ import java.util.*
 
 @RestController
 @RequestMapping("/admin/hr/")
-@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 class BusinessController(private var partnerService: WellPartnerService) {
 
     @GetMapping("business/{id}")
     @PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER)) or" +
-            " hasRole(MenuPermissionUtil.Companion.BuildPermissionString(MENU_PERMISSION_PARTNER, MENU_PERMISSION_TYPE_READ))" )
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))" )
     fun getPartner(@PathVariable id: String): ResponseEntity<BaseItemRes<WellPartnerDTO>> {
         val uuidIdx: String
         try {
@@ -46,12 +44,11 @@ class BusinessController(private var partnerService: WellPartnerService) {
         return ResponseEntity.ok(BaseItemRes(HttpStatus.OK, "", partner.get()))
     }
 
+
     @GetMapping("business")
-    //@WellPermissionChecker([PermissionKey.PERMISSION_LOGIN])
-/*    @PreAuthorize("isAuthenticated() and" +
-            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.MenuPermissionUtil).Companion.BuildPermissionString(MENU_PERMISSION_PARTNER, MENU_PERMISSION_TYPE_READ)) )")*/
+    @PreAuthorize("@wellAuthorize.hasUserPermission('${PermissionKey.MEMBER}', '${PermissionKey.PARTNER}') or" +
+            "@wellAuthorize.hasMenuPermission('${MenuPermission.PARTNER}'," +
+            " '${MenuPermissionAction.VIEWMENU}', '${MenuPermissionAction.READ}')")
     fun getPartnerList(
         @RequestParam("from_date", required = false) startDate: String?,
         @RequestParam("to_date", required = false) endDate: String?,

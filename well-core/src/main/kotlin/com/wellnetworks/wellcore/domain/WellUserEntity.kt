@@ -51,9 +51,16 @@ data class WellUserEntity(
 ): BaseEntity(), UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         var authorities: MutableList<GrantedAuthority> = ArrayList()
+
+        // Group Permission
+        if (!groupPermissionKey.isNullOrEmpty()) {
+            authorities.add(SimpleGrantedAuthority(groupPermissionKey))
+        }
+
         for (permission in permissionsKeysStringList) {
             authorities.add(SimpleGrantedAuthority(permission))
         }
+
         return authorities
     }
 

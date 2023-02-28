@@ -2,11 +2,14 @@ package com.wellnetworks.wellcore.service
 
 import com.wellnetworks.wellcore.domain.WellUserEntity
 import com.wellnetworks.wellcore.domain.dto.*
+import com.wellnetworks.wellcore.domain.enums.PermissionList
+import com.wellnetworks.wellcore.domain.enums.TableIDList
 import com.wellnetworks.wellcore.repository.WellPermissionRepository
 import com.wellnetworks.wellcore.repository.WellUserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.multipart.MultipartFile
 import java.time.ZonedDateTime
 import java.util.Optional
 import java.util.UUID
@@ -60,4 +63,13 @@ class WellUserService {
 
         return permissions.map { it.getWellPermisionDTO() }
     }
+/*
+    @Transactional(rollbackFor = [Exception::class])
+    fun updateTempPwdById(user: WellMemberDTOUpdate, files: List<MultipartFile>?): Boolean {
+
+
+        return true
+    }
+
+ */
 }

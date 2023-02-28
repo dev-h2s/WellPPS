@@ -5,6 +5,7 @@ import com.wellnetworks.wellcore.domain.WellUserEntity
 import java.time.ZonedDateTime
 import java.util.*
 import com.wellnetworks.wellcore.domain.dto.BaseDTO
+import com.wellnetworks.wellcore.domain.enums.*
 import org.hibernate.Hibernate
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -61,3 +62,28 @@ data class WellUserDTOCreate(
     @JsonIgnore
     override val Register_Datetime: ZonedDateTime = ZonedDateTime.now(),
 ): BaseDTO(Modify_Datetime, Register_Datetime)
+/*
+@JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+data class WellUserDTOUpdate @JsonCreator constructor (
+    @JsonProperty("uid")
+    val UserID: String,
+    @JsonProperty("pkey")
+    val PermissionsKeysStringList: List<String>,
+    @JsonProperty("pwdh")
+    val Password_Hash: String?,
+    @JsonProperty("tpwd")
+    val Temporary_Password: String?,
+    @JsonProperty("tpwd_expire")
+    val Temporary_Password_Expire: ZonedDateTime?,
+    @JsonProperty("tpwd_count")
+    val Temporary_Password_Create_Count: Byte? = 0,
+    @JsonProperty("tpwd_date")
+    val Temporary_Password_Create_Datetime: ZonedDateTime?,
+    @JsonIgnore
+    override val Modify_Datetime: ZonedDateTime?,
+    @JsonIgnore
+    override val Register_Datetime: ZonedDateTime?,
+): BaseDTO(Modify_Datetime, Register_Datetime)
+
+ */

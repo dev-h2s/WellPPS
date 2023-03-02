@@ -1,10 +1,8 @@
 package com.wellnetworks.wellcore.domain.dto
 
 import com.fasterxml.jackson.annotation.*
-import com.wellnetworks.wellcore.domain.WellUserEntity
 import java.time.ZonedDateTime
 import java.util.*
-import com.wellnetworks.wellcore.domain.dto.BaseDTO
 import com.wellnetworks.wellcore.domain.enums.*
 import org.hibernate.Hibernate
 
@@ -62,14 +60,16 @@ data class WellUserDTOCreate(
     @JsonIgnore
     override val Register_Datetime: ZonedDateTime = ZonedDateTime.now(),
 ): BaseDTO(Modify_Datetime, Register_Datetime)
-/*
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 //@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class WellUserDTOUpdate @JsonCreator constructor (
+    @JsonProperty("idx")
+    val Idx: String,
     @JsonProperty("uid")
-    val UserID: String,
+    val UserID: String?,
     @JsonProperty("pkey")
-    val PermissionsKeysStringList: List<String>,
+    val PermissionsKeysStringList: List<String>?,
     @JsonProperty("pwdh")
     val Password_Hash: String?,
     @JsonProperty("tpwd")
@@ -86,4 +86,3 @@ data class WellUserDTOUpdate @JsonCreator constructor (
     override val Register_Datetime: ZonedDateTime?,
 ): BaseDTO(Modify_Datetime, Register_Datetime)
 
- */

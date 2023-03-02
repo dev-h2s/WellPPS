@@ -126,7 +126,7 @@ data class WellUserEntity(
     override fun toString(): String {
         return this.userID
     }
-/*
+
     fun updateDto (dto: WellUserDTOUpdate) {
         if (dto.UserID != null) this.userID = dto.UserID
         if (dto.PermissionsKeysStringList != null) this.permissionsKeysStringList = dto.PermissionsKeysStringList
@@ -135,10 +135,10 @@ data class WellUserEntity(
         if (dto.Temporary_Password_Create_Count != null) this.temporaryPasswordCreateCount = dto.Temporary_Password_Create_Count
         if (dto.Temporary_Password_Expire != null) this.temporaryPasswordExpire = dto.Temporary_Password_Expire
         if (dto.Temporary_Password_Create_Datetime != null) this.temporaryPasswordCreateDatetime = dto.Temporary_Password_Create_Datetime
-
-
+        if (dto.Modify_Datetime != null) this.modifyDatetime = dto.Modify_Datetime
+        if (dto.Register_Datetime != null) this.registerDatetime = dto.Register_Datetime
     }
 
 
- */
+
 }

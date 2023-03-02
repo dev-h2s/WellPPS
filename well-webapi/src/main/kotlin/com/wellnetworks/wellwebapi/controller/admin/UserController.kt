@@ -1,39 +1,67 @@
 package com.wellnetworks.wellwebapi.controller.admin
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.wellnetworks.wellcore.domain.dto.WellPartnerDTO
+import com.wellnetworks.wellcore.domain.dto.WellUserDTOCreate
+import com.wellnetworks.wellcore.domain.dto.WellUserDTOUpdate
+import com.wellnetworks.wellcore.domain.enums.MenuPermission
+import com.wellnetworks.wellcore.domain.enums.MenuPermissionAction
+import com.wellnetworks.wellcore.domain.enums.PermissionKey
 import com.wellnetworks.wellcore.service.WellUserService
+import com.wellnetworks.wellwebapi.exception.BaseException
+import com.wellnetworks.wellwebapi.exception.BaseResponseCode
+import com.wellnetworks.wellwebapi.request.init.CreateAdminReq
+import com.wellnetworks.wellwebapi.request.init.UpdatePwd
 import com.wellnetworks.wellwebapi.response.BaseRes
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
+import java.time.ZonedDateTime
 import java.util.*
 
 @RestController
 @RequestMapping("/admin/user/")
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
-class UserController(private var userService: WellUserService) {
+class UserController(private var userService: WellUserService, private val passwordEncoder: PasswordEncoder) {
 
-    @PutMapping("temp_pwd/{id}")
-    @PreAuthorize("isAuthenticated() and" +
-            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN.permitssionKey) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_MEMBER.permitssionKey))")
-    fun updateTempPwd(@PathVariable id: String) : ResponseEntity<BaseRes> {
-        val uuidIdx: String
+    @PutMapping("update_pwd")
+    /*
+    @PreAuthorize("@wellAuthorize.hasUserPermission('${PermissionKey.MEMBER}', '${PermissionKey.PARTNER}') or" +
+            "@wellAuthorize.hasMenuPermission('${MenuPermission.MEMBER}'," +
+            " '${MenuPermissionAction.UPDATE}', '${MenuPermissionAction.CREATE}')")
 
+     */
+    fun updatePwd(@RequestBody updatePwd: UpdatePwd): ResponseEntity<BaseRes> {
         try{
-            uuidIdx = UUID.fromString(id).toString()
-        }catch (e: java.lang.Exception){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseRes(HttpStatus.BAD_REQUEST, "문서 번호가 잘못되었습니다."))
-        }
+            if(updatePwd.type == 1){
+                val updatePass = WellUserDTOUpdate(updatePwd.idx, null, null,
+                    passwordEncoder.encode(updatePwd.password),null,null,
+                    null,null, ZonedDateTime.now(),null)
 
-        try {
-            //userService.updateTempPwdById(uuidIdx)
-        } catch (e: Exception) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(BaseRes(HttpStatus.NOT_FOUND, "$id 데이터를 찾을 수 없습니다."))
-        }
+                println(updatePass)
 
-        return ResponseEntity.ok(BaseRes(HttpStatus.OK, "delete ok"))
+                if (!userService.updatePassword(updatePass))
+                    throw BaseException(BaseResponseCode.FAILED_TO_SAVE_USER)
+
+            }else if(updatePwd.type == 2){
+                val tmpPassCount = (userService.getTmpPassCountByIdx(updatePwd.idx)+1).toByte()
+                val updatePass = WellUserDTOUpdate(updatePwd.idx, null, null,
+                   null, passwordEncoder.encode(updatePwd.password),ZonedDateTime.now().plusDays(5),
+                    tmpPassCount,ZonedDateTime.now(), null,null)
+
+                if (!userService.updatePassword(updatePass))
+                    throw BaseException(BaseResponseCode.FAILED_TO_SAVE_USER)
+            }
+
+
+        }catch (e : Exception){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseRes(HttpStatus.BAD_REQUEST, e.message ?: "잘못된 요청입니다."))
+        }
+        return ResponseEntity.ok(BaseRes(HttpStatus.OK, "업데이트 성공"))
     }
+
 }

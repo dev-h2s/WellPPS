@@ -37,6 +37,7 @@ class BusinessController(private var partnerService: WellPartnerService) {
         }
 
         val partner = partnerService.getPartnerByIdx(uuidIdx)
+        println(partner)
 
         if (partner.isEmpty)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(BaseItemRes(HttpStatus.NOT_FOUND, "$id 데이터를 찾을 수 없습니다."))

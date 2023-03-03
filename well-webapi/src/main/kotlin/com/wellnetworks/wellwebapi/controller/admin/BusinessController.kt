@@ -9,6 +9,7 @@ import com.wellnetworks.wellcore.service.WellPartnerService
 import com.wellnetworks.wellwebapi.response.*
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -71,7 +72,7 @@ class BusinessController(private var partnerService: WellPartnerService) {
     ): ResponseEntity<BaseListRes<WellPartnerDTO>> {
         val searchKeywords: MutableList<SearchCriteria> = mutableListOf()
 
-        val pageable: Pageable = PageRequest.of(page, size)
+        val pageable: Pageable = PageRequest.of(page, size, Sort.by("registerDatetime").descending())
         val dtStartFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
         val dtEndFormatter = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss.SSSSSSS")
 

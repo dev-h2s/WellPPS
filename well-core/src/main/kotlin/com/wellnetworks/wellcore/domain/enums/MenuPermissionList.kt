@@ -15,7 +15,7 @@ annotation class MenuPermissionAction {
         const val EXCEL = "EXCEL"
 
         fun asMap() : Map<String, String> {
-            val props = PermissionKey::class.companionObject!!.memberProperties.associateBy { it.name }
+            val props = MenuPermissionAction::class.companionObject!!.memberProperties.associateBy { it.name }
             return props.keys.associateWith { props[it]?.call().toString()!! }
         }
     }
@@ -92,7 +92,7 @@ annotation class MenuPermission {
         const val POPUP = "MENU_POPUP" //팝업관리
 
         fun asMap() : Map<String, String> {
-            val props = PermissionKey::class.companionObject!!.memberProperties.associateBy { it.name }
+            val props = MenuPermission::class.companionObject!!.memberProperties.associateBy { it.name }
             return props.keys.associateWith { props[it]?.call().toString()!! }
         }
     }

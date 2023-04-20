@@ -57,16 +57,16 @@ class BusinessController(private var partnerService: WellPartnerService) {
         @RequestParam("pcode", required = false) pCode: String?,
         @RequestParam("c_name", required = false) partnerName: String?,
         @RequestParam("c_type", required = false) partnerType: Int?,
-//        @RequestParam("dtyp", required = false) discountType: String?,
+        @RequestParam("rate_type", required = false) discountType: Int?, //충전할인율
         @RequestParam("con_person", required = false) manager: String?,
         @RequestParam("ceo_name", required = false) ceoName: String?,
         @RequestParam("ceo_tel", required = false) ceoTelephone: String?,
         @RequestParam("c_status", required = false) status: Int?,
-//        @RequestParam("upp", required = false) upper: String?,
-//        @RequestParam("lic", required = false) licenseAttached: Boolean?,
-//        @RequestParam("con", required = false) contractAttached: Boolean?,
-//        @RequestParam("dist", required = false) districts: String?,
-//        @RequestParam("addr", required = false) address: String?,
+        @RequestParam("upper", required = false) upper: String?, //상부점
+//        @RequestParam("tax_regdoc", required = false) licenseAttached: Boolean?, //등록증
+//        @RequestParam("con_regdoc", required = false) contractAttached: Boolean?, //계약서
+//        @RequestParam("district", required = false) districts: String?, //지역
+        @RequestParam("addr", required = false) address: String?, //주소
         @RequestParam("size", defaultValue = "10") size: Int,
         @RequestParam("page", defaultValue = "0") page: Int,
     ): ResponseEntity<BaseListRes<WellPartnerDTO>> {
@@ -107,6 +107,10 @@ class BusinessController(private var partnerService: WellPartnerService) {
         if (!ceoName.isNullOrEmpty()) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.CEO_Name.columnsName, "=", ceoName))
         if (!ceoTelephone.isNullOrEmpty()) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.CEO_Telephone.columnsName, "=", ceoTelephone))
         if (status != null) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Company_State.columnsName, "=", CompanyStateType.from(status!!)!!))
+        if (discountType != null) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Rate.columnsName, "=", RateType.from(discountType!!)!!))
+        if (!upper.isNullOrEmpty()) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Organization_Parent.columnsName, "=", upper))
+        if (!address.isNullOrEmpty()) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Company_Address1.columnsName, "%%", address))
+//      if (licenseAttached != null) searchKeywords.add(SearchCriteria(WellPartnerColumnsName.Organization_Parent.columnsName, "=", licenseAttached))
 
         val partnerList = partnerService.searchPartner(pageable, searchKeywords)
 

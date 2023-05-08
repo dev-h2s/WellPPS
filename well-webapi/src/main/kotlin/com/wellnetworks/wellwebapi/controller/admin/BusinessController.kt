@@ -237,9 +237,9 @@ class BusinessController(private var partnerService: WellPartnerService) {
     }
 
     @GetMapping("partner/param_companytype")
-    @PreAuthorize("isAuthenticated() and" +
-            " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN.permitssionKey) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER.permitssionKey))")
+    @PreAuthorize("@wellAuthorize.hasUserPermission('${PermissionKey.MEMBER}', '${PermissionKey.PARTNER}') or" +
+            "@wellAuthorize.hasMenuPermission('${MenuPermission.PARTNER}'," +
+            " '${MenuPermissionAction.VIEWMENU}', '${MenuPermissionAction.READ}')")
     fun paramCompanyType(): ResponseEntity<BaseListRes<ParamEnumItemRes>> {
         var paramCompanyTypeList : MutableList<ParamEnumItemRes> = mutableListOf()
         for (item in CompanyType.values()) {

@@ -5,10 +5,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.wellnetworks.wellcore.domain.dto.WellGroupDTO
 import com.wellnetworks.wellcore.domain.dto.WellPartnerDTO
 import com.wellnetworks.wellcore.domain.dto.WellPermissionDTO
-import com.wellnetworks.wellcore.domain.enums.CompanyType
-import com.wellnetworks.wellcore.domain.enums.MenuPermission
-import com.wellnetworks.wellcore.domain.enums.MenuPermissionAction
-import com.wellnetworks.wellcore.domain.enums.MenuPermissionUtil
+import com.wellnetworks.wellcore.domain.enums.*
 import com.wellnetworks.wellcore.service.WellGroupService
 import com.wellnetworks.wellwebapi.response.BaseItemRes
 import com.wellnetworks.wellwebapi.response.BaseListRes
@@ -112,16 +109,16 @@ class GroupController(private var groupService: WellGroupService) {
         return ResponseEntity.ok(BaseRes(HttpStatus.OK, "삭제 성공"))
     }
 
-    @GetMapping("group/menuAction")
+    @GetMapping("group/actionList")
     @PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
             " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
     fun menuAction(): ResponseEntity<BaseListRes<ParamEnumItemRes>> {
         var menuActionList : MutableList<ParamEnumItemRes> = mutableListOf()
-        for (item in MenuPermissionAction.asMap()) {
+        for (item in ActionList.values()) {
             menuActionList.add(
                 ParamEnumItemRes(
-                item.hashCode(),
+                item.index(),
                 item.key,
                 item.toString()
             )
@@ -130,22 +127,22 @@ class GroupController(private var groupService: WellGroupService) {
 
         return ResponseEntity.ok(
             BaseListRes<ParamEnumItemRes>(
-                HttpStatus.OK, "",
+                HttpStatus.OK, "ActionList",
                 menuActionList,
             )
         )
     }
 
-    @GetMapping("group/menuPermission")
+    @GetMapping("group/menuList")
     @PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
             " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
     fun menuPermission(): ResponseEntity<BaseListRes<ParamEnumItemRes>> {
         var menuPermissionList : MutableList<ParamEnumItemRes> = mutableListOf()
-        for (item in MenuPermission.asMap()) {
+        for (item in PermissionList.values()) {
             menuPermissionList.add(
                 ParamEnumItemRes(
-                    item.hashCode(),
+                    item.index(),
                     item.key,
                     item.toString()
                 )
@@ -154,7 +151,7 @@ class GroupController(private var groupService: WellGroupService) {
 
         return ResponseEntity.ok(
             BaseListRes<ParamEnumItemRes>(
-                HttpStatus.OK, "",
+                HttpStatus.OK, "MenuList",
                 menuPermissionList,
             )
         )

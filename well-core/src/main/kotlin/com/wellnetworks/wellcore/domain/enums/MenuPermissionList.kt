@@ -135,3 +135,132 @@ class MenuPermissionUtil {
         }
     }
 }
+
+interface PermissionEnumList {
+    fun index() : Int
+    val key: String
+    override fun toString() : String
+}
+
+enum class PermissionList : PermissionEnumList {
+    MENU_OPENING {
+        override fun index() = 0
+        override val key: String
+            get() = "MENU_OPENING"
+
+        override fun toString(): String {
+            return "개통내역"
+        }
+    },
+    MENU_OPENING_APP {
+        override fun index() = 1
+        override val key: String
+            get() = "MENU_OPENING_APP"
+
+        override fun toString(): String {
+            return "개통접수내역(APP)"
+        }
+    },
+    MENU_ILLEGAL {
+        override fun index() = 2
+        override val key: String
+            get() = "MENU_ILLEGAL"
+
+        override fun toString(): String {
+            return "부정가입현황"
+        }
+    },
+    MENU_DAY_STAT {
+        override fun index() = 3
+        override val key: String
+            get() = "MENU_DAY_STAT"
+
+        override fun toString(): String {
+            return "일별실적내역"
+        }
+    },
+    MENU_MONTH_STAT {
+        override fun index() = 4
+        override val key: String
+            get() = "MENU_MONTH_STAT"
+
+        override fun toString(): String {
+            return "월별실적내역"
+        }
+    };
+
+    companion object : EnumFinder<Int, PermissionList>(PermissionList.values().associateBy { it.index() })
+}
+
+interface ActionEnumList {
+    fun index() : Int
+    val key: String
+    override fun toString() : String
+}
+enum class ActionList : ActionEnumList {
+    VIEWMENU {
+        override fun index() = 0
+        override val key: String
+            get() = "VIEWMENU"
+
+        override fun toString(): String {
+            return "열람"
+        }
+    },
+    CREATE {
+        override fun index() = 1
+        override val key: String
+            get() = "CREATE"
+
+        override fun toString(): String {
+            return "입력"
+        }
+    },
+    READ {
+        override fun index() = 2
+        override val key: String
+            get() = "READ"
+
+        override fun toString(): String {
+            return "보기"
+        }
+    },
+    UPDATE {
+        override fun index() = 3
+        override val key: String
+            get() = "UPDATE"
+
+        override fun toString(): String {
+            return "수정"
+        }
+    },
+    DELETE {
+        override fun index() = 4
+        override val key: String
+            get() = "DELETE"
+
+        override fun toString(): String {
+            return "삭제"
+        }
+    },
+    SEARCH {
+        override fun index() = 5
+        override val key: String
+            get() = "SEARCH"
+
+        override fun toString(): String {
+            return "검색"
+        }
+    },
+    EXCEL {
+        override fun index() = 6
+        override val key: String
+            get() = "EXCEL"
+
+        override fun toString(): String {
+            return "엑셀"
+        }
+    };
+
+    companion object : EnumFinder<Int, ActionList>(ActionList.values().associateBy { it.index() })
+}

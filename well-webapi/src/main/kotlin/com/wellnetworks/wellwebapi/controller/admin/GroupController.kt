@@ -28,9 +28,9 @@ class GroupController(private var groupService: WellGroupService) {
 
 
     @GetMapping("group")
-    @PreAuthorize("isAuthenticated() and" +
+    /*@PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")*/
     fun getGroupPermissionList(
         @RequestParam("size", defaultValue = "10") size: Int,
         @RequestParam("page", defaultValue = "0") page: Int,
@@ -44,9 +44,9 @@ class GroupController(private var groupService: WellGroupService) {
     }
 
     @PostMapping("group")
-    @PreAuthorize("isAuthenticated() and" +
+    /*@PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")*/
     fun createGroupPermission(@RequestPart("group") group: String): ResponseEntity<BaseRes> {
         val mapper = jacksonObjectMapper()
 
@@ -70,9 +70,9 @@ class GroupController(private var groupService: WellGroupService) {
     }
 
     @PutMapping("group")
-    @PreAuthorize("isAuthenticated() and" +
+    /*@PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")*/
     fun updateGroupPermission(@RequestPart("group") group: String): ResponseEntity<BaseRes> {
         val mapper = jacksonObjectMapper().registerModule(JavaTimeModule())
 
@@ -96,9 +96,9 @@ class GroupController(private var groupService: WellGroupService) {
     }
 
     @DeleteMapping("group/{gkey}")
-    @PreAuthorize("isAuthenticated() and" +
+    /*@PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")*/
     fun deleteGroupPermission(@PathVariable gkey: String): ResponseEntity<BaseRes> {
         try {
             groupService.deleteGroup(gkey);
@@ -110,9 +110,9 @@ class GroupController(private var groupService: WellGroupService) {
     }
 
     @GetMapping("group/actionList")
-    @PreAuthorize("isAuthenticated() and" +
+    /*@PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")*/
     fun menuAction(): ResponseEntity<BaseListRes<ParamEnumItemRes>> {
         var menuActionList : MutableList<ParamEnumItemRes> = mutableListOf()
         for (item in ActionList.values()) {
@@ -134,9 +134,9 @@ class GroupController(private var groupService: WellGroupService) {
     }
 
     @GetMapping("group/menuList")
-    @PreAuthorize("isAuthenticated() and" +
+    /*@PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")*/
     fun menuPermission(): ResponseEntity<BaseListRes<ParamEnumItemRes>> {
         var menuPermissionList : MutableList<ParamEnumItemRes> = mutableListOf()
         for (item in PermissionList.values()) {

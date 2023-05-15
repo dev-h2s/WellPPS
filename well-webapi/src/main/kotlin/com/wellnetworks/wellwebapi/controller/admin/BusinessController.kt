@@ -26,9 +26,9 @@ import java.util.*
 class BusinessController(private var partnerService: WellPartnerService) {
 
     @GetMapping("business/{id}")
-    @PreAuthorize("isAuthenticated() and" +
+    /*@PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))" )
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))" )*/
     fun getPartner(@PathVariable id: String): ResponseEntity<BaseItemRes<WellPartnerDTO>> {
         val uuidIdx: String
         try {
@@ -48,9 +48,9 @@ class BusinessController(private var partnerService: WellPartnerService) {
 
 
     @GetMapping("business")
-    @PreAuthorize("@wellAuthorize.hasUserPermission('${PermissionKey.MEMBER}', '${PermissionKey.PARTNER}') or" +
+    /*@PreAuthorize("@wellAuthorize.hasUserPermission('${PermissionKey.MEMBER}', '${PermissionKey.PARTNER}') or" +
             "@wellAuthorize.hasMenuPermission('${MenuPermission.PARTNER}'," +
-            " '${MenuPermissionAction.VIEWMENU}', '${MenuPermissionAction.READ}')")
+            " '${MenuPermissionAction.VIEWMENU}', '${MenuPermissionAction.READ}')")*/
     fun getPartnerList(
         @RequestParam("from_date", required = false) startDate: String?,
         @RequestParam("to_date", required = false) endDate: String?,
@@ -121,9 +121,9 @@ class BusinessController(private var partnerService: WellPartnerService) {
 
     @PostMapping("business",
         consumes = [MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorize("isAuthenticated() and" +
+    /*@PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")*/
     fun createPartner(@RequestPart("user") userJsonString: String,
                       @RequestPart("partner") partnerJsonString: String,
                       @RequestPart("file") files: List<MultipartFile>
@@ -144,9 +144,9 @@ class BusinessController(private var partnerService: WellPartnerService) {
     }
 
     @DeleteMapping("business/{id}")
-    @PreAuthorize("isAuthenticated() and" +
+    /*@PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")*/
     fun deletePartner(@PathVariable id: String) : ResponseEntity<BaseRes> {
         val uuidIdx: String
 
@@ -168,9 +168,9 @@ class BusinessController(private var partnerService: WellPartnerService) {
 
 
     @PutMapping("business")
-    @PreAuthorize("isAuthenticated() and" +
+    /*@PreAuthorize("isAuthenticated() and" +
         " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
-        " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
+        " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")*/
 
     //(@PathVariable id: String): ResponseEntity<BaseItemRes<WellPartnerDTO>> {
     //fun updatePartner(@RequestPart("partner") partner: String, @RequestPart("file") files: List<MultipartFile>): ResponseEntity<BaseRes> {
@@ -237,9 +237,9 @@ class BusinessController(private var partnerService: WellPartnerService) {
     }
 
     @GetMapping("partner/param_companytype")
-    @PreAuthorize("@wellAuthorize.hasUserPermission('${PermissionKey.MEMBER}', '${PermissionKey.PARTNER}') or" +
+    /*@PreAuthorize("@wellAuthorize.hasUserPermission('${PermissionKey.MEMBER}', '${PermissionKey.PARTNER}') or" +
             "@wellAuthorize.hasMenuPermission('${MenuPermission.PARTNER}'," +
-            " '${MenuPermissionAction.VIEWMENU}', '${MenuPermissionAction.READ}')")
+            " '${MenuPermissionAction.VIEWMENU}', '${MenuPermissionAction.READ}')")*/
     fun paramCompanyType(): ResponseEntity<BaseListRes<ParamEnumItemRes>> {
         var paramCompanyTypeList : MutableList<ParamEnumItemRes> = mutableListOf()
         for (item in CompanyType.values()) {

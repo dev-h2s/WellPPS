@@ -28,9 +28,9 @@ import java.util.*
 @RequestMapping("/admin/hr/")
 class MemberController(private var memberInfoService: WellMemberInfoService) {
     @GetMapping("member/{id}")
-    @PreAuthorize("isAuthenticated() and" +
+    /*@PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPERADMIN) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")*/
     fun getMember(@PathVariable id: String): ResponseEntity<BaseItemRes<WellMemberInfoDTO>> {
         val uuidIdx: String
         try {
@@ -48,9 +48,9 @@ class MemberController(private var memberInfoService: WellMemberInfoService) {
     }
 
     @GetMapping("member")
-    @PreAuthorize("isAuthenticated() and" +
+    /*@PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")*/
     fun getMemberList(
         @RequestParam("size", defaultValue = "10") size: Int,
         @RequestParam("page", defaultValue = "0") page: Int,
@@ -71,9 +71,9 @@ class MemberController(private var memberInfoService: WellMemberInfoService) {
     }
 
     @PostMapping("member")
-    @PreAuthorize("isAuthenticated() and" +
+    /*@PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")*/
     fun createMember(@RequestPart("user") userJsonString: String,
                      @RequestPart("member") memberJsonString: String
                      //@RequestPart("file") files: List<MultipartFile>
@@ -99,9 +99,9 @@ class MemberController(private var memberInfoService: WellMemberInfoService) {
     }
 
     @PutMapping("member")
-    @PreAuthorize("isAuthenticated() and" +
+    /*@PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")*/
 
     //(@PathVariable id: String): ResponseEntity<BaseItemRes<WellPartnerDTO>> {
     //fun updatePartner(@RequestPart("partner") partner: String, @RequestPart("file") files: List<MultipartFile>): ResponseEntity<BaseRes> {
@@ -125,9 +125,9 @@ class MemberController(private var memberInfoService: WellMemberInfoService) {
     }
 
     @DeleteMapping("member/{id}")
-    @PreAuthorize("isAuthenticated() and" +
+    /*@PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")*/
     fun deletePartner(@PathVariable id: String) : ResponseEntity<BaseRes> {
         val uuidIdx: String
 

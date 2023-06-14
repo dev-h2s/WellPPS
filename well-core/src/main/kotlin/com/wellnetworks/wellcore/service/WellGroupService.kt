@@ -1,7 +1,9 @@
 package com.wellnetworks.wellcore.service
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.wellnetworks.wellcore.domain.WellGroupEntity
 import com.wellnetworks.wellcore.domain.dto.WellGroupDTO
+import com.wellnetworks.wellcore.domain.enums.MenuPermissionAction
 import com.wellnetworks.wellcore.repository.WellGroupRepository
 import com.wellnetworks.wellcore.repository.WellUserRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -86,5 +88,10 @@ class WellGroupService {
         }
 
         throw Exception("delete count not match.")
+    }
+
+    fun getMenuPermissionAction(): List<String> {
+        val mapper = jacksonObjectMapper()
+        return MenuPermissionAction.asMap().values.toString().map { it.toString() };
     }
 }

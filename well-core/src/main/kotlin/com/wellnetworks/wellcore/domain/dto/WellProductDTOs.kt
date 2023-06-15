@@ -9,7 +9,7 @@ import java.time.ZonedDateTime
 
 data class WellProductDTOs(
     @JsonProperty("idx")
-    val Idx: String,
+    val Idx: String?,
     @JsonProperty("operator_name")
     val OperatorName: String?,
     @JsonProperty("operator_code")
@@ -44,9 +44,9 @@ data class WellProductDTOs(
     val ProductMemo: String?,
     @JsonProperty("sort1")
     val Sort1: Int?,
-    @JsonProperty("monthly")
+    @JsonProperty("sort2")
     val Sort2: Int?,
-    @JsonProperty("monthly")
+    @JsonProperty("sort3")
     val Sort3: Int?,
     @JsonIgnore
     override val Modify_Datetime: ZonedDateTime?,

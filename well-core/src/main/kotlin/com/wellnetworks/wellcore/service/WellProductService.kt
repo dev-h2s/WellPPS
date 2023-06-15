@@ -28,7 +28,7 @@ class WellProductService {
             )
         try {
             wellProductRepository.save(cProduct)
-        } catch (e: Exception) {
+        } catch (e: IllegalArgumentException) {
             return false
         }
         return true

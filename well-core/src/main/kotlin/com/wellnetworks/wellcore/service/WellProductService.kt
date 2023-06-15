@@ -7,6 +7,7 @@ import com.wellnetworks.wellcore.repository.WellProductRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 @Component
 class WellProductService {
@@ -14,13 +15,10 @@ class WellProductService {
     @Autowired
     private lateinit var wellProductRepository: WellProductRepository
 
-    @Autowired
-    private lateinit var wellProductService: WellProductService
-
     @Transactional(rollbackFor = [Exception::class])
     fun createProduct(product: WellProductDTOs): Boolean {
-        try {
-            var productIdx: String = (wellProductService.createProduct(product) ?: throw Exception("데이터 생성에 실패하였습니다.")).toString()
+
+            var productIdx = UUID.randomUUID().toString().uppercase()
 
             var cProduct = WellProductEntity(
                 productIdx,product.OperatorName,product.OperatorCode,product.ProductName,product.ProductCodeIn,
@@ -28,12 +26,8 @@ class WellProductService {
                 product.ProductInfoSms,product.ProductInfoEtc,product.Telecom_Type,product.Monthly,product.VisibleFlag,product.RunFlag,
                 product.ProductMemo,0,0,0,product.Register_Datetime,product.Modify_Datetime
             )
-
-            val permissions: List<String> = listOf (
-                PermissionKey.MEMBER_SCREENING,
-            )
-
-            //wellProductRepository.save(cProduct)
+        try {
+            wellProductRepository.save(cProduct)
         } catch (e: Exception) {
             return false
         }

@@ -1,6 +1,7 @@
 package com.wellnetworks.wellcore.service
 
 import com.wellnetworks.wellcore.domain.WellProductEntity
+import com.wellnetworks.wellcore.domain.dto.WellMemberInfoDTO
 import com.wellnetworks.wellcore.domain.dto.WellProductDTOs
 import com.wellnetworks.wellcore.domain.enums.PermissionKey
 import com.wellnetworks.wellcore.repository.WellProductRepository
@@ -32,5 +33,10 @@ class WellProductService {
             return false
         }
         return true
+    }
+
+    fun getProductByIdx(idx: String): Optional<WellProductDTOs> {
+        val product = wellProductRepository.findByIdx(idx.uppercase())
+        return product.map { it.toDto() }
     }
 }

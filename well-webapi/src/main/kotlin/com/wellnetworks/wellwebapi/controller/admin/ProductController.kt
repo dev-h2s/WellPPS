@@ -1,16 +1,16 @@
 package com.wellnetworks.wellwebapi.controller.admin
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.wellnetworks.wellcore.domain.dto.WellMemberInfoDTO
 import com.wellnetworks.wellcore.domain.dto.WellProductDTOs
 import com.wellnetworks.wellcore.service.WellProductService
+import com.wellnetworks.wellwebapi.response.BaseItemRes
 import com.wellnetworks.wellwebapi.response.BaseRes
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestPart
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @RequestMapping("/admin/pr/")
@@ -30,5 +30,22 @@ class ProductController(private var productService: WellProductService) {
         }
 
         return ResponseEntity.ok(BaseRes(HttpStatus.OK, "제품 추가 성공"))
+    }
+
+    @GetMapping("product/{id}")
+    fun getProduct(@PathVariable id: String): ResponseEntity<BaseItemRes<WellProductDTOs>> {
+        val idx: String
+        try {
+            idx = UUID.fromString(id).toString().uppercase()
+        } catch (e: Exception) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseItemRes(HttpStatus.BAD_REQUEST, "문서 번호가 잘못되었습니다."))
+        }
+
+        val product = productService.getProductByIdx(idx)
+
+        if (product.isEmpty)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(BaseItemRes(HttpStatus.NOT_FOUND, "$id 데이터를 찾을 수 없습니다."))
+
+        return ResponseEntity.ok(BaseItemRes(HttpStatus.OK, "", product.get()))
     }
 }

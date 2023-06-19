@@ -4,8 +4,12 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.wellnetworks.wellcore.domain.dto.WellMemberInfoDTO
 import com.wellnetworks.wellcore.domain.dto.WellProductDTOs
 import com.wellnetworks.wellcore.service.WellProductService
+import com.wellnetworks.wellcore.service.utils.SearchCriteria
 import com.wellnetworks.wellwebapi.response.BaseItemRes
+import com.wellnetworks.wellwebapi.response.BaseListRes
 import com.wellnetworks.wellwebapi.response.BaseRes
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -48,4 +52,22 @@ class ProductController(private var productService: WellProductService) {
 
         return ResponseEntity.ok(BaseItemRes(HttpStatus.OK, "", product.get()))
     }
+
+    @GetMapping("product")
+    fun getProductList(
+        @RequestParam("size", defaultValue = "10") size: Int,
+        @RequestParam("page", defaultValue = "0") page: Int,
+    ): ResponseEntity<BaseListRes<WellProductDTOs>>{
+        val searchKeywords: MutableList<SearchCriteria> = mutableListOf()
+
+        val pageable: Pageable = PageRequest.of(page, size)
+
+        // Todo : 검색조건 추가
+
+        val productList = productService.searchProduct(pageable, searchKeywords)
+
+        return ResponseEntity.ok(BaseListRes(HttpStatus.OK, "",
+            productList.content, productList.number, productList.totalElements, productList.totalPages))
+    }
+
 }

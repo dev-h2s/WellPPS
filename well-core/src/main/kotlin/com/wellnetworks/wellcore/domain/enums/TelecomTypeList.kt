@@ -7,7 +7,7 @@ interface ITelecomType {
 }
 
 enum class TelecomType : ITelecomType{
-    PRODUCT_TYPE_UNKNOWN {
+    TELECOM_TYPE_UNKNOWN {
         override fun index() = 0
         override val key: String
             get() = "TELECOM_TYPE_UNKNOWN"
@@ -16,7 +16,7 @@ enum class TelecomType : ITelecomType{
             return "알수없음"
         }
     },
-    PRODUCT_TYPE_NORMAL {
+    SK {
         override fun index() = 1
         override val key: String
             get() = "SK"
@@ -25,7 +25,7 @@ enum class TelecomType : ITelecomType{
             return "SK"
         }
     },
-    PRODUCT_TYPE_PLAN {
+    KT {
         override fun index() = 2
         override val key: String
             get() = "KT"
@@ -34,7 +34,7 @@ enum class TelecomType : ITelecomType{
             return "KT"
         }
     },
-    PRODUCT_TYPE_POSTPAID {
+    LG {
         override fun index() = 3
         override val key: String
             get() = "LG"
@@ -43,7 +43,7 @@ enum class TelecomType : ITelecomType{
             return "LG"
         }
     },
-    PRODUCT_TYPE_TOPUP {
+    ETC {
         override fun index() = 4
         override val key: String
             get() = "ETC"

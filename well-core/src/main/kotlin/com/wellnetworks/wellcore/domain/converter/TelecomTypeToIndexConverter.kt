@@ -12,8 +12,8 @@ class TelecomTypeToIndexConverter : AttributeConverter<TelecomType, Byte>  {
     }
 
     override fun convertToEntityAttribute(dbData: Byte?): TelecomType {
-        if (dbData == null) return TelecomType.PRODUCT_TYPE_UNKNOWN;
-        return TelecomType from dbData.toInt() ?: TelecomType.PRODUCT_TYPE_UNKNOWN;
+        if (dbData == null) return TelecomType.TELECOM_TYPE_UNKNOWN;
+        return TelecomType from dbData.toInt() ?: TelecomType.TELECOM_TYPE_UNKNOWN;
     }
 
 }

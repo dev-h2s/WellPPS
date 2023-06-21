@@ -1,6 +1,8 @@
 package com.wellnetworks.wellcore.domain
 
 import com.wellnetworks.wellcore.domain.converter.*
+import com.wellnetworks.wellcore.domain.dto.WellPartnerDTOUpdate
+import com.wellnetworks.wellcore.domain.dto.WellProductDTOUpdate
 import com.wellnetworks.wellcore.domain.dto.WellProductDTOs
 import com.wellnetworks.wellcore.domain.enums.*
 import jakarta.persistence.*
@@ -122,6 +124,33 @@ data class WellProductEntity(
             Modify_Datetime = this.modifyDatetime,
             Register_Datetime = this.registerDatetime,
         )
+    }
+
+    fun updateDto(dto: WellProductDTOUpdate) {
+        if (dto.Idx != null) this.idx = dto.Idx
+        if (dto.OperatorName != null) this.operatorName = dto.OperatorName
+        if (dto.OperatorCode != null) this.operatorCode = dto.OperatorCode
+        if (dto.ProductName != null) this.productName = dto.ProductName
+        if (dto.ProductCodeIn != null) this.productCodeIn = dto.ProductCodeIn
+        if (dto.ProductCodeEx != null) this.productCodeEx = dto.ProductCodeEx
+        if (dto.Product_Type != null) this.product = dto.Product_Type
+        if (dto.ProductPrice != null) this.productPrice = dto.ProductPrice
+        if (dto.ProductInfoData != null) this.productInfoData = dto.ProductInfoData
+        if (dto.ProductInfoVoice != null) this.productInfoVoice = dto.ProductInfoVoice
+        if (dto.ProductInfoSms != null) this.productInfoSms = dto.ProductInfoSms
+        if (dto.ProductInfoEtc != null) this.productInfoEtc = dto.ProductInfoEtc
+        if (dto.Telecom_Type != null) this.telecom = dto.Telecom_Type
+        if (dto.VisibleFlag != null) this.visibleFlag = dto.VisibleFlag
+        if (dto.RunFlag != null) this.runFlag = dto.RunFlag
+        if (dto.Monthly != null) this.monthly = dto.Monthly
+        if (dto.ProductMemo != null) this.productMemo = dto.ProductMemo
+        if (dto.Sort1 != null) this.sort1 = dto.Sort1
+        if (dto.Sort2 != null) this.sort2 = dto.Sort2
+        if (dto.Sort3 != null) this.sort3 = dto.Sort3
+        if (dto.Modify_Datetime != null) this.productModifyDatetime = dto.Modify_Datetime
+        if (dto.Register_Datetime != null) this.productRegisterDatetime = dto.Register_Datetime
+
+
     }
 
 

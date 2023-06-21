@@ -1,7 +1,10 @@
 package com.wellnetworks.wellwebapi.controller.admin
 
+import com.fasterxml.jackson.databind.ser.Serializers.Base
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.wellnetworks.wellcore.domain.dto.WellMemberInfoDTO
+import com.wellnetworks.wellcore.domain.dto.WellProductDTOUpdate
 import com.wellnetworks.wellcore.domain.dto.WellProductDTOs
 import com.wellnetworks.wellcore.service.WellProductService
 import com.wellnetworks.wellcore.service.utils.SearchCriteria
@@ -68,6 +71,37 @@ class ProductController(private var productService: WellProductService) {
 
         return ResponseEntity.ok(BaseListRes(HttpStatus.OK, "",
             productList.content, productList.number, productList.totalElements, productList.totalPages))
+    }
+
+    @PutMapping("product")
+    fun updateProduct(@RequestPart("product") product: String) : ResponseEntity<BaseRes>{
+
+        val mapper = jacksonObjectMapper().registerModule(JavaTimeModule())
+
+        try {
+            val productObj = mapper.readValue(product, WellProductDTOUpdate::class.java)
+
+            if (!productService.updateProduct(productObj))
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(BaseRes(HttpStatus.INTERNAL_SERVER_ERROR, "업데이트 실패"))
+
+        } catch (e: Exception) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseRes(HttpStatus.BAD_REQUEST, e.message ?: "잘못된 요청입니다."))
+        }
+        return ResponseEntity.ok(BaseRes(HttpStatus.OK, "업데이트 성공"))
+    }
+
+    @DeleteMapping("product/{id}")
+    fun deleteProduct(@PathVariable id: String) : ResponseEntity<BaseRes> {
+        val uuidIdx: String
+
+        try{
+            uuidIdx = UUID.fromString(id).toString()
+            productService.deleteProductById(uuidIdx)
+        }catch (e: Exception){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(BaseRes(HttpStatus.NOT_FOUND, "$id 데이터를 찾을 수 없습니다."))
+        }
+        return ResponseEntity.ok(BaseRes(HttpStatus.OK, "삭제 성공"))
     }
 
 }

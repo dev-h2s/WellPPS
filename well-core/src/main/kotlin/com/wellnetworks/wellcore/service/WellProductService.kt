@@ -1,10 +1,8 @@
 package com.wellnetworks.wellcore.service
 
-import com.wellnetworks.wellcore.domain.WellMemberInfoEntity
 import com.wellnetworks.wellcore.domain.WellProductEntity
-import com.wellnetworks.wellcore.domain.dto.WellMemberInfoDTO
+import com.wellnetworks.wellcore.domain.dto.WellProductDTOUpdate
 import com.wellnetworks.wellcore.domain.dto.WellProductDTOs
-import com.wellnetworks.wellcore.domain.enums.PermissionKey
 import com.wellnetworks.wellcore.repository.WellProductRepository
 import com.wellnetworks.wellcore.service.utils.SearchCriteria
 import com.wellnetworks.wellcore.service.utils.WellServiceUtil
@@ -13,6 +11,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+import java.time.ZonedDateTime
 import java.util.*
 
 @Component
@@ -30,7 +29,7 @@ class WellProductService {
                 productIdx,product.OperatorName,product.OperatorCode,product.ProductName,product.ProductCodeIn,
                 product.ProductCodeEx,product.Product_Type,product.ProductPrice,product.ProductInfoData,product.ProductInfoVoice,
                 product.ProductInfoSms,product.ProductInfoEtc,product.Telecom_Type,product.Monthly,product.VisibleFlag,product.RunFlag,
-                product.ProductMemo,0,0,0,product.Register_Datetime,null
+                product.ProductMemo,0,0,0,product.Register_Datetime,product.Modify_Datetime
             )
         try {
             wellProductRepository.save(cProduct)
@@ -53,5 +52,32 @@ class WellProductService {
         return wellProductRepository.findAll(
             WellServiceUtil.Specification<WellProductEntity>(searchKeyword), pageable)
             .map { it.toDto() }
+    }
+
+    @Transactional(rollbackFor = [Exception::class])
+    fun updateProduct(product: WellProductDTOUpdate) : Boolean {
+        try{
+            val currentEntity = wellProductRepository.findByIdx(product.Idx.toString().uppercase()).orElse(null)?: return false
+
+            currentEntity.updateDto(product)
+            currentEntity.modifyDatetime = ZonedDateTime.now()
+            wellProductRepository.save(currentEntity)
+
+        } catch (e: Exception){
+            return false
+        }
+
+        return true
+    }
+
+    @Transactional(rollbackFor = [Exception::class])
+    fun deleteProductById(idx: String) {
+        val product = wellProductRepository.deleteByIdx(idx)
+
+        if (product.get() == 1) {
+            return
+        }
+
+        throw Exception("delete count not match.")
     }
 }

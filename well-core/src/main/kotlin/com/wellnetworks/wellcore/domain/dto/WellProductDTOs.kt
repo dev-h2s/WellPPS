@@ -15,7 +15,7 @@ data class WellProductDTOs(
     @JsonProperty("operator_name")
     val OperatorName: String?,
     @JsonProperty("operator_code")
-    val OperatorCode: String,
+    val OperatorCode: String?,
     @JsonProperty("product_name")
     val ProductName: String?,
     @JsonProperty("product_code_in")
@@ -23,7 +23,7 @@ data class WellProductDTOs(
     @JsonProperty("product_code_ex")
     val ProductCodeEx: String?,
     @JsonProperty("product_type")
-    val Product_Type: ProductType,
+    val Product_Type: ProductType?,
     @JsonProperty("product_price")
     val ProductPrice: Int?,
     @JsonProperty("product_info_data")
@@ -72,11 +72,11 @@ data class WellProductDTOs(
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class WellProductDTOUpdate @JsonCreator constructor(
     @JsonProperty("idx")
-    val Idx: String?,
+    val Idx: String,
     @JsonProperty("operator_name")
     val OperatorName: String?,
     @JsonProperty("operator_code")
-    val OperatorCode: String,
+    val OperatorCode: String?,
     @JsonProperty("product_name")
     val ProductName: String?,
     @JsonProperty("product_code_in")
@@ -84,7 +84,7 @@ data class WellProductDTOUpdate @JsonCreator constructor(
     @JsonProperty("product_code_ex")
     val ProductCodeEx: String?,
     @JsonProperty("product_type")
-    val Product_Type: ProductType,
+    val Product_Type: ProductType?,
     @JsonProperty("product_price")
     val ProductPrice: Int?,
     @JsonProperty("product_info_data")
@@ -100,9 +100,9 @@ data class WellProductDTOUpdate @JsonCreator constructor(
     @JsonProperty("monthly")
     val Monthly: String?,
     @JsonProperty("visible_flag")
-    val VisibleFlag: Boolean,
+    val VisibleFlag: Boolean?,
     @JsonProperty("run_flag")
-    val RunFlag: Boolean,
+    val RunFlag: Boolean?,
     @JsonProperty("product_memo")
     val ProductMemo: String?,
     @JsonProperty("sort1")

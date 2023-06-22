@@ -1,7 +1,6 @@
 package com.wellnetworks.wellcore.domain
 
 import com.wellnetworks.wellcore.domain.converter.*
-import com.wellnetworks.wellcore.domain.dto.WellPartnerDTOUpdate
 import com.wellnetworks.wellcore.domain.dto.WellProductDTOUpdate
 import com.wellnetworks.wellcore.domain.dto.WellProductDTOs
 import com.wellnetworks.wellcore.domain.enums.*
@@ -19,23 +18,23 @@ data class WellProductEntity(
     @Column(name="idx", columnDefinition = "uniqueidentifier", unique = true, nullable = false)
     var idx: String,
 
-    @Column(name="operator_name", length = 32, nullable = false)
+    @Column(name="operator_name", length = 32, nullable = true)
     var operatorName: String?,
 
-    @Column(name="operator_code", length = 32, nullable = false)
+    @Column(name="operator_code", length = 32, nullable = true)
     var operatorCode: String,
 
     @Column(name="product_name", length = 64, nullable = true)
     var productName: String?,
 
-    @Column(name="product_code_in", length = 32, nullable = false)
+    @Column(name="product_code_in", length = 32, nullable = true)
     var productCodeIn: String?,
 
-    @Column(name="product_code_ex", length = 32, nullable = false)
+    @Column(name="product_code_ex", length = 32, nullable = true)
     var productCodeEx: String?,
 
     @Convert(converter = ProductTypeToIndexConverter::class)
-    var product: ProductType,
+    var product: ProductType?,
 
     @Column(name="product_price", nullable = true)
     var productPrice: Int?,
@@ -68,7 +67,7 @@ data class WellProductEntity(
     var productMemo: String?,
 
     @Column(name="sort1", columnDefinition = "bit", nullable = true)
-    var sort1: Int,
+    var sort1: Int?,
 
     @Column(name="sort2", columnDefinition = "bit", nullable = true)
     var sort2: Int,

@@ -11,6 +11,7 @@ import com.wellnetworks.wellcore.service.utils.SearchCriteria
 import com.wellnetworks.wellwebapi.response.BaseItemRes
 import com.wellnetworks.wellwebapi.response.BaseListRes
 import com.wellnetworks.wellwebapi.response.BaseRes
+import com.wellnetworks.wellwebapi.response.ProductCountRes
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -102,6 +103,22 @@ class ProductController(private var productService: WellProductService) {
                 .body(BaseRes(HttpStatus.NOT_FOUND, "$id 데이터를 찾을 수 없습니다."))
         }
         return ResponseEntity.ok(BaseRes(HttpStatus.OK, "삭제 성공"))
+    }
+
+    @GetMapping("product/count")
+    fun countProduct(): ResponseEntity<ProductCountRes> {
+
+        val count = productService.productCount()
+        val totalTelecom = count.totalTelecom
+        val runTelecom = count.runTelecom
+        val totalProduct = count.totalProduct
+        val runProduct = count.runProduct
+
+        return ResponseEntity.ok(
+            ProductCountRes(
+                totalTelecom, runTelecom, totalProduct, runProduct
+            )
+        )
     }
 
 }

@@ -26,10 +26,11 @@ class WellProductService {
             var productIdx = UUID.randomUUID().toString().uppercase()
 
             var cProduct = WellProductEntity(
-                productIdx,product.OperatorName,product.OperatorCode,product.ProductName,product.ProductCodeIn,
+                productIdx,product.OperatorName,
+                product.OperatorCode.toString(),product.ProductName,product.ProductCodeIn,
                 product.ProductCodeEx,product.Product_Type,product.ProductPrice,product.ProductInfoData,product.ProductInfoVoice,
                 product.ProductInfoSms,product.ProductInfoEtc,product.Telecom_Type,product.Monthly,product.VisibleFlag,product.RunFlag,
-                product.ProductMemo,0,0,0,product.Register_Datetime,product.Modify_Datetime
+                product.ProductMemo,product.Sort1,0,0,product.Register_Datetime,product.Modify_Datetime
             )
         try {
             wellProductRepository.save(cProduct)
@@ -79,5 +80,16 @@ class WellProductService {
         }
 
         throw Exception("delete count not match.")
+    }
+
+    data class productCountAll(val totalTelecom: Long, val runTelecom: Long, val totalProduct: Long, val runProduct: Long)
+
+    fun productCount(): productCountAll {
+        val totalTelecom = wellProductRepository.countByOperatorNameIsNotNull()
+        val runTelecom = wellProductRepository.countByRunFlagIsTrueAndOperatorNameIsNotNull()
+        val totalProduct = wellProductRepository.countByProductNameIsNotNull()
+        val runProduct = wellProductRepository.countByRunFlagIsTrueAndProductNameIsNotNull()
+
+        return productCountAll(totalTelecom, runTelecom, totalProduct, runProduct)
     }
 }

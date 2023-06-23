@@ -120,8 +120,8 @@ data class WellProductEntity(
             Sort1 = this.sort1,
             Sort2 = this.sort2,
             Sort3 = this.sort3,
-            Modify_Datetime = this.modifyDatetime,
-            Register_Datetime = this.registerDatetime,
+            Modify_Datetime = this.productModifyDatetime,
+            Register_Datetime = this.productRegisterDatetime,
         )
     }
 

@@ -30,7 +30,8 @@ class WellProductService {
                 product.OperatorCode.toString(),product.ProductName,product.ProductCodeIn,
                 product.ProductCodeEx,product.Product_Type,product.ProductPrice,product.ProductInfoData,product.ProductInfoVoice,
                 product.ProductInfoSms,product.ProductInfoEtc,product.Telecom_Type,product.Monthly,product.VisibleFlag,product.RunFlag,
-                product.ProductMemo,product.Sort1,0,0,product.Register_Datetime,product.Modify_Datetime
+                product.ProductMemo,product.Sort1,0,0,
+                ZonedDateTime.now(),product.Modify_Datetime
             )
         try {
             wellProductRepository.save(cProduct)
@@ -61,7 +62,7 @@ class WellProductService {
             val currentEntity = wellProductRepository.findByIdx(product.Idx.toString().uppercase()).orElse(null)?: return false
 
             currentEntity.updateDto(product)
-            currentEntity.modifyDatetime = ZonedDateTime.now()
+            currentEntity.productModifyDatetime = ZonedDateTime.now().plusHours(9)
             wellProductRepository.save(currentEntity)
 
         } catch (e: Exception){
@@ -85,10 +86,10 @@ class WellProductService {
     data class productCountAll(val totalTelecom: Long, val runTelecom: Long, val totalProduct: Long, val runProduct: Long)
 
     fun productCount(): productCountAll {
-        val totalTelecom = wellProductRepository.countByOperatorNameIsNotNull()
-        val runTelecom = wellProductRepository.countByRunFlagIsTrueAndOperatorNameIsNotNull()
-        val totalProduct = wellProductRepository.countByProductNameIsNotNull()
-        val runProduct = wellProductRepository.countByRunFlagIsTrueAndProductNameIsNotNull()
+        val totalTelecom = wellProductRepository.countBySort1Equals(1)
+        val runTelecom = wellProductRepository.countByRunFlagIsTrueAndSort1Equals(1)
+        val totalProduct = wellProductRepository.countBySort1Equals(2)
+        val runProduct = wellProductRepository.countByRunFlagIsTrueAndSort1Equals(2)
 
         return productCountAll(totalTelecom, runTelecom, totalProduct, runProduct)
     }

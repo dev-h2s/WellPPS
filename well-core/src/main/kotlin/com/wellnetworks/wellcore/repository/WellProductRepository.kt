@@ -14,13 +14,13 @@ interface WellProductRepository: CrudRepository<WellProductEntity, String>, JpaS
 
     fun deleteByIdx(idx: String): Optional<Int>
 
-    fun countByOperatorNameIsNotNull(): Long
+    fun countBySort1Equals(type: Int): Long
 
-    fun countByRunFlagIsTrueAndOperatorNameIsNotNull(): Long
+    fun countByRunFlagIsTrueAndSort1Equals(type: Int): Long
 
-    fun countByProductNameIsNotNull(): Long
+    //fun countByProductNameIsNotNull(): Long
 
-    fun countByRunFlagIsTrueAndProductNameIsNotNull(): Long
+    //fun countByRunFlagIsTrueAndProductNameIsNotNull(): Long
 
 
 }

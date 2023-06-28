@@ -66,13 +66,13 @@ data class WellProductEntity(
     @Column(name="product_memo", nullable = true)
     var productMemo: String?,
 
-    @Column(name="sort1", columnDefinition = "bit", nullable = true)
+    @Column(name="sort1", nullable = true)
     var sort1: Int?,
 
-    @Column(name="sort2", columnDefinition = "bit", nullable = true)
+    @Column(name="sort2", nullable = true)
     var sort2: Int,
 
-    @Column(name="sort3", columnDefinition = "bit", nullable = true)
+    @Column(name="sort3", nullable = true)
     var sort3: Int,
 
     @Column(name="product_regdt", nullable = true)

@@ -1,11 +1,13 @@
 package com.wellnetworks.wellcore.domain
 
+import com.wellnetworks.wellcore.domain.converter.*
+import com.wellnetworks.wellcore.domain.enums.LocalType
+import com.wellnetworks.wellcore.domain.enums.OpeningType
+import com.wellnetworks.wellcore.domain.enums.PaymentType
+import com.wellnetworks.wellcore.domain.enums.WriteType
 import io.micrometer.core.annotation.Counted
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.Index
-import jakarta.persistence.Table
+import jakarta.persistence.*
+import org.aspectj.apache.bcel.classfile.Module.Open
 
 @Entity
 @Table(name = "opening_tb", indexes =
@@ -24,7 +26,8 @@ data class WellOpeningEntity(
     var userSubIdx: String?,
 
     @Column(name = "opening_type")
-    var openingType: String?,
+    @Convert(converter = OpeningTypeToIndexConverter::class)
+    var openingType: OpeningType?,
 
     @Column(name = "operator_code",  length = 32, nullable = true)
     var operatorCode: String?,
@@ -48,10 +51,12 @@ data class WellOpeningEntity(
     var model_no: String?,
 
     @Column(name = "payment_type", nullable = true)
-    var paymentType: Byte?,
+    @Convert(converter = PaymentTypeToIndexConverter::class)
+    var paymentType: PaymentType?,
 
     @Column(name = "local_type", nullable = true)
-    var localType: Byte?,
+    @Convert(converter = LocalTypeToIndexConverter::class)
+    var localType: LocalType?,
 
     @Column(name = "incharge", length = 32, nullable = true)
     var incharge: String?,
@@ -72,7 +77,8 @@ data class WellOpeningEntity(
     var autoCharge: Byte?,
 
     @Column(name = "write_type", nullable = true)
-    var writeType: Byte?,
+    @Convert(converter = WriteTypeToIndexConverter::class)
+    var writeType: WriteType?,
 
     @Column(name="commission1", nullable = true)
     var commission1: Int?,

@@ -33,6 +33,7 @@ data class WellProductEntity(
     @Column(name="product_code_ex", length = 32, nullable = true)
     var productCodeEx: String?,
 
+    @Column(name = "product_type")
     @Convert(converter = ProductTypeToIndexConverter::class)
     var product: ProductType?,
 
@@ -51,6 +52,7 @@ data class WellProductEntity(
     @Column(name="product_info_etc", nullable = true)
     var productInfoEtc: String?,
 
+    @Column(name = "telecom_type")
     @Convert(converter = TelecomTypeToIndexConverter::class)
     var telecom: TelecomType?,
 

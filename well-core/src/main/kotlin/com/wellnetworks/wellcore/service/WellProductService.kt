@@ -30,8 +30,7 @@ class WellProductService {
                 product.OperatorCode.toString(),product.ProductName,product.ProductCodeIn,
                 product.ProductCodeEx,product.Product_Type,product.ProductPrice,product.ProductInfoData,product.ProductInfoVoice,
                 product.ProductInfoSms,product.ProductInfoEtc,product.Telecom_Type,product.Monthly,product.VisibleFlag,product.RunFlag,
-                product.ProductMemo,product.Sort1,0,0,
-                ZonedDateTime.now(),product.Modify_Datetime
+                product.ProductMemo,product.Sort1,0,0
             )
         try {
             wellProductRepository.save(cProduct)
@@ -62,7 +61,7 @@ class WellProductService {
             val currentEntity = wellProductRepository.findByIdx(product.Idx.toString().uppercase()).orElse(null)?: return false
 
             currentEntity.updateDto(product)
-            currentEntity.productModifyDatetime = ZonedDateTime.now().plusHours(9)
+            currentEntity.modifyDatetime = ZonedDateTime.now().plusHours(9)
             wellProductRepository.save(currentEntity)
 
         } catch (e: Exception){

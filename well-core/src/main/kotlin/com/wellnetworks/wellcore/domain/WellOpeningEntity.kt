@@ -12,7 +12,7 @@ import org.hibernate.Hibernate
 @Entity
 @Table(name = "opening_tb", indexes =
 [
-    Index(name = "IX_opening", columnList = "idx, user_idx, user_sub_idx, opening_type, mvno_code, product_code, phone_no", unique = false),
+    Index(name = "IX_opening", columnList = "idx, user_idx, user_sub_idx, opening_type, operator_code, product_code_in, phone_num", unique = false),
 ])
 data class WellOpeningEntity(
     @Id

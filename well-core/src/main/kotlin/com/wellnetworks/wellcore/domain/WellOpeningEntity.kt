@@ -1,13 +1,13 @@
 package com.wellnetworks.wellcore.domain
 
 import com.wellnetworks.wellcore.domain.converter.*
+import com.wellnetworks.wellcore.domain.dto.WellOpeningDTOs
 import com.wellnetworks.wellcore.domain.enums.LocalType
 import com.wellnetworks.wellcore.domain.enums.OpeningType
 import com.wellnetworks.wellcore.domain.enums.PaymentType
 import com.wellnetworks.wellcore.domain.enums.WriteType
-import io.micrometer.core.annotation.Counted
 import jakarta.persistence.*
-import org.aspectj.apache.bcel.classfile.Module.Open
+import org.hibernate.Hibernate
 
 @Entity
 @Table(name = "opening_tb", indexes =
@@ -35,8 +35,8 @@ data class WellOpeningEntity(
     @Column(name="product_code_in", length = 32, nullable = true)
     var productCodeIn: String?,
 
-    @Column(name = "phone_no",  length = 32, nullable = true)
-    var phoneNo: String?,
+    @Column(name = "phone_num",  length = 32, nullable = true)
+    var phoneNum: String?,
 
     @Column(name = "customer_name", length = 64, nullable = true)
     var customerName: String?,
@@ -89,7 +89,52 @@ data class WellOpeningEntity(
     @Column(name="commission3", nullable = true)
     var commission3: Int?,
 
-    ): BaseEntity() {
+): BaseEntity() {
 
+    override fun equals(other: Any?): Boolean {
+        if (this == other) return true;
+        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false;
+        other as WellOpeningEntity
+
+        return idx != null && idx.uppercase() == other.idx.uppercase()
+    }
+
+    override fun hashCode(): Int {
+        return idx.hashCode()
+    }
+
+    override fun toString(): String {
+        return productCodeIn ?: ""
+    }
+
+    fun toDto(): WellOpeningDTOs {
+        return WellOpeningDTOs(
+            Idx = this.idx.uppercase(),
+            UserIdx = this.userIdx.uppercase(),
+            UserSubIdx = this.userSubIdx?.uppercase(),
+            OpeningType = this.openingType,
+            OperatorCode = this.operatorCode,
+            ProductCodeIn = this.productCodeIn,
+            PhoneNum = this.phoneNum,
+            CustomerName = this.customerName,
+            Passport = this.passport,
+            Country = this.country,
+            ModelNo = this.model_no,
+            PaymentType = this.paymentType,
+            LocalType = this.localType,
+            Incharge = this.incharge,
+            UserName = this.userName,
+            UserId = this.userId,
+            Check = this.check,
+            Inspector = this.inspector,
+            AutoCharge = this.autoCharge,
+            WriteType = this.writeType,
+            Commission1 = this.commission1,
+            Commission2 = this.commission2,
+            Commission3 = this.commission3,
+            Modify_Datetime = this.modifyDatetime,
+            Register_Datetime = this.registerDatetime
+        )
+    }
 
 }

@@ -77,11 +77,6 @@ data class WellProductEntity(
     @Column(name="sort3", nullable = true)
     var sort3: Int,
 
-    @Column(name="product_regdt", nullable = true)
-    var productRegisterDatetime: ZonedDateTime?,
-
-    @Column(name="product_moddt", nullable = true)
-    var productModifyDatetime: ZonedDateTime?,
 ): BaseEntity() {
 
     override fun equals(other: Any?): Boolean {
@@ -122,8 +117,8 @@ data class WellProductEntity(
             Sort1 = this.sort1,
             Sort2 = this.sort2,
             Sort3 = this.sort3,
-            Modify_Datetime = this.productModifyDatetime,
-            Register_Datetime = this.productRegisterDatetime,
+            Modify_Datetime = this.modifyDatetime,
+            Register_Datetime = this.registerDatetime
         )
     }
 
@@ -148,8 +143,8 @@ data class WellProductEntity(
         if (dto.Sort1 != null) this.sort1 = dto.Sort1
         if (dto.Sort2 != null) this.sort2 = dto.Sort2
         if (dto.Sort3 != null) this.sort3 = dto.Sort3
-        if (dto.Modify_Datetime != null) this.productModifyDatetime = dto.Modify_Datetime
-        if (dto.Register_Datetime != null) this.productRegisterDatetime = dto.Register_Datetime
+        if (dto.Modify_Datetime != null) this.modifyDatetime = dto.Modify_Datetime
+        if (dto.Register_Datetime != null) this.registerDatetime = dto.Register_Datetime
 
 
     }

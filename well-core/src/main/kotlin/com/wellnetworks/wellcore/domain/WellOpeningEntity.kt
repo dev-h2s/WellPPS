@@ -1,7 +1,6 @@
 package com.wellnetworks.wellcore.domain
 
 import com.wellnetworks.wellcore.domain.converter.*
-import com.wellnetworks.wellcore.domain.dto.WellOpeningDTOs
 import com.wellnetworks.wellcore.domain.enums.LocalType
 import com.wellnetworks.wellcore.domain.enums.OpeningType
 import com.wellnetworks.wellcore.domain.enums.PaymentType

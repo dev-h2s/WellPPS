@@ -1,7 +1,6 @@
 package com.wellnetworks.wellwebapi.controller.admin
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.wellnetworks.wellcore.domain.dto.WellOpeningDTOs
 import com.wellnetworks.wellcore.service.WellOpeningService
 import com.wellnetworks.wellwebapi.response.BaseRes
 import org.springframework.http.HttpStatus

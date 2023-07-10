@@ -1,7 +1,6 @@
 package com.wellnetworks.wellcore.domain
 
 import com.wellnetworks.wellcore.domain.converter.*
-import com.wellnetworks.wellcore.domain.dto.WellOpeningDTOs
 import com.wellnetworks.wellcore.domain.enums.LocalType
 import com.wellnetworks.wellcore.domain.enums.OpeningType
 import com.wellnetworks.wellcore.domain.enums.PaymentType
@@ -19,10 +18,10 @@ data class WellOpeningEntity(
     @Column(name = "idx", columnDefinition = "uniqueidentifier", unique = true, nullable = false)
     var idx: String,
 
-    @Column(name = "user_idx", columnDefinition = "uniqueidentifier", nullable = false )
+    @Column(name = "user_idx", nullable = false )
     var userIdx: String,
 
-    @Column(name = "user_sub_idx", columnDefinition = "uniqueidentifier")
+    @Column(name = "user_sub_idx", nullable = true )
     var userSubIdx: String?,
 
     @Column(name = "opening_type")
@@ -41,8 +40,8 @@ data class WellOpeningEntity(
     @Column(name = "customer_name", length = 64, nullable = true)
     var customerName: String?,
 
-    @Column(name = "passport", nullable = true)
-    var passport: Byte?,
+    @Column(name = "passport", columnDefinition = "bit", nullable = true)
+    var passport: Boolean?,
 
     @Column(name = "country", length = 32, nullable = true)
     var country: String?,
@@ -67,14 +66,14 @@ data class WellOpeningEntity(
     @Column(name = "user_id", length = 32, nullable = true)
     var userId: String?,
 
-    @Column(name = "check", nullable = true)
-    var check: Byte?,
+    @Column(name = "check_review", columnDefinition = "bit", nullable = true)
+    var checkReview: Boolean?,
 
     @Column(name = "inspector", length = 32, nullable = true)
     var inspector: String?,
 
-    @Column(name = "auto_charge", nullable = true)
-    var autoCharge: Byte?,
+    @Column(name = "auto_charge", columnDefinition = "bit", nullable = true)
+    var autoCharge: Boolean?,
 
     @Column(name = "write_type", nullable = true)
     @Convert(converter = WriteTypeToIndexConverter::class)
@@ -125,7 +124,7 @@ data class WellOpeningEntity(
             Incharge = this.incharge,
             UserName = this.userName,
             UserId = this.userId,
-            Check = this.check,
+            CheckReview = this.checkReview,
             Inspector = this.inspector,
             AutoCharge = this.autoCharge,
             WriteType = this.writeType,

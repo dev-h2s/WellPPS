@@ -1,6 +1,7 @@
 package com.wellnetworks.wellcore.service
 
 import com.wellnetworks.wellcore.domain.WellOpeningEntity
+import com.wellnetworks.wellcore.domain.dto.WellOpeningDTO
 import com.wellnetworks.wellcore.repository.WellOpeningRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -14,7 +15,7 @@ class WellOpeningService {
     private lateinit var wellOpeningRepository: WellOpeningRepository
 
     @Transactional(rollbackFor = [Exception::class])
-    fun createOpening(opening: WellOpeningDTOs): Boolean {
+    fun createOpening(opening: WellOpeningDTO): Boolean {
 
         var openingIdx = UUID.randomUUID().toString().uppercase()
 

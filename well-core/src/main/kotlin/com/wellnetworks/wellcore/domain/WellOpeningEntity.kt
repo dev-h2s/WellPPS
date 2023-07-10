@@ -1,6 +1,7 @@
 package com.wellnetworks.wellcore.domain
 
 import com.wellnetworks.wellcore.domain.converter.*
+import com.wellnetworks.wellcore.domain.dto.WellOpeningDTO
 import com.wellnetworks.wellcore.domain.enums.LocalType
 import com.wellnetworks.wellcore.domain.enums.OpeningType
 import com.wellnetworks.wellcore.domain.enums.PaymentType
@@ -106,8 +107,8 @@ data class WellOpeningEntity(
         return productCodeIn ?: ""
     }
 
-    fun toDto(): WellOpeningDTOs {
-        return WellOpeningDTOs(
+    fun toDto(): WellOpeningDTO {
+        return WellOpeningDTO(
             Idx = this.idx.uppercase(),
             UserIdx = this.userIdx.uppercase(),
             UserSubIdx = this.userSubIdx?.uppercase(),

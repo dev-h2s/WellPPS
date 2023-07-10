@@ -1,6 +1,7 @@
 package com.wellnetworks.wellwebapi.controller.admin
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.wellnetworks.wellcore.domain.dto.WellOpeningDTO
 import com.wellnetworks.wellcore.service.WellOpeningService
 import com.wellnetworks.wellwebapi.response.BaseRes
 import org.springframework.http.HttpStatus
@@ -21,7 +22,7 @@ class OpeningController(private var openingService: WellOpeningService) {
         val mapper = jacksonObjectMapper()
 
         try{
-            val openingObj = mapper.readValue(openingJsonString, WellOpeningDTOs::class.java)
+            val openingObj = mapper.readValue(openingJsonString, WellOpeningDTO::class.java)
 
             if(!openingService.createOpening(openingObj))
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(BaseRes(HttpStatus.INTERNAL_SERVER_ERROR, "개통내역 추가 실패"))

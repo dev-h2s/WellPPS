@@ -18,7 +18,7 @@ class OpeningController(private var openingService: WellOpeningService) {
 
     @PostMapping("opening",
         consumes = [MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE])
-    fun createProduct(@RequestPart("opening") openingJsonString: String): ResponseEntity<BaseRes> {
+    fun createOpening(@RequestPart("opening") openingJsonString: String): ResponseEntity<BaseRes> {
         val mapper = jacksonObjectMapper()
 
         try{

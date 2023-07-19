@@ -1,9 +1,15 @@
 package com.wellnetworks.wellcore.service
 
 import com.wellnetworks.wellcore.domain.WellOpeningEntity
+import com.wellnetworks.wellcore.domain.WellProductEntity
 import com.wellnetworks.wellcore.domain.dto.WellOpeningDTO
+import com.wellnetworks.wellcore.domain.dto.WellProductDTOs
 import com.wellnetworks.wellcore.repository.WellOpeningRepository
+import com.wellnetworks.wellcore.service.utils.SearchCriteria
+import com.wellnetworks.wellcore.service.utils.WellServiceUtil
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -34,6 +40,21 @@ class WellOpeningService {
             return false
         }
         return true
+    }
+
+    fun getOpeningByIdx(idx: String): Optional<WellOpeningDTO> {
+        val opening = wellOpeningRepository.findByIdx(idx.uppercase())
+        return opening.map { it.toDto() }
+    }
+
+    fun searchOpening(pageable: Pageable, searchKeyword: List<SearchCriteria>? = null): Page<WellOpeningDTO> {
+        if (searchKeyword.isNullOrEmpty()) {
+            return wellOpeningRepository.findAll(pageable).map { it.toDto() }
+        }
+
+        return wellOpeningRepository.findAll(
+            WellServiceUtil.Specification<WellOpeningEntity>(searchKeyword), pageable)
+            .map { it.toDto() }
     }
 
 }

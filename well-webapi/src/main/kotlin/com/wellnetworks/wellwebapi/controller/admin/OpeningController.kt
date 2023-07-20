@@ -1,7 +1,10 @@
 package com.wellnetworks.wellwebapi.controller.admin
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.wellnetworks.wellcore.domain.dto.WellOpeningDTO
+import com.wellnetworks.wellcore.domain.dto.WellOpeningDTOUpdate
+import com.wellnetworks.wellcore.domain.dto.WellProductDTOUpdate
 import com.wellnetworks.wellcore.domain.dto.WellProductDTOs
 import com.wellnetworks.wellcore.service.WellOpeningService
 import com.wellnetworks.wellcore.service.utils.SearchCriteria
@@ -71,5 +74,22 @@ class OpeningController(private var openingService: WellOpeningService) {
             BaseListRes(HttpStatus.OK, "",
                 openingList.content, openingList.number, openingList.totalElements, openingList.totalPages)
         )
+    }
+
+    @PutMapping("opening")
+    fun updateOpening(@RequestPart("opening") opening: String) : ResponseEntity<BaseRes>{
+
+        val mapper = jacksonObjectMapper().registerModule(JavaTimeModule())
+
+        try {
+            val openingObj = mapper.readValue(opening, WellOpeningDTOUpdate::class.java)
+
+            if (!openingService.updateOpening(openingObj))
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(BaseRes(HttpStatus.INTERNAL_SERVER_ERROR, "업데이트 실패"))
+
+        } catch (e: Exception) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseRes(HttpStatus.BAD_REQUEST, e.message ?: "잘못된 요청입니다."))
+        }
+        return ResponseEntity.ok(BaseRes(HttpStatus.OK, "업데이트 성공"))
     }
 }

@@ -3,6 +3,8 @@ package com.wellnetworks.wellcore.service
 import com.wellnetworks.wellcore.domain.WellOpeningEntity
 import com.wellnetworks.wellcore.domain.WellProductEntity
 import com.wellnetworks.wellcore.domain.dto.WellOpeningDTO
+import com.wellnetworks.wellcore.domain.dto.WellOpeningDTOUpdate
+import com.wellnetworks.wellcore.domain.dto.WellProductDTOUpdate
 import com.wellnetworks.wellcore.domain.dto.WellProductDTOs
 import com.wellnetworks.wellcore.repository.WellOpeningRepository
 import com.wellnetworks.wellcore.service.utils.SearchCriteria
@@ -12,6 +14,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+import java.time.ZonedDateTime
 import java.util.*
 
 @Component
@@ -55,6 +58,22 @@ class WellOpeningService {
         return wellOpeningRepository.findAll(
             WellServiceUtil.Specification<WellOpeningEntity>(searchKeyword), pageable)
             .map { it.toDto() }
+    }
+
+    @Transactional(rollbackFor = [Exception::class])
+    fun updateOpening(opening: WellOpeningDTOUpdate) : Boolean {
+        try{
+            val currentEntity = wellOpeningRepository.findByIdx(opening.Idx.toString().uppercase()).orElse(null)?: return false
+
+            currentEntity.updateDto(opening)
+            currentEntity.modifyDatetime = ZonedDateTime.now().plusHours(9)
+            wellOpeningRepository.save(currentEntity)
+
+        } catch (e: Exception){
+            return false
+        }
+
+        return true
     }
 
 }

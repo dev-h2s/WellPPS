@@ -2,6 +2,7 @@ package com.wellnetworks.wellcore.domain
 
 import com.wellnetworks.wellcore.domain.converter.*
 import com.wellnetworks.wellcore.domain.dto.WellOpeningDTO
+import com.wellnetworks.wellcore.domain.dto.WellOpeningDTOUpdate
 import com.wellnetworks.wellcore.domain.enums.LocalType
 import com.wellnetworks.wellcore.domain.enums.OpeningType
 import com.wellnetworks.wellcore.domain.enums.PaymentType
@@ -135,6 +136,34 @@ data class WellOpeningEntity(
             Modify_Datetime = this.modifyDatetime,
             Register_Datetime = this.registerDatetime
         )
+    }
+
+    fun updateDto(dto: WellOpeningDTOUpdate) {
+        if(dto.Idx != null) this.idx = dto.Idx
+        if(dto.UserIdx != null) this.userIdx = dto.UserIdx
+        if(dto.UserSubIdx != null) this.userSubIdx = dto.UserSubIdx
+        if(dto.OpeningType != null) this.openingType = dto.OpeningType
+        if(dto.OperatorCode != null) this.operatorCode = dto.OperatorCode
+        if(dto.ProductCodeIn != null) this.productCodeIn = dto.ProductCodeIn
+        if(dto.PhoneNum != null) this.phoneNum = dto.PhoneNum
+        if(dto.CustomerName != null) this.customerName = dto.CustomerName
+        if(dto.Passport != null) this.passport = dto.Passport
+        if(dto.Country != null) this.country = dto.Country
+        if(dto.ModelNo != null) this.model_no = dto.ModelNo
+        if(dto.PaymentType != null) this.paymentType = dto.PaymentType
+        if(dto.LocalType != null) this.localType = dto.LocalType
+        if(dto.Incharge != null) this.incharge = dto.Incharge
+        if(dto.UserName != null) this.userName = dto.UserName
+        if(dto.UserId != null) this.userId = dto.UserId
+        if(dto.CheckReview != null) this.checkReview = dto.CheckReview
+        if(dto.Inspector != null) this.inspector = dto.Inspector
+        if(dto.AutoCharge != null) this.autoCharge = dto.AutoCharge
+        if(dto.WriteType != null) this.writeType = dto.WriteType
+        if(dto.Commission1 != null) this.commission1 = dto.Commission1
+        if(dto.Commission2 != null) this.commission2 = dto.Commission2
+        if(dto.Commission3 != null) this.commission3 = dto.Commission3
+        if(dto.Modify_Datetime != null) this.modifyDatetime = dto.Modify_Datetime
+        if(dto.Register_Datetime != null) this.registerDatetime = dto.Register_Datetime
     }
 
 }

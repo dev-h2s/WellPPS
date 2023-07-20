@@ -1,6 +1,8 @@
 package com.wellnetworks.wellcore.domain.dto
 
+import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.wellnetworks.wellcore.domain.enums.LocalType
 import com.wellnetworks.wellcore.domain.enums.OpeningType
@@ -75,5 +77,58 @@ data class WellOpeningDTO(
         return Idx != null && Idx == other.Idx;
     }
 }
+@JsonInclude(JsonInclude.Include.NON_NULL)
+data class WellOpeningDTOUpdate @JsonCreator constructor(
+    @JsonProperty("idx")
+    val Idx: String?,
+    @JsonProperty("user_idx")
+    val UserIdx: String?,
+    @JsonProperty("user_sub_idx")
+    val UserSubIdx: String?,
+    @JsonProperty("opening_type")
+    val OpeningType: OpeningType?,
+    @JsonProperty("operator_code")
+    val OperatorCode: String?,
+    @JsonProperty("product_code_in")
+    val ProductCodeIn: String?,
+    @JsonProperty("phone_num")
+    val PhoneNum: String?,
+    @JsonProperty("customer_name")
+    val CustomerName: String?,
+    @JsonProperty("passport")
+    val Passport: Boolean?,
+    @JsonProperty("country")
+    val Country: String?,
+    @JsonProperty("model_no")
+    val ModelNo: String?,
+    @JsonProperty("payment_type")
+    val PaymentType: PaymentType?,
+    @JsonProperty("local_type")
+    val LocalType: LocalType?,
+    @JsonProperty("incharge")
+    val Incharge: String?,
+    @JsonProperty("user_name")
+    val UserName: String?,
+    @JsonProperty("user_id")
+    val UserId: String?,
+    @JsonProperty("check_review")
+    val CheckReview: Boolean?,
+    @JsonProperty("inspector")
+    val Inspector: String?,
+    @JsonProperty("auto_charge")
+    val AutoCharge: Boolean?,
+    @JsonProperty("write_type")
+    val WriteType: WriteType?,
+    @JsonProperty("commission1")
+    val Commission1: Int?,
+    @JsonProperty("commission2")
+    val Commission2: Int?,
+    @JsonProperty("commission3")
+    val Commission3: Int?,
+    @JsonIgnore
+    override val Modify_Datetime: ZonedDateTime?,
+    @JsonIgnore
+    override val Register_Datetime: ZonedDateTime?,
+): BaseDTO(Modify_Datetime, Register_Datetime)
 
 

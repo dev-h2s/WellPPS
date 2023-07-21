@@ -92,4 +92,18 @@ class OpeningController(private var openingService: WellOpeningService) {
         }
         return ResponseEntity.ok(BaseRes(HttpStatus.OK, "업데이트 성공"))
     }
+
+    @DeleteMapping("opening/{id}")
+    fun deleteOpening(@PathVariable id: String) : ResponseEntity<BaseRes> {
+        val uuidIdx: String
+
+        try{
+            uuidIdx = UUID.fromString(id).toString()
+            openingService.deleteOpeningById(uuidIdx)
+        }catch (e: Exception){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(BaseRes(HttpStatus.NOT_FOUND, "$id 데이터를 찾을 수 없습니다."))
+        }
+        return ResponseEntity.ok(BaseRes(HttpStatus.OK, "삭제 성공"))
+    }
 }

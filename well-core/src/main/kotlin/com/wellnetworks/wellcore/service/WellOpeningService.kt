@@ -76,4 +76,15 @@ class WellOpeningService {
         return true
     }
 
+    @Transactional(rollbackFor = [Exception::class])
+    fun deleteOpeningById(idx: String) {
+        val product = wellOpeningRepository.deleteByIdx(idx)
+
+        if (product.get() == 1) {
+            return
+        }
+
+        throw Exception("delete count not match.")
+    }
+
 }

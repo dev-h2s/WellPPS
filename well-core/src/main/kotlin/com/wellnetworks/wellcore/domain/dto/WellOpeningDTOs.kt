@@ -15,7 +15,7 @@ data class WellOpeningDTO(
     @JsonProperty("idx")
     val Idx: String?,
     @JsonProperty("user_idx")
-    val UserIdx: String?,
+    val UserIdx: String,
     @JsonProperty("user_sub_idx")
     val UserSubIdx: String?,
     @JsonProperty("opening_type")

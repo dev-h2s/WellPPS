@@ -58,7 +58,7 @@ enum class WriteType : IWriteType{
             get() = "WRITE_TYPE_ETC"
 
         override fun toString(): String {
-            return "시타"
+            return "기타"
         }
     };
     companion object : EnumFinder<Int, WriteType>(WriteType.values().associateBy { it.index() })

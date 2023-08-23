@@ -131,12 +131,11 @@ class WellPartnerService {
 
             val createPartner = WellPartnerEntity(
                 userIdx, partner.P_Code, TableIDList.PARTNER.TableID,
-                partner.Company_Name, partner.Company_Type, partner.Company_Group,
-                null, partner.Tax_Number, partner.Tax_Email,
-                null,
+                partner.Company_Name, partner.Company_Type, partner.Company_Group,partner.Tax_Registration_DocumentFileName,
+                partner.Tax_Number, partner.Tax_Email, null,
                 partner.Office_Telephone, partner.Office_Email, partner.Rate, partner.Contact_Person, partner.Use_API,
                 partner.Company_State, partner.Company_Level, partner.Organization_Parent, partner.Organization_Child,
-                partner.CEO_Name, partner.CEO_Telephone, null, partner.Certification_Phone, partner.Certification_Email,
+                partner.CEO_Name, partner.CEO_Telephone, partner.CEO_IDCard_FileName, partner.Certification_Phone, partner.Certification_Email,
                 partner.Tax_Address1, partner.Tax_Address2, partner.Company_Address1, partner.Company_Address2, partner.Prior_Consent, partner.Contact_Type,
                 partner.Agree_Terms, ZonedDateTime.now(), null,
                 partner.Bank_Name, partner.Bank_Account, partner.Bank_Holder, partner.Admin_Memo,

@@ -121,9 +121,9 @@ class BusinessController(private var partnerService: WellPartnerService) {
 
     @PostMapping("business",
         consumes = [MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE])
-    /*@PreAuthorize("isAuthenticated() and" +
+    @PreAuthorize("isAuthenticated() and" +
             " (hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).SUPER_ADMIN) or" +
-            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")*/
+            " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionKey).MEMBER))")
     fun createPartner(@RequestPart("user") userJsonString: String,
                       @RequestPart("partner") partnerJsonString: String,
                       @RequestPart("file") files: List<MultipartFile>

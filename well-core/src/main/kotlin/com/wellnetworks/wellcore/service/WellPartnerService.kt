@@ -17,10 +17,14 @@ import org.springframework.web.multipart.MultipartFile
 import java.time.ZonedDateTime
 import java.util.*
 
-
+// 컨트롤러에서 넘어온 요청 처리
 @Component
+// @Component : 클래스를 Spring 애플리케이션 컨텍스트에 빈으로 등록하는 역할
+// WellPartnerService 클래스에 @Component 어노테이션이 적용되었기 때문에 이 클래스의 빈이 등록되고,
+// 다른 컴포넌트나 서비스에서 WellPartnerService의 인스턴스를 주입받아 사용 가능
 class WellPartnerService {
     @Autowired
+    // WellPartnerRepository는 데이터베이스와 상호작용하기 위한 JPA와 같은 데이터 액세스 기술을 사용하는 데이터 저장소에 접근하는 데 사용
     private lateinit var wellPartnerRepository: WellPartnerRepository
 
     @Autowired
@@ -32,6 +36,8 @@ class WellPartnerService {
     @Autowired
     private lateinit var wellUserRepository: WellUserRepository
     fun getPartnerByIdx(idx: String): Optional<WellPartnerDTO> {
+        //파트너 정보 조회
+        // 정보 조회 후 Optional<WellPartnerDTO> 형태로 반환
         val partner = wellPartnerRepository.findByIdx(idx)
         return partner.map { it.toDto() }
     }

@@ -1,5 +1,5 @@
 package com.wellnetworks.wellcore.repository
-
+// crud문 실행
 import com.wellnetworks.wellcore.domain.WellPartnerEntity
 import com.wellnetworks.wellcore.domain.enums.CompanyStateType
 import org.springframework.data.domain.Page

@@ -1,5 +1,5 @@
 package com.wellnetworks.wellcore.domain
-
+// 거래처 정보
 import com.wellnetworks.wellcore.domain.converter.*
 import com.wellnetworks.wellcore.domain.dto.WellPartnerDTO
 import com.wellnetworks.wellcore.domain.dto.WellPartnerDTOUpdate

@@ -21,8 +21,12 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
+//RestController는 @ResponseBody 어노테이션이 붙은 효과를 지니게 됩니다.
+//즉 주용도는 JSON/XML형태로 객체 데이터 반환을 목적으로 합니다.
 @RequestMapping("/admin/pr/")
+// 이 컨트롤러가 처리하는 엔드포인트의 기본 URL 경로를 지정합니다. 모든 메서드의 URL은 "/admin/pr/"로 시작합니다.
 class ProductController(private var productService: WellProductService) {
+//    "productService"라는 변수가 있으며, 이 변수의 타입은 "WellProductService"입니다.
     @PostMapping("product",
         consumes = [MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE])
     fun createProduct(@RequestPart("product") productJsonString: String):ResponseEntity<BaseRes>{

@@ -15,6 +15,7 @@ import org.hibernate.Hibernate
 [
     Index(name = "IX_opening", columnList = "idx, user_idx, user_sub_idx, opening_type, operator_code, product_code_in, phone_num", unique = false),
 ])
+//개통 관련 ntity
 data class WellOpeningEntity(
     @Id
     @Column(name = "idx", columnDefinition = "uniqueidentifier", unique = true, nullable = false)

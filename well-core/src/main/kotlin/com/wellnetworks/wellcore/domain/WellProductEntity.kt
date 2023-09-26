@@ -95,6 +95,7 @@ data class WellProductEntity(
         return productName ?: ""
     }
 
+    //요금제 dto
     fun toDto(): WellProductDTOs {
         return WellProductDTOs(
             Idx = this.idx.uppercase(),
@@ -121,7 +122,7 @@ data class WellProductEntity(
             Register_Datetime = this.registerDatetime
         )
     }
-
+//dto의 update와 연결
     fun updateDto(dto: WellProductDTOUpdate) {
         if (dto.Idx != null) this.idx = dto.Idx
         if (dto.OperatorName != null) this.operatorName = dto.OperatorName

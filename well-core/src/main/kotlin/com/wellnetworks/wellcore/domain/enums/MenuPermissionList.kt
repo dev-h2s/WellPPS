@@ -1,5 +1,5 @@
 package com.wellnetworks.wellcore.domain.enums
-
+// 메뉴 권한 리스트
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.memberProperties
@@ -98,41 +98,56 @@ annotation class MenuPermission {
     }
 }
 
+// 메뉴 권한 관련 유틸리티 클래스
 class MenuPermissionUtil {
     companion object {
+        // 메뉴 권한을 매핑
         val menuPermissionMap = MenuPermission.asMap()
+        // 메뉴 권한 액션을 매핑
         val menuPermissionActionMap = MenuPermissionAction.asMap()
 
+        // 모든 메뉴 권한과 액션을 조합하여 권한 문자열을 생성
         fun BuildPermissionStringAll(): List<String> {
+            // 권한 문자열을 저장할 빈 리스트를 생성
             var permissionStringList: MutableList<String> = mutableListOf()
-
+            // 모든 메뉴 권한과 액션을 반복적으로 조합
             for (menuPermission in menuPermissionMap.values) {
+                // BuildPermissionString 함수를 사용하여 권한 문자열을 생성하고 리스트에 추가
                 for (menuPermissionType in menuPermissionActionMap.values) {
                     permissionStringList.add(BuildPermissionString(menuPermission, menuPermissionType))
                 }
             }
-
+            // 생성된 권한 문자열 리스트를 불변한 리스트로 변환하여 반환
             return permissionStringList.toList()
         }
 
+        // 메뉴 권한과 액션으로 분리하여 Pair로 반환
         fun ParsePermissionString(groupPermissionString: String): Pair<String, String>? {
+            // 주어진 문자열을 대문자로 변환하고 '_'로 분할한 리스트를 생성
             var splitPermissionString = groupPermissionString.uppercase().split('_').toMutableList()
 
+            // 분할한 리스트가 비어있다면 null을 반환
             if (splitPermissionString.isNullOrEmpty()) return null
 
+            // 액션 찾기
             val actionSearch = menuPermissionActionMap.filterValues { it == splitPermissionString.last() }.keys.firstOrNull()
                 ?: return null
+            // 리스트에서 액션 부분을 제거
             splitPermissionString.removeAt(splitPermissionString.lastIndex)
 
+            // 메뉴 권한을 찾기
             val menuPermissionSearch = menuPermissionMap.filterKeys { it == splitPermissionString.joinToString("_") }.keys.firstOrNull()
                 ?: return null
 
+            // 메뉴 권한과 액션을 Pair로 묶어 반환
             return Pair(actionSearch, menuPermissionSearch)
         }
 
-        fun BuildPermissionString(menuPermission: String, action: String) : String {
+        // 메뉴 권한과 액션을 조합하여 권한 문자열을 생성
+        fun BuildPermissionString(menuPermission: String, action: String): String {
             return "${menuPermission}_${action}"
         }
+
     }
 }
 

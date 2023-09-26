@@ -23,6 +23,11 @@ import java.util.UUID
 @Component
 class WellMemberInfoService {
 
+    // @Autowired 어노테이션은 스프링 프레임워크에서 자동으로 의존성 주입을 수행하는데 사용
+    // 이것을 통해 해당 필드들은 스프링 컨테이너에서 관리되는 빈(Bean) 객체로 자동으로 주입
+    // 주입된 빈은 클래스 내에서 사용할 수 있게 됨
+    // lateinit은 Kotlin에서 사용되는 한정자로, 변수 초기화를 늦추는 기능을 제공
+    // 코드에서 이 변수들을 사용하기 위해서는 스프링 프레임워크가 해당 변수들을 주입하고 초기화해야함
     @Autowired
     lateinit var wellMemberInfoRepository: WellMemberInfoRepository
 
@@ -34,11 +39,13 @@ class WellMemberInfoService {
 
     @Autowired
     private lateinit var wellUserRepository: WellUserRepository
+
+    // 주어진 회원 ID에 해당하는 회원 정보를 가져오는 함수
     fun getMemberByIdx(idx: String): Optional<WellMemberInfoDTO> {
         val member = wellMemberInfoRepository.findByIdx(idx.uppercase())
         return member.map { it.toDto() }
     }
-
+    // 회원 정보를 검색하고 페이지별로 반환하는 함수
     fun searchMember(pageable: Pageable, searchKeyword: List<SearchCriteria>? = null): Page<WellMemberInfoDTO> {
         if (searchKeyword.isNullOrEmpty()) {
             return wellMemberInfoRepository.findAll(pageable).map { it.toDto() }
@@ -49,11 +56,12 @@ class WellMemberInfoService {
             .map { it.toDto() }
     }
 
+    // 주어진 회원 이름에 해당하는 회원 정보를 가져오는 함수
     fun getMemberByMemberName(name: String): Optional<WellMemberInfoDTO> {
         val member = wellMemberInfoRepository.findByName(name)
         return  member.map { it.toDto() }
     }
-
+    // 새 회원 정보를 생성하는 함수
     @Transactional(rollbackFor = [Exception::class])
     fun createMember(user: WellUserDTOCreate, member: WellMemberInfoDTOCreate): Boolean {
         try {
@@ -80,6 +88,7 @@ class WellMemberInfoService {
         return true
     }
 
+    // updateMember: 회원 정보를 업데이트하고 파일을 업로드하는 함수
     @Transactional(rollbackFor = [Exception::class])
     fun updateMember(member: WellMemberDTOUpdate, files: List<MultipartFile>?): Boolean {
         try {
@@ -132,6 +141,7 @@ class WellMemberInfoService {
         return true
     }
 
+    // deleteMemberById: 주어진 회원 ID에 해당하는 회원 정보를 삭제하는 함수
     @Transactional(rollbackFor = [Exception::class])
     fun deleteMemberById(idx: String) {
         val member = wellMemberInfoRepository.deleteByIdx(idx)

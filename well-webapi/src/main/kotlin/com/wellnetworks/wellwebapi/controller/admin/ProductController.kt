@@ -80,7 +80,7 @@ class ProductController(private var productService: WellProductService) {
         @RequestParam("page", defaultValue = "0") page: Int,
         //페이지 size : 한페이지당 나오는 열 수 page : 페이지 갯수
         )
-    //        HTTP 응답을 나타내는 객체입니다.
+    //        HTTP 응답을 나타내는 객체
     : ResponseEntity<BaseListRes<WellProductDTOs>>{
 
         // 검색 키워드를 저장할 MutableList를 초기화. (검색 기능을 추가할 때 사용될 수 있다.)
@@ -90,7 +90,7 @@ class ProductController(private var productService: WellProductService) {
         val pageable: Pageable = PageRequest.of(page, size)
 
         // Todo : 검색조건 추가
-        // productService에서  목록을 조회하고 페이지 정보와 함께 클라이언트에게 응답
+        // Service에서  목록을 조회하고 페이지 정보와 함께 클라이언트에게 응답
         val productList = productService.searchProduct(pageable, searchKeywords)
 
             //BaseListRes 객체 생성, 성공시 비어있는 메시지

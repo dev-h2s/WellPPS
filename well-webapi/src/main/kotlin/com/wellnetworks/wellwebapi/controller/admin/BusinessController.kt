@@ -34,6 +34,7 @@ class BusinessController(private var wellPartnerService: WellPartnerService) {
 
     }
 
+    // getmapping으로 파트너 리스트 가져옴
     @GetMapping("business")
     @PostAuthorize("isAuthenticated() and" +
             " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN) and" +
@@ -59,6 +60,7 @@ class BusinessController(private var wellPartnerService: WellPartnerService) {
 
     }
 
+    // postmapping
     @PostMapping("business")
     @PostAuthorize("isAuthenticated() and" +
             " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN) and" +
@@ -67,6 +69,7 @@ class BusinessController(private var wellPartnerService: WellPartnerService) {
 
     }
 
+    // deletemapping
     @DeleteMapping("business")
     @PostAuthorize("isAuthenticated() and" +
             " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN) and" +
@@ -75,6 +78,7 @@ class BusinessController(private var wellPartnerService: WellPartnerService) {
 
     }
 
+    // putmapping
     @PutMapping("business")
     @PostAuthorize("isAuthenticated() and" +
             " hasRole(T(com.wellnetworks.wellcore.domain.enums.PermissionList).PERMISSION_SUPERADMIN) and" +

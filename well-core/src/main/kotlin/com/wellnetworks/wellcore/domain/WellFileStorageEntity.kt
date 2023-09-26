@@ -1,5 +1,5 @@
 package com.wellnetworks.wellcore.domain
-
+// 파일 정보
 import com.wellnetworks.wellcore.domain.converter.ListToStringConverter
 import com.wellnetworks.wellcore.domain.dto.WellFileStorageDTO
 import jakarta.persistence.*
@@ -74,18 +74,21 @@ data class WellFileStorageEntity (
         )
     }
 
+    // 값이 일치하는지 확인
     override fun equals(other: Any?): Boolean {
         if (this == other) return true;
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false;
         other as WellFileStorageEntity
-
+        // idx 값이 모두 null이 아니고 일치하는 경우 true 반환
         return idx != null && idx == other.idx;
     }
 
+    // 해시 코드를 사용하여 객체를 고유하게 식별
     override fun hashCode(): Int {
         return idx.hashCode();
     }
 
+    // 객체를 문자열로 표시
     override fun toString(): String {
         return fileName;
     }

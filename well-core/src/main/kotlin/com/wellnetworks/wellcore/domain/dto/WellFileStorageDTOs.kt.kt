@@ -1,5 +1,5 @@
 package com.wellnetworks.wellcore.domain.dto
-
+// 파일 dto
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.hibernate.Hibernate
 import java.time.ZonedDateTime

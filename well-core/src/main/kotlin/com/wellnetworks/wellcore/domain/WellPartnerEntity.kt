@@ -182,7 +182,7 @@ data class WellPartnerEntity (
         return companyName ?: ""
     }
 
-
+    // WellPartnerDTOCreate 객체를 WellPartnerDTO 객체로 매핑
     fun toDto(): WellPartnerDTO = WellPartnerDTO(
         Idx = this.idx.uppercase(),
         P_Code = this.pCode,
@@ -239,6 +239,7 @@ data class WellPartnerEntity (
         Tax_Registration_DocumentFileName = null,
     )
 
+    // WellPartnerDTO 객체에서 필요한 데이터를 추출하여 현재 클래스의 인스턴스 변수에 할당
     fun fromDto(dto: WellPartnerDTO) {
         this.pCode = dto.P_Code
         this.tableID = dto.TableID
@@ -288,6 +289,7 @@ data class WellPartnerEntity (
         this.contactModifyDatetime = dto.Contact_Modify_Datetime
     }
 
+    // 필요한 데이터를 추출하여 업데이트
     fun updateDto(dto: WellPartnerDTOUpdate) {
         if (dto.Company_Name != null) this.companyName = dto.Company_Name
         if (dto.Company_Type != null) this.companyType = dto.Company_Type //거래처구분:딜러,판매점,충전점,기타제휴사,기관,영업팀

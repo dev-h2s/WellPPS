@@ -28,12 +28,15 @@ class WellPartnerService {
     private lateinit var wellPartnerRepository: WellPartnerRepository
 
     @Autowired
+    // 사용자 정보 가져오기
     private lateinit var wellUserService: WellUserService
 
     @Autowired
+    // 파일 정보 가져오기
     private lateinit var wellFileStorageService: WellFileStorageService
 
     @Autowired
+    // 사용자 crud 가져오기
     private lateinit var wellUserRepository: WellUserRepository
     fun getPartnerByIdx(idx: String): Optional<WellPartnerDTO> {
         //파트너 정보 조회
@@ -41,27 +44,36 @@ class WellPartnerService {
         val partner = wellPartnerRepository.findByIdx(idx)
         return partner.map { it.toDto() }
     }
+
+    //파트너 삭제 메소드
     @Transactional(rollbackFor = [Exception::class])
+    // 메서드를 하나의 트랜잭션으로 처리하고 예외 발생 시 롤백
     fun deletePartnerById(idx: String) {
+        // 파트너 idx 삭제
         val partner = wellPartnerRepository.deleteByIdx(idx)
         var user = wellUserRepository.deleteByIdx(idx)
-
+        // 삭제된 행의 수가 모두 1인 경우에만 성공으로 간주
         if (partner.get() == 1 && user.get() == 1) {
             return
         }
 
-        throw Exception("delete count not match.")
+        throw Exception("삭제된 행의 수가 일치하지 않습니다.")
     }
 
+    // 파트너 찾기 메소드
     fun searchPartner(pageable: Pageable, searchKeyword: List<SearchCriteria>? = null): Page<WellPartnerDTO> {
         if (searchKeyword.isNullOrEmpty()) {
+            // 리스트가 비어 있거나 null이면 모든 파트너 데이터 반환
             return wellPartnerRepository.findAll(pageable).map { it.toDto() }
         }
 
         return wellPartnerRepository.findAll(
+            // WellServiceUtil.Specification을 사용하여 검색 조건을 지정 후 반환
             WellServiceUtil.Specification<WellPartnerEntity>(searchKeyword), pageable)
             .map { it.toDto() }
     }
+
+    // 거래 유무 (등록, 가틍록, 관리대상, 거래중지 count)
     data class cTypeCount(val regCount: Long, val tempCount: Long, val watchCount: Long, val susCount: Long)
 
     fun companyTypeCount(): cTypeCount {
@@ -74,6 +86,8 @@ class WellPartnerService {
         return cTypeCount(regCnt, tmpCnt, watchCnt, susCnt)
     }
 
+
+    // 수수료 파일, 계약 파일 개수
     data class ptnUnattachedCount(val taxIdxCount:Long, val contractIdxCount:Long)
     fun partnerUnattachedTaxCount(): ptnUnattachedCount {
         val taxUnattachedCount = wellPartnerRepository.countByTaxRegistrationDocFileIdxIsNull()
@@ -82,7 +96,7 @@ class WellPartnerService {
         return ptnUnattachedCount(taxUnattachedCount, contractUnattachedCount)
     }
 
-    // 회원가입을 통한 파트너 등록
+    // 회원가입을 통한 파트너 로그인
     @Transactional(rollbackFor = [Exception::class])
     fun signupPartner(user: WellUserDTOCreate, signup: WellPartnerDTOSignup, files: List<MultipartFile>): Boolean {
 
@@ -106,10 +120,12 @@ class WellPartnerService {
             null, null, null
         )
 
+        // 권한
         val permissions: List<String> = listOf(
             PermissionKey.SIGNUP_SCREENING,
         )
 
+        // 파트너 정보를 생성하고 파일을 연결
         try {
             for(file in files) {
                 val fileID = wellFileStorageService.saveFile(TableIDList.PARTNER.TableID, userID, null, false, permissions, file)
@@ -121,7 +137,7 @@ class WellPartnerService {
                     createPartner.ceoIDCardFileIdx = fileID
                 }
             }
-
+            // createPartner정보를 db에 저장
             wellPartnerRepository.save(createPartner)
         } catch (e: Exception) {
             return false
@@ -130,6 +146,7 @@ class WellPartnerService {
         return true
     }
 
+    // 회원가입
     @Transactional(rollbackFor = [Exception::class])
     fun creaetPartner(user: WellUserDTOCreate, partner: WellPartnerDTOCreate, files: List<MultipartFile>): Boolean {
         try {
@@ -150,10 +167,12 @@ class WellPartnerService {
                 partner.Contact_Progress, partner.Contact_Reject, partner.Contact_Approver, partner.Contact_Register_Datetime, partner.Contact_Modify_Datetime
             )
 
+            // 권한
             val permissions: List<String> = listOf (
                 PermissionKey.MEMBER_SCREENING,
             )
 
+            // 파트너 정보를 생성하고 파일 생성
             for(file in files) {
                 var fileID: String? =
                     wellFileStorageService.saveFile(TableIDList.PARTNER.TableID, userIdx, null, false, permissions, file)
@@ -173,6 +192,7 @@ class WellPartnerService {
         return true
     }
 
+    // 파트너 정보 변경
     @Transactional(rollbackFor = [Exception::class])
     fun updatePartner(partner: WellPartnerDTOUpdate, files: List<MultipartFile>?): Boolean {
         try {
@@ -209,7 +229,7 @@ class WellPartnerService {
                     }
                 }
             }
-
+            // update 후 새로 저장
             currentEntity.updateDto(partner)
 
             wellPartnerRepository.save(currentEntity)

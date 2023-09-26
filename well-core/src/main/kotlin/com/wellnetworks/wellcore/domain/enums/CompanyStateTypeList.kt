@@ -1,5 +1,5 @@
 package com.wellnetworks.wellcore.domain.enums
-
+// 거래유무 파악
 interface ICompanyStateType {
     fun index() : Int
     val key: String

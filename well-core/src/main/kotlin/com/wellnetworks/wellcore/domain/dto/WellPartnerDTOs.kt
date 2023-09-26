@@ -1,5 +1,5 @@
 package com.wellnetworks.wellcore.domain.dto
-
+// 거래처 dto
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonIgnore
@@ -9,7 +9,7 @@ import com.wellnetworks.wellcore.domain.enums.*
 import org.hibernate.Hibernate
 import java.time.ZonedDateTime
 import java.util.UUID
-
+// WellPartnerColumnsName 배열 생성
 enum class WellPartnerColumnsName(val columnsName: String) {
     Idx("idx"),
     P_Code("pCode"),
@@ -62,6 +62,7 @@ enum class WellPartnerColumnsName(val columnsName: String) {
     Register_Datetime("registerDatetime"),
 }
 
+// 거래처 dto 정보
 //@JsonInclude(JsonInclude.Include.NON_NULL)
 data class WellPartnerDTO (
     @JsonProperty("idx")
@@ -199,6 +200,8 @@ data class WellPartnerDTO (
     }
 }
 
+// 거래처 DTO 생성
+// @JsonInclude 어노테이션은 JSON 직렬화 시, null 값인 속성들을 포함시키지 않도록 설정
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class WellPartnerDTOCreate @JsonCreator constructor (
     @JsonProperty("table_id")
@@ -310,6 +313,7 @@ data class WellPartnerDTOCreate @JsonCreator constructor (
     override val Register_Datetime: ZonedDateTime?,
 ): BaseDTO(Modify_Datetime, Register_Datetime)
 
+// 거래처 dto 회원가입
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class WellPartnerDTOSignup (
     //@JsonProperty("idx")
@@ -343,6 +347,7 @@ data class WellPartnerDTOSignup (
     override val Register_Datetime: ZonedDateTime?,
 ): BaseDTO(Modify_Datetime, Register_Datetime)
 
+// 거래처 dto 업데이트
 @JsonInclude(JsonInclude.Include.NON_NULL)
 //@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class WellPartnerDTOUpdate @JsonCreator constructor (

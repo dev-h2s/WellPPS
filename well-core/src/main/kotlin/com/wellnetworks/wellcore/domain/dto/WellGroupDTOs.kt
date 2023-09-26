@@ -1,5 +1,5 @@
 package com.wellnetworks.wellcore.domain.dto
-
+// 그룹 dto
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty

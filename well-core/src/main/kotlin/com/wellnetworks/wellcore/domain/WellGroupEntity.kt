@@ -1,5 +1,5 @@
 package com.wellnetworks.wellcore.domain
-
+// 그룹 정보
 import com.wellnetworks.wellcore.domain.converter.ListToStringConverter
 import com.wellnetworks.wellcore.domain.dto.WellGroupDTO
 import org.hibernate.Hibernate
@@ -39,6 +39,7 @@ data class WellGroupEntity(
         return label ?: ""
     }
 
+    // 그룹 dto
     fun toDto(): WellGroupDTO = WellGroupDTO(
         GroupKey = this.groupPermissionKey.uppercase(),
         Label = this.label,
@@ -48,6 +49,7 @@ data class WellGroupEntity(
         Register_Datetime = this.registerDatetime,
     )
 
+    //그룹 업데이트 dto
     fun updateDto(dto: WellGroupDTO) {
         this.label = dto.Label
         this.groupPermissionsKeysStringList = dto.GroupPermissionKeysStringList

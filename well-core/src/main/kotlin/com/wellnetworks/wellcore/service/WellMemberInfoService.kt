@@ -87,7 +87,7 @@ class WellMemberInfoService {
 
         return true
     }
-
+   //
     // updateMember: 회원 정보를 업데이트하고 파일을 업로드하는 함수
     @Transactional(rollbackFor = [Exception::class])
     fun updateMember(member: WellMemberDTOUpdate, files: List<MultipartFile>?): Boolean {

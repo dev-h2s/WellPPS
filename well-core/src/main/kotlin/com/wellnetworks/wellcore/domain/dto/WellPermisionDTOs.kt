@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.wellnetworks.wellcore.domain.WellUserEntity
 import org.hibernate.Hibernate
 import java.time.ZonedDateTime
-
+//권한 관련 DTO
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class WellPermissionDTO (
     @JsonProperty("pkey")

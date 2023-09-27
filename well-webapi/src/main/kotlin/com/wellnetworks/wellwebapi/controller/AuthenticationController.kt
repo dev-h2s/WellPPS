@@ -24,10 +24,13 @@ import kotlin.math.sign
 
 @RestController
 @RequestMapping("/")
+// 인증 컨트롤러
 class AuthenticationController(
+
     private val userService: WellUserService, private val partnerService: WellPartnerService,
     private val passwordEncoder: PasswordEncoder) {
 /*
+//로그인 로직 미완
     @PostMapping("login")
     fun login(@RequestBody userLoginReq: UserLoginReq): ResponseEntity<UserLoginRes> {
         if (!userService.existByUserID(userLoginReq.username)) {
@@ -49,12 +52,15 @@ class AuthenticationController(
                @RequestPart("signup") signupJsonString: String,
                @RequestPart("file") files: List<MultipartFile>
     ): ResponseEntity<BaseRes> {
-
+    // 이 함수는 사용자 등록 (회원가입)
+    // Jackson ObjectMapper를 사용하여 JSON 문자열을 객체로 역직렬화
         val mapper = jacksonObjectMapper()
 
         try {
+            // 유저와 거래처 가입 가능
             val user = mapper.readValue(userJsonString, WellUserDTOCreate::class.java)
             val signup = mapper.readValue(signupJsonString, WellPartnerDTOSignup::class.java)
+            // not null 설정된 해당 값이 없으면 오류 문구 출력
 
             if (signup.CEO_Name.isNullOrEmpty())
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseRes(HttpStatus.BAD_REQUEST, "대표자 이름이 없습니다."))
@@ -99,7 +105,7 @@ class AuthenticationController(
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BaseRes(HttpStatus.BAD_REQUEST, "시스템 오류로 등록에 실패하였습니다."))
         */
-
+//성공시 성공 메세지 출력
         return ResponseEntity.ok(BaseRes(HttpStatus.OK, "회원가입 요청 성공"))
     }
 

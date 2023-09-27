@@ -138,6 +138,28 @@ project(":well-webapi") {
     tasks.named<Jar>("jar") { enabled = true }
 }
 
+project(":well-chargeApi") {
+    dependencies {
+        val implementation by configurations
+        val testImplementation by configurations
+        implementation(project(":well-core"))
+        implementation(project(":well-secure"))
+        implementation(project(":well-webapi"))
+        implementation("org.springframework.boot:spring-boot-starter-security")
+        implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+        implementation("org.springframework.session:spring-session-core")
+        testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+        testImplementation("org.springframework.security:spring-security-test")
+    }
+
+    tasks.withType<Jar> {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+
+    tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") { enabled = true }
+    tasks.named<Jar>("jar") { enabled = true }
+}
+
 application {
     mainClass.set("com.wellnetworks.wellwebapi.WellWebapiApplication")
 }

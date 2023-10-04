@@ -15,100 +15,101 @@ import jakarta.persistence.*
  [Index(name = "IX_tid", columnList = "tbl_id ASC", unique = false),
  ])
 data class WellMemberInfoEntity(
+    //0
     @Id
     @Column(name = "idx", columnDefinition = "uniqueidentifier", unique = true, nullable = false)
     var idx: String,
 
     @Column(name = "tbl_id", length = 16)
     var tableID: String,
-
+    //0
     @Column(name = "belong", nullable = false)
     @Convert(converter = CurrentEmploymentTypeToIndexConverter::class)
     var currentEmployment : CurrentEmploymentType,
-
+    //0
     @Column(name = "name", length = 64, nullable = false)
     var name: String,
-
+    //0
     @Column(name = "mail", length = 320, nullable = false)
     var email: String,
-
+    //0
     @Column(name = "phone_private", length = 16)
     var phonePrivate: String,
-
+    //0
     @Column(name = "phone_work", length = 16)
     var phoneWork: String,
-
+    //0
     @Column(name = "reg_num", length = 16)
     var registrationNumber: String,
-
+    //0
     @Column(name = "dep")
     @Convert(converter = DepartmentTypeToIndexConverter::class)
     var department: DepartmentType,
-
+    //0
     @Column(name = "pos")
     @Convert(converter = JobPositionTypeToIndexConverter::class)
     var jobPosition: JobPositionType,
-
+    //0
     @Column(name = "level")
     var level: Byte,
-
+    //0
     @Column(name = "home_addr1", length = 255)
     var homeAddress1: String,
-
+    //0
     @Column(name = "home_addr2", length = 255)
     var homeAddress2: String,
-
+    //0
     @Column(name = "b_name", length = 64)
     var bankName: String,
-
+    //0
     @Column(name = "b_account", length = 64)
     var bankAccount: String,
-
+    //0
     @Column(name = "b_holder", length = 64)
     var bankHolder: String,
-
+    //0
     @Column(name = "state")
     @Convert(converter = EmploymentStateTypeToIndexConverter::class)
     var employmentState: EmploymentStateType,
-
+    //0
     @Column(name = "j_type")
     @Convert(converter = JobTypeToIndexConverter::class)
     var jobType: JobType,
-
+    //0
     @Column(name = "phone_cert", columnDefinition = "bit")
     var certificationPhone: Boolean,
-
+    //0
     @Column(name = "email_cert", columnDefinition = "bit")
     var certificationEmail: Boolean,
-
+    //0
     @Column(name = "entry_dt", nullable = true)
     var entryDatetime: ZonedDateTime?,
-
+    //0
     @Column(name = "retire_dt", nullable = true)
     var employmentQuitDatetime: ZonedDateTime?,
-
+    //0
     @Column(name = "retire_type")
     @Convert(converter = EmploymentQuitTypeToIndexConverter::class)
     var employmentQuitType: EmploymentQuitType,
-
+    //0
     @Column(name = "access", columnDefinition = "bit")
     var access: Boolean,
-
+    //0
     @Column(name="file1_idx", nullable = true)
     var file1Idx: String?,
-
+    //0
     @Column(name="file2_idx", nullable = true)
     var file2Idx: String?,
-
+    //0
     @Column(name="file3_idx", nullable = true)
     var file3Idx: String?,
-
+    //0
     @Column(name="file4_idx", nullable = true)
     var file4Idx: String?,
-
+    //0
     @Column(name="file5_idx", nullable = true)
     var file5Idx: String?,
-
+    //0
     @Column(name = "memo")
     var memo: String,
 

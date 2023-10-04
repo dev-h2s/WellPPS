@@ -12,7 +12,7 @@ import java.time.ZonedDateTime;
 @Getter
 public class WellPartnerUserEntity {
 
-    @Id @GeneratedValue //거래처_idx
+    @Id //거래처_idx
     @Column(name = "p_idx", columnDefinition = "uniqueidentifier")
     private String partnerIdx;
 

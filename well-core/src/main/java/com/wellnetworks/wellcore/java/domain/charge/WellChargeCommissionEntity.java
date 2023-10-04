@@ -10,14 +10,14 @@ import lombok.Getter;
 @Getter
 public class WellChargeCommissionEntity {
 
-    @Id @GeneratedValue //수수료정보_id
+    @Id //수수료정보_id
     @Column(name = "comm_id")
-    private Long Id;
+    private Long CommissionId;
 
     @Column(name = "p_idx", columnDefinition = "uniqueidentifier", unique = true, nullable = false) //거래처_idx
-    private String idx;
+    private String partnerIdx;
 
-    @Column(name = "opening_discount") //개통점할인율
+    @Column(name = "op_discount") //개통점할인율
     private Float openingDiscount;
 
     @Column(name = "charge_discount") //충전점할인율

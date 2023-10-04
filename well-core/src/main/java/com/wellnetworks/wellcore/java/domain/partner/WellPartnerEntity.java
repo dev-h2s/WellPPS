@@ -13,18 +13,18 @@ import java.time.ZonedDateTime;
 @Table(name = "partner_tb", indexes =
 @Index(name = "IX_pcode", columnList = "pcode", unique = true))
 public class WellPartnerEntity {
-    @Id @GeneratedValue //거래처_idx
+    @Id //거래처_idx
     @Column(name = "p_idx", columnDefinition = "uniqueidentifier", unique = true, nullable = false)
-    private String idx;
+    private String partnerIdx;
 
     @Column(name = "p_group_id") //거래처 그룹_id
     private Long partnerGroupId;
 
     @Column(name = "p_id") //거래처_id
-    private Long id;
+    private Long partnerId;
 
     @Column(name = "pcode", unique = true) //거래처코드
-    private String pCode;
+    private String partnerCode;
 
     @Column(name = "tbl_id", nullable = false) //테이블코드
     private String tableID;
@@ -36,7 +36,7 @@ public class WellPartnerEntity {
     private String transactionStatus;
 
     @Column(name = "p_type", nullable = false) //거래처구분
-    private String pType;
+    private String partnerType;
 
     @Column(name = "p_upper_id") //상부점_id
     private Long partnerUpperId;

@@ -10,7 +10,7 @@ import lombok.Getter;
 @Getter
 public class WellPartnerGroupEntity {
 
-    @Id @GeneratedValue //거래처그룹_id
+    @Id //거래처그룹_id
     @Column(name = "p_group_id")
-    private Long Id;
+    private Long partnerGroupId;
 }

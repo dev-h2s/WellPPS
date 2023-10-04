@@ -12,7 +12,7 @@ import java.time.ZonedDateTime;
 @Getter
 public class WellPartnerManagerGroupEntity {
 
-    @Id @GeneratedValue //그룹별권한
+    @Id //그룹별권한
     @Column(name = "pm_gkey")
     private String partnerManagerGroupKey;
 

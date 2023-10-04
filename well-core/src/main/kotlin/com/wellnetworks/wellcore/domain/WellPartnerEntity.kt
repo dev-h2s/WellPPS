@@ -15,94 +15,96 @@ import jakarta.persistence.*
  ])
 
 data class WellPartnerEntity (
+//0
     @Id
     @Column(name="idx", columnDefinition = "uniqueidentifier", unique = true, nullable = false)
     var idx : String,
-
+//0
     @Column(name="pcode", length = 32, unique = true, nullable = true)
     var pCode: String?,
-
+//0
     @Column(name="tbl_id", length = 16, nullable = false)
     var tableID: String,
-
+//0
     @Column(name="cname", length = 64, nullable = true)
     var companyName: String?,
-
+//0
     @Column(name="ctype", nullable = false)
     @Convert(converter = CompanyTypeToIndexConverter::class)
     var companyType: CompanyType,
-
+//0
     @Column(name="cgrp", nullable = true)
     var companyGroup: Byte?,
 
+// 거래처파일 테이블 존재 -> 컬럼 존재 이유 없음
     @Column(name="tax_regdoc", nullable = true)
     var taxRegistrationDocFileIdx: String?,
-
+//0
     @Column(name="tax_num", length = 16, nullable = true)
     var taxNumber: String?,
 
     @Column(name="tax_mail", length = 320, nullable = true)
     var taxEmail: String?,
-
+// 거래처파일 테이블 존재 -> 컬럼 존재 이유 없음
     @Column(name="contract_regdoc", nullable = true)
     var contractDocFileIdx: String?,
-
+//0
     @Column(name="ctel", length = 16, nullable = true)
     var telephoneOffice: String?,
-
+//0
     @Column(name="cmail", length = 320, nullable = true)
     var emailOffice: String?,
-
+//0
     @Column(name="rate")
     @Convert(converter = RateTypeToIndexConverter::class)
     var rate: RateType,
-
+//0
     @Column(name="con_person", length = 64, nullable = true)
     var contactPerson: String?,
 
     @Column(name="use_api", columnDefinition = "bit", nullable = false)
     var useAPI: Boolean,
-
+//0
     @Column(name="cstate")
     @Convert(converter = CompanyStateTypeToIndexConverter::class)
     var companyState: CompanyStateType,
 
     @Column(name="clevel", nullable = true)
     var companyLevel: Byte?,
-
+//0
     @Column(name="parent_org", nullable = true)
     var parentOrganization: String?,
-
+//하부점 없어도됨
     @Column(name="child_org", nullable = true)
     var childOrganization: String?,
-
+//0
     @Column(name="ceo_name", length = 64)
     var ceoName: String,
-
+//0
     @Column(name="ceo_tel", length = 16)
     var ceoTelephone: String,
 
     @Column(name="ceo_idcard", nullable = true)
     var ceoIDCardFileIdx: String?,
-
+// 과연 필요한가??
     @Column(name="phone_cert", columnDefinition = "bit")
     var certificationPhone: Boolean,
-
+// 과연 필요한가??
     @Column(name="email_cert", columnDefinition = "bit")
     var certificationEmail: Boolean,
-
+//0
     @Column(name="tax_addr1", length = 255, nullable = true)
     var taxAddress1: String?,
-
+//0
     @Column(name="tax_addr2", length = 255, nullable = true)
     var taxAddress2: String?,
-
+//0
     @Column(name="caddr1", length = 255, nullable = true)
     var companyAddress1: String?,
-
+//0
     @Column(name="caddr2", length = 255, nullable = true)
     var companyAddress2: String?,
-
+//0
     @Column(name="priconsent", length = 16, nullable = true)
     var priorConsent: String?,
 
@@ -119,16 +121,16 @@ data class WellPartnerEntity (
 
     @Column(name="agree_mod", nullable = true)
     var agreeTermsModifyDatetime: ZonedDateTime?,
-
+//0
     @Column(name="b_name", length = 64, nullable = true)
     var bankName: String?,
-
+//0
     @Column(name="b_account", length = 64, nullable = true)
     var bankAccount: String?,
-
+//0
     @Column(name="b_holder", length = 64, nullable = true)
     var bankHolder: String?,
-
+//0
     @Column(name="memo", nullable = true)
     var adminMemo: String?,
 
@@ -138,7 +140,7 @@ data class WellPartnerEntity (
 
     @Column(name="contact_phone", length = 16, nullable = true)
     var contactPhone: String?,
-
+//0
     @Column(name="contact_dt", nullable = true)
     var contactDatetime: ZonedDateTime?,
 
@@ -158,10 +160,10 @@ data class WellPartnerEntity (
 
     @Column(name="contact_approver", length = 64, nullable = true)
     var contactApprover: String?,
-
+//0
     @Column(name="contact_regdt", nullable = true)
     var contactRegisterDatetime: ZonedDateTime?,
-
+//0
     @Column(name="contact_moddt", nullable = true)
     var contactModifyDatetime: ZonedDateTime?,
     ): BaseEntity() {

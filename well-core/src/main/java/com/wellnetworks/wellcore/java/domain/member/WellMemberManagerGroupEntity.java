@@ -14,19 +14,22 @@ import java.time.ZonedDateTime;
 @Table(name="member_manager_group_tb")
 public class WellMemberManagerGroupEntity {
 
-    //맴버 관리자그룹
     @Id
-    @Column(name = "mm_gkey")
+    @Column(name = "mm_gkey")//맴버 관리자그룹
     private String memberManagerGroupKey;
-    //맴버 그룹명
-    @Column(name = "mm_name")
+
+    @Column(name = "mm_name")//맴버 그룹명
     private String memberManagerName;
+
     @Column(name = "permissions") //맴버 권한
     private String permissions;
+
     @Column (name = "description") //맴버 권한에 대한 설명
     private String description;
+
     @Column(name = "mm_moddt") //권한채택일
     private ZonedDateTime memberManagerModifyDate;
+
     @Column(name = "mm_regdt") //생성 날짜와 시간
     private ZonedDateTime memberManagerRegisterDate;
 

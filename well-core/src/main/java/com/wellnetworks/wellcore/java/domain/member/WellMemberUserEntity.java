@@ -11,38 +11,38 @@ import java.time.ZonedDateTime;
 @Entity
 @Table(name = "member_user_tb", indexes = {@Index(name = "IX_tid", columnList = "tbl_id ASC")})
 public class WellMemberUserEntity {
-    //맴버 고유 식별자 idx
+
     @Id
-    @Column(name = "m_idx", columnDefinition = "uniqueidentifier")
+    @Column(name = "m_idx", columnDefinition = "uniqueidentifier") //맴버 고유 식별자 idx
     private String memberIdx;
-    //로그인시 아이디
-    @Column(name = "m_identification")
+
+    @Column(name = "m_identification") //로그인시 아이디
     private String memberIdentification;
-    //로그인시 패스워드
-    @Column(name = "pwd")
+
+    @Column(name = "pwd") //로그인시 비밀번호
     private String memberUserPwd;
-    //권한
-    @Column(name = "permissions")
+
+    @Column(name = "permissions") //권한
     private String permissions;
-    //임시비밀번호
-    @Column(name = "tmp_pwd")
+
+    @Column(name = "tmp_pwd") //임시비밀번호
     private String tmpPwd;
-    //임시비밀번호 만료날짜
-    @Column(name = "tmp_pwd_expiration")
+
+    @Column(name = "tmp_pwd_expiration") //임시비밀번호 만료날짜
     private ZonedDateTime tmpPwdExpiration;
-    //임시비밀번호 사용횟수
-    @Column(name = "tmp_pwd_count")
+
+    @Column(name = "tmp_pwd_count") //임시비밀번호 사용횟수
     private int tmpPwdCount;
-    //임시비밀번호 생성일자
-    @Column(name = "tmp_pwd_dt")
+
+    @Column(name = "tmp_pwd_dt") //임시비밀번호 생성일자
     private ZonedDateTime tmpPwdDate;
-    //유저정보 수정일자
-    @Column(name = "m_u_moddt")
+
+    @Column(name = "m_u_moddt") //유저정보 수정일자
     private ZonedDateTime memberUserModifyDate;
-    //유저정보 수정일자
-    @Column(name = "m_u_regdt")
+
+    @Column(name = "m_u_regdt") //유저정보 수정일자
     private ZonedDateTime getMemberUserRegisterDate;
-    //그룹식별자
-    @Column(name = "Group_key")
+
+    @Column(name = "Group_key") //그룹식별자
     private String groupKey;
 }

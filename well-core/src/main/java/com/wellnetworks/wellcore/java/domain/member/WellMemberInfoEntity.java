@@ -13,115 +13,105 @@ import java.time.ZonedDateTime;
 @Table(name = "member_tb", indexes = {@Index(name = "IX_tid", columnList = "tbl_id ASC"),})
 public class WellMemberInfoEntity {
 
-    //맴버의 고유 식별자 idx
-    @Id
-    @Column(name = "m_idx", columnDefinition = "uniqueidentifier")
-    private String memberIdx;
 
+    @Id
+    @Column(name = "m_idx", columnDefinition = "uniqueidentifier") //맴버의 고유 식별자 idx
+    private String memberIdx;
     //!! ??뭐지
 //    @Column(name = "tbl_id",  )
 //    private String tableID;
-    //member의 아이디
-    @Column(name = "m_id")
+    @Column(name = "m_id") //member의 아이디
     private String memberId;
 
-    // 소속
-    @Column(name = "belong")
+    @Column(name = "belong") // 소속
     private String currentEmployment;
 
-    //맴버 이름
-    @Column(name = "name")
+    @Column(name = "name") //맴버 이름
     private String name;
 
-    //맴버 이메일
-    @Column(name = "e_mail")
+    @Column(name = "e_mail") //맴버 이메일
     private String eMail;
-    // 개인 전화번호
-    @Column(name = "tel_private")
+
+    @Column(name = "tel_private") // 개인 전화번호
     private String telPrivate;
-    // 직장 전화번호
-    @Column(name = "tel_work")
+
+    @Column(name = "tel_work") // 직장 전화번호
     private String telWork;
-    //사원 등록번호
-    @Column(name = "reg_num")
+
+    @Column(name = "reg_num") //사원 등록번호
     private String registrationNumber;
-    //부서
-    @Column(name = "department")
+
+    @Column(name = "department") //부서
     private String department;
-    //직위(대표,부장 등)
-    @Column(name = "possition")
+
+    @Column(name = "possition") //직위(대표,부장 등)
     private String jobPosition;
-    //!!(미정의)
-    @Column(name = "level")
+
+    @Column(name = "level") //!!(미정의)
     private byte level;
-    //도로명주소
-    @Column(name = "home_addr1")
+
+    @Column(name = "home_addr1") //도로명주소
     private String homeAddress1;
-    //상세주소
-    @Column(name = "home_addr2")
+
+    @Column(name = "home_addr2") //상세주소
     private String homeAddress2;
-    //은행 이름
-    @Column(name = "bank_name")
+
+    @Column(name = "bank_name") //은행 이름
     private String bankName;
-    //은행 계좌
-    @Column(name = "bank_account")
+
+    @Column(name = "bank_account") //은행 계좌
     private String bankAccount;
-    //은행 계좌 소유자
-    @Column(name = "bank_holder")
+
+    @Column(name = "bank_holder") //은행 계좌 소유자
     private String bankHolder;
-    //재직 상태(재직,퇴사 등)
-    @Column(name = "emp_state")
+
+    @Column(name = "emp_state") //재직 상태(재직,퇴사 등)
     private String employmentState;
-    //직원 유형(정규직, 비정규직 등)
-    @Column(name = "emp_type")
+
+    @Column(name = "emp_type") //직원 유형(정규직, 비정규직 등)
     private String jobType;
-    //전화번호 인증여부
-    @Column(name = "tel_cert", columnDefinition = "bit")
+
+    @Column(name = "tel_cert", columnDefinition = "bit") //전화번호 인증여부
     private boolean certificationtel;
-    //이메일 인증여부
-    @Column(name = "email_cert", columnDefinition = "bit")
+
+    @Column(name = "email_cert", columnDefinition = "bit") //이메일 인증여부
     private boolean certificationEmail;
-    //입사 일자
-    @Column(name = "entry_dt")
+
+    @Column(name = "entry_dt") //입사 일자
     private ZonedDateTime entryDatetime;
-    //퇴사 일자
-    @Column(name = "retire_dt")
+
+    @Column(name = "retire_dt") //퇴사 일자
     private ZonedDateTime employmentQuitDatetime;
-    //퇴사 사유
-    @Column(name = "retire_type")
+
+    @Column(name = "retire_type") //퇴사 사유
     private String employmentQuitType;
-    //데이터 베이스 접근권한
-    @Column(name = "db_access_power", columnDefinition = "bit")
+
+    @Column(name = "db_access_power", columnDefinition = "bit")  //데이터 베이스 접근권한
     private boolean dbAccessPower;
-    //맴버 메모
-    @Column(name = "memo")
+
+    @Column(name = "memo") //맴버 메모
     private String memo;
-    //첨부 파일1
-    @Column(name = "file1_idx")
+
+    @Column(name = "file1_idx") //첨부 파일1
     private String file1Idx;
-    //첨부 파일2
-    @Column(name = "file2_idx")
+
+    @Column(name = "file2_idx") //첨부 파일2
     private String file2Idx;
-    //첨부 파일3
-    @Column(name = "file3_idx")
+
+    @Column(name = "file3_idx") //첨부 파일3
     private String file3Idx;
-    //첨부 파일4
-    @Column(name = "file4_idx")
+
+    @Column(name = "file4_idx") //첨부 파일4
     private String file4Idx;
-    //첨부 파일5
-    @Column(name = "file5_idx")
+
+    @Column(name = "file5_idx") //첨부 파일5
     private String file5Idx;
-    //마지막 수정 날짜
-    @Column(name = "m_moddt")
+
+    @Column(name = "m_moddt") //마지막 수정 날짜
     private ZonedDateTime memberModifyDate;
-    //생성 날짜와 시간
-    @Column(name = "m_regdt")
+
+    @Column(name = "m_regdt") //생성 날짜와 시간
     private ZonedDateTime memberRegisterDate;
-
-
-    //기본 생성자
-    public WellMemberInfoEntity() {
-    }
 
 
 }

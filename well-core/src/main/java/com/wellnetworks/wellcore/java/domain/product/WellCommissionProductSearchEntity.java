@@ -19,12 +19,12 @@ public class WellCommissionProductSearchEntity {
 
     //요금제 테이블 연결 다 대 1
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "pr_idx", referencedColumnName = "pr_idx", insertable = false, updatable = false)
+    @JoinColumn(name = "pr_idx", referencedColumnName = "pr_idx")
     private WellCommissionProductEntity product;
 
     //거래처 테이블 연결 다 대 1
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "p_idx", referencedColumnName = "partner_idx", insertable = false, updatable = false)
+    @JoinColumn(name = "p_idx", referencedColumnName = "partner_idx")
     private WellPartnerEntity partner;
 
     @Column(name = "search_request_dt")  // 조회 요청을 한 시간

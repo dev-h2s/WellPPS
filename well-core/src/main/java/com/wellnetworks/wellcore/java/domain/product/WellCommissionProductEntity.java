@@ -18,12 +18,12 @@ public class WellCommissionProductEntity {
     private String productIdx;
 
     //요금제 조회 테이블 연결 1대 다
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WellCommissionProductSearchEntity> productSearch = new ArrayList<>();
+//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<WellCommissionProductSearchEntity> productSearch = new ArrayList<>();
 
     //개통정책 테이블 연결 1대 다
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WellCommissionOpeningPolicyEntity> OpeningPolicy = new ArrayList<>();
+//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<WellCommissionOpeningPolicyEntity> OpeningPolicy = new ArrayList<>();
 
     @Column(name = "o_idx") // 통신사 정보와 연결되는 FK
     private String operatorIdx;

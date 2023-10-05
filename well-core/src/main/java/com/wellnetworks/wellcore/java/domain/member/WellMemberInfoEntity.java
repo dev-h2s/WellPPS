@@ -1,21 +1,31 @@
 package com.wellnetworks.wellcore.java.domain.member;
 //맴버 테이블
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import java.time.LocalDateTime;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 
 @Entity
 @Getter
 @Table(name = "member_tb")
-public class WellMemberInfoEntity extends WellMemberUserEntity {
+public class WellMemberInfoEntity {
 
-//    @Id
-//    @Column(name = "m_idx", columnDefinition = "uniqueidentifier") //맴버의 고유 식별자 idx
-//    private String memberIdx;
+    @Id
+    @Column(name = "m_idx", columnDefinition = "uniqueidentifier") //맴버의 고유 식별자 idx
+    private String memberIdx;
+
+    @OneToOne(fetch = LAZY) //멤버 유저 1대1
+    @JoinColumn(name = "m_idx")
+    private WellMemberUserEntity memberUser; //멤버 유저 엔티티 참조
+
     //!! ??뭐지
-    //    @Column(name = "tbl_id",  )
-    //    private String tableID;
+    @Column(name = "tbl_id")
+    private String tableID;
+
     @Column(name = "m_id") //member의 아이디
     private String memberId;
 

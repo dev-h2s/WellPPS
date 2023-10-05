@@ -8,10 +8,9 @@ import lombok.Getter;
 @Getter
 @Table(name = "partnership_tb", indexes  =@Index(name = "partnership_id", columnList = "", unique = true))
 public class WellPartnerShipEntity {
-    @Id
-    @GeneratedValue //업무제휴 고유id
+    @Id //업무제휴 고유id
     @Column(name = "partnership_id", columnDefinition = "uniqueidentifier", unique = true, nullable = false)
-    private int partnershipId;
+    private Integer partnershipId;
 
     @Column(name = "partnership_name") //업체명
     private String partnershipName;

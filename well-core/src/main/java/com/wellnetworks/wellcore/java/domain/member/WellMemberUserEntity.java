@@ -1,10 +1,14 @@
 package com.wellnetworks.wellcore.java.domain.member;
 //맴버 유저 테이블
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
@@ -15,7 +19,11 @@ public class WellMemberUserEntity {
     @Column(name = "m_idx", columnDefinition = "uniqueidentifier") //맴버 고유 식별자 idx
     private String memberIdx;
 
-    @ManyToOne(fetch = FetchType.LAZY) //유저의 맴버 그룹_id
+    @JsonIgnore //순환참조 문제 방지
+    @OneToOne(fetch = LAZY, mappedBy = "memberUser") //멤버 1대1
+    private WellMemberInfoEntity member; //멤버 엔티티 참조
+
+    @ManyToOne(fetch = LAZY) //유저의 맴버 그룹_id
     @JoinColumn(name = "mm_gkey")
     private WellMemberManagerGroupEntity memberGroup;
 

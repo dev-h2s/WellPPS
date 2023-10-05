@@ -20,7 +20,7 @@ public class WellChargeHistoryEntity {
 
     //거래처 테이블 연결 다 대 1
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "p_idx", referencedColumnName = "partner_idx", insertable = false, updatable = false)
+    @JoinColumn(name = "p_idx", referencedColumnName = "partner_idx")
     private WellPartnerEntity partner;
 
     @Column(name = "product_search_idx")  // 요금제 조회 내역과 연결되는 fk

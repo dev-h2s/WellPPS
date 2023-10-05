@@ -20,12 +20,12 @@ public class WellCommissionOpeningPolicyEntity {
 
     //요금제 테이블 연결 다 대 1
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "pr_idx", referencedColumnName = "pr_idx", insertable = false, updatable = false)
+    @JoinColumn(name = "pr_idx", referencedColumnName = "pr_idx")
     private WellCommissionProductEntity product;
 
     //통신사 테이블 연결 다 대 1
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "pr_idx", referencedColumnName = "pr_idx", insertable = false, updatable = false)
+    @JoinColumn(name = "pr_idx", referencedColumnName = "pr_idx")
     private WellCommissionOperatorEntity operator;
 
     @Column(name = "passport_type") // 등록증인지 여권인지 판단(등록증, 여권에 따라 수수료 달라짐)

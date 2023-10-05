@@ -16,7 +16,7 @@ public class WellDipositEntity {
         @Column(name = "dipo_idx", columnDefinition = "uniqueidentifier")
         private String dipositIdx;
 
-        @ManyToOne(fetch = LAZY)//가상계좌_idx
+        @OneToOne(fetch = LAZY)//가상계좌_idx
         @JoinColumn(name = "v_account_idx", unique = true, nullable = false)
         private WellVirtualAccountEntity virtualAccount;
 

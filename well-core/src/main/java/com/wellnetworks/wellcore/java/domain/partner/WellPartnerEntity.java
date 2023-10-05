@@ -3,10 +3,16 @@ package com.wellnetworks.wellcore.java.domain.partner;
 
 import com.wellnetworks.wellcore.domain.converter.CompanyStateTypeToIndexConverter;
 import com.wellnetworks.wellcore.domain.converter.CompanyTypeToIndexConverter;
+import com.wellnetworks.wellcore.java.domain.charge.WellChargeHistoryEntity;
+import com.wellnetworks.wellcore.java.domain.product.WellCommissionProductSearchEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static jakarta.persistence.FetchType.*;
 
 @Entity
 @Getter
@@ -17,9 +23,17 @@ public class WellPartnerEntity {
     @Column(name = "p_idx", columnDefinition = "uniqueidentifier", unique = true, nullable = false)
     private String partnerIdx;
 
-    @ManyToOne(fetch = FetchType.LAZY) //거래처 그룹_id
+    @ManyToOne(fetch = LAZY) //거래처 그룹_id
     @JoinColumn(name = "p_group_id")
     private WellPartnerGroupEntity partnerGroup;
+
+    // 요금제 조회 테이블 연결 1대 다
+    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WellCommissionProductSearchEntity> productSearch = new ArrayList<>();
+
+    // 충전 시도내역 테이블 연결 1대 다
+    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WellChargeHistoryEntity> chargeHistory = new ArrayList<>();
 
     @Column(name = "p_id") //거래처_id
     private Long partnerId;

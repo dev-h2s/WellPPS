@@ -1,25 +1,27 @@
 package com.wellnetworks.wellcore.java.domain.member;
-
+//맴버 테이블
 import com.wellnetworks.wellcore.domain.converter.*;
 import com.wellnetworks.wellcore.domain.dto.WellMemberDTOUpdate;
 import com.wellnetworks.wellcore.domain.dto.WellMemberInfoDTO;
 import com.wellnetworks.wellcore.domain.enums.*;
 import jakarta.persistence.*;
 import org.hibernate.Hibernate;
+import lombok.Getter;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "member_tb", indexes = {@Index(name = "IX_tid", columnList = "tbl_id ASC"),})
-public class WellMemberInfoEntity {
+@Getter
+@Table(name = "member_tb")
+public class WellMemberInfoEntity extends WellMemberUserEntity {
 
-
-    @Id
-    @Column(name = "m_idx", columnDefinition = "uniqueidentifier") //맴버의 고유 식별자 idx
-    private String memberIdx;
+//    @Id
+//    @Column(name = "m_idx", columnDefinition = "uniqueidentifier") //맴버의 고유 식별자 idx
+//    private String memberIdx;
     //!! ??뭐지
-//    @Column(name = "tbl_id",  )
-//    private String tableID;
+    //    @Column(name = "tbl_id",  )
+    //    private String tableID;
     @Column(name = "m_id") //member의 아이디
     private String memberId;
 
@@ -78,10 +80,10 @@ public class WellMemberInfoEntity {
     private boolean certificationEmail;
 
     @Column(name = "entry_dt") //입사 일자
-    private ZonedDateTime entryDatetime;
+    private LocalDateTime entryDatetime;
 
     @Column(name = "retire_dt") //퇴사 일자
-    private ZonedDateTime employmentQuitDatetime;
+    private LocalDateTime employmentQuitDatetime;
 
     @Column(name = "retire_type") //퇴사 사유
     private String employmentQuitType;
@@ -97,7 +99,6 @@ public class WellMemberInfoEntity {
 
     @Column(name = "file2_idx") //첨부 파일2
     private String file2Idx;
-
     @Column(name = "file3_idx") //첨부 파일3
     private String file3Idx;
 
@@ -108,10 +109,10 @@ public class WellMemberInfoEntity {
     private String file5Idx;
 
     @Column(name = "m_moddt") //마지막 수정 날짜
-    private ZonedDateTime memberModifyDate;
+    private LocalDateTime memberModifyDate;
 
     @Column(name = "m_regdt") //생성 날짜와 시간
-    private ZonedDateTime memberRegisterDate;
+    private LocalDateTime memberRegisterDate;
 
 
 }

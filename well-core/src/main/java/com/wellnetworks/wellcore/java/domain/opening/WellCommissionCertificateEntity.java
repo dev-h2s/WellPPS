@@ -3,7 +3,6 @@ package com.wellnetworks.wellcore.java.domain.opening;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 
 // 개통 수수료 등록증
 @Entity

@@ -1,7 +1,6 @@
 package com.wellnetworks.wellcore.java.domain.operator;
 //통신사
 import com.wellnetworks.wellcore.java.domain.opening.WellCommissionOpeningPolicyEntity;
-import com.wellnetworks.wellcore.java.domain.product.WellCommissionProductSearchEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 

@@ -1,18 +1,10 @@
 package com.wellnetworks.wellcore.java.domain.member;
 //맴버 유저 테이블
-import com.wellnetworks.wellcore.domain.converter.*;
-import com.wellnetworks.wellcore.domain.dto.WellMemberDTOUpdate;
-import com.wellnetworks.wellcore.domain.dto.WellMemberInfoDTO;
-import com.wellnetworks.wellcore.domain.enums.*;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
+
 import jakarta.persistence.*;
 import lombok.Getter;
-import org.hibernate.Hibernate;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter

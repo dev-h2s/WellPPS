@@ -2,7 +2,6 @@ package com.wellnetworks.wellcore.java.domain.partner;
 //부정가입현황
 
 import com.wellnetworks.wellcore.java.domain.file.WellFakeRegistrationFIleStorageEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellVirtualAccountFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.opening.WellOpeningEntity;
 import jakarta.persistence.*;
 import lombok.Getter;

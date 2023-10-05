@@ -17,8 +17,9 @@ public class WellPartnerEntity {
     @Column(name = "p_idx", columnDefinition = "uniqueidentifier", unique = true, nullable = false)
     private String partnerIdx;
 
-    @Column(name = "p_group_id") //거래처 그룹_id
-    private Long partnerGroupId;
+    @ManyToOne(fetch = FetchType.LAZY) //거래처 그룹_id
+    @JoinColumn(name = "p_group_id")
+    private WellPartnerGroupEntity partnerGroup;
 
     @Column(name = "p_id") //거래처_id
     private Long partnerId;

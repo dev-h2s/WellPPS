@@ -17,7 +17,7 @@ public class WellFakeRegistrationFIleStorageEntity {
     @JoinColumn(name = "fake_reg_id")
     private WellFakeRegistrationEntity fakeRegistration;
 
-    @ManyToOne(fetch = LAZY) // 가상계좌 파일과 첨부파일 간의 연결
-    @JoinColumn(name = "file_id")
+    @OneToOne(fetch = LAZY) // 부정가입현황 파일과 첨부파일 간의 연결
+    @JoinColumn(name = "file_idx")
     private WellFileStorageEntity file;
 }

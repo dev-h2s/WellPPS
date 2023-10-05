@@ -1,19 +1,28 @@
 package com.wellnetworks.wellcore.java.domain.file;
 //첨부파일
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
 public class WellFileStorageEntity {
 
     @Id //파일_idx
-    @Column(name = "file_id", columnDefinition = "uniqueidentifier")
-    private String fileId;
+    @Column(name = "file_idx", columnDefinition = "uniqueidentifier")
+    private String fileIdx;
+
+    @OneToOne(fetch = LAZY) // 첨부파일과 부정가입현황파일 간의 연결
+    private WellFakeRegistrationFIleStorageEntity fakeRegistrationFIleStorage;
+
+    @OneToOne(fetch = LAZY) // 첨부파일과 가상계좌파일 간의 연결
+    private WellVirtualAccountFIleStorageEntity virtualAccountFIleStorage;
+
+    @OneToOne(fetch = LAZY) // 첨부파일과 거래처파일 간의 연결
+    private WellPartnerFIleStorageEntity PartnerFIleStorage;
 
     @Column(name = "file_name") //원본파일명
     private String fileName;

@@ -22,7 +22,7 @@ public class WellVirtualAccountEntity {
     @OneToMany(mappedBy = "v_account_file", fetch = LAZY, cascade = CascadeType.ALL)  //여러 가상계좌 파일을 가질 수 있음
     private List<WellVirtualAccountFIleStorageEntity> files = new ArrayList<>();
 
-    @ManyToOne(fetch = LAZY) //거래처_idx
+    @OneToOne(fetch = LAZY) //거래처_idx
     @JoinColumn(name = "p_idx", unique = true, nullable = false)
     private WellPartnerEntity partner;
 

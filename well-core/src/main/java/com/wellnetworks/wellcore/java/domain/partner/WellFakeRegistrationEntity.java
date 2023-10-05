@@ -20,7 +20,7 @@ public class WellFakeRegistrationEntity {
     @Column(name = "fake_reg_id")
     private Integer fakeRegistrationId;
 
-    @ManyToOne(fetch = LAZY) //개통_id
+    @OneToOne(fetch = LAZY) //개통_id
     @JoinColumn(name = "op_info_id")
     private WellOpeningEntity openingInfo;
 

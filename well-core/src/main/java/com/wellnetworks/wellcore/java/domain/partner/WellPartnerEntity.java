@@ -7,7 +7,7 @@ import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,11 +30,11 @@ public class WellPartnerEntity {
 
 
     // 요금제 조회 테이블 연결 1대 다
-    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WellCommissionProductSearchEntity> productSearch = new ArrayList<>();
 
     // 충전 시도내역 테이블 연결 1대 다
-    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WellChargeHistoryEntity> chargeHistory = new ArrayList<>();
 
     @Column(name = "p_id") //거래처_id
@@ -44,7 +44,7 @@ public class WellPartnerEntity {
     @JoinColumn(name = "p_id")
     private WellPartnerUserEntity partnerUser;
 
-    @OneToMany(mappedBy = "p_file", cascade = CascadeType.ALL)  //여러 거래처 파일을 가질 수 있음
+    @OneToMany(mappedBy = "p_file", fetch = LAZY, cascade = CascadeType.ALL)  //여러 거래처 파일을 가질 수 있음
     private List<WellPartnerFIleStorageEntity> files = new ArrayList<>();
 
     @Column(name = "pcode", unique = true) //거래처코드
@@ -69,10 +69,10 @@ public class WellPartnerEntity {
     private String partnerTelecom;
 
     @Column(name = "product_regdt") //시작날짜
-    private LocalDateTime productRegisterDate;
+    private ZonedDateTime productRegisterDate;
 
     @Column(name = "product_moddt") //종료날짜
-    private LocalDateTime productModifyDate;
+    private ZonedDateTime productModifyDate;
 
     @Column(name="sales_manager") //영업담당자
     private String salesManager;
@@ -111,7 +111,7 @@ public class WellPartnerEntity {
     private String region;
 
     @Column(name = "subdt") //가입승인일자
-    private LocalDateTime subscriptionDate;
+    private ZonedDateTime subscriptionDate;
 
     @Column(name = "special_policy_opening") //특수정책개통
     private boolean specialPolicyOpening;
@@ -135,7 +135,7 @@ public class WellPartnerEntity {
     private String partnerMemo;
 
     @Column(name = "sales_team_visdt") //영업팀최근방문일자
-    private LocalDateTime salesTeamVisitDate;
+    private ZonedDateTime salesTeamVisitDate;
 
     @Column(name = "sales_team_visit_memo") //영업팀방문일지
     private String salesTeamVisitMemo;
@@ -156,10 +156,10 @@ public class WellPartnerEntity {
     private String event;
 
     @Column(name = "opening_visit_reqdt") //개통점방문요청일자
-    private LocalDateTime openingVisitRequestDate;
+    private ZonedDateTime openingVisitRequestDate;
 
     @Column(name = "opening_visit_decdt") //개통점방문확정일자
-    private LocalDateTime openingVisitDecideDate;
+    private ZonedDateTime openingVisitDecideDate;
 
     @Column(name = "opening_progress") //개통점진행도
     private String openingProgress;

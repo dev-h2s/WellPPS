@@ -1,10 +1,11 @@
 package com.wellnetworks.wellcore.java.domain.charge;
 // 충전정책
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+import jakarta.persistence.*;
 import lombok.Getter;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
@@ -14,8 +15,9 @@ public class WellChargeCommissionEntity {
     @Column(name = "comm_id")
     private Long CommissionId;
 
-    @Column(name = "p_idx", columnDefinition = "uniqueidentifier", unique = true, nullable = false) //거래처_idx
-    private String partnerIdx;
+    @ManyToOne(fetch = LAZY) //거래처_idx
+    @JoinColumn(name = "p_idx", unique = true, nullable = false)
+    private WellPartnerEntity partner;  // 거래처 엔티티를 참조
 
     @Column(name = "op_discount") //개통점할인율
     private Float openingDiscount;

@@ -1,12 +1,12 @@
 package com.wellnetworks.wellcore.java.domain.account;
 //예치금
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
@@ -16,8 +16,9 @@ public class WellDipositEntity {
         @Column(name = "dipo_idx", columnDefinition = "uniqueidentifier")
         private String dipositIdx;
 
-        @Column(name = "v_account_idx") //가상계좌_idx
-        private String virtualAccountIdx;
+        @ManyToOne(fetch = LAZY)//가상계좌_idx
+        @JoinColumn(name = "v_account_idx", unique = true, nullable = false)
+        private WellVirtualAccountEntity virtualAccount;
 
         @Column(name = "dipo_balance") //예치금잔액
         private Integer dipositBalance;

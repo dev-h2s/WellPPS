@@ -3,10 +3,16 @@ package com.wellnetworks.wellcore.java.domain.partner;
 
 import com.wellnetworks.wellcore.domain.converter.CompanyStateTypeToIndexConverter;
 import com.wellnetworks.wellcore.domain.converter.CompanyTypeToIndexConverter;
+import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
+import com.wellnetworks.wellcore.java.domain.file.WellVirtualAccountFIleStorageEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
@@ -17,12 +23,16 @@ public class WellPartnerEntity {
     @Column(name = "p_idx", columnDefinition = "uniqueidentifier", unique = true, nullable = false)
     private String partnerIdx;
 
-    @ManyToOne(fetch = FetchType.LAZY) //거래처 그룹_id
+    @ManyToOne(fetch = LAZY) //거래처 그룹_id
     @JoinColumn(name = "p_group_id")
     private WellPartnerGroupEntity partnerGroup;
 
-    @Column(name = "p_id") //거래처_id
-    private Long partnerId;
+    @OneToOne(fetch = LAZY) //거래처_id (id를 사용하여 거래처 유저 엔티티와 1대1 연결)
+    @JoinColumn(name = "p_id")
+    private WellPartnerUserEntity partnerUser;
+
+    @OneToMany(mappedBy = "p_file", fetch = LAZY, cascade = CascadeType.ALL)  //여러 거래처 파일을 가질 수 있음
+    private List<WellPartnerFIleStorageEntity> files = new ArrayList<>();
 
     @Column(name = "pcode", unique = true) //거래처코드
     private String partnerCode;

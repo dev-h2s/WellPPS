@@ -3,8 +3,13 @@ package com.wellnetworks.wellcore.java.domain.partner;
 
 import com.wellnetworks.wellcore.domain.converter.CompanyStateTypeToIndexConverter;
 import com.wellnetworks.wellcore.domain.converter.CompanyTypeToIndexConverter;
+<<<<<<< HEAD
 import com.wellnetworks.wellcore.java.domain.charge.WellChargeHistoryEntity;
 import com.wellnetworks.wellcore.java.domain.product.WellCommissionProductSearchEntity;
+=======
+import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
+import com.wellnetworks.wellcore.java.domain.file.WellVirtualAccountFIleStorageEntity;
+>>>>>>> origin/jinLocalBranch
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -12,7 +17,11 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+<<<<<<< HEAD
 import static jakarta.persistence.FetchType.*;
+=======
+import static jakarta.persistence.FetchType.LAZY;
+>>>>>>> origin/jinLocalBranch
 
 @Entity
 @Getter
@@ -27,6 +36,7 @@ public class WellPartnerEntity {
     @JoinColumn(name = "p_group_id")
     private WellPartnerGroupEntity partnerGroup;
 
+<<<<<<< HEAD
     // 요금제 조회 테이블 연결 1대 다
     @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WellCommissionProductSearchEntity> productSearch = new ArrayList<>();
@@ -37,6 +47,14 @@ public class WellPartnerEntity {
 
     @Column(name = "p_id") //거래처_id
     private Long partnerId;
+=======
+    @OneToOne(fetch = LAZY) //거래처_id (id를 사용하여 거래처 유저 엔티티와 1대1 연결)
+    @JoinColumn(name = "p_id")
+    private WellPartnerUserEntity partnerUser;
+
+    @OneToMany(mappedBy = "p_file", fetch = LAZY, cascade = CascadeType.ALL)  //여러 거래처 파일을 가질 수 있음
+    private List<WellPartnerFIleStorageEntity> files = new ArrayList<>();
+>>>>>>> origin/jinLocalBranch
 
     @Column(name = "pcode", unique = true) //거래처코드
     private String partnerCode;

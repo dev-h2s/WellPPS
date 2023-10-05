@@ -1,12 +1,13 @@
 package com.wellnetworks.wellcore.java.domain.apikeyIn;
 // 내부 apikey
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
@@ -16,8 +17,9 @@ public class WellApikeyInEntity {
     @Column(name = "api_key_in_id")
     private Long apiKeyInId;
 
-    @Column(name = "p_idx", columnDefinition = "uniqueidentifier") //거래처_idx
-    private String partnerIdx;
+    @ManyToOne(fetch = LAZY) //거래처_idx
+    @JoinColumn(name = "p_idx", unique = true, nullable = false)
+    private WellPartnerEntity partner;
 
     @Column(name = "api_key_in") //내부APIKEY
     private String apiKeyIn;

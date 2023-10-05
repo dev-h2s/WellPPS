@@ -1,22 +1,30 @@
 package com.wellnetworks.wellcore.java.domain.account;
 // 가상계좌
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import com.wellnetworks.wellcore.java.domain.file.WellVirtualAccountFIleStorageEntity;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
 public class WellVirtualAccountEntity {
 
-    @Id // 가상계좌_idx
+    @Id // 가상계좌_idx(pk)
     @Column(name = "v_account_idx", columnDefinition = "uniqueidentifier")
     private String virtualAccountIdx;
 
-    @Column(name = "p_idx", columnDefinition = "uniqueidentifier") // 거래처_idx
-    private String partnerIdx;
+    @OneToMany(mappedBy = "v_account_file", fetch = LAZY, cascade = CascadeType.ALL)  //여러 가상계좌 파일을 가질 수 있음
+    private List<WellVirtualAccountFIleStorageEntity> files = new ArrayList<>();
+
+    @ManyToOne(fetch = LAZY) //거래처_idx
+    @JoinColumn(name = "p_idx", unique = true, nullable = false)
+    private WellPartnerEntity partner;
 
     @Column(name = "reg_dt") // 작성일
     private LocalDateTime registerDate;

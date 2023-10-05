@@ -1,23 +1,28 @@
 package com.wellnetworks.wellcore.java.domain.partner;
 // 거래처 유저
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Getter;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
 public class WellPartnerUserEntity {
 
-    @Id //거래처_idx
-    @Column(name = "p_idx", columnDefinition = "uniqueidentifier")
-    private String partnerIdx;
+    @Id //거래처_id
+    @Column(name = "p_id")
+    private Long partnerId;
 
-    @Column(name = "pm_gkey") //그룹별권한
-    private String partnerManagerGroupKey;
+    @JsonIgnore //순환참조 문제 방지
+    @OneToOne(fetch = LAZY, mappedBy = "partnerUser") //거래처 1대1
+    private WellPartnerEntity partner; //거래처 엔티티 참조
+
+    @ManyToOne(fetch = LAZY) //그룹별권한
+    @JoinColumn(name = "pm_gkey")
+    private WellPartnerManagerGroupEntity partnerManagerGroup; //거래처유저그룹 엔티티 참조
 
     @Column(name = "p_identification") //로그인시 아이디
     private String partnerIdentification;
@@ -32,18 +37,18 @@ public class WellPartnerUserEntity {
     private String tmpPwd;
 
     @Column(name = "tmp_pwd_expiration") //임시비밀번호 만료날짜
-    private ZonedDateTime tmpPwdExpiration;
+    private LocalDateTime tmpPwdExpiration;
 
     @Column(name = "tmp_pwd_count") //임시비밀번호 사용횟수
     private int tmpPwdCount;
 
     @Column(name = "tmp_pwd_dt") //임시비밀번호 생성일자
-    private ZonedDateTime tmpPwdDate;
+    private LocalDateTime tmpPwdDate;
 
     @Column(name = "p_u_moddt") //유저정보 수정일자
-    private ZonedDateTime partnerUserModifyDate;
+    private LocalDateTime partnerUserModifyDate;
 
     @Column(name = "p_u_regdt") //유저정보 생성일자
-    private ZonedDateTime partnerUserRegisterDate;
+    private LocalDateTime partnerUserRegisterDate;
 
 }

@@ -1,11 +1,12 @@
 package com.wellnetworks.wellcore.java.domain.opening;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 //개통
 @Entity
@@ -16,8 +17,9 @@ public class WellOpeningEntity {
     @Column(name = "op_info_idx", columnDefinition = "uniqueidentifier")
     private String openingInfoIdx;
 
-    @Column(name = "p_idx", columnDefinition = "uniqueidentifier") //거래처_idx
-    private String partnerIdx;
+    @ManyToOne(fetch = LAZY) //거래처_idx
+    @JoinColumn(name = "p_idx", unique = true, nullable = false)
+    private WellPartnerEntity partner;
 
     @Column(name = "op_info_id", unique = true) //개통_id
     private Long openingInfoId;

@@ -11,7 +11,7 @@ import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @Table(name = "product_search_tb", indexes = {@Index(name = "pr_search_idx", columnList = "memberManagerGroupKey",unique = true)})
-public class WellCommissionProductSearchEntity {
+public class WellProductSearchEntity {
 
     @Id
     @Column(name = "pr_search_idx", columnDefinition = "uniqueidentifier") // 생성 고유 값
@@ -20,7 +20,7 @@ public class WellCommissionProductSearchEntity {
     //요금제 테이블 연결 다 대 1
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "pr_idx", referencedColumnName = "pr_idx")
-    private WellCommissionProductEntity product;
+    private WellProductEntity product;
 
     //거래처 테이블 연결 다 대 1
     @ManyToOne(fetch = LAZY)

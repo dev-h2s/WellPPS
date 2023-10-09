@@ -2,7 +2,7 @@ package com.wellnetworks.wellcore.java.domain.partner;
 // 거래처
 
 import com.wellnetworks.wellcore.java.domain.charge.WellChargeHistoryEntity;
-import com.wellnetworks.wellcore.java.domain.product.WellCommissionProductSearchEntity;
+import com.wellnetworks.wellcore.java.domain.product.WellProductSearchEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -31,7 +31,7 @@ public class WellPartnerEntity {
 
     // 요금제 조회 테이블 연결 1대 다
     @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WellCommissionProductSearchEntity> productSearch = new ArrayList<>();
+    private List<WellProductSearchEntity> productSearch = new ArrayList<>();
 
     // 충전 시도내역 테이블 연결 1대 다
     @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL, orphanRemoval = true)

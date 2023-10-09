@@ -1,17 +1,14 @@
 package com.wellnetworks.wellcore.java.domain.product;
 //요금제
-import com.wellnetworks.wellcore.java.domain.opening.WellCommissionOpeningPolicyEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
 @Table(name = "product_tb", indexes = {@Index(name = "p_idx", columnList = "productIdx",unique = true)})
-public class WellCommissionProductEntity {
+public class WellProductEntity {
 
     @Id
     @Column(name = "pr_idx", columnDefinition = "uniqueidentifier") // 생성 고유 값

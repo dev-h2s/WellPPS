@@ -2,7 +2,7 @@ package com.wellnetworks.wellcore.java.domain.opening;
 //개통정책
 
 import com.wellnetworks.wellcore.java.domain.operator.WellCommissionOperatorEntity;
-import com.wellnetworks.wellcore.java.domain.product.WellCommissionProductEntity;
+import com.wellnetworks.wellcore.java.domain.product.WellProductEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -21,7 +21,7 @@ public class WellCommissionOpeningPolicyEntity {
     //요금제 테이블 연결 다 대 1
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "pr_idx", referencedColumnName = "pr_idx")
-    private WellCommissionProductEntity product;
+    private WellProductEntity product;
 
     //통신사 테이블 연결 다 대 1
     @ManyToOne(fetch = LAZY)

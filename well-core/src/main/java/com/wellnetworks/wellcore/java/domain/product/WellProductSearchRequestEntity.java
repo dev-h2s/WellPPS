@@ -6,7 +6,7 @@ import lombok.Getter;
 @Entity
 @Getter
 @Table(name = "product_search_request_tb", indexes = {@Index(name = "p_search_request_idx", columnList = "productSearchRequestIdx",unique = true)})
-public class WellCommissionProductSearchRequestEntity extends WellCommissionProductSearchEntity {
+public class WellProductSearchRequestEntity extends WellProductSearchEntity {
 
 // 요금제 조회 테이블의 pk이자 fk
 // 조회 요청하는 apikey

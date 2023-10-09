@@ -14,7 +14,7 @@ public class WellPartnerFIleStorageEntity {
     private String fileIdx;
 
     @ManyToOne(fetch = LAZY) //거래처_idx
-    @JoinColumn(name = "p_idx")
+    @JoinColumn(name = "p_file")
     private WellPartnerEntity partner;
 
     @OneToOne(fetch = LAZY) // 거래처 파일과 첨부파일 간의 연결

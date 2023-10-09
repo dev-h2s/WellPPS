@@ -10,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Getter
-public class WellPartnerManagerGroupEntity {
+public class WellPartnerPermissionGroupEntity {
 
     @Id //그룹별권한
     @Column(name = "pm_gkey")

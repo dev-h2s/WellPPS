@@ -1,5 +1,6 @@
 package com.wellnetworks.wellcore.java.domain.opening;
 
+import com.wellnetworks.wellcore.java.domain.partner.WellFakeRegistrationEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,6 +21,10 @@ public class WellOpeningEntity {
     @ManyToOne(fetch = LAZY) //거래처_idx
     @JoinColumn(name = "p_idx", unique = true, nullable = false)
     private WellPartnerEntity partner;
+
+    // 부정가입현황 1대1
+    @OneToOne(mappedBy = "opening_info", fetch = LAZY, cascade = CascadeType.ALL)
+    private WellFakeRegistrationEntity fakeRegistration;
 
     @Column(name = "op_info_id", unique = true) //개통_id
     private Long openingInfoId;

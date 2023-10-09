@@ -15,8 +15,9 @@ public class WellChargeResultHistoryEntity extends WellChargeHistoryEntity {
     @Column(name = "charge_result_history_id", columnDefinition = "uniqueidentifier") // 충전 결과 내역 고유 값 idx
     private Integer chargeResultHistoryId;
 
-//    @Column(name = "charge_history_id") // 충전시도내역 테이블과 연결되는 fk
-//    private Integer chargeHistoryId;
+    @ManyToOne(fetch = FetchType.LAZY) // 충전시도내역 테이블과 연결되는 fk
+    @JoinColumn(name = "charge_history_idx")
+    private WellChargeHistoryEntity chargeHistory;
 
     @Column(name = "charge_start_dt") // 충전된 시작 시간
     private LocalDateTime chargeStartDt;

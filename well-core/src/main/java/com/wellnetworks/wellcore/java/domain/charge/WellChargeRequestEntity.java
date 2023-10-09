@@ -15,8 +15,9 @@ public class WellChargeRequestEntity extends WellChargeHistoryEntity {
     @Column(name = "charge_request_id", columnDefinition = "uniqueidentifier") // 생성 고유값 pk
     private Integer chargeRequestId;
 
-//    @Column(name = "charge_history_id") // 충전 시도 내역 테이블과 연결되는 fk
-//    private Integer chargeHistoryId;
+    @ManyToOne(fetch = FetchType.LAZY) // 충전 시도 내역 테이블과 연결되는 fk
+    @JoinColumn(name = "charge_history_idx") // charge_history_idx로 연결
+    private WellChargeHistoryEntity chargeHistory;
 
     @Column(name = "request_api_key") // 충전 시도시 요청된는 apikey 값
     private String  requestApiKey;

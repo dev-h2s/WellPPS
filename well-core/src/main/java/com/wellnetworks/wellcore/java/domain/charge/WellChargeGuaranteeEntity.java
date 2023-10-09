@@ -13,8 +13,9 @@ public class WellChargeGuaranteeEntity extends WellChargeHistoryEntity {
     @Column(name = "charging_guarantee_id", columnDefinition = "uniqueidentifier") //충전 중 담보 예치금 고유 식별자 idx
     private Integer chargingGuaranteeId;
 
-//    @Column(name = "charge_history_id") //충전 시도 내역 fk
-//    private Integer chargeHistoryId;
+    @ManyToOne(fetch = FetchType.LAZY) // 충전시도내역 테이블과 연결되는 fk
+    @JoinColumn(name = "charge_history_idx")
+    private WellChargeHistoryEntity chargeHistory;
 
     @Column(name = "guarantee_diposit") // 담보예치금
     private Integer guaranteeDiposit;

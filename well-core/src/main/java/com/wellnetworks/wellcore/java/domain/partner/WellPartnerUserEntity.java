@@ -17,12 +17,12 @@ public class WellPartnerUserEntity {
     private Long partnerId;
 
     @JsonIgnore //순환참조 문제 방지
-    @OneToOne(fetch = LAZY, mappedBy = "partnerUser") //거래처 1대1
+    @OneToOne(fetch = LAZY, mappedBy = "partnerId") //거래처 1대1
     private WellPartnerEntity partner; //거래처 엔티티 참조
 
     @ManyToOne(fetch = LAZY) //그룹별권한
     @JoinColumn(name = "pm_gkey")
-    private WellPartnerManagerGroupEntity partnerManagerGroup; //거래처유저그룹 엔티티 참조
+    private WellPartnerPermissionGroupEntity partnerManagerGroup; //거래처유저그룹 엔티티 참조
 
     @Column(name = "p_identification") //로그인시 아이디
     private String partnerIdentification;

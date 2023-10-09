@@ -22,9 +22,12 @@ public class WellVirtualAccountEntity {
     @OneToMany(mappedBy = "v_account_file", fetch = LAZY, cascade = CascadeType.ALL)  //여러 가상계좌 파일을 가질 수 있음
     private List<WellVirtualAccountFIleStorageEntity> files = new ArrayList<>();
 
-    @OneToOne(fetch = LAZY) //거래처_idx
+    @OneToOne(fetch = LAZY) //거래처_idx 거래처랑 1대1
     @JoinColumn(name = "p_idx", unique = true, nullable = false)
     private WellPartnerEntity partner;
+
+    @OneToOne(mappedBy = "virtualAccount", fetch = LAZY) // 예치금이랑 1대1(양방향)
+    private WellDipositEntity deposit;
 
     @Column(name = "reg_dt") // 작성일
     private LocalDateTime registerDate;

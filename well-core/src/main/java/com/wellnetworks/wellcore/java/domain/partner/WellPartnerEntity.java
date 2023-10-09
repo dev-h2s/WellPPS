@@ -1,7 +1,10 @@
 package com.wellnetworks.wellcore.java.domain.partner;
 // 거래처
 
+import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
+import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.charge.WellChargeHistoryEntity;
+import com.wellnetworks.wellcore.java.domain.opening.WellOpeningEntity;
 import com.wellnetworks.wellcore.java.domain.product.WellProductSearchEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import jakarta.persistence.*;
@@ -28,23 +31,32 @@ public class WellPartnerEntity {
     @JoinColumn(name = "p_group_id")
     private WellPartnerGroupEntity partnerGroup;
 
+    @OneToOne(fetch = LAZY) //거래처_id (id를 사용하여 거래처 유저 엔티티와 1대1 연결)
+    @JoinColumn(name = "p_id", referencedColumnName = "p_id")
+    private WellPartnerUserEntity partnerId;
+
+    @ManyToOne(fetch = LAZY) //apikey 다 대 1 연결
+    @JoinColumn(name = "p_idx")
+    private WellApikeyInEntity apiKey;
+
+    // 가상계좌 연결 1대1
+    @OneToOne(mappedBy = "partner", fetch = LAZY, cascade = CascadeType.ALL)
+    private WellVirtualAccountEntity virtualAccount;
+
+    // 개통 연결 1대다
+    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
+    private List<WellOpeningEntity> openings = new ArrayList<>();
 
     // 요금제 조회 테이블 연결 1대 다
-    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
     private List<WellProductSearchEntity> productSearch = new ArrayList<>();
 
     // 충전 시도내역 테이블 연결 1대 다
-    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
     private List<WellChargeHistoryEntity> chargeHistory = new ArrayList<>();
 
-    @Column(name = "p_id") //거래처_id
-    private Long partnerId;
-
-    @OneToOne(fetch = LAZY) //거래처_id (id를 사용하여 거래처 유저 엔티티와 1대1 연결)
-    @JoinColumn(name = "p_id")
-    private WellPartnerUserEntity partnerUser;
-
-    @OneToMany(mappedBy = "p_file", fetch = LAZY, cascade = CascadeType.ALL)  //여러 거래처 파일을 가질 수 있음
+    //여러 거래처 파일을 가질 수 있음
+    @OneToMany(mappedBy = "p_file", cascade = CascadeType.ALL)
     private List<WellPartnerFIleStorageEntity> files = new ArrayList<>();
 
     @Column(name = "pcode", unique = true) //거래처코드

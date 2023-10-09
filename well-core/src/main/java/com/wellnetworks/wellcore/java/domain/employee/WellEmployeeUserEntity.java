@@ -1,8 +1,7 @@
-package com.wellnetworks.wellcore.java.domain.member;
-//맴버 유저 테이블
+package com.wellnetworks.wellcore.java.domain.employee;
+//직원 유저 테이블
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -12,26 +11,26 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Table(name = "member_user_tb", indexes = {@Index(name = "m_idx", columnList = "memberIdx",unique = true)})
-public class WellMemberUserEntity {
+@Table(name = "employee_user_tb", indexes = {@Index(name = "m_idx", columnList = "employeeIdx",unique = true)})
+public class WellEmployeeUserEntity {
 
     @Id
     @Column(name = "m_idx", columnDefinition = "uniqueidentifier") //맴버 고유 식별자 idx
-    private String memberIdx;
+    private String employeeIdx;
 
     @JsonIgnore //순환참조 문제 방지
-    @OneToOne(fetch = LAZY, mappedBy = "memberUser") //멤버 1대1
-    private WellMemberInfoEntity member; //멤버 엔티티 참조
+    @OneToOne(fetch = LAZY, mappedBy = "employeeUser") //직원 1대1
+    private WellEmployeeEntity employee; //직원 엔티티 참조
 
     @ManyToOne(fetch = LAZY) //유저의 맴버 그룹_id
     @JoinColumn(name = "mm_gkey")
-    private WellMemberManagerGroupEntity memberGroup;
+    private WellEmployeeManagerGroupEntity employeeGroup;
 
     @Column(name = "m_identification") //로그인시 아이디
-    private String memberIdentification;
+    private String employeeIdentification;
 
     @Column(name = "pwd") //로그인시 비밀번호
-    private String memberUserPwd;
+    private String employeeUserPwd;
 
     @Column(name = "permissions") //권한
     private String permissions;
@@ -49,10 +48,10 @@ public class WellMemberUserEntity {
     private LocalDateTime tmpPwdDate;
 
     @Column(name = "m_u_moddt") //유저정보 수정일자
-    private LocalDateTime memberUserModifyDate;
+    private LocalDateTime employeeUserModifyDate;
 
     @Column(name = "m_u_regdt") //유저정보 수정일자
-    private LocalDateTime getMemberUserRegisterDate;
+    private LocalDateTime getemployeeUserRegisterDate;
 
     @Column(name = "Group_key") //그룹식별자
     private String groupKey;

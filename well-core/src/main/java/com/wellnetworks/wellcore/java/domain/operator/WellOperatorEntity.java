@@ -1,6 +1,6 @@
 package com.wellnetworks.wellcore.java.domain.operator;
 //통신사
-import com.wellnetworks.wellcore.java.domain.opening.WellCommissionOpeningPolicyEntity;
+import com.wellnetworks.wellcore.java.domain.product.WellProductEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -10,15 +10,15 @@ import java.util.List;
 @Entity
 @Getter
 @Table(name = "operator_tb", indexes = {@Index(name = "operator_idx", columnList = "operatorIdx",unique = true)})
-public class WellCommissionOperatorEntity {
+public class WellOperatorEntity {
 
     @Id
     @Column(name = "o_idx", columnDefinition = "uniqueidentifier", unique = true, nullable = false) // 생성 고유 값
     private String operatorIdx;
 
-    //개통정책 테이블 연결 1대 다
+    //요금제 테이블 연결 1대 다
     @OneToMany(mappedBy = "operator", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WellCommissionOpeningPolicyEntity> OpeningPolicy = new ArrayList<>();
+    private List<WellProductEntity> product = new ArrayList<>();
 
     @Column(name = "o_name") // 통신사 명
     private String operatorName;

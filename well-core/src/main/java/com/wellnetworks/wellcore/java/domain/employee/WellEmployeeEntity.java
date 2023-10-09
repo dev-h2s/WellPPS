@@ -1,7 +1,5 @@
-package com.wellnetworks.wellcore.java.domain.member;
-//맴버 테이블
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+package com.wellnetworks.wellcore.java.domain.employee;
+//직원 테이블
 import jakarta.persistence.*;
 import lombok.Getter;
 import java.time.LocalDateTime;
@@ -11,23 +9,23 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Table(name = "member_tb")
-public class WellMemberInfoEntity {
+@Table(name = "employee_tb")
+public class WellEmployeeEntity {
 
     @Id
-    @Column(name = "m_idx", columnDefinition = "uniqueidentifier") //맴버의 고유 식별자 idx
-    private String memberIdx;
+    @Column(name = "em_idx", columnDefinition = "uniqueidentifier") //직원의 고유 식별자 idx
+    private String employeeIdx;
 
-    @OneToOne(fetch = LAZY) //멤버 유저 1대1
-    @JoinColumn(name = "m_idx")
-    private WellMemberUserEntity memberUser; //멤버 유저 엔티티 참조
+    @OneToOne(fetch = LAZY) // 유저 1대1
+    @JoinColumn(name = "em_idx")
+    private WellEmployeeUserEntity employeeUser; //직원 유저 엔티티 참조
 
     //!! ??뭐지
-    @Column(name = "tbl_id")
-    private String tableID;
+//    @Column(name = "tbl_id")
+//    private String tableID;
 
-    @Column(name = "m_id") //member의 아이디
-    private String memberId;
+    @Column(name = "em_id") //직원의 아이디
+    private String employeeId;
 
     @Column(name = "belong") // 소속
     private String currentEmployment;
@@ -113,10 +111,10 @@ public class WellMemberInfoEntity {
     private String file5Idx;
 
     @Column(name = "m_moddt") //마지막 수정 날짜
-    private LocalDateTime memberModifyDate;
+    private LocalDateTime employeeModifyDate;
 
     @Column(name = "m_regdt") //생성 날짜와 시간
-    private LocalDateTime memberRegisterDate;
+    private LocalDateTime employeeRegisterDate;
 
 
 }

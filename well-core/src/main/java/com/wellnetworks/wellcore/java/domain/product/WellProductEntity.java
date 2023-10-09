@@ -1,9 +1,13 @@
 package com.wellnetworks.wellcore.java.domain.product;
 //요금제
+import com.wellnetworks.wellcore.java.domain.opening.WellOpeningEntity;
+import com.wellnetworks.wellcore.java.domain.operator.WellOperatorEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -15,15 +19,16 @@ public class WellProductEntity {
     private String productIdx;
 
     //요금제 조회 테이블 연결 1대 다
-//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<WellCommissionProductSearchEntity> productSearch = new ArrayList<>();
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WellProductSearchEntity> productSearch = new ArrayList<>();
 
     //개통정책 테이블 연결 1대 다
-//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<WellCommissionOpeningPolicyEntity> OpeningPolicy = new ArrayList<>();
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WellOpeningEntity> OpeningPolicy = new ArrayList<>();
 
-    @Column(name = "o_idx") // 통신사 정보와 연결되는 FK
-    private String operatorIdx;
+    @ManyToOne
+    @JoinColumn(name = "o_idx") // 통신사 정보와 연결되는 FK
+    private WellOperatorEntity operator;
 
     @Column(name = "pr_name")  // 요금제의 이름
     private String productName;

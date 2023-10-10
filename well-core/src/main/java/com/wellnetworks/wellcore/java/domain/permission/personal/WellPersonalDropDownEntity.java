@@ -23,7 +23,7 @@ public class WellPersonalDropDownEntity {
     @Column(name = "per_drop_id")
     private Long perDropId;
 
-    // 직원 테이블에서 받는 fk
+    // 직원 테이블에서 받는 fk 단방향
     @OneToOne
     @JoinColumn(name = "em_id")
     private WellEmployeeEntity employee;

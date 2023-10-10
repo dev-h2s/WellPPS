@@ -23,12 +23,12 @@ public class WellPersonalDropContentEntity {
     @Column(name = "per_drop_content_id")
     private Long perDropContentId;
 
-    //    개인 dropdown의 FK로 받는 id
-    @Column(name = "drop_content_name")
-    private String contentName;
-
-    //    dropdowncontent의 이름
+    // 개인 dropdown의 FK로 받는 id 단방향
     @ManyToOne
     @JoinColumn(name = "per_drop_id")
     private WellPersonalDropDownEntity personalDropDown;
+
+    //    dropdowncontent의 이름
+    @Column(name = "drop_content_name")
+    private String contentName;
 }

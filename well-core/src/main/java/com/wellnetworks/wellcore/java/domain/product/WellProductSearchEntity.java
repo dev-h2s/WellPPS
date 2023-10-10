@@ -17,12 +17,13 @@ public class WellProductSearchEntity {
     @Column(name = "pr_search_idx", columnDefinition = "uniqueidentifier") // 생성 고유 값
     private String prSearchIdx;
 
-    //요금제 테이블 연결 다 대 1
+    //요금제 테이블 연결 다 대 1 양방향
+    @
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "pr_idx", referencedColumnName = "pr_idx")
     private WellProductEntity product;
 
-    //거래처 테이블 연결 다 대 1
+    //거래처 테이블 연결 다 대 1 양방향
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "p_idx", referencedColumnName = "partner_idx")
     private WellPartnerEntity partner;

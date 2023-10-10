@@ -16,8 +16,8 @@ public class WellOperatorEntity {
     @Column(name = "o_idx", columnDefinition = "uniqueidentifier", unique = true, nullable = false) // 생성 고유 값
     private String operatorIdx;
 
-    //요금제 테이블 연결 1대 다
-    @OneToMany(mappedBy = "operator", cascade = CascadeType.ALL, orphanRemoval = true)
+    //요금제 테이블 연결 1대 다 양방향
+    @OneToMany(mappedBy = "operator", cascade = CascadeType.ALL)
     private List<WellProductEntity> product = new ArrayList<>();
 
     @Column(name = "o_name") // 통신사 명

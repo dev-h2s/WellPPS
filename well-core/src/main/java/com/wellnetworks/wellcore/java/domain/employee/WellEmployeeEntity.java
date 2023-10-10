@@ -13,12 +13,9 @@ import static jakarta.persistence.FetchType.LAZY;
 public class WellEmployeeEntity {
 
     @Id
-    @Column(name = "em_idx", columnDefinition = "uniqueidentifier") //직원의 고유 식별자 idx
-    private String employeeIdx;
-
-    @OneToOne(fetch = LAZY) // 유저 1대1
-    @JoinColumn(name = "em_idx")
-    private WellEmployeeUserEntity employeeUser; //직원 유저 엔티티 참조
+    @OneToOne(fetch = LAZY) // 직원 유저와 유저 1대1 양방향
+    @JoinColumn(name = "em_idx") //직원의 고유 식별자 idx
+    private WellEmployeeUserEntity employeeUser;
 
     //!! ??뭐지
 //    @Column(name = "tbl_id")

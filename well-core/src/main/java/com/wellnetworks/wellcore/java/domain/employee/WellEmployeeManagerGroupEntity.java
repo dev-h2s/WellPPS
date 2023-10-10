@@ -18,7 +18,7 @@ public class WellEmployeeManagerGroupEntity {
     private String employeeManagerGroupKey;
 
     @OneToMany(mappedBy = "emGroup") // 양방향 일때 직원 리스트 가져오기
-    private List<WellEmployeeEntity> employees = new ArrayList<>();
+    private List<WellEmployeeEntity> employee = new ArrayList<>();
 
     @Column(name = "em_g_name")//직원 그룹명
     private String employeeManagerName;

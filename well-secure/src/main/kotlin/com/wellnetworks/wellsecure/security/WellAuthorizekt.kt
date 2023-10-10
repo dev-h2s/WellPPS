@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @RequiredArgsConstructor
-class WellAuthorize {
+class WellAuthorizekt {
     @Autowired
     private lateinit var wellGroupRepository: WellGroupRepository
 

@@ -1,10 +1,8 @@
 package com.wellnetworks.wellsecure.request
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import lombok.Getter
-import lombok.Setter
 
-data class UserLoginReq (
+data class UserLoginReqkt (
     @JsonProperty("username")
     val username: String,
     @JsonProperty("password")

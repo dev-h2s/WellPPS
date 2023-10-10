@@ -1,7 +1,7 @@
 package com.wellnetworks.wellsecure.jwt
 
-import com.wellnetworks.wellsecure.config.SecurityProperties
-import com.wellnetworks.wellsecure.service.WellUserDetailService
+import com.wellnetworks.wellsecure.config.SecurityPropertieskt
+import com.wellnetworks.wellsecure.service.WellUserDetailServicekt
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
@@ -10,14 +10,13 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.User
 import org.springframework.stereotype.Component
 import java.security.Key
-import java.text.SimpleDateFormat
 import java.util.*
 import jakarta.annotation.PostConstruct
 
 @Component
-class TokenProvider(
-    private val securityProperties: SecurityProperties,
-    private val wellUserDetailService: WellUserDetailService
+class TokenProviderkt(
+    private val securityProperties: SecurityPropertieskt,
+    private val wellUserDetailService: WellUserDetailServicekt
 ) {
     private var key: Key? = null
     private var tokenValidity: Date? = null

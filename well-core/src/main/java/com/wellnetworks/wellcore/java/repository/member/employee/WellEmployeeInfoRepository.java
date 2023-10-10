@@ -10,10 +10,11 @@ import org.springframework.data.repository.CrudRepository;
 import java.awt.print.Pageable;
 import java.util.Optional;
 
-//
+//사원의 조회에 관련된 Repository
 public interface WellEmployeeInfoRepository
 extends JpaRepository<WellEmployeeEntity, String>, JpaSpecificationExecutor <WellEmployeeEntity> {
 // optinal = null 참조 처리 가능 비어있어도 empty로 반환
+
     // employee idx로 조회
     Optional<WellEmployeeEntity> findByIdx(String idx);
 
@@ -23,7 +24,7 @@ extends JpaRepository<WellEmployeeEntity, String>, JpaSpecificationExecutor <Wel
     // employee name으로 조회
     Optional<WellEmployeeEntity> findByName(String name);
 
-    // employee idx로 삭제
+    // employee idx로 삭제 ?? user에서 해야할 듯
     Optional<Integer> deleteByIdx(String idx);
 
 }

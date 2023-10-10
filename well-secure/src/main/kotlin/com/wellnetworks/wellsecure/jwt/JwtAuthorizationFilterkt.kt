@@ -1,27 +1,19 @@
 package com.wellnetworks.wellsecure.jwt
 
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
-import com.wellnetworks.wellcore.repository.WellUserRepository
-import com.wellnetworks.wellsecure.config.SecurityProperties
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
+import com.wellnetworks.wellsecure.config.SecurityPropertieskt
 import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
-import org.springframework.stereotype.Component
 import java.io.IOException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import kotlin.jvm.optionals.getOrNull
 
-class JwtAuthorizationFilter(
+class JwtAuthorizationFilterkt(
     authManager: AuthenticationManager,
-    private val securityProperties: SecurityProperties,
-    private val tokenProvider: TokenProvider
+    private val securityProperties: SecurityPropertieskt,
+    private val tokenProvider: TokenProviderkt
 ): BasicAuthenticationFilter(authManager) {
 
     @Throws(IOException::class, ServletException::class)

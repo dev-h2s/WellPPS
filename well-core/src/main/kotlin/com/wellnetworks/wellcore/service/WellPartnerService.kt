@@ -1,6 +1,6 @@
 package com.wellnetworks.wellcore.service
 
-import com.wellnetworks.wellcore.domain.WellPartnerEntity
+import com.wellnetworks.wellcore.domain.WellPartnerEntityKT
 import com.wellnetworks.wellcore.domain.dto.*
 import com.wellnetworks.wellcore.domain.enums.*
 import com.wellnetworks.wellcore.repository.WellPartnerRepository
@@ -10,7 +10,6 @@ import com.wellnetworks.wellcore.service.utils.WellServiceUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
@@ -69,7 +68,7 @@ class WellPartnerService {
 
         return wellPartnerRepository.findAll(
             // WellServiceUtil.Specification을 사용하여 검색 조건을 지정 후 반환
-            WellServiceUtil.Specification<WellPartnerEntity>(searchKeyword), pageable)
+            WellServiceUtil.Specification<WellPartnerEntityKT>(searchKeyword), pageable)
             .map { it.toDto() }
     }
 
@@ -102,7 +101,7 @@ class WellPartnerService {
 
         var userID: String = wellUserService.createUser(user) ?: throw Exception("사용자 데이터 생성에 실패하였습니다.")
 
-        val createPartner = WellPartnerEntity(
+        val createPartner = WellPartnerEntityKT(
             userID, user.UserID, TableIDList.PARTNER.TableID,
             null, CompanyType.COMPANY_TYPE_UNKNOWN, null,
             null, signup.Tax_Number, signup.Tax_Email,
@@ -152,7 +151,7 @@ class WellPartnerService {
         try {
             var userIdx: String = wellUserService.createUser(user) ?: throw Exception("사용자 데이터 생성에 실패하였습니다.")
 
-            val createPartner = WellPartnerEntity(
+            val createPartner = WellPartnerEntityKT(
                 userIdx, partner.P_Code, TableIDList.PARTNER.TableID,
                 partner.Company_Name, partner.Company_Type, partner.Company_Group,partner.Tax_Registration_DocumentFileName,
                 partner.Tax_Number, partner.Tax_Email, null,

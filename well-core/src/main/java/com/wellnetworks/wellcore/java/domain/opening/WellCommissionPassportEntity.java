@@ -13,8 +13,8 @@ public class WellCommissionPassportEntity extends WellCommissionOpeningPolicyEnt
     @Column(name = "commission_passport_idx", columnDefinition = "uniqueidentifier") // 개통수수료의 고유값 pk
     private Integer commissionCertificateIdx;
 
-    @Column(name = "version_id") // 개통정책과 연결되는 fk
-    private Integer versionId;
+//    @Column(name = "version_id") // 개통정책과 연결되는 fk
+//    private Integer versionId;
 
     @Column(name = "o_idx") // 개통정책과 연결되는 fk
     private String operatorIdx;
@@ -22,8 +22,8 @@ public class WellCommissionPassportEntity extends WellCommissionOpeningPolicyEnt
     @Column(name = "p_idx")  // 개통정책과 연결되는 fk
     private String productIdx;
 
-    @Column(name = "passport_type") // 개통정책과 연결되는 fk
-    private Boolean passportType;
+//    @Column(name = "passport_type") // 개통정책과 연결되는 fk
+//    private Boolean passportType;
 
     @Column(name = "initial_charge")  // 개통시 당사가 거래처에 주는 충전 초기금액
     private Integer initialCharge;

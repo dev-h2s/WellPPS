@@ -6,7 +6,6 @@ import com.wellnetworks.wellcore.domain.dto.WellPartnerDTOUpdate
 import com.wellnetworks.wellcore.domain.enums.*
 import org.hibernate.Hibernate
 import java.time.ZonedDateTime
-import java.util.*
 import jakarta.persistence.*
 
 @Entity
@@ -14,7 +13,7 @@ import jakarta.persistence.*
  [Index(name = "IX_pcode", columnList = "pcode", unique = true),
  ])
 
-data class WellPartnerEntity (
+data class WellPartnerEntityKT (
 //0
     @Id
     @Column(name="idx", columnDefinition = "uniqueidentifier", unique = true, nullable = false)
@@ -171,7 +170,7 @@ data class WellPartnerEntity (
     override fun equals(other: Any?): Boolean {
         if (this == other) return true;
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false;
-        other as WellPartnerEntity
+        other as WellPartnerEntityKT
 
         return idx != null && idx.uppercase() == other.idx.uppercase();
     }

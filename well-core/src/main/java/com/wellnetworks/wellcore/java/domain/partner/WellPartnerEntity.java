@@ -10,7 +10,7 @@ import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,10 +81,10 @@ public class WellPartnerEntity {
     private String partnerTelecom;
 
     @Column(name = "product_regdt") //시작날짜
-    private ZonedDateTime productRegisterDate;
+    private LocalDateTime productRegisterDate;
 
     @Column(name = "product_moddt") //종료날짜
-    private ZonedDateTime productModifyDate;
+    private LocalDateTime productModifyDate;
 
     @Column(name="sales_manager") //영업담당자
     private String salesManager;
@@ -123,7 +123,7 @@ public class WellPartnerEntity {
     private String region;
 
     @Column(name = "subdt") //가입승인일자
-    private ZonedDateTime subscriptionDate;
+    private LocalDateTime subscriptionDate;
 
     @Column(name = "special_policy_opening") //특수정책개통
     private boolean specialPolicyOpening;
@@ -147,7 +147,7 @@ public class WellPartnerEntity {
     private String partnerMemo;
 
     @Column(name = "sales_team_visdt") //영업팀최근방문일자
-    private ZonedDateTime salesTeamVisitDate;
+    private LocalDateTime salesTeamVisitDate;
 
     @Column(name = "sales_team_visit_memo") //영업팀방문일지
     private String salesTeamVisitMemo;
@@ -168,10 +168,10 @@ public class WellPartnerEntity {
     private String event;
 
     @Column(name = "opening_visit_reqdt") //개통점방문요청일자
-    private ZonedDateTime openingVisitRequestDate;
+    private LocalDateTime openingVisitRequestDate;
 
     @Column(name = "opening_visit_decdt") //개통점방문확정일자
-    private ZonedDateTime openingVisitDecideDate;
+    private LocalDateTime openingVisitDecideDate;
 
     @Column(name = "opening_progress") //개통점진행도
     private String openingProgress;
@@ -182,3 +182,5 @@ public class WellPartnerEntity {
     @Column(name = "opening_note") //개통점신청비고
     private String openingNote;
 }
+
+//비지니스 로직

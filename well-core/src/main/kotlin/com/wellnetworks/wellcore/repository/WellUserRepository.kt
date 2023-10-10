@@ -1,13 +1,11 @@
 package com.wellnetworks.wellcore.repository
 // user 관련 정보 crud 생성
-import com.wellnetworks.wellcore.domain.WellPartnerEntity
 import org.springframework.data.repository.CrudRepository
 import com.wellnetworks.wellcore.domain.WellUserEntity
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import java.util.Optional
-import java.util.UUID
 
 interface WellUserRepository: CrudRepository<WellUserEntity, String>, JpaSpecificationExecutor<WellUserEntity> {
     // idx찾기

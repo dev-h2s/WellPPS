@@ -22,7 +22,7 @@ public class WellFileStorageEntity {
     private WellVirtualAccountFIleStorageEntity virtualAccountFIleStorage;
 
     @OneToOne(fetch = LAZY) // 첨부파일과 거래처파일 간의 연결
-    private WellPartnerFIleStorageEntity PartnerFIleStorage;
+    private WellPartnerFIleStorageEntity PartnerFileStorage;
 
     @Column(name = "file_name") //원본파일명
     private String fileName;

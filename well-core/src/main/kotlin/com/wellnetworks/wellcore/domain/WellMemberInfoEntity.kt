@@ -3,11 +3,9 @@ package com.wellnetworks.wellcore.domain
 import com.wellnetworks.wellcore.domain.converter.*
 import com.wellnetworks.wellcore.domain.dto.WellMemberDTOUpdate
 import com.wellnetworks.wellcore.domain.dto.WellMemberInfoDTO
-import com.wellnetworks.wellcore.domain.dto.WellPartnerDTOUpdate
 import com.wellnetworks.wellcore.domain.enums.*
 import org.hibernate.Hibernate
 import java.time.ZonedDateTime
-import java.util.*
 import jakarta.persistence.*
 
 @Entity
@@ -187,7 +185,7 @@ data class WellMemberInfoEntity(
     override fun equals(other: Any?): Boolean {
         if (this == other) return true;
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false;
-        other as WellPartnerEntity
+        other as WellPartnerEntityKT
 
         return idx != null && idx.uppercase() == other.idx.uppercase();
     }

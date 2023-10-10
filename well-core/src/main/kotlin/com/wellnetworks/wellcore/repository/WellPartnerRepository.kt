@@ -1,23 +1,22 @@
 package com.wellnetworks.wellcore.repository
 // crud문 실행
-import com.wellnetworks.wellcore.domain.WellPartnerEntity
+import com.wellnetworks.wellcore.domain.WellPartnerEntityKT
 import com.wellnetworks.wellcore.domain.enums.CompanyStateType
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.repository.CrudRepository
 import java.util.*
 
-interface WellPartnerRepository: CrudRepository<WellPartnerEntity, String>, JpaSpecificationExecutor<WellPartnerEntity> {
+interface WellPartnerRepository: CrudRepository<WellPartnerEntityKT, String>, JpaSpecificationExecutor<WellPartnerEntityKT> {
     // 파트너 idx로 검색
-    fun findByIdx(idx: String): Optional<WellPartnerEntity>
+    fun findByIdx(idx: String): Optional<WellPartnerEntityKT>
 
     //  페이지네이션을 적용하여 모든 파트너 엔티티 검색
-    fun findAll(pageable: Pageable): Page<WellPartnerEntity>
+    fun findAll(pageable: Pageable): Page<WellPartnerEntityKT>
 
     //  회사 이름을 사용하여 파트너 검색
-    fun findByCompanyName(partnerName: String): Optional<WellPartnerEntity>
+    fun findByCompanyName(partnerName: String): Optional<WellPartnerEntityKT>
 
     //  회사 상태에 따라 파트너 엔티티 개수
     fun countByCompanyState(companyState: CompanyStateType): Long

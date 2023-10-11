@@ -17,7 +17,7 @@ public interface WellPartnerRepository extends JpaRepository<WellPartnerEntity, 
 // 거래처 리스트 crud
 
     //거래처_idx 검색
-    Optional<WellPartnerEntity> findByPartnerIdx(String partnerIdx);
+    WellPartnerEntity find(String partnerIdx);
     //페이지 네이션으로 모든 거래처 엔티티 검색
     Page<WellPartnerEntity> findAll(Pageable pageable);
 
@@ -105,7 +105,9 @@ public interface WellPartnerRepository extends JpaRepository<WellPartnerEntity, 
     Optional<Long> countByRegistrationIsNull();
 
     //거래처 등록
+    WellPartnerEntity save(WellPartnerEntity wellPartnerEntity);
     //거래처 수정
+
     //거래처_idx삭제(체크항목 삭제)
     Optional<WellPartnerEntity> deleteByPartnerIdx(String partnerIdx);
 }

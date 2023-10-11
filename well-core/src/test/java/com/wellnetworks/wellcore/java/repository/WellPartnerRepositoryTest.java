@@ -1,28 +1,31 @@
 package com.wellnetworks.wellcore.java.repository;
 
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
-import jakarta.transaction.Transactional;
-import org.junit.After;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
+
 @SpringBootTest
 @Transactional
-public class WellPartnerRepositoryTest {
+class WellPartnerRepositoryTest {
+
+    @Autowired WellPartnerRepository wellPartnerRepository;
 
         @Test
-            public void 거래처검색() throws Exception {
-            //given
-            WellPartnerEntity partner = new WellPartnerEntity();
-
+            public void 거래처생성() throws Exception {
+                //given
+            WellPartnerEntity partner = new WellPartnerEntity("1111111111111111");
+            WellPartnerEntity savedPartner = wellPartnerRepository.save(partner);
             //when
-
+            WellPartnerEntity findPartner = wellPartnerRepository.find(savedPartner.getPartnerIdx());
 
             //then
-         }
+            assertThat(findPartner.getPartnerIdx()).isEqualTo(partner.getPartnerIdx());
+            assertThat(findPartner.getPartnerName()).isEqualTo(partner.getPartnerName());
+        }
 }

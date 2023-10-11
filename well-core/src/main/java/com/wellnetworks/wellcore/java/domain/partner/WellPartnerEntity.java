@@ -181,6 +181,17 @@ public class WellPartnerEntity {
 
     @Column(name = "opening_note") //개통점신청비고
     private String openingNote;
+
+    //비지니스 로직
+
+    protected WellPartnerEntity() {} //기본생성자
+
+    public WellPartnerEntity(String partnerIdx) { // setter사용보다 생성자를 만들어서 파라미터를 넘기는게 좋음
+        this.partnerIdx = partnerIdx;
+    }
+
+    public void changePartnerName(String partnerName) { //거래처 이름 변경 예시로 만든거임
+        this.partnerName = partnerName;
+    }
 }
 
-//비지니스 로직

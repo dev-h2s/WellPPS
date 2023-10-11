@@ -18,7 +18,6 @@ public class WellProductSearchEntity {
     private String prSearchIdx;
 
     //요금제 테이블 연결 다 대 1 양방향
-    @
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "pr_idx", referencedColumnName = "pr_idx")
     private WellProductEntity product;

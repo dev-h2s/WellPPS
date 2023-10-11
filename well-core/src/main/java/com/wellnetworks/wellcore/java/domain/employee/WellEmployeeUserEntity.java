@@ -2,7 +2,6 @@ package com.wellnetworks.wellcore.java.domain.employee;
 //직원 유저 테이블
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wellnetworks.wellcore.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,7 +21,7 @@ import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @Table(name = "employee_user_tb", indexes = {@Index(name = "em_idx", columnList = "employeeIdx",unique = true)})
-public class WellEmployeeUserEntity extends BaseEntity implements UserDetailsService {
+public class WellEmployeeUserEntity implements UserDetailsService {
 
     @Id
     @Column(name = "em_idx", columnDefinition = "uniqueidentifier" , unique = true, nullable = false) //맴버 고유 식별자 idx

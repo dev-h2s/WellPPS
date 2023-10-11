@@ -6,7 +6,7 @@ import lombok.Getter;
 // 업무제휴
 @Entity
 @Getter
-@Table(name = "partnership_tb", indexes  =@Index(name = "partnership_id", columnList = "", unique = true))
+@Table(name = "partnership_tb")
 public class WellPartnerShipEntity {
     @Id //업무제휴 고유id
     @Column(name = "partnership_id", columnDefinition = "uniqueidentifier", unique = true, nullable = false)

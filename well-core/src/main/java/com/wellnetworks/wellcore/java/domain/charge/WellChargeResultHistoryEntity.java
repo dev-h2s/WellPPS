@@ -8,15 +8,15 @@ import java.time.LocalDateTime;
 // 충전 결과 내역
 @Entity
 @Getter
-@Table(name = "charge_result_history_tb", indexes = {@Index(name = "charge_result_history_id", columnList = "memberManagerGroupKey",unique = true)})
+@Table(name = "charge_result_history_tb")
 public class WellChargeResultHistoryEntity extends WellChargeHistoryEntity {
 
-    @Id
-    @Column(name = "charge_result_history_id", columnDefinition = "uniqueidentifier") // 충전 결과 내역 고유 값 idx
-    private Integer chargeResultHistoryId;
+//    @Id
+//    @Column(name = "charge_result_history_id", columnDefinition = "uniqueidentifier") // 충전 결과 내역 고유 값 idx
+//    private Integer chargeResultHistoryId;
 
     @ManyToOne(fetch = FetchType.LAZY) // 충전시도내역 테이블과 연결되는 fk
-    @JoinColumn(name = "charge_history_idx")
+    @JoinColumn(name = "charge_history_idx", insertable = false, updatable = false)
     private WellChargeHistoryEntity chargeHistory;
 
     @Column(name = "charge_start_dt") // 충전된 시작 시간

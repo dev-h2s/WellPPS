@@ -16,10 +16,10 @@ public class WellVirtualAccountFIleStorageEntity {
     private String fileIdx;
 
     @ManyToOne(fetch = LAZY)//가상계좌_idx
-    @JoinColumn(name = "v_account_idx")
+    @JoinColumn(name = "v_account_idx", insertable = false, updatable = false)
     private WellVirtualAccountEntity virtualAccount;
 
     @OneToOne(fetch = LAZY) // 가상계좌 파일과 첨부파일 간의 연결
-    @JoinColumn(name = "file_idx")
+    @JoinColumn(name = "file_idx", insertable = false, updatable = false)
     private WellFileStorageEntity file;
 }

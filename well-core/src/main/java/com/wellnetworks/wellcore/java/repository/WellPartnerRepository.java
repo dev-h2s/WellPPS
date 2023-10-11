@@ -17,7 +17,7 @@ public interface WellPartnerRepository extends JpaRepository<WellPartnerEntity, 
 // 거래처 리스트 crud
 
     //거래처_idx 검색
-    WellPartnerEntity find(String partnerIdx);
+    WellPartnerEntity findByPartnerIdx(String partnerIdx);
     //페이지 네이션으로 모든 거래처 엔티티 검색
     Page<WellPartnerEntity> findAll(Pageable pageable);
 

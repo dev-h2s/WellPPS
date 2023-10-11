@@ -14,7 +14,7 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Table(name = "personal_dropdown_content_tb", indexes = {@Index(name = "per_drop_content_id", columnList = "perDropContentId",unique = true)})
+@Table(name = "personal_dropdown_content_tb")
 public class WellPersonalDropContentEntity {
 
     //    개인 drop down들의 content를 지정하기 위한 pk
@@ -25,7 +25,7 @@ public class WellPersonalDropContentEntity {
 
     // 개인 dropdown의 FK로 받는 id 단방향
     @ManyToOne
-    @JoinColumn(name = "per_drop_id")
+    @JoinColumn(name = "per_drop_id", insertable = false, updatable = false)
     private WellPersonalDropDownEntity personalDropDown;
 
     //    dropdowncontent의 이름

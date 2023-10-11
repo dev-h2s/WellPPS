@@ -10,7 +10,7 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Table(name = "product_search_tb", indexes = {@Index(name = "pr_search_idx", columnList = "memberManagerGroupKey",unique = true)})
+@Table(name = "product_search_tb")
 public class WellProductSearchEntity {
 
     @Id
@@ -19,12 +19,12 @@ public class WellProductSearchEntity {
 
     //요금제 테이블 연결 다 대 1 양방향
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "pr_idx", referencedColumnName = "pr_idx")
+    @JoinColumn(name = "pr_idx", insertable = false, updatable = false)
     private WellProductEntity product;
 
     //거래처 테이블 연결 다 대 1 양방향
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "p_idx", referencedColumnName = "partner_idx")
+    @JoinColumn(name = "p_idx", insertable = false, updatable = false)
     private WellPartnerEntity partner;
 
     @Column(name = "search_request_dt")  // 조회 요청을 한 시간

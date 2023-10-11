@@ -20,6 +20,7 @@ subprojects {
 
 	group = "org.wellnetworks"
 	version = "1.0-SNAPSHOT"
+	compileJava.options.encoding = 'UTF-8'
 	sourceCompatibility = '17'
 
 	repositories {
@@ -37,14 +38,9 @@ subprojects {
 
 		compileOnly 'org.projectlombok:lombok'
 		annotationProcessor 'org.projectlombok:lombok'
+		annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
 		developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	}
-
-	configurations {
-		compileOnly {
-			extendsFrom annotationProcessor
-		}
 	}
 
 	test {
@@ -53,19 +49,18 @@ subprojects {
 }
 
 project (':well-core') {
+	bootJar { enabled = false }
+	jar { enabled = true }
 
 	dependencies {
 		implementation 'org.springframework.boot:spring-boot-starter'
 		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 		implementation 'org.springframework.security:spring-security-core:5.7.5'
+		implementation group: 'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '9.2.0.jre8'
 		runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
+		implementation group: 'org.javassist', name: 'javassist', version: '3.15.0-GA'
 	}
 
-	bootJar { enabled = false } // core 은 bootJar 로 패키징 할 필요 없음
-	jar { enabled = true }
-
-	dependencies {
-	}
 }
 
 project (':well-secure') {

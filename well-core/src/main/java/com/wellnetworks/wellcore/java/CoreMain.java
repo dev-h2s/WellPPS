@@ -2,11 +2,9 @@ package com.wellnetworks.wellcore.java;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
-
 @SpringBootApplication
-public class Main {
+public class CoreMain {
     public static void main(String[] args) {
-        System.out.println("well_core");
+        SpringApplication.run(CoreMain.class, args);
     }
 }

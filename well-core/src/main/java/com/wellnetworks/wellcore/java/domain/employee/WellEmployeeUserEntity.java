@@ -20,16 +20,15 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Table(name = "employee_user_tb", indexes = {@Index(name = "em_idx", columnList = "employeeIdx",unique = true)})
+@Table(name = "employee_user_tb")
 public class WellEmployeeUserEntity implements UserDetailsService {
 
     @Id
-    @Column(name = "em_idx", columnDefinition = "uniqueidentifier" , unique = true, nullable = false) //맴버 고유 식별자 idx
+    @Column(name = "em_idx", columnDefinition = "uniqueidentifier") //맴버 고유 식별자 idx
     private String employeeIdx;
 
-    @JsonIgnore //순환참조 문제 방지
-    @OneToOne(fetch = LAZY, mappedBy = "employeeUser") //직원과 1대1 양방향
-    private WellEmployeeEntity employee; //직원 엔티티 참조
+    @OneToOne
+    private WellEmployeeEntity employeeUser;
 
     @JsonIgnore //순환참조 문제 방지
     @ManyToOne(fetch = LAZY) //양방향 일때 유저의 맴버 그룹_id 연결

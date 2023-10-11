@@ -9,7 +9,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@Table(name = "operator_tb", indexes = {@Index(name = "operator_idx", columnList = "operatorIdx",unique = true)})
+@Table(name = "operator_tb")
 public class WellOperatorEntity {
 
     @Id

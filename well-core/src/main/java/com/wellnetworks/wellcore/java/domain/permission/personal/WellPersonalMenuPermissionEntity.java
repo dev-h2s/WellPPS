@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-@Table(name = "personal_menu_permission_tb", indexes = {@Index(name = "per_menu_id", columnList = "perMenuId",unique = true)})
+@Table(name = "personal_menu_permission_tb")
 public class WellPersonalMenuPermissionEntity {
 
     //    개인 권한의 dropdown content의 각 권한 여부를 지정하기위한 pk
@@ -17,7 +17,7 @@ public class WellPersonalMenuPermissionEntity {
 
     //    개인 dropcontent의 FK로 받는 id 단방향
     @ManyToOne
-    @JoinColumn(name = "per_drop_content_id")
+    @JoinColumn(name = "per_drop_content_id", insertable = false, updatable = false)
     private WellPersonalDropContentEntity dropdownContent;
 
     //    개인 입력 권한의 허용 여부

@@ -14,7 +14,7 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Table(name = "department_dropdown_tb", indexes = {@Index(name = "dep_drop_id", columnList = "depDropId",unique = true)})
+@Table(name = "department_dropdown_tb")
 public class WellDepartmentDropDownEntity {
 
     //    부서 권한의 dropdown의 각 권한 여부를 지정하기 위한 pk

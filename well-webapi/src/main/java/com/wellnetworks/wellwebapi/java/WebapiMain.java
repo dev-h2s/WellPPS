@@ -1,12 +1,11 @@
 package com.wellnetworks.wellwebapi.java;
 
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
-
 @SpringBootApplication
-@ComponentScan(basePackages = "com.wellnetworks")
-public class Main {
+public class WebapiMain {
     public static void main(String[] args) {
-        System.out.println("well-webapi");
+        System.out.println("well_core");
+        SpringApplication.run(WebapiMain.class, args);
     }
 }

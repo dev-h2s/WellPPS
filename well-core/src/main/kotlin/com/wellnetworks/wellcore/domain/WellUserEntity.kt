@@ -49,6 +49,7 @@ data class WellUserEntity(
 
     @Column(name = "tmp_pwd_dt", nullable = true)
     var temporaryPasswordCreateDatetime: ZonedDateTime?,
+
 ): BaseEntity(), UserDetails {
     // UserDetails : 스프링 시큐리티에서 사용자의 상세 정보를 정의
     // BaseEntity() 클래스를 상속받아 사용

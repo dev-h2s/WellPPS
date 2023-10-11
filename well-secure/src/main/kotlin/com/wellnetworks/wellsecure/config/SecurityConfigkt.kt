@@ -1,31 +1,27 @@
 package com.wellnetworks.wellsecure.config
 
-import com.wellnetworks.wellsecure.jwt.JwtAuthenticationFilter
-import com.wellnetworks.wellsecure.jwt.JwtAuthorizationFilter
-import com.wellnetworks.wellsecure.jwt.TokenProvider
-import com.wellnetworks.wellsecure.service.AppAuthenticationManager
+import com.wellnetworks.wellsecure.jwt.JwtAuthenticationFilterkt
+import com.wellnetworks.wellsecure.jwt.JwtAuthorizationFilterkt
+import com.wellnetworks.wellsecure.jwt.TokenProviderkt
+import com.wellnetworks.wellsecure.service.AppAuthenticationManagerkt
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.web.util.matcher.RequestMatcher
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
-import org.springframework.web.cors.CorsUtils
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 //회원가입 관련 security 로직
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-class SecurityConfig(
-    val securityProperties: SecurityProperties,
-    val authenticationManager: AppAuthenticationManager,
-    val tokenProvider: TokenProvider
+class SecurityConfigkt(
+    val securityProperties: SecurityPropertieskt,
+    val authenticationManager: AppAuthenticationManagerkt,
+    val tokenProvider: TokenProviderkt
 ) {
     @Bean
     @Throws(Exception::class)
@@ -39,8 +35,8 @@ class SecurityConfig(
 //            .formLogin().disable()
 //            .httpBasic().disable()
             //.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-            .addFilter(JwtAuthenticationFilter(authenticationManager, securityProperties, tokenProvider))
-            .addFilter(JwtAuthorizationFilter(authenticationManager, securityProperties, tokenProvider))
+            .addFilter(JwtAuthenticationFilterkt(authenticationManager, securityProperties, tokenProvider))
+            .addFilter(JwtAuthorizationFilterkt(authenticationManager, securityProperties, tokenProvider))
 //            .and()
             .logout()
             .logoutUrl("/logout")

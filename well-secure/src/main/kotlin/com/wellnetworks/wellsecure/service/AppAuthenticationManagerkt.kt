@@ -9,8 +9,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
 
 @Component
-class AppAuthenticationManager(
-    private val wellUserDetailService: WellUserDetailService,
+class AppAuthenticationManagerkt(
+    private val wellUserDetailService: WellUserDetailServicekt,
     val bCryptPasswordEncoder: BCryptPasswordEncoder,
 ) : AuthenticationManager {
     @Throws(AuthenticationException::class)

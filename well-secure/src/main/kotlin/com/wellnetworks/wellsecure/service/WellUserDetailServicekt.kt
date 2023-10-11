@@ -11,7 +11,7 @@ import java.util.*
 
 @Component
 @ComponentScan("com.wellnetworks.wellcore.repository")
-class WellUserDetailService(private var wellUserRepository: WellUserRepository): UserDetailsService {
+class WellUserDetailServicekt(private var wellUserRepository: WellUserRepository): UserDetailsService {
 
     @Throws(UsernameNotFoundException::class)
     override fun loadUserByUsername(username: String): UserDetails {

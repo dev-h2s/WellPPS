@@ -9,8 +9,8 @@ import java.awt.print.Pageable;
 import java.util.Optional;
 
 // 사원의 계정과 관련된 레포지토리
-public interface WellEmployeeUserRepository
-        extends JpaRepository<WellEmployeeUserEntity, String>, JpaSpecificationExecutor<WellEmployeeUserEntity> {
+//public interface WellEmployeeUserRepository
+//        extends JpaRepository<WellEmployeeUserEntity, String>, JpaSpecificationExecutor<WellEmployeeUserEntity> {
     // optinal = null 참조 처리 가능 비어있어도 empty로 반환
     // idx찾기
 //    Optional<WellEmployeeUserEntity> findByIdx(String idx);
@@ -30,4 +30,4 @@ public interface WellEmployeeUserRepository
     // idx 삭제
 //    Optional<Integer> deleteByIdx(String idx);
 
-}
+//}

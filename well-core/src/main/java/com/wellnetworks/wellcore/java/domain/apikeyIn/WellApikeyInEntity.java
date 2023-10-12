@@ -16,14 +16,12 @@ import static jakarta.persistence.FetchType.LAZY;
 @Getter
 public class WellApikeyInEntity {
 
-    @Id //APIKEY_id
-    @Column(name = "api_key_in_id")
-    private Long apiKeyInId;
+    @Id //APIKEY_idx
+    @Column(name = "api_key_in_idx")
+    private String apiKeyInIdx;
 
-    @Column(name = "p_idx", insertable = false, updatable = false) // 거래처_idx
-    private String partnerIdx;
-
-    @OneToMany(mappedBy = "apiKey", cascade = CascadeType.ALL) // 양방향
+    // 거래처와의 일대다 관계 (하나의 API 키는 여러 개의 거래처를 가질 수 있음)
+    @OneToMany(mappedBy = "apiKey")
     private List<WellPartnerEntity> partners = new ArrayList<>();
 
     @Column(name = "api_key_in") //내부APIKEY

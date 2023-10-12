@@ -30,11 +30,12 @@ public class WellPartnerEntity {
     private WellPartnerGroupEntity partnerGroup;
 
     @OneToOne(fetch = LAZY) //거래처_id (id를 사용하여 거래처 유저 엔티티와 1대1 연결)
-    @JoinColumn(name = "p_id", referencedColumnName = "p_id")
+    @JoinColumn(name = "p_id")
     private WellPartnerUserEntity partnerId;
 
-    @ManyToOne(fetch = LAZY) //apikey 다 대 1 연결
-    @JoinColumn(name = "p_idx", insertable = false, updatable = false)
+    // API 키와의 다대일 관계 (하나의 거래처는 하나의 API 키를 가짐)
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "api_key_in_id", insertable=false, updatable=false)
     private WellApikeyInEntity apiKey;
 
     // 가상계좌 연결 1대1

@@ -9,13 +9,13 @@ import lombok.Getter;
 public class WellProductSearchRequestEntity extends WellProductSearchEntity {
 
 // 요금제 조회 테이블의 pk이자 fk
-// 조회 요청하는 apikey
-// 조회할 때 요청되는 apikey
 
-    @Column(name = "search_request_date_apikey") // 거래처 테이블과 연결되는 fk
+//    들어올 자리
+
+    @Column(name = "search_request_date_apikey") // 조회 요청하는 apikey
     private String searchRequestDateApikey;
 
-    @Column(name = "search_request_tel") // 요금제 정보 테이블의 fk
+    @Column(name = "search_request_tel") // 조회할 때 요청되는 apikey
     private String searchRequestTel;
 
 

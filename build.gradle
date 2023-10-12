@@ -41,6 +41,9 @@ subprojects {
 		annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
 		developmentOnly 'org.springframework.boot:spring-boot-devtools'
+// slf4j & logback
+		implementation('org.slf4j:jcl-over-slf4j')
+		implementation('ch.qos.logback:logback-classic')
 	}
 
 	test {
@@ -59,6 +62,9 @@ project (':well-core') {
 		implementation group: 'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '9.2.0.jre8'
 		runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
 		implementation group: 'org.javassist', name: 'javassist', version: '3.15.0-GA'
+// slf4j & logback
+		implementation('org.slf4j:jcl-over-slf4j')
+		implementation('ch.qos.logback:logback-classic')
 	}
 
 }

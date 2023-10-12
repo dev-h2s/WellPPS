@@ -6,6 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 
+/*
 public interface WellGroupRepository extends CrudRepository<WellEmployeeManagerGroupEntity, String> {
 
     // 그룹 권한 키로 WellGroupEntity를 찾는다
@@ -16,4 +17,4 @@ public interface WellGroupRepository extends CrudRepository<WellEmployeeManagerG
 
     // 그룹 권한 키로 WellGroupEntity를 삭제하고 삭제된 개수를 반환한다
     Optional<Integer> deleteByGroupPermissionKey(String groupPermissionKey);
-}
+}*/

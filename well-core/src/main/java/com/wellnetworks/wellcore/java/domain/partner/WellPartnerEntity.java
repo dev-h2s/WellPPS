@@ -185,13 +185,12 @@ public class WellPartnerEntity {
 
     protected WellPartnerEntity() {} //기본생성자
 
-    public WellPartnerEntity(String partnerIdx, String partnerCode) { // setter사용보다 생성자를 만들어서 파라미터를 넘기는게 좋음
+    public WellPartnerEntity(String tableID, String partnerType, String partnerName, String partnerIdx, String partnerCode) { // setter사용보다 생성자를 만들어서 파라미터를 넘기는게 좋음
+        this.tableID = tableID;
+        this.partnerType = partnerType;
+        this.partnerName = partnerName;
         this.partnerIdx = partnerIdx;
         this.partnerCode = partnerCode;
-    }
-
-    public void changePartnerName(String partnerName) { //거래처 이름 변경 예시로 만든거임
-        this.partnerName = partnerName;
     }
 }
 

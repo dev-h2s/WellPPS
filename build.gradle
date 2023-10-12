@@ -59,6 +59,7 @@ project (':well-core') {
 		implementation group: 'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '9.2.0.jre8'
 		runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
 		implementation group: 'org.javassist', name: 'javassist', version: '3.15.0-GA'
+		compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
 	}
 
 }
@@ -76,6 +77,8 @@ project (':well-secure') {
 		runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
 		runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 		testImplementation 'org.springframework.security:spring-security-test'
+		compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
+//		implementation ("org.springframework.security:spring-security-config:5.6.0") // anMatchers 사용으로추가
 	}
 }
 

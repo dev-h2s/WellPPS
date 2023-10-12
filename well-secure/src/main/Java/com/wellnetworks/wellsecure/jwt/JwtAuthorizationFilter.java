@@ -1,18 +1,18 @@
 package com.wellnetworks.wellsecure.jwt;
 
 import com.wellnetworks.wellsecure.config.SecurityProperties;
+import org.springframework.security.core.Authentication;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import java.io.IOException;
-
+//주요 역할: JWT 기반의 인가를 처리:토큰 추출, 토큰 유효성 검사, 사용자 인증 후 인가 요청한 작업 허용 결정
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     private final SecurityProperties securityProperties;
     private final TokenProvider tokenProvider;

@@ -3,8 +3,12 @@ package com.wellnetworks.wellsecure.security;
 import com.wellnetworks.wellcore.java.repository.member.WellGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -13,10 +17,8 @@ import java.util.Set;
 public class WellAuthorize {
     @Autowired  // 스프링 빈 주입을 위한 어노테이션
     private WellGroupRepository wellGroupRepository;
-
     private Set<String> userPermissions = null;
     private RoleHierarchy roleHierarchy = null;
-
     private final Map<String, MenuPermission> menuPermissionMap = MenuPermission.asMap();
     private final Map<String, MenuPermissionAction> menuPermissionActionMap = MenuPermissionAction.asMap();
 

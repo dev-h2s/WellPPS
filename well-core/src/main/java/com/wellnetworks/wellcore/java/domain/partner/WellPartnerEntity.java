@@ -20,15 +20,13 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Table(name = "partner_tb", indexes =
-@Index(name = "IX_pcode", columnList = "pcode", unique = true))
 public class WellPartnerEntity {
     @Id //거래처_idx
-    @Column(name = "p_idx", columnDefinition = "uniqueidentifier", unique = true, nullable = false)
+    @Column(name = "p_idx", columnDefinition = "uniqueidentifier")
     private String partnerIdx;
 
     @ManyToOne(fetch = LAZY) //거래처 그룹_id
-    @JoinColumn(name = "p_group_id")
+    @JoinColumn(name = "p_group_id", insertable = false, updatable = false)
     private WellPartnerGroupEntity partnerGroup;
 
     @OneToOne(fetch = LAZY) //거래처_id (id를 사용하여 거래처 유저 엔티티와 1대1 연결)
@@ -36,7 +34,7 @@ public class WellPartnerEntity {
     private WellPartnerUserEntity partnerId;
 
     @ManyToOne(fetch = LAZY) //apikey 다 대 1 연결
-    @JoinColumn(name = "p_idx")
+    @JoinColumn(name = "p_idx", insertable = false, updatable = false)
     private WellApikeyInEntity apiKey;
 
     // 가상계좌 연결 1대1
@@ -56,7 +54,7 @@ public class WellPartnerEntity {
     private List<WellChargeHistoryEntity> chargeHistory = new ArrayList<>();
 
     //여러 거래처 파일을 가질 수 있음
-    @OneToMany(mappedBy = "p_file", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<WellPartnerFIleStorageEntity> files = new ArrayList<>();
 
     @Column(name = "pcode", unique = true) //거래처코드
@@ -186,8 +184,9 @@ public class WellPartnerEntity {
 
     protected WellPartnerEntity() {} //기본생성자
 
-    public WellPartnerEntity(String partnerIdx) { // setter사용보다 생성자를 만들어서 파라미터를 넘기는게 좋음
+    public WellPartnerEntity(String partnerIdx, String partnerCode) { // setter사용보다 생성자를 만들어서 파라미터를 넘기는게 좋음
         this.partnerIdx = partnerIdx;
+        this.partnerCode = partnerCode;
     }
 
     public void changePartnerName(String partnerName) { //거래처 이름 변경 예시로 만든거임

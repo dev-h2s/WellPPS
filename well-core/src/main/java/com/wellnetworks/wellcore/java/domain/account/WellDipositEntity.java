@@ -17,7 +17,7 @@ public class WellDipositEntity {
         private String dipositIdx;
 
         @OneToOne(fetch = LAZY)//가상계좌_idx
-        @JoinColumn(name = "v_account_idx", unique = true, nullable = false)
+        @JoinColumn(name = "v_account_idx", insertable = false, updatable = false)
         private WellVirtualAccountEntity virtualAccount;
 
         @Column(name = "dipo_balance") //예치금잔액

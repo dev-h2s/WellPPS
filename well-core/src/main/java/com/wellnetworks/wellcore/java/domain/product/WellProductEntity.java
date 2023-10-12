@@ -1,6 +1,7 @@
 package com.wellnetworks.wellcore.java.domain.product;
 //요금제
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wellnetworks.wellcore.java.domain.opening.WellCommissionOpeningPolicyEntity;
 import com.wellnetworks.wellcore.java.domain.opening.WellOpeningEntity;
 import com.wellnetworks.wellcore.java.domain.operator.WellOperatorEntity;
 import jakarta.persistence.*;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@Table(name = "product_tb", indexes = {@Index(name = "p_idx", columnList = "productIdx",unique = true)})
+@Table(name = "product_tb")
 public class WellProductEntity {
 
     @Id
@@ -21,17 +22,17 @@ public class WellProductEntity {
 
     //요금제 조회 테이블 연결 1대 다 양방향
     @JsonIgnore //순환참조 문제 방지
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<WellProductSearchEntity> productSearch = new ArrayList<>();
 
     //개통정책 테이블 연결 1대 다
     @JsonIgnore //순환참조 문제 방지
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WellOpeningEntity> OpeningPolicy = new ArrayList<>();
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<WellCommissionOpeningPolicyEntity> OpeningPolicy = new ArrayList<>();
 
     @ManyToOne
     @JsonIgnore //순환참조 문제 방지
-    @JoinColumn(name = "o_idx") // 통신사 정보와 연결되는 FK 양방향
+    @JoinColumn(name = "o_idx", insertable = false, updatable = false) // 통신사 정보와 연결되는 FK 양방향
     private WellOperatorEntity operator;
 
     @Column(name = "pr_name")  // 요금제의 이름

@@ -21,7 +21,7 @@ public class WellPartnerUserEntity {
     private WellPartnerEntity partner; //거래처 엔티티 참조
 
     @ManyToOne(fetch = LAZY) //그룹별권한
-    @JoinColumn(name = "pm_gkey")
+    @JoinColumn(name = "pm_gkey", insertable = false, updatable = false)
     private WellPartnerPermissionGroupEntity partnerManagerGroup; //거래처유저그룹 엔티티 참조
 
     @Column(name = "p_identification") //로그인시 아이디

@@ -6,12 +6,12 @@ import lombok.Getter;
 // 개통 수수료 여권
 @Entity
 @Getter
-@Table(name = "commission_passport_tb", indexes = {@Index(name = "commission_certificate_idx", columnList = "commissionCertificateIdx",unique = true)})
+@Table(name = "commission_passport_tb")
 public class WellCommissionPassportEntity extends WellCommissionOpeningPolicyEntity {
 
-    @Id
-    @Column(name = "commission_passport_idx", columnDefinition = "uniqueidentifier") // 개통수수료의 고유값 pk
-    private Integer commissionCertificateIdx;
+//    @Id
+//    @Column(name = "commission_passport_idx", columnDefinition = "uniqueidentifier") // 개통수수료의 고유값 pk
+//    private Integer commissionCertificateIdx;
 
 //    @Column(name = "version_id") // 개통정책과 연결되는 fk
 //    private Integer versionId;

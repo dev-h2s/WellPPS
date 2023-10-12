@@ -16,15 +16,15 @@ extends JpaRepository<WellEmployeeEntity, String>, JpaSpecificationExecutor <Wel
 // optinal = null 참조 처리 가능 비어있어도 empty로 반환
 
     // employee idx로 조회
-    Optional<WellEmployeeEntity> findByIdx(String idx);
+//    Optional<WellEmployeeEntity> findByIdx(String idx);
 
     // 페이지네이션을 적용하여 모든 맴버 엔티티 검색
-    Page<WellEmployeeEntity> findAll(Pageable pageable);
+//    Page<WellEmployeeEntity> findAll(Pageable pageable);
 
     // employee name으로 조회
-    Optional<WellEmployeeEntity> findByName(String name);
+//    Optional<WellEmployeeEntity> findByName(String name);
 
     // employee idx로 삭제 ?? user에서 해야할 듯
-    Optional<Integer> deleteByIdx(String idx);
+//    Optional<Integer> deleteByIdx(String idx);
 
 }

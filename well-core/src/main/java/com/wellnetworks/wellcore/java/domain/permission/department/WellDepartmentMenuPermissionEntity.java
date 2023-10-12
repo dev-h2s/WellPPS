@@ -14,7 +14,7 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Table(name = "department_menu_permission_tb", indexes = {@Index(name = "dep_menu_id", columnList = "depMenuId",unique = true)})
+@Table(name = "department_menu_permission_tb")
 public class WellDepartmentMenuPermissionEntity {
 
 //    부서 권한의 dropdown content의 각 권한 여부를 지정하기 위한 pk
@@ -23,7 +23,7 @@ public class WellDepartmentMenuPermissionEntity {
     private Long depMenuId;
     //    부서 drop의 하위 컨텐트의 FK로 받는 id
     @ManyToOne
-    @JoinColumn(name = "dep_drop_content_id")
+    @JoinColumn(name = "dep_drop_content_id", insertable = false, updatable = false)
     private WellDepartmentDropDownContentEntity dropdownContent;
 
     //    부서 입력 권한의 허용 여부

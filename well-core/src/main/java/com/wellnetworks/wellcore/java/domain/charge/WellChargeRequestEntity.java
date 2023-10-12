@@ -8,15 +8,15 @@ import java.time.LocalDateTime;
 // 충전시도요청
 @Entity
 @Getter
-@Table(name = "charge_request_tb", indexes = {@Index(name = "charge_request_id", columnList = "memberManagerGroupKey",unique = true)})
+@Table(name = "charge_request_tb")
 public class WellChargeRequestEntity extends WellChargeHistoryEntity {
 
-    @Id
-    @Column(name = "charge_request_id", columnDefinition = "uniqueidentifier") // 생성 고유값 pk
-    private Integer chargeRequestId;
+//    @Id
+//    @Column(name = "charge_request_id", columnDefinition = "uniqueidentifier") // 생성 고유값 pk
+//    private Integer chargeRequestId;
 
     @ManyToOne(fetch = FetchType.LAZY) // 충전 시도 내역 테이블과 연결되는 fk
-    @JoinColumn(name = "charge_history_idx") // charge_history_idx로 연결
+    @JoinColumn(name = "charge_history_idx", insertable = false, updatable = false) // charge_history_idx로 연결
     private WellChargeHistoryEntity chargeHistory;
 
     @Column(name = "request_api_key") // 충전 시도시 요청된는 apikey 값

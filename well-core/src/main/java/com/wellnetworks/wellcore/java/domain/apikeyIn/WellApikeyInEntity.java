@@ -20,7 +20,7 @@ public class WellApikeyInEntity {
     @Column(name = "api_key_in_id")
     private Long apiKeyInId;
 
-    @Column(name = "p_idx", columnDefinition = "uniqueidentifier") // 거래처_idx
+    @Column(name = "p_idx", insertable = false, updatable = false) // 거래처_idx
     private String partnerIdx;
 
     @OneToMany(mappedBy = "apiKey", cascade = CascadeType.ALL) // 양방향

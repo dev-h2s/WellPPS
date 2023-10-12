@@ -11,7 +11,7 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Table(name = "opening_policy_tb", indexes = {@Index(name = "version_id", columnList = "versionId", unique = true)})
+@Table(name = "opening_policy_tb")
 public class WellCommissionOpeningPolicyEntity {
 
     @Id
@@ -20,7 +20,7 @@ public class WellCommissionOpeningPolicyEntity {
 
     //요금제 테이블 연결 다 대 1
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "pr_idx", referencedColumnName = "pr_idx")
+    @JoinColumn(name = "pr_idx", insertable = false, updatable = false)
     private WellProductEntity product;
 
     @Column(name = "passport_type") // 등록증인지 여권인지 판단(등록증, 여권에 따라 수수료 달라짐)

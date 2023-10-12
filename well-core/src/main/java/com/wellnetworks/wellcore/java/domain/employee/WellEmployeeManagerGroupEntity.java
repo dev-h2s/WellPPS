@@ -14,16 +14,16 @@ import java.util.stream.Collectors;
 
 @Entity
 @Getter
-@Setter
-@Table(name = "employee_manager_group_tb", indexes = {@Index(name = "em_gkey", columnList = "employeeManagerGroupKey",unique = true)})
-public class WellEmployeeManagerGroupEntity {
+
+@Table(name = "employee_manager_group_tb")
+public class WellEmployeeManagerGroupEntity{
 
     @Id
     @Column(name = "em_gkey")//직원 관리자그룹
     private String employeeManagerGroupKey;
 
     @OneToMany(mappedBy = "emGroup") // 양방향 일때 직원 리스트 가져오기
-    private List<WellEmployeeEntity> employee = new ArrayList<>();
+    private List<WellEmployeeUserEntity> employee = new ArrayList<>();
 
     @Column(name = "em_g_name")//직원 그룹명
     private String employeeManagerName;

@@ -15,7 +15,7 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Table(name = "personal_dropdown_tb", indexes = {@Index(name = "per_drop_id", columnList = "perDropId",unique = true)})
+@Table(name = "personal_dropdown_tb")
 public class WellPersonalDropDownEntity {
     // 개인 권한의 dropdown의 각 권한 여부를 지정하기 위한 pk
     @Id
@@ -25,7 +25,7 @@ public class WellPersonalDropDownEntity {
 
     // 직원 테이블에서 받는 fk 단방향
     @OneToOne
-    @JoinColumn(name = "em_id")
+    @JoinColumn(name = "em_id", insertable = false, updatable = false)
     private WellEmployeeEntity employee;
 
     // 개인 dropdown의 이름

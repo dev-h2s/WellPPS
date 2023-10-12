@@ -21,10 +21,10 @@ public class WellFakeRegistrationEntity {
     private Integer fakeRegistrationId;
 
     @OneToOne(fetch = LAZY) //개통_id
-    @JoinColumn(name = "op_info_id")
+    @JoinColumn(name = "op_info_id", insertable = false, updatable = false)
     private WellOpeningEntity openingInfo;
 
-    @OneToMany(mappedBy = "fake_reg_file", fetch = LAZY, cascade = CascadeType.ALL)  //여러 부정가입 파일을 가질 수 있음
+    @OneToMany(mappedBy = "fakeRegistration", fetch = LAZY, cascade = CascadeType.ALL)  //여러 부정가입 파일을 가질 수 있음
     private List<WellFakeRegistrationFIleStorageEntity> files = new ArrayList<>();
 
     @Column(name = "upload_date") //등록일자

@@ -13,7 +13,7 @@ import static jakarta.persistence.FetchType.LAZY;
 // 충전 시도 내역
 @Entity
 @Getter
-@Table(name = "charge_history_tb", indexes = {@Index(name = "charge_history_idx", columnList = "chargeHistoryIdx",unique = true)})
+@Table(name = "charge_history_tb")
 public class WellChargeHistoryEntity {
 
     @Id
@@ -22,7 +22,7 @@ public class WellChargeHistoryEntity {
 
     //거래처 테이블 연결 다 대 1
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "p_idx", referencedColumnName = "partner_idx")
+    @JoinColumn(name = "p_idx", insertable = false, updatable = false)
     private WellPartnerEntity partner;
 
     @Column(name = "product_search_idx")  // 요금제 조회 내역과 연결되는 fk

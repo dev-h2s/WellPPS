@@ -16,7 +16,7 @@ public class WellChargeCommissionEntity {
     private Long CommissionId;
 
     @ManyToOne(fetch = LAZY) //거래처_idx
-    @JoinColumn(name = "p_idx", unique = true, nullable = false)
+    @JoinColumn(name = "p_idx", insertable = false, updatable = false)
     private WellPartnerEntity partner;  // 거래처 엔티티를 참조
 //* unique, nullable 없애야하는지 확인 필요
     @Column(name = "op_discount") //개통점할인율

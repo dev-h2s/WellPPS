@@ -15,7 +15,7 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Table(name = "department_dropdown_content_tb", indexes = {@Index(name = "dep_drop_content_id", columnList = "depDropContentId",unique = true)})
+@Table(name = "department_dropdown_content_tb")
 public class WellDepartmentDropDownContentEntity {
 
 
@@ -27,7 +27,7 @@ public class WellDepartmentDropDownContentEntity {
 
     //    부서 dropdown의 FK로 받는 id
     @ManyToOne
-    @JoinColumn(name = "dep_drop_id")
+    @JoinColumn(name = "dep_drop_id", insertable = false, updatable = false)
     private WellDepartmentDropDownEntity departmentDropdown;
 
     //    dropdowncontent의 이름

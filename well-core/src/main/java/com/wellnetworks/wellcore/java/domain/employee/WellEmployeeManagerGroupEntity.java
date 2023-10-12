@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 
 @Entity
 @Getter
-
 @Table(name = "employee_manager_group_tb")
 public class WellEmployeeManagerGroupEntity{
 

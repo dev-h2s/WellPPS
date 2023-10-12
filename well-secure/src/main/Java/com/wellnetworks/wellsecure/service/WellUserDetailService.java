@@ -29,7 +29,7 @@ public class WellUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // userID로 사용자 검색하기
-        Optional<WellEmployeeUserEntity> userOptional = wellEmployeeUserRepository.findByUserID(username);
+        Optional<WellEmployeeUserEntity> userOptional = wellEmployeeUserRepository.findByemployeeIdentification(username);
 
         if (!userOptional.isPresent()) {
             throw new UsernameNotFoundException("The username " + username + " doesn't exist");

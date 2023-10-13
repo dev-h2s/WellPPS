@@ -1,6 +1,7 @@
 package com.wellnetworks.wellcore.java.repository;
 
 import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
+import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,7 @@ public interface WellPartnerRepository extends JpaRepository<WellPartnerEntity, 
 
     //상부점 select박스로 검색
     Optional<WellPartnerEntity> findByPartnerUpperId(Long partnerUpperId);
+
     //충전할인율구분 select박스로 검색
     Optional<WellPartnerEntity> findByDiscountCategory(String discountCategory);
     //거래처구분 select박스로 검색
@@ -30,18 +32,18 @@ public interface WellPartnerRepository extends JpaRepository<WellPartnerEntity, 
     //영업담당자 select박스로 검색
     Optional<WellPartnerEntity> findBySalesManager(String salesManager);
     //등록증 select박스로 검색
-    @Query("SELECT DISTINCT f " +
+    @Query("SELECT p.partnerIdx " +
             "FROM WellFileStorageEntity f " +
-            "JOIN f.PartnerFileStorage pf " +
-            "JOIN pf.partner p " +
+            "LEFT JOIN f.PartnerFileStorage pf " +
+            "LEFT JOIN pf.partner p " +
             "WHERE p.partnerIdx = :partnerIdx " +
             "AND f.fileKind = '등록증'")
     Optional<WellFileStorageEntity> findByRegistrationByPartnerIdx(@Param("partnerIdx") String partnerIdx);
     //계약서 select박스로 검색
     @Query("SELECT DISTINCT f " +
             "FROM WellFileStorageEntity f " +
-            "JOIN f.PartnerFileStorage pf " +
-            "JOIN pf.partner p " +
+            "LEFT JOIN f.PartnerFileStorage pf " +
+            "LEFT JOIN pf.partner p " +
             "WHERE p.partnerIdx = :partnerIdx " +
             "AND f.fileKind = '계약서'")
     Optional<WellFileStorageEntity> findContractByPartnerIdx(@Param("partnerIdx") String partnerIdx);
@@ -72,37 +74,6 @@ public interface WellPartnerRepository extends JpaRepository<WellPartnerEntity, 
     //사업장번호로 거래처 검색
     Optional<WellPartnerEntity> findByRegistrationNumber(String registrationNumber);
 
-    //거래유무 엔티티 개수
-    //거래중 개수
-    @Query("SELECT p FROM WellPartnerEntity p " +
-            "WHERE p.transactionStatus = '거래중'")
-    Long countByTrading(String transactionStatus);
-    //거래중지 개수
-    @Query("SELECT p FROM WellPartnerEntity p " +
-            "WHERE p.transactionStatus = '거래중지'")
-    Long countByTradeStop(String transactionStatus);
-    //관리대상 개수
-    @Query("SELECT p FROM WellPartnerEntity p " +
-            "WHERE p.transactionStatus = '관리대상'")
-    Long countByTarget(String transactionStatus);
-    // 가등록 개수
-    @Query("SELECT p FROM WellPartnerEntity p " +
-            "WHERE p.transactionStatus = '가등록'")
-    Long countByFakeTrade(String transactionStatus);
-    //첨부파일에 따라 계약서 미첨부 개수
-    @Query("SELECT COUNT(p.partnerIdx) " +
-            "FROM WellPartnerEntity p " +
-            "LEFT JOIN WellPartnerFIleStorageEntity pf ON p.partnerIdx = pf.partner " +
-            "LEFT JOIN WellFileStorageEntity f ON pf.fileIdx = f.fileIdx AND f.fileKind = '계약서' " +
-            "WHERE f.fileIdx IS NULL")
-    Optional<Long> countByContractIsNull();
-    //첨부파일에 따라 등록증 미첨부 개수
-    @Query("SELECT COUNT(p.partnerIdx) " +
-            "FROM WellPartnerEntity p " +
-            "LEFT JOIN WellPartnerFIleStorageEntity pf ON p.partnerIdx = pf.partner " +
-            "LEFT JOIN WellFileStorageEntity f ON pf.fileIdx = f.fileIdx AND f.fileKind = '등록증' " +
-            "WHERE f.fileIdx IS NULL")
-    Optional<Long> countByRegistrationIsNull();
 
     //거래처 등록
     WellPartnerEntity save(WellPartnerEntity wellPartnerEntity);
@@ -110,4 +81,11 @@ public interface WellPartnerRepository extends JpaRepository<WellPartnerEntity, 
 
     //거래처_idx삭제(체크항목 삭제)
     Optional<WellPartnerEntity> deleteByPartnerIdx(String partnerIdx);
+
+
+
+    // 첨부파일 저장
+    void save(WellFileStorageEntity registrationFile);
+    //거래처 첨부파일 저장
+    void save(WellPartnerFIleStorageEntity partnerFileStorage);
 }

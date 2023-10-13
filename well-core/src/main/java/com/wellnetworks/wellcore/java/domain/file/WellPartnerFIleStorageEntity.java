@@ -13,6 +13,9 @@ public class WellPartnerFIleStorageEntity {
     @Column(name = "file_idx")
     private String fileIdx;
 
+    @Column(name = "p_idx")
+    private String partnerIdx;
+
     @ManyToOne(fetch = LAZY) //거래처_idx
     @JoinColumn(name = "p_idx", insertable = false, updatable = false)
     private WellPartnerEntity partner;
@@ -20,4 +23,11 @@ public class WellPartnerFIleStorageEntity {
     @OneToOne(fetch = LAZY) // 거래처 파일과 첨부파일 간의 연결
     @JoinColumn(name = "file_idx", insertable = false, updatable = false)
     private WellFileStorageEntity file;
+
+    protected WellPartnerFIleStorageEntity() {}
+
+    public WellPartnerFIleStorageEntity(WellFileStorageEntity file, WellPartnerEntity partner) {
+        this.fileIdx = file.getFileIdx();
+        this.partnerIdx = partner.getPartnerIdx();
+    }
 }

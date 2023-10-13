@@ -53,7 +53,7 @@ public class SecurityConfig  {
                 .invalidateHttpSession(true)  // 로그아웃 시 HTTP 세션을 무효화합니다.
                 .deleteCookies("JSESSIONID", "remember-me");  // 로그아웃 시 특정 쿠키를 삭제합니다.
                 // HTTP 요청에 대한 보안 설정을 시작
-                http.authorizeRequests().antMatchers("/init/**").permitAll() // /init로 시작하는 모든 URL 경로에 대한 접근을 사용자에게 허용하는 설정
+                http.authorizeRequests().requestMatchers("/init/**").permitAll() // /init로 시작하는 모든 URL 경로에 대한 접근을 사용자에게 허용하는 설정
                 // ... 여기에 다른 경로 패턴들이 추가됩니다 ...
                 .anyRequest().authenticated();  // 그 외의 모든 요청은 인증이 필요하다고 명시합니다.
 

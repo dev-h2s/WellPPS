@@ -24,6 +24,9 @@ public class WellFileStorageEntity {
     @OneToOne(fetch = LAZY) // 첨부파일과 거래처파일 간의 연결
     private WellPartnerFIleStorageEntity PartnerFileStorage;
 
+    @OneToOne(fetch = LAZY) // 첨부파일과 사원파일 간의 연결
+    private WellEmployeeStorageEntity employeeFileStorage;
+
     @Column(name = "file_name") //원본파일명
     private String fileName;
 

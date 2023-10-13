@@ -1,10 +1,9 @@
 package com.wellnetworks.wellcore.java.domain.employee;
 //직원 그룹 테이블
 
-import com.wellnetworks.wellcore.java.DTO.WellEmployeeManagerGroupDTO;
+import com.wellnetworks.wellcore.java.DTO.member.WellEmployeeManagerGroupDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,6 +37,27 @@ public class WellEmployeeManagerGroupEntity{
 
     @Column(name = "em_g_regdt") //생성 날짜와 시간
     private LocalDateTime employeeManagerRegisterDate;
+
+
+
+    public WellEmployeeManagerGroupDTO toDto() {
+        List<String> employeeIdx = employee.stream()
+                .map(WellEmployeeUserEntity::getEmployeeIdx) // 가정: WellEmployeeUserEntity에서 Idx를 가져오는 메서드
+                .collect(Collectors.toList());
+        return new WellEmployeeManagerGroupDTO(
+                this.employeeManagerGroupKey.toUpperCase(),
+                employeeIdx,
+                this.employeeManagerName,
+                this.employeeManagerPermissions,
+                this.employeeManagerDescription,
+                this.employeeManagerModifyDate,
+                this.employeeManagerRegisterDate
+        );
+    }
+
+
+
+
 
 
 //    public WellEmployeeManagerGroupDTO toDto() {

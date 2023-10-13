@@ -15,7 +15,7 @@ import java.util.Optional;
 // 스프링 컴포넌트로 지정하기
 @Component
 // 지정된 패키지에 대한 컴포넌트 스캔
-@ComponentScan("com.wellnetworks.wellcore.java.repository")
+@ComponentScan("com.wellnetworks.wellcore")
 public class WellUserDetailService implements UserDetailsService {
     // employeeUser의 레포지토리
     private final WellEmployeeUserRepository wellEmployeeUserRepository;

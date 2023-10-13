@@ -7,9 +7,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.domain.Pageable;
-import java.util.Optional;
+import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 //사원의 조회에 관련된 Repository
+@Repository
+
 public interface WellEmployeeInfoRepository
 extends JpaRepository<WellEmployeeEntity, String>, JpaSpecificationExecutor <WellEmployeeEntity> {
 // optinal = null 참조 처리 가능 비어있어도 empty로 반환

@@ -1,4 +1,4 @@
-package com.wellnetworks.wellcore.java.DTO;
+package com.wellnetworks.wellcore.java.DTO.member;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,12 +9,11 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class WellEmployeeManagerGroupDTO {
-
+public class WellEmployeeManagerGroupDTOs {
 
     private String employeeManagerGroupKey; // 직원 관리자그룹 키
 
-    private List<String> employeeIds; // 직원 ID 리스트 (Entity 내에 직접적인 엔터티 관계가 아닌 ID 목록으로 표현)
+    private List<String> employeeIdx; // 직원 ID 리스트 (Entity 내에 직접적인 엔터티 관계가 아닌 ID 목록으로 표현)
 
     private String employeeManagerName; // 직원 그룹명
 

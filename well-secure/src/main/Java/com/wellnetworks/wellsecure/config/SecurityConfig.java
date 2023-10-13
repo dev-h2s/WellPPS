@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+//import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
@@ -20,7 +21,7 @@ import java.util.Arrays;
 @EnableWebSecurity  // Spring Security를 활성화하는 어노테이션
 @EnableMethodSecurity   // 메서드 수준의 보안을 활성화
 
-public class SecurityConfig {
+public class SecurityConfig  {
 
     // 필요한 의존성을 주입받기 위한 멤버 변수.
     private final SecurityProperties securityProperties;
@@ -36,7 +37,8 @@ public class SecurityConfig {
         this.tokenProvider = tokenProvider;
     }
 
-    @Bean  // Spring 빈으로 등록될 메서드를 나타냄.
+    @Bean  // Spring 빈으로 등록될 메서드를 나타냄
+    //Spring Security 설정
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors()  // CORS 설정을 활성화합니다.
                 .and()
@@ -50,9 +52,8 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/login")  // 로그아웃 후 리다이렉트될 URL을 설정합니다.
                 .invalidateHttpSession(true)  // 로그아웃 시 HTTP 세션을 무효화합니다.
                 .deleteCookies("JSESSIONID", "remember-me");  // 로그아웃 시 특정 쿠키를 삭제합니다.
-
-        http.authorizeRequests()  // HTTP 요청에 대한 보안 설정을 시작
-                .antMatchers("/init/**").permitAll()
+                // HTTP 요청에 대한 보안 설정을 시작
+                http.authorizeRequests().antMatchers("/init/**").permitAll() // /init로 시작하는 모든 URL 경로에 대한 접근을 사용자에게 허용하는 설정
                 // ... 여기에 다른 경로 패턴들이 추가됩니다 ...
                 .anyRequest().authenticated();  // 그 외의 모든 요청은 인증이 필요하다고 명시합니다.
 

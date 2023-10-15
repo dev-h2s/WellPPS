@@ -5,12 +5,16 @@ import com.wellnetworks.wellcore.java.domain.charge.WellChargeHistoryEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerUserEntity;
+import com.wellnetworks.wellcore.java.domain.permission.personal.WellPersonalDropDownEntity;
 import com.wellnetworks.wellcore.java.domain.product.WellProductSearchEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static jakarta.persistence.FetchType.LAZY;
 

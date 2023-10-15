@@ -1,6 +1,7 @@
 package com.wellnetworks.wellsecure.service;
 
-import com.wellnetworks.wellcore.java.DTO.WellEmployeeManagerGroupDTO;
+import com.wellnetworks.wellcore.java.DTO.member.WellEmployeeManagerGroupDTO;
+import com.wellnetworks.wellcore.java.DTO.member.WellEmployeeManagerGroupDTOs;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeManagerGroupEntity;
 import com.wellnetworks.wellcore.java.repository.member.WellGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,8 @@ public class WellGroupService {
     private WellGroupRepository wellGroupRepository;
 
     // 그룹 ID로 WellGroupDTO를 가져오는 메서드
-    public Optional<WellEmployeeManagerGroupDTO> getGroupByIdx(String groupKey) {
-        return wellGroupRepository.findByGroupPermissionKey(groupKey)
-                .map(WellEmployeeManagerGroupEntity::toDto);
-    }
+//    public Optional<WellEmployeeManagerGroupDTOs> getGroupByIdx(String groupKey) {
+//        return wellGroupRepository.findByemployeeManagerGroupKey(groupKey)
+//                .map(WellEmployeeManagerGroupEntity::toDto);
+//    }
 }

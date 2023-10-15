@@ -7,14 +7,15 @@ import com.wellnetworks.wellcore.java.domain.charge.WellChargeHistoryEntity;
 import com.wellnetworks.wellcore.java.domain.opening.WellOpeningEntity;
 import com.wellnetworks.wellcore.java.domain.product.WellProductSearchEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
-import com.wellnetworks.wellcore.java.dto.WellPartnerDTO.WellPartnerInfoDTO;
-import com.wellnetworks.wellcore.java.dto.WellPartnerDTO.WellPartnerUpdateDTO;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 import static jakarta.persistence.FetchType.LAZY;
@@ -22,6 +23,7 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class WellPartnerEntity {
     @Id //거래처_idx
     @Column(name = "p_idx", columnDefinition = "uniqueidentifier")
@@ -183,105 +185,13 @@ public class WellPartnerEntity {
     @Column(name = "opening_note") //개통점신청비고
     private String openingNote;
 
-    //비지니스 로직
+    //동일한 거래처 나타내는지 판단
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        WellPartnerEntity other = (WellPartnerEntity) obj;
 
-    protected WellPartnerEntity() {} //기본생성자
-
-    public WellPartnerEntity(String tableID, String partnerType, String partnerName, String partnerIdx, String partnerCode, Long partnerUpperId
-                            , String discountCategory, String salesManager, String transactionStatus
-                            , String region)
-    { // setter사용보다 생성자를 만들어서 파라미터를 넘기는게 좋음
-        this.tableID = tableID;
-        this.partnerType = partnerType;
-        this.partnerName = partnerName;
-        this.partnerIdx = partnerIdx;
-        this.partnerCode = partnerCode;
-        this.partnerUpperId = partnerUpperId;
-        this.discountCategory = discountCategory;
-        this.salesManager = salesManager;
-        this.transactionStatus = transactionStatus;
-        this.region = region;
+        return partnerIdx != null && partnerIdx.equals(other.partnerIdx);
     }
-
-    //엔티티 클래스에 대한 DTO 변환 메소드
-    public WellPartnerInfoDTO partnerDto() {
-        WellPartnerInfoDTO dto = new WellPartnerInfoDTO();
-        dto.setPartnerIdx(this.getPartnerIdx().toUpperCase());
-        dto.setPartnerCode(this.getPartnerCode());
-        dto.setTableID(this.getTableID());
-        dto.setPartnerName(this.getPartnerName());
-        dto.setTransactionStatus(this.getTransactionStatus());
-        dto.setPartnerType(this.getPartnerType());
-        dto.setPartnerUpperId(this.getPartnerUpperId());
-        dto.setPartnerTelephone(this.getPartnerTelephone());
-        dto.setProductRegisterDate(this.getProductRegisterDate());
-        dto.setProductModifyDate(this.getProductModifyDate());
-        dto.setSalesManager(this.getSalesManager());
-        dto.setCeoName(this.getCeoName());
-        dto.setCeoTelephone(this.getCeoTelephone());
-        dto.setRegistrationAddress(this.getRegistrationAddress());
-        dto.setRegistrationDetailAddress(this.getRegistrationDetailAddress());
-        dto.setLocationAddress(this.getLocationAddress());
-        dto.setLocationDetailAddress(this.getLocationDetailAddress());
-        dto.setCommisionType(this.getCommisionType());
-        dto.setDiscountCategory(this.getDiscountCategory());
-        dto.setRegion(this.getRegion());
-        dto.setSubscriptionDate(this.getSubscriptionDate());
-        dto.setSpecialPolicyOpening(this.isSpecialPolicyOpening());
-        dto.setSpecialPolicyCharge(this.isSpecialPolicyCharge());
-        dto.setPassword(this.getPassword());
-        dto.setPreApprovalNumber(this.getPreApprovalNumber());
-        dto.setEmailAddress(this.getEmailAddress());
-        dto.setRegistrationNumber(this.getRegistrationNumber());
-        dto.setPartnerMemo(this.getPartnerMemo());
-        dto.setSalesTeamVisitDate(this.getSalesTeamVisitDate());
-        dto.setSalesTeamVisitMemo(this.getSalesTeamVisitMemo());
-        dto.setCommissionDepositAccount(this.getCommissionDepositAccount());
-        dto.setCommissionBankName(this.getCommissionBankName());
-        dto.setCommissionBankHolder(this.getCommissionBankHolder());
-        dto.setWriter(this.getWriter());
-        dto.setEvent(this.getEvent());
-        dto.setOpeningVisitRequestDate(this.getOpeningVisitRequestDate());
-        dto.setOpeningVisitDecideDate(this.getOpeningVisitDecideDate());
-        dto.setOpeningProgress(this.getOpeningProgress());
-        dto.setOpeningFlag(this.isOpeningFlag());
-        dto.setOpeningNote(this.getOpeningNote());
-
-        return dto;
-    }
-
-    public WellPartnerUpdateDTO updateDTO() {
-        WellPartnerUpdateDTO dto = new WellPartnerUpdateDTO();
-        dto.setPartnerCode(this.getPartnerCode());
-        dto.setPartnerName(this.getPartnerName());
-        dto.setPartnerType(this.getPartnerType());
-        dto.setDiscountCategory(this.getDiscountCategory());
-        dto.setSalesManager(this.getSalesManager());
-        dto.setPreApprovalNumber(this.getPreApprovalNumber());
-        dto.setSubscriptionDate(this.getSubscriptionDate());
-        dto.setTransactionStatus(this.getTransactionStatus());
-        dto.setSpecialPolicyOpening(String.valueOf(this.isSpecialPolicyOpening()));
-        dto.setSpecialPolicyCharge(String.valueOf(this.isSpecialPolicyCharge()));
-        dto.setPartnerUpperId(this.getPartnerUpperId().toString());
-        dto.setCeoName(this.getCeoName());
-        dto.setCeoTelephone(this.getCeoTelephone());
-        dto.setPartnerTelephone(this.getPartnerTelephone());
-        dto.setEmailAddress(this.getEmailAddress());
-        dto.setCommissionDepositAccount(this.getCommissionDepositAccount());
-        dto.setCommissionBankName(this.getCommissionBankName());
-        dto.setCommissionBankHolder(this.getCommissionBankHolder());
-        dto.setRegistrationNumber(this.getRegistrationNumber());
-        dto.setRegistrationAddress(this.getRegistrationAddress());
-        dto.setRegistrationDetailAddress(this.getRegistrationDetailAddress());
-        dto.setLocationAddress(this.getLocationAddress());
-        dto.setLocationDetailAddress(this.getLocationDetailAddress());
-        dto.setPartnerMemo(this.getPartnerMemo());
-        dto.setSalesTeamVisitDate(this.getSalesTeamVisitDate());
-        dto.setSalesTeamVisitMemo(this.getSalesTeamVisitMemo());
-
-        return dto;
-    }
-
-
-
 }

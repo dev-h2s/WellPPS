@@ -20,7 +20,7 @@ public class WellPartnerFIleStorageEntity {
     @JoinColumn(name = "p_idx", insertable = false, updatable = false)
     private WellPartnerEntity partner;
 
-    @OneToOne(fetch = LAZY) // 거래처 파일과 첨부파일 간의 연결
+    @OneToOne(fetch = LAZY, cascade = CascadeType.ALL) // 거래처 파일과 첨부파일 간의 연결
     @JoinColumn(name = "file_idx", insertable = false, updatable = false)
     private WellFileStorageEntity file;
 

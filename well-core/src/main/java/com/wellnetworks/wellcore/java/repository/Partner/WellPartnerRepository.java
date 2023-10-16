@@ -25,5 +25,5 @@ public interface WellPartnerRepository extends JpaRepository<WellPartnerEntity, 
     WellPartnerEntity save(WellPartnerEntity wellPartnerEntity);
 
     //거래처_idx삭제(체크항목 삭제)
-    Optional<WellPartnerEntity> deleteByPartnerIdx(String partnerIdx);
+    WellPartnerEntity deleteByPartnerIdx(String partnerIdx);
 }

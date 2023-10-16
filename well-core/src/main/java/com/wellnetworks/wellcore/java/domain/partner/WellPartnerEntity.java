@@ -51,11 +51,11 @@ public class WellPartnerEntity {
     private List<WellOpeningEntity> openings = new ArrayList<>();
 
     // 요금제 조회 테이블 연결 1대 다
-    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "partner")
     private List<WellProductSearchEntity> productSearch = new ArrayList<>();
 
     // 충전 시도내역 테이블 연결 1대 다
-    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "partner")
     private List<WellChargeHistoryEntity> chargeHistory = new ArrayList<>();
 
     //여러 거래처 파일을 가질 수 있음

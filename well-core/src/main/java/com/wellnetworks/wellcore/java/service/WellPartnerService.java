@@ -6,16 +6,12 @@ import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
-import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
-import com.wellnetworks.wellcore.java.repository.account.WellDipositRepository;
-import com.wellnetworks.wellcore.java.repository.account.WellVirtualAccountRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -68,11 +64,30 @@ public class WellPartnerService {
         return partnerInfoList;
     }
 
-    @Transactional
-     public void deletePartnerIdx(String partnerIdx) {
-        // 거래처 idx 삭제 -> 삭제 시 거래처랑 연결되어 있는 애들도 다 삭제 되어야함
-        wellPartnerRepository.deleteByPartnerIdx(partnerIdx);
+    @Transactional(rollbackOn = Exception.class)
+    public Optional<WellPartnerInfoDTO> deletePartnerIdx(String partnerIdx) {
+        // 거래처를 조회
+        WellPartnerEntity partnerEntity = wellPartnerRepository.findByPartnerIdx(partnerIdx);
+
+        if (partnerEntity != null) {
+            List<WellFileStorageEntity> fileStorages = partnerEntity.getFiles().stream()
+                    .map(WellPartnerFIleStorageEntity::getFile)
+                    .collect(Collectors.toList());
+
+            // 거래처가 가상계좌를 가지고 있는 경우, 예치금 정보를 가져옴
+            WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
+            WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
+
+            // 거래처 삭제
+            wellPartnerRepository.delete(partnerEntity);
+
+            return Optional.of(new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity));
+        } else {
+            // 삭제 대상이 없을 경우 빈 Optional 반환
+            return Optional.empty();
+        }
     }
+
 
     // 페이지네이션 거래처 검색
     public Page<WellPartnerEntity> getPaginatedPartners(int page, int size) {

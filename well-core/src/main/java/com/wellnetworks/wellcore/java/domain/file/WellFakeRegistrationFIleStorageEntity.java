@@ -17,7 +17,7 @@ public class WellFakeRegistrationFIleStorageEntity {
     @JoinColumn(name = "fake_reg_id", insertable = false, updatable = false)
     private WellFakeRegistrationEntity fakeRegistration;
 
-    @OneToOne(fetch = LAZY) // 부정가입현황 파일과 첨부파일 간의 연결
+    @OneToOne(fetch = LAZY, cascade = CascadeType.ALL) // 부정가입현황 파일과 첨부파일 간의 연결
     @JoinColumn(name = "file_idx", insertable = false, updatable = false)
     private WellFileStorageEntity file;
 }

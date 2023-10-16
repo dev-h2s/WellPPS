@@ -26,7 +26,7 @@ public class WellVirtualAccountEntity {
     @JoinColumn(name = "p_idx", insertable = false, updatable = false)
     private WellPartnerEntity partner;
 
-    @OneToOne(mappedBy = "virtualAccount", fetch = LAZY) // 예치금이랑 1대1(양방향)
+    @OneToOne(mappedBy = "virtualAccount", fetch = LAZY, cascade = CascadeType.ALL) // 예치금이랑 1대1(양방향)
     private WellDipositEntity deposit;
 
     @Column(name = "reg_dt") // 작성일

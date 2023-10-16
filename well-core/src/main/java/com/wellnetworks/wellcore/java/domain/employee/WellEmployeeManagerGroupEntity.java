@@ -1,7 +1,7 @@
 package com.wellnetworks.wellcore.java.domain.employee;
 //직원 그룹 테이블
 
-import com.wellnetworks.wellcore.java.dto.member.WellEmployeeManagerGroupDTO;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -40,20 +40,20 @@ public class WellEmployeeManagerGroupEntity{
 
 
 
-    public WellEmployeeManagerGroupDTO toDto() {
-        List<String> employeeIdx = employee.stream()
-                .map(WellEmployeeUserEntity::getEmployeeIdx) // 가정: WellEmployeeUserEntity에서 Idx를 가져오는 메서드
-                .collect(Collectors.toList());
-        return new WellEmployeeManagerGroupDTO(
-                this.employeeManagerGroupKey.toUpperCase(),
-                employeeIdx,
-                this.employeeManagerName,
-                this.employeeManagerPermissions,
-                this.employeeManagerDescription,
-                this.employeeManagerModifyDate,
-                this.employeeManagerRegisterDate
-        );
-    }
+//    public WellEmployeeManagerGroupDTO toDto() {
+//        List<String> employeeIdx = employee.stream()
+//                .map(WellEmployeeUserEntity::getEmployeeIdx) // 가정: WellEmployeeUserEntity에서 Idx를 가져오는 메서드
+//                .collect(Collectors.toList());
+//        return new WellEmployeeManagerGroupDTO(
+//                this.employeeManagerGroupKey.toUpperCase(),
+//                employeeIdx,
+//                this.employeeManagerName,
+//                this.employeeManagerPermissions,
+//                this.employeeManagerDescription,
+//                this.employeeManagerModifyDate,
+//                this.employeeManagerRegisterDate
+//        );
+//    }
 
 
 

@@ -34,7 +34,7 @@ public class WellFileStorageEntity {
     private String storedFileName;
 
     @Column(name = "file_size") //파일사이즈
-    private String fileSize;
+    private Long fileSize;
 
     @Column(name = "file_extension") //파일확장자
     private String fileExtension;
@@ -61,7 +61,7 @@ public class WellFileStorageEntity {
 
     }
 
-    public WellFileStorageEntity(String fileIdx, String fileKind) {
+    public WellFileStorageEntity(String idx, String fileName, String orgName, long fileSize, String fileIdx, String fileKind, int i) {
         this.fileIdx = fileIdx;
         this.fileKind = fileKind;
     }

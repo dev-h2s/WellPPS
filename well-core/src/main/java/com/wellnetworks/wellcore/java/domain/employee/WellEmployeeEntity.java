@@ -1,5 +1,6 @@
 package com.wellnetworks.wellcore.java.domain.employee;
 //직원 테이블
+import com.wellnetworks.wellcore.java.DTO.member.WellEmployeeDTO;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -98,25 +99,14 @@ public class WellEmployeeEntity {
     @Column(name = "memo") //맴버 메모
     private String memo;
 
-    @Column(name = "file1_idx") //첨부 파일1
-    private String file1Idx;
-
-    @Column(name = "file2_idx") //첨부 파일2
-    private String file2Idx;
-    @Column(name = "file3_idx") //첨부 파일3
-    private String file3Idx;
-
-    @Column(name = "file4_idx") //첨부 파일4
-    private String file4Idx;
-
-    @Column(name = "file5_idx") //첨부 파일5
-    private String file5Idx;
-
     @Column(name = "m_moddt") //마지막 수정 날짜
     private LocalDateTime employeeModifyDate;
 
     @Column(name = "m_regdt") //생성 날짜와 시간
     private LocalDateTime employeeRegisterDate;
+
+
+    protected WellEmployeeEntity() {} //기본생성자
 
 
 }

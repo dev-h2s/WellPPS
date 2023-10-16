@@ -1,15 +1,14 @@
-package com.wellnetworks.wellcore.java.DTO.member;
+package com.wellnetworks.wellcore.java.dto.member;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class WellEmployeeManagerGroupDTOs {
+public class WellEmployeeManagerGroupDTO {
 
     private String employeeManagerGroupKey; // 직원 관리자그룹 키
 

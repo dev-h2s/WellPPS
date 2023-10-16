@@ -1,4 +1,4 @@
-package com.wellnetworks.wellcore.java.DTO.member;
+package com.wellnetworks.wellcore.java.dto.member;
 
 
 import lombok.Getter;

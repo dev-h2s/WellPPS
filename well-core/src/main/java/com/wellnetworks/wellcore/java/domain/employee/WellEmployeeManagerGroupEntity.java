@@ -1,7 +1,7 @@
 package com.wellnetworks.wellcore.java.domain.employee;
 //직원 그룹 테이블
 
-import com.wellnetworks.wellcore.java.DTO.member.WellEmployeeManagerGroupDTO;
+import com.wellnetworks.wellcore.java.dto.member.WellEmployeeManagerGroupDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 

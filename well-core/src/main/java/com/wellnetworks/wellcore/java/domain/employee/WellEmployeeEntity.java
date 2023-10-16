@@ -1,18 +1,18 @@
 package com.wellnetworks.wellcore.java.domain.employee;
 //직원 테이블
-import com.wellnetworks.wellcore.java.DTO.member.WellEmployeeDTO;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import static jakarta.persistence.FetchType.LAZY;
+import java.util.Objects;
 
 
 @Entity
 @Getter
+@AllArgsConstructor // 모든 필드를 인자로 받는 생성자 역할
 @Table(name = "employee_tb")
 public class WellEmployeeEntity {
 
@@ -28,10 +28,10 @@ public class WellEmployeeEntity {
     private String tableID;
 
     @Column(name = "em_id") //직원의 아이디
-    private String employeeId;
+    private Integer employeeId;
 
     @Column(name = "belong") // 소속
-    private String currentEmployment;
+    private String belong;
 
     @Column(name = "name") //맴버 이름
     private String name;
@@ -51,11 +51,11 @@ public class WellEmployeeEntity {
     @Column(name = "department") //부서
     private String department;
 
-    @Column(name = "possition") //직위(대표,부장 등)
-    private String jobPosition;
+    @Column(name = "position") //직위(대표,부장 등)
+    private String position;
 
     @Column(name = "level") //!!(미정의)
-    private byte level;
+    private String level;
 
     @Column(name = "home_addr1") //도로명주소
     private String homeAddress1;
@@ -84,6 +84,9 @@ public class WellEmployeeEntity {
     @Column(name = "email_cert", columnDefinition = "bit") //이메일 인증여부
     private boolean certificationEmail;
 
+    @Column(name = "external_access_cert", columnDefinition = "bit") //이메일 인증여부
+    private boolean externalAccessCert;
+
     @Column(name = "entry_dt") //입사 일자
     private LocalDateTime entryDatetime;
 
@@ -93,20 +96,37 @@ public class WellEmployeeEntity {
     @Column(name = "retire_type") //퇴사 사유
     private String employmentQuitType;
 
+    @Column(name = "remaining_leave_days") //잔여연차
+    private float remainingLeaveDays;
+
+    @Column(name = "resident_Registration_number") //주민번호
+    private String residentRegistrationNumber;
+
     @Column(name = "db_access_power", columnDefinition = "bit")  //데이터 베이스 접근권한
     private boolean dbAccessPower;
 
     @Column(name = "memo") //맴버 메모
     private String memo;
 
-    @Column(name = "m_moddt") //마지막 수정 날짜
+    @Column(name = "em_moddt") //마지막 수정 날짜
     private LocalDateTime employeeModifyDate;
 
-    @Column(name = "m_regdt") //생성 날짜와 시간
+    @Column(name = "em_regdt") //생성 날짜와 시간
     private LocalDateTime employeeRegisterDate;
+
+    //여러 거래처 파일을 가질 수 있음
+    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
+    private List<WellEmployeeFileStorageEntity> files = new ArrayList<>();
 
 
     protected WellEmployeeEntity() {} //기본생성자
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        WellEmployeeEntity that = (WellEmployeeEntity) o;
+        return Objects.equals(employeeIdx, that.employeeIdx);
+    }
 
 }

@@ -5,6 +5,7 @@ import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
@@ -13,7 +14,7 @@ public class WellFIleStorageDTO {
     private String fileIdx;
     private String fileName;
     private String storedFileName;
-    private String fileSize;
+    private Long fileSize;
     private String fileExtension;
     private Integer fileDownCount;
     private String fileDescription;

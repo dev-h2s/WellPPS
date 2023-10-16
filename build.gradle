@@ -96,7 +96,6 @@ project (':well-webapi') {
 
 	dependencies {
 		implementation project (':well-core')
-		implementation project (':well-secure')
 		implementation 'org.springframework.boot:spring-boot-starter-security'
 		implementation 'org.springframework.session:spring-session-core'
 		testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'

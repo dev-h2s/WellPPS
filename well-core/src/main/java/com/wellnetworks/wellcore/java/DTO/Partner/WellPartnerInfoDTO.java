@@ -13,7 +13,9 @@ public class WellPartnerInfoDTO {
     private String partnerIdx;
     private String transactionStatus;
     private String fileKind;
-    private LocalDateTime subscriptionDate;
+    private LocalDateTime productRegisterDate;
+    private LocalDateTime productModifyDate;
+    private String partnerCode;
     private String partnerName;
     private String partnerType;
     private String discountCategory;
@@ -23,6 +25,8 @@ public class WellPartnerInfoDTO {
     private String partnerTelephone;
     private String writer;
     private Long partnerUpperId;
+    private Integer size;
+    private Integer page;
 
     public WellPartnerInfoDTO(WellPartnerEntity entity, List<WellFileStorageEntity> fileStorages, WellDipositEntity diposit) {
         this.partnerIdx = entity.getPartnerIdx();
@@ -34,7 +38,9 @@ public class WellPartnerInfoDTO {
             }
         }
 
-        this.subscriptionDate = entity.getSubscriptionDate();
+        this.productRegisterDate = entity.getProductRegisterDate();
+        this.productModifyDate = entity.getProductModifyDate();
+        this.partnerCode = entity.getPartnerCode();
         this.partnerName = entity.getPartnerName();
         this.partnerType = entity.getPartnerType();
         this.discountCategory = entity.getDiscountCategory();
@@ -48,6 +54,8 @@ public class WellPartnerInfoDTO {
         this.partnerTelephone = entity.getPartnerTelephone();
         this.writer = entity.getWriter();
         this.partnerUpperId = entity.getPartnerUpperId();
+        this.size = entity.getSize();
+        this.page = entity.getPage();
     }
 
 

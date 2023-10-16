@@ -115,7 +115,7 @@ public class WellEmployeeEntity {
     private LocalDateTime employeeRegisterDate;
 
     //여러 거래처 파일을 가질 수 있음
-    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "Employee", cascade = CascadeType.ALL)
     private List<WellEmployeeFileStorageEntity> files = new ArrayList<>();
 
 

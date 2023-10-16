@@ -1,7 +1,6 @@
 package com.wellnetworks.wellcore.java.domain.permission.personal;
 // 개인 dropwodn content
 import com.wellnetworks.wellcore.java.domain.charge.WellChargeHistoryEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerUserEntity;
 import com.wellnetworks.wellcore.java.domain.product.WellProductSearchEntity;
 import jakarta.persistence.*;
@@ -27,6 +26,7 @@ public class WellPersonalDropContentEntity {
     private Long perDropContentId;
 
     // 개인 dropdown의 FK로 받는 id 단방향
+
     @ManyToOne
     @JoinColumn(name = "per_drop_id", insertable = false, updatable = false)
     private WellPersonalDropDownEntity personalDropDown;

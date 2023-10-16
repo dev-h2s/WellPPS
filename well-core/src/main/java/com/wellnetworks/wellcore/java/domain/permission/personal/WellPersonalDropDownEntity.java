@@ -2,7 +2,6 @@ package com.wellnetworks.wellcore.java.domain.permission.personal;
 // 개인 dropdown
 import com.wellnetworks.wellcore.java.domain.charge.WellChargeHistoryEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerUserEntity;
 import com.wellnetworks.wellcore.java.domain.product.WellProductSearchEntity;
 import jakarta.persistence.*;

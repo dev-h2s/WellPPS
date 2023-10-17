@@ -1,70 +1,53 @@
-package com.wellnetworks.wellcore.java.domain.partner;
-// 거래처
+package com.wellnetworks.wellcore.java.domain.backup.partner;
 
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
-import com.wellnetworks.wellcore.java.domain.charge.WellChargeHistoryEntity;
-import com.wellnetworks.wellcore.java.domain.opening.WellOpeningEntity;
-import com.wellnetworks.wellcore.java.domain.product.WellProductSearchEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
+import com.wellnetworks.wellcore.java.domain.opening.WellOpeningEntity;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerUserEntity;
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
 
 import static jakarta.persistence.FetchType.LAZY;
-
-
 @Entity
-@Getter
+@Data
 @NoArgsConstructor
-public class WellPartnerEntity {
+public class WellPartnerEntityBackup {
     @Id //거래처_idx
-    @Column(name = "p_idx", columnDefinition = "uniqueidentifier")
+    @Column(name = "p_idx")
     private String partnerIdx;
 
-    @Column(name = "p_id")
-    private Long partnerIds;
-
-
-    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL) //거래처 그룹_id
+    @ManyToOne(fetch = LAZY) //거래처 그룹_id
     @JoinColumn(name = "p_group_id", insertable = false, updatable = false)
-    private WellPartnerGroupEntity partnerGroup;
+    private WellPartnerGroupEntityBackup partnerGroup;
 
-    @OneToOne(fetch = LAZY, cascade = CascadeType.ALL) //거래처_id (id를 사용하여 거래처 유저 엔티티와 1대1 연결)
-    @JoinColumn(name = "p_id", insertable = false, updatable = false)
-    private WellPartnerUserEntity partnerId;
+    @OneToOne(fetch = LAZY) //거래처_id (id를 사용하여 거래처 유저 엔티티와 1대1 연결)
+    @JoinColumn(name = "p_id")
+    private WellPartnerUserEntityBackup partnerId;
 
     // API 키와의 다대일 관계 (하나의 거래처는 하나의 API 키를 가짐)
-    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "api_key_in_id", insertable=false, updatable=false)
-    private WellApikeyInEntity apiKey;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "api_key_in_id", insertable = false, updatable = false)
+    private WellApikeyInEntityBackup apiKey;
 
     // 가상계좌 연결 1대1
     @OneToOne(mappedBy = "partner", fetch = LAZY, cascade = CascadeType.ALL)
-    private WellVirtualAccountEntity virtualAccount;
+    private WellVirtualAccountEntityBackup virtualAccount;
 
     // 개통 연결 1대다
     @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
-    private List<WellOpeningEntity> openings = new ArrayList<>();
-
-    // 요금제 조회 테이블 연결 1대 다
-    @OneToMany(mappedBy = "partner")
-    private List<WellProductSearchEntity> productSearch = new ArrayList<>();
-
-    // 충전 시도내역 테이블 연결 1대 다
-    @OneToMany(mappedBy = "partner")
-    private List<WellChargeHistoryEntity> chargeHistory = new ArrayList<>();
+    private List<WellOpeningEntityBackup> openings = new ArrayList<>();
 
     //여러 거래처 파일을 가질 수 있음
     @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
-    private List<WellPartnerFIleStorageEntity> files = new ArrayList<>();
+    private List<WellPartnerFileStorageEntityBackup> files = new ArrayList<>();
 
     @Column(name = "pcode", unique = true) //거래처코드
     private String partnerCode;
@@ -84,7 +67,7 @@ public class WellPartnerEntity {
     @Column(name = "p_upper_id") //상부점_id
     private Long partnerUpperId;
 
-    @Column(name="p_tel") //사업장전화번호
+    @Column(name = "p_tel") //사업장전화번호
     private String partnerTelephone;
 
     @Column(name = "product_regdt") //시작날짜
@@ -93,13 +76,13 @@ public class WellPartnerEntity {
     @Column(name = "product_moddt") //종료날짜
     private LocalDateTime productModifyDate;
 
-    @Column(name="sales_manager") //영업담당자
+    @Column(name = "sales_manager") //영업담당자
     private String salesManager;
 
     @Column(name = "ceo_name") //대표자명
     private String ceoName;
 
-    @Column(name="ceo_tel") //대표자전화번호
+    @Column(name = "ceo_tel") //대표자전화번호
     private String ceoTelephone;
 
     @Column(name = "reg_addr") //사업자등록증주소
@@ -144,7 +127,7 @@ public class WellPartnerEntity {
     @Column(name = "pre_approval_number") //사전승낙번호
     private String preApprovalNumber;
 
-    @Column(name="email_addr") //이메일주소
+    @Column(name = "email_addr") //이메일주소
     private String emailAddress;
 
     @Column(name = "registration_number") //사업자등록번호
@@ -159,7 +142,7 @@ public class WellPartnerEntity {
     @Column(name = "sales_team_visit_memo") //영업팀방문일지
     private String salesTeamVisitMemo;
 
-    @Column(name="commission_deposit_account") //수수료입금계좌
+    @Column(name = "commission_deposit_account") //수수료입금계좌
     private String commissionDepositAccount;
 
     @Column(name = "commission_bank_name") //수수료입금계좌은행명
@@ -188,14 +171,4 @@ public class WellPartnerEntity {
 
     @Column(name = "opening_note") //개통점신청비고
     private String openingNote;
-
-    //동일한 거래처 나타내는지 판단
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        WellPartnerEntity other = (WellPartnerEntity) obj;
-
-        return partnerIdx != null && partnerIdx.equals(other.partnerIdx);
-    }
 }

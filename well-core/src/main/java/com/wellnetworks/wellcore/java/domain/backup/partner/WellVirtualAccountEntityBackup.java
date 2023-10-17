@@ -1,8 +1,10 @@
-package com.wellnetworks.wellcore.java.domain.account;
-// 가상계좌
+package com.wellnetworks.wellcore.java.domain.backup.partner;
+
+import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellVirtualAccountFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -12,8 +14,8 @@ import java.util.List;
 import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
-@Getter
-public class WellVirtualAccountEntity {
+@Data
+public class WellVirtualAccountEntityBackup {
 
     @Id // 가상계좌_idx(pk)
     @Column(name = "v_account_idx", columnDefinition = "uniqueidentifier")
@@ -23,14 +25,14 @@ public class WellVirtualAccountEntity {
     private String partnerIdx;
 
     @OneToMany(mappedBy = "virtualAccount", fetch = LAZY, cascade = CascadeType.ALL)  //여러 가상계좌 파일을 가질 수 있음
-    private List<WellVirtualAccountFIleStorageEntity> files = new ArrayList<>();
+    private List<WellVirtualAccountFileStorageEntityBackup> files = new ArrayList<>();
 
     @OneToOne(fetch = LAZY) //거래처_idx 거래처랑 1대1
     @JoinColumn(name = "p_idx", insertable = false, updatable = false)
-    private WellPartnerEntity partner;
+    private WellPartnerEntityBackup partner;
 
     @OneToOne(mappedBy = "virtualAccount", fetch = LAZY, cascade = CascadeType.ALL) // 예치금이랑 1대1(양방향)
-    private WellDipositEntity deposit;
+    private WellDipositEntityBackup deposit;
 
     @Column(name = "reg_dt") // 작성일
     private LocalDateTime registerDate;

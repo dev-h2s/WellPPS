@@ -1,5 +1,4 @@
-package com.wellnetworks.wellcore.java.domain.partner;
-//부정가입현황
+package com.wellnetworks.wellcore.java.domain.backup.partner;
 
 import com.wellnetworks.wellcore.java.domain.file.WellFakeRegistrationFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.opening.WellOpeningEntity;
@@ -14,7 +13,7 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-public class WellFakeRegistrationEntity {
+public class WellFakeRegistrationEntityBackup {
 
     @Id //부정가입현황_id
     @Column(name = "fake_reg_id")
@@ -22,10 +21,10 @@ public class WellFakeRegistrationEntity {
 
     @OneToOne(fetch = LAZY) //개통_id
     @JoinColumn(name = "op_info_id", insertable = false, updatable = false)
-    private WellOpeningEntity openingInfo;
+    private WellOpeningEntityBackup openingInfo;
 
     @OneToMany(mappedBy = "fakeRegistration", fetch = LAZY, cascade = CascadeType.ALL)  //여러 부정가입 파일을 가질 수 있음
-    private List<WellFakeRegistrationFIleStorageEntity> files = new ArrayList<>();
+    private List<WellFakeRegistrationFileStorageEntityBackup> files = new ArrayList<>();
 
     @Column(name = "upload_date") //등록일자
     private LocalDateTime uploadDate;

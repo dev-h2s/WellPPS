@@ -1,13 +1,11 @@
-package com.wellnetworks.wellcore.java.repository.account;
+package com.wellnetworks.wellcore.java.repository.backup.partner;
 
-import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
+import com.wellnetworks.wellcore.java.domain.backup.partner.WellApikeyInEntityBackup;
 import com.wellnetworks.wellcore.java.domain.backup.partner.WellDipositEntityBackup;
-import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface WellDipositRepository extends JpaRepository<WellDipositEntity, String> {
+public interface WellDipositBackupRepository extends JpaRepository<WellDipositEntityBackup, String> {
+
     //예치금_idx 검색
     WellDipositEntityBackup findByDipositIdx(String dipositIdx);
 

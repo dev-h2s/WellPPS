@@ -1,14 +1,10 @@
-package com.wellnetworks.wellcore.java.repository.File;
+package com.wellnetworks.wellcore.java.repository.backup.partner;
 
 import com.wellnetworks.wellcore.java.domain.backup.partner.WellFileStorageEntityBackup;
-import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
+import com.wellnetworks.wellcore.java.domain.backup.partner.WellVirtualAccountFileStorageEntityBackup;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
-@Repository
-public interface WellFileStorageRepository extends JpaRepository<WellFileStorageEntity, String> {
+public interface WellFileBackupRepository extends JpaRepository<WellFileStorageEntityBackup, String> {
 
     //첨부파일_idx 검색
     WellFileStorageEntityBackup findByFileIdx(String fileIdx);

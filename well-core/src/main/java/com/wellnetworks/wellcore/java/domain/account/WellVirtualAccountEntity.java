@@ -19,14 +19,11 @@ public class WellVirtualAccountEntity {
     @Column(name = "v_account_idx", columnDefinition = "uniqueidentifier")
     private String virtualAccountIdx;
 
-    @Column(name = "p_idx")
-    private String partnerIdx;
-
     @OneToMany(mappedBy = "virtualAccount", fetch = LAZY, cascade = CascadeType.ALL)  //여러 가상계좌 파일을 가질 수 있음
     private List<WellVirtualAccountFIleStorageEntity> files = new ArrayList<>();
 
     @OneToOne(fetch = LAZY) //거래처_idx 거래처랑 1대1
-    @JoinColumn(name = "p_idx", insertable = false, updatable = false)
+    @JoinColumn(name = "p_idx", referencedColumnName = "p_idx", insertable = false, updatable = false)
     private WellPartnerEntity partner;
 
     @OneToOne(mappedBy = "virtualAccount", fetch = LAZY, cascade = CascadeType.ALL) // 예치금이랑 1대1(양방향)

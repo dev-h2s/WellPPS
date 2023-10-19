@@ -1,7 +1,10 @@
 package com.wellnetworks.wellcore.java.domain.file;
 //첨부파일
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -9,6 +12,8 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
+@AllArgsConstructor
+@Builder
 public class WellFileStorageEntity {
 
     @Id //파일_idx
@@ -61,7 +66,7 @@ public class WellFileStorageEntity {
 
     }
 
-    public WellFileStorageEntity(String idx, String fileName, String orgName, long fileSize, String fileIdx, String fileKind, int i) {
+    public WellFileStorageEntity(String fileIdx, String fileKind) {
         this.fileIdx = fileIdx;
         this.fileKind = fileKind;
     }

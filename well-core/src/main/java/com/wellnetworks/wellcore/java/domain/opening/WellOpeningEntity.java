@@ -19,11 +19,11 @@ public class WellOpeningEntity {
     private String openingInfoIdx;
 
     @ManyToOne(fetch = LAZY) //거래처_idx
-    @JoinColumn(name = "p_idx", insertable = false, updatable = false)
+    @JoinColumn(name = "p_idx", referencedColumnName = "p_idx", insertable = false, updatable = false)
     private WellPartnerEntity partner;
 
     // 부정가입현황 1대1
-    @OneToOne(mappedBy = "openingInfo", fetch = LAZY, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "openingInfo", fetch = LAZY, orphanRemoval = true)
     private WellFakeRegistrationEntity fakeRegistration;
 
     @Column(name = "op_info_id", unique = true) //개통_id

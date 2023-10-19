@@ -1,7 +1,5 @@
 package com.wellnetworks.wellcore.java.dto.Partner;
 
-import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
-import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
@@ -11,7 +9,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class WellPartnerUpdateDTO {
+public class WellPartnerCreateDTO {
     private String partnerIdx;
     private String partnerCode;
     private String partnerName;
@@ -46,9 +44,9 @@ public class WellPartnerUpdateDTO {
     private String salesTeamVisitMemo;
 //    private String commissionPolicy; 아직 안정해짐
 
-    //업데이트
+    //생성
     @Builder
-    public WellPartnerUpdateDTO(WellPartnerEntity entity, WellApikeyInEntity apikey, WellDipositEntity diposit, WellVirtualAccountEntity account, WellFileStorageEntity file) {
+    public WellPartnerCreateDTO(WellPartnerEntity entity, WellApikeyInEntity apikey, WellFileStorageEntity file) {
         this.partnerIdx = entity.getPartnerIdx();
         this.partnerCode = entity.getPartnerCode();
         this.partnerName = entity.getPartnerName();
@@ -62,14 +60,6 @@ public class WellPartnerUpdateDTO {
         this.preApprovalNumber = entity.getPreApprovalNumber();
         this.subscriptionDate = entity.getSubscriptionDate();
         this.transactionStatus = entity.getTransactionStatus();
-        if (diposit != null) {
-            this.dipositBalance = diposit.getDipositBalance();
-        }
-        if (account != null) {
-            this.virtualAccount = account.getVirtualBankName() + " " + account.getVirtualAccount();
-        }
-        this.specialPolicyOpening = entity.isSpecialPolicyOpening();
-        this.specialPolicyCharge = entity.isSpecialPolicyCharge();
         this.partnerUpperId = entity.getPartnerUpperId();
         this.ceoName = entity.getCeoName();
         this.ceoTelephone = entity.getCeoTelephone();
@@ -91,11 +81,36 @@ public class WellPartnerUpdateDTO {
         this.salesTeamVisitMemo = entity.getSalesTeamVisitMemo();
     }
 
-
     public WellPartnerEntity toEntity() {
         return WellPartnerEntity.builder()
                 .partnerIdx(partnerIdx)
+                .partnerCode(partnerCode)
+                .partnerName(partnerName)
+                .partnerType(partnerType)
+                .partnerGroup(toEntity().getPartnerGroup())
+                .discountCategory(discountCategory)
+                .salesManager(salesManager)
+                .preApprovalNumber(preApprovalNumber)
+                .subscriptionDate(subscriptionDate)
+                .transactionStatus(transactionStatus)
+                .partnerUpperId(partnerUpperId)
+                .ceoName(ceoName)
+                .ceoTelephone(ceoTelephone)
+                .partnerTelephone(partnerTelephone)
+                .emailAddress(emailAddress)
+                .commissionDepositAccount(commissionDepositAccount)
+                .commissionBankName(commissionBankName)
+                .commissionBankHolder(commissionBankHolder)
+                .registrationNumber(registrationNumber)
+                .registrationAddress(registrationAddress)
+                .registrationDetailAddress(registrationDetailAddress)
+                .locationAddress(locationAddress)
+                .locationDetailAddress(locationDetailAddress)
+                .partnerMemo(partnerMemo)
+                .salesTeamVisitDate(salesTeamVisitDate)
+                .salesTeamVisitMemo(salesTeamVisitMemo)
                 .build();
+
     }
 
     //동일한 거래처 나타내는지 판단
@@ -103,7 +118,7 @@ public class WellPartnerUpdateDTO {
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
-        WellPartnerUpdateDTO other = (WellPartnerUpdateDTO) obj;
+        WellPartnerCreateDTO other = (WellPartnerCreateDTO) obj;
 
         return partnerIdx != null && partnerIdx.equals(other.partnerIdx);
     }

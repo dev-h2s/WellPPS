@@ -1,7 +1,7 @@
 package com.wellnetworks.wellcore.java.repository.File;
 
-import com.wellnetworks.wellcore.java.domain.backup.partner.WellPartnerFileStorageEntityBackup;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
+import com.wellnetworks.wellcore.java.dto.FIle.WellPartnerFileStorageDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface WellPartnerFileRepository extends JpaRepository<WellPartnerFIleStorageEntity, String> {
@@ -14,4 +14,6 @@ public interface WellPartnerFileRepository extends JpaRepository<WellPartnerFIle
 
     //거래처파일_idx삭제(체크항목 삭제)
     WellPartnerFIleStorageEntity deleteByFileIdx(String fileIdx);
+
+    void save(WellPartnerFileStorageDTO partnerFile);
 }

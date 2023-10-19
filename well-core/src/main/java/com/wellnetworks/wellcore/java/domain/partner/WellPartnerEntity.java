@@ -4,11 +4,14 @@ package com.wellnetworks.wellcore.java.domain.partner;
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.charge.WellChargeHistoryEntity;
+import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import com.wellnetworks.wellcore.java.domain.opening.WellOpeningEntity;
 import com.wellnetworks.wellcore.java.domain.product.WellProductSearchEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,38 +23,35 @@ import java.util.Optional;
 
 import static jakarta.persistence.FetchType.LAZY;
 
-
 @Entity
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class WellPartnerEntity {
     @Id //거래처_idx
     @Column(name = "p_idx", columnDefinition = "uniqueidentifier")
     private String partnerIdx;
 
-    @Column(name = "p_id")
-    private Long partnerIds;
-
-
-    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL) //거래처 그룹_id
+    @ManyToOne(fetch = LAZY) //거래처 그룹_id
     @JoinColumn(name = "p_group_id", insertable = false, updatable = false)
     private WellPartnerGroupEntity partnerGroup;
 
-    @OneToOne(fetch = LAZY, cascade = CascadeType.ALL) //거래처_id (id를 사용하여 거래처 유저 엔티티와 1대1 연결)
+    @OneToOne(fetch = LAZY) //거래처_id (id를 사용하여 거래처 유저 엔티티와 1대1 연결)
     @JoinColumn(name = "p_id", insertable = false, updatable = false)
     private WellPartnerUserEntity partnerId;
 
     // API 키와의 다대일 관계 (하나의 거래처는 하나의 API 키를 가짐)
-    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "api_key_in_id", insertable=false, updatable=false)
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "api_key_in_idx", insertable=false, updatable=false)
     private WellApikeyInEntity apiKey;
 
     // 가상계좌 연결 1대1
-    @OneToOne(mappedBy = "partner", fetch = LAZY, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "partner", fetch = LAZY)
     private WellVirtualAccountEntity virtualAccount;
 
     // 개통 연결 1대다
-    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "partner")
     private List<WellOpeningEntity> openings = new ArrayList<>();
 
     // 요금제 조회 테이블 연결 1대 다
@@ -63,14 +63,11 @@ public class WellPartnerEntity {
     private List<WellChargeHistoryEntity> chargeHistory = new ArrayList<>();
 
     //여러 거래처 파일을 가질 수 있음
-    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "partner")
     private List<WellPartnerFIleStorageEntity> files = new ArrayList<>();
 
     @Column(name = "pcode", unique = true) //거래처코드
     private String partnerCode;
-
-    @Column(name = "tbl_id", nullable = false) //테이블코드
-    private String tableID;
 
     @Column(name = "p_name", nullable = false) //거래처명
     private String partnerName;
@@ -188,6 +185,7 @@ public class WellPartnerEntity {
 
     @Column(name = "opening_note") //개통점신청비고
     private String openingNote;
+
 
     //동일한 거래처 나타내는지 판단
     @Override

@@ -24,36 +24,29 @@ public class WellPartnerEntityBackup {
     @Column(name = "p_idx")
     private String partnerIdx;
 
-    @ManyToOne(fetch = LAZY) //거래처 그룹_id
-    @JoinColumn(name = "p_group_id", insertable = false, updatable = false)
-    private WellPartnerGroupEntityBackup partnerGroup;
+    @Column(name = "p_id")
+    private Long partnerId;
 
-    @OneToOne(fetch = LAZY) //거래처_id (id를 사용하여 거래처 유저 엔티티와 1대1 연결)
-    @JoinColumn(name = "p_id")
-    private WellPartnerUserEntityBackup partnerId;
+    @Column(name = "p_group_id")
+    private Long partnerGroupId;
 
-    // API 키와의 다대일 관계 (하나의 거래처는 하나의 API 키를 가짐)
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "api_key_in_id", insertable = false, updatable = false)
-    private WellApikeyInEntityBackup apiKey;
+    @Column(name = "api_key_in_idx")
+    private String apiKeyInIdx;
 
     // 가상계좌 연결 1대1
-    @OneToOne(mappedBy = "partner", fetch = LAZY, cascade = CascadeType.ALL)
-    private WellVirtualAccountEntityBackup virtualAccount;
+    @Column(name = "v_account_idx")
+    private String virtualAccountIdx;
 
     // 개통 연결 1대다
-    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
-    private List<WellOpeningEntityBackup> openings = new ArrayList<>();
+    @Column(name = "op_info_idx")
+    private String openingInfoIdx;
 
     //여러 거래처 파일을 가질 수 있음
-    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
-    private List<WellPartnerFileStorageEntityBackup> files = new ArrayList<>();
+    @Column(name = "file_idx")
+    private String fileIdx;
 
     @Column(name = "pcode", unique = true) //거래처코드
     private String partnerCode;
-
-    @Column(name = "tbl_id", nullable = false) //테이블코드
-    private String tableID;
 
     @Column(name = "p_name", nullable = false) //거래처명
     private String partnerName;

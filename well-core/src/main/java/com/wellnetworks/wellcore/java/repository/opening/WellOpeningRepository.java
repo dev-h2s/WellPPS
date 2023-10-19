@@ -1,9 +1,10 @@
 package com.wellnetworks.wellcore.java.repository.opening;
 
-import com.wellnetworks.wellcore.java.domain.backup.partner.WellOpeningEntityBackup;
 import com.wellnetworks.wellcore.java.domain.opening.WellOpeningEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface WellOpeningRepository extends JpaRepository<WellOpeningEntity, String> {
 
     //개통_idx 검색

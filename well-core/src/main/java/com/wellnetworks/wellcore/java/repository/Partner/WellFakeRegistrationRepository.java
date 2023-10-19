@@ -1,6 +1,5 @@
 package com.wellnetworks.wellcore.java.repository.Partner;
 
-import com.wellnetworks.wellcore.java.domain.backup.partner.WellFakeRegistrationEntityBackup;
 import com.wellnetworks.wellcore.java.domain.partner.WellFakeRegistrationEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 

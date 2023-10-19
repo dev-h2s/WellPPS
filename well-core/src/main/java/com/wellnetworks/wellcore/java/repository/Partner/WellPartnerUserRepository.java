@@ -1,6 +1,5 @@
 package com.wellnetworks.wellcore.java.repository.Partner;
 
-import com.wellnetworks.wellcore.java.domain.backup.partner.WellPartnerUserEntityBackup;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerUserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 

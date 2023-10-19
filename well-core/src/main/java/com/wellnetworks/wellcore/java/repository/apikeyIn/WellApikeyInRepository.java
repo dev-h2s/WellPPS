@@ -1,7 +1,6 @@
 package com.wellnetworks.wellcore.java.repository.apikeyIn;
 
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
-import com.wellnetworks.wellcore.java.domain.backup.partner.WellApikeyInEntityBackup;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface WellApikeyInRepository extends JpaRepository<WellApikeyInEntity, String> {

@@ -1,6 +1,5 @@
 package com.wellnetworks.wellcore.java.repository.File;
 
-import com.wellnetworks.wellcore.java.domain.backup.partner.WellVirtualAccountFileStorageEntityBackup;
 import com.wellnetworks.wellcore.java.domain.file.WellVirtualAccountFIleStorageEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 

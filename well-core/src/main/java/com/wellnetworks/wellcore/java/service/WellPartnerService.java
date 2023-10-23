@@ -8,8 +8,10 @@ import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.opening.WellOpeningEntity;
 import com.wellnetworks.wellcore.java.domain.partner.*;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
+import com.wellnetworks.wellcore.java.dto.PartnerGroup.WellPartnerGroupCreateDTO;
 import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
 import com.wellnetworks.wellcore.java.repository.File.WellPartnerFileRepository;
 import com.wellnetworks.wellcore.java.repository.File.WellVirtualAccountFileRepository;
@@ -29,6 +31,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.Console;
 import java.lang.reflect.Member;
@@ -37,6 +40,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import static com.wellnetworks.wellcore.java.domain.partner.QWellPartnerEntity.wellPartnerEntity;
@@ -45,12 +49,25 @@ import static com.wellnetworks.wellcore.java.domain.partner.QWellPartnerEntity.w
 public class WellPartnerService {
 
     @Autowired private WellPartnerRepository wellPartnerRepository;
-
     @Autowired private WellPartnerBackupRepository wellPartnerBackupRepository;
-
+    @Autowired private WellPartnerGroupRepository wellPartnerGroupRepository;
 
     @PersistenceContext
     private EntityManager em;
+
+
+
+
+    //거래처 리스트 조회
+    public List<WellPartnerGroupEntity> getAllGroups() {
+        return wellPartnerGroupRepository.findAll();
+    }
+
+
+
+
+
+
 
     // 거래처 1개 조회
     public Optional<WellPartnerInfoDTO> getPartnerByPartnerIdx(String partnerIdx) {
@@ -92,13 +109,66 @@ public class WellPartnerService {
         return partnerInfoList;
     }
 
-    //거래처 생성
-//    @Transactional
-//    public Long save(final BoardRequestDto params) {
-//        WellPartnerEntity entity = wellPartnerRepository.save(params.toEntity());
-//        return entity.getPartnerIdx();
-//    }
 
+
+
+    //거래처 생성
+
+    //p_code 랜덤 값
+    public String generateUniquePartnerCode() {
+        String partnerCode = null;
+        boolean isUnique = false;
+        while (!isUnique) {
+            Random random = new Random();
+            int randomNumber = 100000 + random.nextInt(900000); // 6자리 숫자 생성
+            partnerCode = "pa-" + randomNumber;
+            // 중복 확인
+            WellPartnerEntity existingPartner = wellPartnerRepository.findByPartnerCode(partnerCode);
+            // 중복되지 않으면 반복 중지
+            if (existingPartner == null) {
+                isUnique = true;
+            }
+        }
+        return partnerCode;
+    }
+
+    @Transactional
+    public void join(WellPartnerCreateDTO createDTO) {
+        // 1. 거래처 그룹 정보 가져오기
+        WellPartnerGroupEntity partnerGroup = wellPartnerGroupRepository.findByPartnerGroupId(createDTO.getPartnerGroupId());
+
+        // 로깅 1: 거래처 그룹을 찾을 때 반환된 값을 로깅
+        if (partnerGroup != null) {
+            System.out.println("Found partnerGroup: " + partnerGroup.getPartnerGroupId());
+            System.out.println("Found partnerGroup: " + (partnerGroup != null));
+
+        }
+
+        // 로깅 2: 입력된 partnerGroupId 로깅
+        System.out.println("Input createDTO: " + createDTO.getPartnerGroupId());
+
+        // 3. 입력된 partnerGroupId와 거래처 그룹의 partnerGroupId를 로깅
+        if (partnerGroup != null && !partnerGroup.getPartnerGroupId().equals(createDTO.getPartnerGroupId())) {
+            System.out.println("Mismatch between partnerGroupId and createDTO partnerGroupId.");
+        }
+
+        if (partnerGroup == null) {
+            throw new RuntimeException("해당 거래처 그룹을 찾을 수 없습니다.");
+        }
+
+        // 거래처 Entity 생성
+        WellPartnerEntity partner = WellPartnerEntity.builder()
+                .partnerCode(generateUniquePartnerCode())
+                .partnerName(createDTO.getPartnerName())
+                .partnerType(createDTO.getPartnerType())
+                .specialPolicyCharge(createDTO.isSpecialPolicyCharge())
+                .specialPolicyOpening(createDTO.isSpecialPolicyOpening())
+                .partnerGroup(new WellPartnerGroupEntity(partnerGroup.getPartnerGroupId())) // 거래처 그룹 설정
+                .build();
+
+        // 거래처 저장
+        wellPartnerRepository.save(partner);
+    }
 
 
 

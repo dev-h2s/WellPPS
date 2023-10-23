@@ -1,8 +1,13 @@
 package com.wellnetworks.wellcore.java.domain.account;
 //예치금
 
+import com.wellnetworks.wellcore.java.dto.Diposit.WellDipositCreateDTO;
+import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountCreateDTO;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -10,6 +15,9 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class WellDipositEntity {
 
         @Id //    예치금_idx
@@ -55,6 +63,5 @@ public class WellDipositEntity {
 
         @Column(name = "writer") //작성자
         private String writer;
-
 
 }

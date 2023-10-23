@@ -4,21 +4,21 @@ package com.wellnetworks.wellcore.java.domain.partner;
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.charge.WellChargeHistoryEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import com.wellnetworks.wellcore.java.domain.opening.WellOpeningEntity;
 import com.wellnetworks.wellcore.java.domain.product.WellProductSearchEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 
 import static jakarta.persistence.FetchType.LAZY;
@@ -26,15 +26,15 @@ import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class WellPartnerEntity {
     @Id //거래처_idx
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "p_idx", columnDefinition = "uniqueidentifier")
-    private String partnerIdx;
+    private UUID partnerIdx;
 
     @ManyToOne(fetch = LAZY) //거래처 그룹_id
-    @JoinColumn(name = "p_group_id", insertable = false, updatable = false)
+    @JoinColumn(insertable = false, updatable = false)
     private WellPartnerGroupEntity partnerGroup;
 
     @OneToOne(fetch = LAZY) //거래처_id (id를 사용하여 거래처 유저 엔티티와 1대1 연결)
@@ -186,6 +186,16 @@ public class WellPartnerEntity {
     @Column(name = "opening_note") //개통점신청비고
     private String openingNote;
 
+    @Builder
+    public WellPartnerEntity(String partnerCode, String partnerName, String partnerType, boolean specialPolicyOpening, boolean specialPolicyCharge
+                            , WellPartnerGroupEntity partnerGroup) {
+        this.partnerCode = partnerCode;
+        this.partnerName = partnerName;
+        this.partnerType = partnerType;
+        this.specialPolicyCharge = specialPolicyCharge;
+        this.specialPolicyOpening = specialPolicyOpening;
+        this.partnerGroup = partnerGroup;
+    }
 
     //동일한 거래처 나타내는지 판단
     @Override

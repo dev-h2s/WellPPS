@@ -2,7 +2,10 @@ package com.wellnetworks.wellcore.java.domain.partner;
 // 거래처 유저
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -10,6 +13,9 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class WellPartnerUserEntity {
 
     @Id //거래처_id

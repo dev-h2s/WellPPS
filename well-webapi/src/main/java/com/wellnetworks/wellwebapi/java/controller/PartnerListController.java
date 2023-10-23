@@ -1,17 +1,11 @@
 package com.wellnetworks.wellwebapi.java.controller;
 // 거래처 리스트 컨트롤러
 
-import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
-import com.wellnetworks.wellcore.java.dto.FIle.WellFIleStorageDTO;
-import com.wellnetworks.wellcore.java.dto.FIle.WellPartnerFileStorageDTO;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
-import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
-import com.wellnetworks.wellcore.java.repository.File.WellPartnerFileRepository;
-import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyInRepository;
+import com.wellnetworks.wellcore.java.dto.PartnerGroup.WellPartnerGroupCreateDTO;
 import com.wellnetworks.wellcore.java.service.WellPartnerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +13,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
-import static org.springframework.http.HttpStatus.CREATED;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(("/admin/hr/"))
@@ -43,7 +35,6 @@ public class PartnerListController {
         if (partnerInfoDTO == null) {
             throw new ClassNotFoundException(String.format("IDX[%s] not found", partnerIdx));
         }
-
         return partnerInfoDTO;
     }
 
@@ -71,15 +62,12 @@ public class PartnerListController {
     }
 
     //거래처 입력
-//    @PostMapping("/business/create")
-//    public String createPartner(@Valid @ModelAttribute WellPartnerUpdateDTO updateDTO, BindingResult bindingResult) throws Exception {
-//        if (bindingResult.hasErrors()) {
-//            return "/business";
-//        } else {
-//                wellPartnerService.join(updateDTO);
-//        }
-//        return "redirect:login";
-//    }
+    @PostMapping("partners/create")
+    public ResponseEntity<String> createPartner(@RequestBody WellPartnerCreateDTO createDTO) {
+        wellPartnerService.join(createDTO); // 거래처 그룹 ID를 함께 전달
+        return ResponseEntity.status(HttpStatus.CREATED).body("거래처가 성공적으로 생성되었습니다.");
+    }
+
 
 
 
@@ -100,6 +88,29 @@ public class PartnerListController {
             // 삭제 성공한 경우 204 No Content를 반환
             return ResponseEntity.noContent().build();
         }
+    }
+
+
+    //거래처 그룹
+    @GetMapping("group")
+    public ResponseEntity<List<WellPartnerGroupCreateDTO>> getAllGroups() {
+        List<WellPartnerGroupEntity> groupEntities = wellPartnerService.getAllGroups();
+
+        // 엔티티를 DTO로 변환
+        List<WellPartnerGroupCreateDTO> groupDTOs = groupEntities.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(groupDTOs);
+    }
+
+    // 엔티티를 DTO로 변환하는 메서드
+    private WellPartnerGroupCreateDTO convertToDTO(WellPartnerGroupEntity entity) {
+        WellPartnerGroupCreateDTO dto = new WellPartnerGroupCreateDTO();
+        dto.setPartnerGroupId(entity.getPartnerGroupId());
+        // 나머지 필드에 대한 매핑
+
+        return dto;
     }
 
 }

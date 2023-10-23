@@ -3,7 +3,10 @@ package com.wellnetworks.wellcore.java.domain.account;
 import com.wellnetworks.wellcore.java.domain.file.WellVirtualAccountFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,6 +16,9 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class WellVirtualAccountEntity {
 
     @Id // 가상계좌_idx(pk)

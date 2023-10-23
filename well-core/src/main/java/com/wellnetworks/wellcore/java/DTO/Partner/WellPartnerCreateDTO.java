@@ -1,126 +1,47 @@
 package com.wellnetworks.wellcore.java.dto.Partner;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerUserEntity;
+import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApikeyInCreateDTO;
+import com.wellnetworks.wellcore.java.dto.Diposit.WellDipositCreateDTO;
+import com.wellnetworks.wellcore.java.dto.FIle.WellFIleCreateDTO;
+import com.wellnetworks.wellcore.java.dto.FIle.WellPartnerFileCreateDTO;
+import com.wellnetworks.wellcore.java.dto.PartnerUser.WellPartnerUserCreateDTO;
+import com.wellnetworks.wellcore.java.dto.PartnerGroup.WellPartnerGroupCreateDTO;
+import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountCreateDTO;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class WellPartnerCreateDTO {
-    private String partnerIdx;
-    private String partnerCode;
+    @JsonProperty("p_code")
+    private String parterCode;
+    @JsonProperty("p_name")
     private String partnerName;
+    @JsonProperty("p_type")
     private String partnerType;
-    private String partnerGroup;
-    private String discountCategory;
-    private String salesManager;
-    private String apiKey;
-    private String preApprovalNumber;
-    private LocalDateTime subscriptionDate;
-    private String transactionStatus;
-    private Integer dipositBalance;
-    private String virtualAccount;
+    @JsonProperty("special_policy_opening")
     private boolean specialPolicyOpening;
+    @JsonProperty("special_policy_charge")
     private boolean specialPolicyCharge;
-    private Long partnerUpperId;
-    private String ceoName;
-    private String ceoTelephone;
-    private String partnerTelephone;
-    private String emailAddress;
-    private String commissionDepositAccount;
-    private String commissionBankName;
-    private String commissionBankHolder;
-    private String registrationNumber;
-    private String registrationAddress;
-    private String registrationDetailAddress;
-    private String locationAddress;
-    private String locationDetailAddress;
-    private String files;
-    private String partnerMemo;
-    private LocalDateTime salesTeamVisitDate;
-    private String salesTeamVisitMemo;
-//    private String commissionPolicy; 아직 안정해짐
 
-    //생성
-    @Builder
-    public WellPartnerCreateDTO(WellPartnerEntity entity, WellApikeyInEntity apikey, WellFileStorageEntity file) {
-        this.partnerIdx = entity.getPartnerIdx();
-        this.partnerCode = entity.getPartnerCode();
-        this.partnerName = entity.getPartnerName();
-        this.partnerType = entity.getPartnerType();
-        this.partnerGroup = entity.getPartnerGroup().toString();
-        this.discountCategory = entity.getDiscountCategory();
-        this.salesManager = entity.getSalesManager();
-        if (apikey != null) {
-            this.apiKey = apikey.getApiKeyIn();
-        }
-        this.preApprovalNumber = entity.getPreApprovalNumber();
-        this.subscriptionDate = entity.getSubscriptionDate();
-        this.transactionStatus = entity.getTransactionStatus();
-        this.partnerUpperId = entity.getPartnerUpperId();
-        this.ceoName = entity.getCeoName();
-        this.ceoTelephone = entity.getCeoTelephone();
-        this.partnerTelephone = entity.getPartnerTelephone();
-        this.emailAddress = entity.getEmailAddress();
-        this.commissionDepositAccount = entity.getCommissionDepositAccount();
-        this.commissionBankName = entity.getCommissionBankName();
-        this.commissionBankHolder = entity.getCommissionBankHolder();
-        this.registrationNumber = entity.getRegistrationNumber();
-        this.registrationAddress = entity.getRegistrationAddress();
-        this.registrationDetailAddress = entity.getRegistrationDetailAddress();
-        this.locationAddress = entity.getLocationAddress();
-        this.locationDetailAddress = entity.getLocationDetailAddress();
-        if (file != null) {
-            this.files = file.getFileKind();
-        }
-        this.partnerMemo = entity.getPartnerMemo();
-        this.salesTeamVisitDate = entity.getSalesTeamVisitDate();
-        this.salesTeamVisitMemo = entity.getSalesTeamVisitMemo();
-    }
-
-    public WellPartnerEntity toEntity() {
-        return WellPartnerEntity.builder()
-                .partnerIdx(partnerIdx)
-                .partnerCode(partnerCode)
-                .partnerName(partnerName)
-                .partnerType(partnerType)
-                .partnerGroup(toEntity().getPartnerGroup())
-                .discountCategory(discountCategory)
-                .salesManager(salesManager)
-                .preApprovalNumber(preApprovalNumber)
-                .subscriptionDate(subscriptionDate)
-                .transactionStatus(transactionStatus)
-                .partnerUpperId(partnerUpperId)
-                .ceoName(ceoName)
-                .ceoTelephone(ceoTelephone)
-                .partnerTelephone(partnerTelephone)
-                .emailAddress(emailAddress)
-                .commissionDepositAccount(commissionDepositAccount)
-                .commissionBankName(commissionBankName)
-                .commissionBankHolder(commissionBankHolder)
-                .registrationNumber(registrationNumber)
-                .registrationAddress(registrationAddress)
-                .registrationDetailAddress(registrationDetailAddress)
-                .locationAddress(locationAddress)
-                .locationDetailAddress(locationDetailAddress)
-                .partnerMemo(partnerMemo)
-                .salesTeamVisitDate(salesTeamVisitDate)
-                .salesTeamVisitMemo(salesTeamVisitMemo)
-                .build();
-
-    }
-
-    //동일한 거래처 나타내는지 판단
-      @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        WellPartnerCreateDTO other = (WellPartnerCreateDTO) obj;
-
-        return partnerIdx != null && partnerIdx.equals(other.partnerIdx);
-    }
+    @JsonProperty("p_group_id")
+    private Long partnerGroupId; // 거래처 그룹 정보 추가
 }
 

@@ -18,6 +18,8 @@ public interface WellPartnerRepository extends JpaRepository<WellPartnerEntity, 
     //페이지 네이션으로 모든 거래처 엔티티 검색
     Page<WellPartnerEntity> findAll(Pageable pageable);
 
+    WellPartnerEntity findByPartnerCode(String partnerCode);
+
     //거래처 거래유무 개수
     Long countByTransactionStatusAndPartnerIdx(String transactionStatus, String partnerIdx);
 

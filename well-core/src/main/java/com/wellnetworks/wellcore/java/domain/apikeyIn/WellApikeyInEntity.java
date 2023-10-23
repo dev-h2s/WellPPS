@@ -4,7 +4,10 @@ package com.wellnetworks.wellcore.java.domain.apikeyIn;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.domain.product.WellProductSearchEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,6 +17,9 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class WellApikeyInEntity {
 
     @Id //APIKEY_idx

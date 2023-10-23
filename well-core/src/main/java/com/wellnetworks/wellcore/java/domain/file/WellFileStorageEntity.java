@@ -12,6 +12,7 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class WellFileStorageEntity {
@@ -61,15 +62,5 @@ public class WellFileStorageEntity {
 
     @Column(name = "file_kind") //파일종류
     private String fileKind;
-
-    protected WellFileStorageEntity() {
-
-    }
-
-    public WellFileStorageEntity(String fileIdx, String fileKind) {
-        this.fileIdx = fileIdx;
-        this.fileKind = fileKind;
-    }
-
 
 }

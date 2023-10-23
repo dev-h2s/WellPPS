@@ -1,7 +1,7 @@
 package com.wellnetworks.wellcore.java.repository.File;
 
 import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
-import com.wellnetworks.wellcore.java.dto.FIle.WellFIleStorageDTO;
+import com.wellnetworks.wellcore.java.dto.FIle.WellFIleCreateDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,5 +17,5 @@ public interface WellFileStorageRepository extends JpaRepository<WellFileStorage
     //첨부파일_idx삭제(체크항목 삭제)
     WellFileStorageRepository deleteByFileIdx(String fileIdx);
 
-    WellFIleStorageDTO save(WellFIleStorageDTO fileStorage);
+    WellFIleCreateDTO save(WellFIleCreateDTO fileStorage);
 }

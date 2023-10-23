@@ -2,14 +2,21 @@ package com.wellnetworks.wellcore.java.domain.partner;
 // 거래처 관리자 그룹
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class WellPartnerPermissionGroupEntity {
 
     @Id //그룹별권한
@@ -29,8 +36,8 @@ public class WellPartnerPermissionGroupEntity {
     private String partnerManagerGroupDescription;
 
     @Column(name = "pm_moddt") //권한채택일
-    private ZonedDateTime partnerManagerGroupModifyDate;
+    private LocalDateTime partnerManagerGroupModifyDate;
 
     @Column(name = "pm_regdt") //권한수정일
-    private ZonedDateTime partnerManagerGroupRegisterDate;
+    private LocalDateTime partnerManagerGroupRegisterDate;
 }

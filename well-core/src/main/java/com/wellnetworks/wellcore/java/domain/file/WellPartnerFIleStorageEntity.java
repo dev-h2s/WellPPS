@@ -2,12 +2,18 @@ package com.wellnetworks.wellcore.java.domain.file;
 //거래처 파일
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class WellPartnerFIleStorageEntity {
     @Id //파일_idx
     @Column(name = "file_idx")
@@ -23,11 +29,4 @@ public class WellPartnerFIleStorageEntity {
     @OneToOne(fetch = LAZY, cascade = CascadeType.ALL) // 거래처 파일과 첨부파일 간의 연결
     @JoinColumn(name = "file_idx", insertable = false, updatable = false)
     private WellFileStorageEntity file;
-
-    protected WellPartnerFIleStorageEntity() {}
-
-    public WellPartnerFIleStorageEntity(WellFileStorageEntity file, WellPartnerEntity partner) {
-        this.fileIdx = file.getFileIdx();
-        this.partnerIdx = partner.getPartnerIdx();
-    }
 }

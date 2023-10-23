@@ -34,7 +34,7 @@ public class WellPartnerEntity {
     private UUID partnerIdx;
 
     @ManyToOne(fetch = LAZY) //거래처 그룹_id
-    @JoinColumn(insertable = false, updatable = false)
+    @JoinColumn(insertable = true, updatable = true)
     private WellPartnerGroupEntity partnerGroup;
 
     @OneToOne(fetch = LAZY) //거래처_id (id를 사용하여 거래처 유저 엔티티와 1대1 연결)
@@ -188,13 +188,18 @@ public class WellPartnerEntity {
 
     @Builder
     public WellPartnerEntity(String partnerCode, String partnerName, String partnerType, boolean specialPolicyOpening, boolean specialPolicyCharge
-                            , WellPartnerGroupEntity partnerGroup) {
+                            , WellPartnerGroupEntity partnerGroup, String discountCategory, String salesManager) {
         this.partnerCode = partnerCode;
         this.partnerName = partnerName;
         this.partnerType = partnerType;
         this.specialPolicyCharge = specialPolicyCharge;
         this.specialPolicyOpening = specialPolicyOpening;
         this.partnerGroup = partnerGroup;
+        if (partnerGroup != null) {
+            this.partnerGroup = partnerGroup;
+        }
+        this.discountCategory = discountCategory;
+        this.salesManager = salesManager;
     }
 
     //동일한 거래처 나타내는지 판단

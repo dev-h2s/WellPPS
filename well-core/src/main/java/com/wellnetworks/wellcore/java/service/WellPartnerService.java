@@ -12,7 +12,7 @@ import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
 import com.wellnetworks.wellcore.java.dto.PartnerGroup.WellPartnerGroupCreateDTO;
-import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
+//import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
 import com.wellnetworks.wellcore.java.repository.File.WellPartnerFileRepository;
 import com.wellnetworks.wellcore.java.repository.File.WellVirtualAccountFileRepository;
 import com.wellnetworks.wellcore.java.repository.Partner.*;
@@ -163,7 +163,9 @@ public class WellPartnerService {
                 .partnerType(createDTO.getPartnerType())
                 .specialPolicyCharge(createDTO.isSpecialPolicyCharge())
                 .specialPolicyOpening(createDTO.isSpecialPolicyOpening())
-                .partnerGroup(new WellPartnerGroupEntity(partnerGroup.getPartnerGroupId())) // 거래처 그룹 설정
+                .partnerGroup(partnerGroup) // 거래처 그룹 설정
+                .discountCategory(createDTO.getDiscountCategory())
+                .salesManager(createDTO.getSalesManager())
                 .build();
 
         // 거래처 저장

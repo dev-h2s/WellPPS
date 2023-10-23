@@ -7,10 +7,11 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 public class WellPartnerInfoDTO {
-    private String partnerIdx;
+    private UUID partnerIdx;
     private String transactionStatus;
     private String fileKind;
     private LocalDateTime productRegisterDate;

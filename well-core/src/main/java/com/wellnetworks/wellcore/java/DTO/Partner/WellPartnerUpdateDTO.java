@@ -49,7 +49,6 @@ public class WellPartnerUpdateDTO {
     //업데이트
     @Builder
     public WellPartnerUpdateDTO(WellPartnerEntity entity, WellApikeyInEntity apikey, WellDipositEntity diposit, WellVirtualAccountEntity account, WellFileStorageEntity file) {
-        this.partnerIdx = entity.getPartnerIdx();
         this.partnerCode = entity.getPartnerCode();
         this.partnerName = entity.getPartnerName();
         this.partnerType = entity.getPartnerType();
@@ -92,11 +91,6 @@ public class WellPartnerUpdateDTO {
     }
 
 
-    public WellPartnerEntity toEntity() {
-        return WellPartnerEntity.builder()
-                .partnerIdx(partnerIdx)
-                .build();
-    }
 
     //동일한 거래처 나타내는지 판단
       @Override

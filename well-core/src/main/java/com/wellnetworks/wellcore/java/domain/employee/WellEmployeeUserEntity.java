@@ -33,7 +33,7 @@ public class WellEmployeeUserEntity implements UserDetailsService {
     @JsonIgnore //순환참조 문제 방지
     @ManyToOne(fetch = LAZY) //양방향 일때 유저의 맴버 그룹_id 연결
     @JoinColumn(name = "em_gkey")
-    private WellEmployeeManagerGroupEntity emGroup;
+    private WellEmployeeManagerGroupEntity employeeManagerGroupKey;
 
     @Column(name = "m_identification") //로그인시 아이디
     private String employeeIdentification;
@@ -51,7 +51,7 @@ public class WellEmployeeUserEntity implements UserDetailsService {
     private LocalDateTime tmpPwdExpiration;
 
     @Column(name = "tmp_pwd_count") //임시비밀번호 사용횟수
-    private int tmpPwdCount;
+    private Integer tmpPwdCount;
 
     @Column(name = "tmp_pwd_dt") //임시비밀번호 생성일자
     private LocalDateTime tmpPwdDate;

@@ -18,7 +18,7 @@ public class WellEmployeeFileStorageEntity {
 
     @ManyToOne(fetch = LAZY) //사원_idx
     @JoinColumn(name = "em_idx", insertable = false, updatable = false)
-    private WellEmployeeEntity Employee;
+    private WellEmployeeEntity employee;
 
     @OneToOne(fetch = LAZY) // 사원파일과 첨부파일 간의 연결
     @JoinColumn(name = "file_idx", insertable = false, updatable = false)

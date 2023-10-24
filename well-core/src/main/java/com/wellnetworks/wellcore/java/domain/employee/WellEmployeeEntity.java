@@ -2,42 +2,46 @@ package com.wellnetworks.wellcore.java.domain.employee;
 //직원 테이블
 import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 
 @Entity
 @Getter
-@AllArgsConstructor // 모든 필드를 인자로 받는 생성자 역할
+@NoArgsConstructor
 @Table(name = "employee_tb")
 public class WellEmployeeEntity {
 
-    @Id //직원_idx
-    @Column(name = "em_idx", columnDefinition = "uniqueidentifier") //맴버 고유 식별자 idx
+    @Id
+    @Column(name= "em_idx")
     private String employeeIdx;
 
-    @OneToOne(mappedBy = "employeeUser", cascade = CascadeType.ALL)
-    private WellEmployeeUserEntity emUser;
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "em_idx", insertable = false, updatable = false)
+    private WellEmployeeUserEntity employeeUser;
 
-    //!! ??뭐지
-    @Column(name = "tbl_id")
-    private String tableID;
+    //여러 사원 관련 파일을 가질 수 있음
+    @OneToMany(mappedBy = "employee")
+    private List<WellEmployeeFileStorageEntity> files = new ArrayList<>();
 
     @Column(name = "em_id") //직원의 아이디
     private Integer employeeId;
 
-    @Column(name = "belong") // 소속
+    @Column(name = "belong") // 소속회사
     private String belong;
 
-    @Column(name = "name") //맴버 이름
+    @Column(name = "name") //사원 이름
     private String name;
 
-    @Column(name = "e_mail") //맴버 이메일
-    private String eMail;
+    @Column(name = "e_mail") //사원 이메일
+    private String email;
 
     @Column(name = "tel_private") // 개인 전화번호
     private String telPrivate;
@@ -48,8 +52,8 @@ public class WellEmployeeEntity {
     @Column(name = "reg_num") //사원 등록번호
     private String registrationNumber;
 
-    @Column(name = "department") //부서
-    private String department;
+//    @Column(name = "department") //부서
+//    private String department;
 
     @Column(name = "position") //직위(대표,부장 등)
     private String position;
@@ -75,17 +79,17 @@ public class WellEmployeeEntity {
     @Column(name = "emp_state") //재직 상태(재직,퇴사 등)
     private String employmentState;
 
-    @Column(name = "emp_type") //직원 유형(정규직, 비정규직 등)
+    @Column(name = "emp_type") //고용형태 유형(정규직, 비정규직 등)
     private String jobType;
 
     @Column(name = "tel_cert", columnDefinition = "bit") //전화번호 인증여부
-    private boolean certificationtel;
+    private Boolean certificationtel;
 
     @Column(name = "email_cert", columnDefinition = "bit") //이메일 인증여부
-    private boolean certificationEmail;
+    private Boolean certificationEmail;
 
-    @Column(name = "external_access_cert", columnDefinition = "bit") //이메일 인증여부
-    private boolean externalAccessCert;
+    @Column(name = "external_access_cert", columnDefinition = "bit") //외부 접속여부
+    private Boolean externalAccessCert;
 
     @Column(name = "entry_dt") //입사 일자
     private LocalDateTime entryDatetime;
@@ -97,15 +101,15 @@ public class WellEmployeeEntity {
     private String employmentQuitType;
 
     @Column(name = "remaining_leave_days") //잔여연차
-    private float remainingLeaveDays;
+    private Float remainingLeaveDays;
 
     @Column(name = "resident_Registration_number") //주민번호
     private String residentRegistrationNumber;
 
     @Column(name = "db_access_power", columnDefinition = "bit")  //데이터 베이스 접근권한
-    private boolean dbAccessPower;
+    private Boolean dbAccessPower;
 
-    @Column(name = "memo") //맴버 메모
+    @Column(name = "memo") //사원 메모
     private String memo;
 
     @Column(name = "em_moddt") //마지막 수정 날짜
@@ -114,12 +118,7 @@ public class WellEmployeeEntity {
     @Column(name = "em_regdt") //생성 날짜와 시간
     private LocalDateTime employeeRegisterDate;
 
-    //여러 거래처 파일을 가질 수 있음
-    @OneToMany(mappedBy = "Employee", cascade = CascadeType.ALL)
-    private List<WellEmployeeFileStorageEntity> files = new ArrayList<>();
 
-
-    protected WellEmployeeEntity() {} //기본생성자
 
     @Override
     public boolean equals(Object o) {

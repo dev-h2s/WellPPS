@@ -18,7 +18,7 @@ public class WellEmployeeUserDTO {
     private String permissions;
     private String tmpPwd;
     private LocalDateTime tmpPwdExpiration;
-    private int tmpPwdCount;
+    private Integer tmpPwdCount;
     private LocalDateTime tmpPwdDate;
     private LocalDateTime employeeUserModifyDate;
     private LocalDateTime getemployeeUserRegisterDate;

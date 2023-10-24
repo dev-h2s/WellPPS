@@ -20,11 +20,11 @@ public class WellEmployeeManagerGroupEntity{
     @Column(name = "em_gkey")//직원 관리자그룹
     private String employeeManagerGroupKey;
 
-    @OneToMany(mappedBy = "emGroup") // 양방향 일때 직원 리스트 가져오기
+    @OneToMany(mappedBy = "employeeManagerGroupKey") // 양방향 일때 직원 리스트 가져오기
     private List<WellEmployeeUserEntity> employee = new ArrayList<>();
 
-    @Column(name = "em_g_name")//직원 그룹명
-    private String employeeManagerName;
+    @Column(name = "department")//부서명
+    private String department;
 
     @Column(name = "em_g_permissions") //직원 권한
     private String employeeManagerPermissions;

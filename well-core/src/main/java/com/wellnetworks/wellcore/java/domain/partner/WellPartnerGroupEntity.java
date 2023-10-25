@@ -24,8 +24,4 @@ public class WellPartnerGroupEntity {
 
     @OneToMany(mappedBy = "partnerGroup") // 파트너 리스트 가져오기(양방향)
     private List<WellPartnerEntity> partners = new ArrayList<>();
-
-    public WellPartnerGroupEntity(Long partnerGroupId) {
-        this.partnerGroupId = partnerGroupId;
-    }
 }

@@ -27,7 +27,7 @@ public class WellPartnerUpdateDTO {
     private String virtualAccount;
     private boolean specialPolicyOpening;
     private boolean specialPolicyCharge;
-    private Long partnerUpperId;
+    private String partnerUpperIdx;
     private String ceoName;
     private String ceoTelephone;
     private String partnerTelephone;
@@ -69,7 +69,7 @@ public class WellPartnerUpdateDTO {
         }
         this.specialPolicyOpening = entity.isSpecialPolicyOpening();
         this.specialPolicyCharge = entity.isSpecialPolicyCharge();
-        this.partnerUpperId = entity.getPartnerUpperId();
+        this.partnerUpperIdx = entity.getPartnerUpperIdx();
         this.ceoName = entity.getCeoName();
         this.ceoTelephone = entity.getCeoTelephone();
         this.partnerTelephone = entity.getPartnerTelephone();

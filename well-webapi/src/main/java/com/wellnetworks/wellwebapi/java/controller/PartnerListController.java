@@ -6,6 +6,7 @@ import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.dto.PartnerGroup.WellPartnerGroupCreateDTO;
+import com.wellnetworks.wellcore.java.dto.PartnerUser.WellPartnerUserCreateDTO;
 import com.wellnetworks.wellcore.java.service.WellPartnerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,21 +1,12 @@
 package com.wellnetworks.wellcore.java.domain.backup.partner;
 
-import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
-import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
-import com.wellnetworks.wellcore.java.domain.opening.WellOpeningEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerUserEntity;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.UUID;
 
-import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Data
 @NoArgsConstructor
@@ -58,7 +49,7 @@ public class WellPartnerEntityBackup {
     private String partnerType;
 
     @Column(name = "p_upper_id") //상부점_id
-    private Long partnerUpperId;
+    private String partnerUpperIdx;
 
     @Column(name = "p_tel") //사업장전화번호
     private String partnerTelephone;
@@ -164,4 +155,5 @@ public class WellPartnerEntityBackup {
 
     @Column(name = "opening_note") //개통점신청비고
     private String openingNote;
+
 }

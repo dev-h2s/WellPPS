@@ -7,11 +7,10 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 public class WellPartnerInfoDTO {
-    private UUID partnerIdx;
+    private String partnerIdx;
     private String transactionStatus;
     private String fileKind;
     private LocalDateTime productRegisterDate;
@@ -25,7 +24,7 @@ public class WellPartnerInfoDTO {
     private String ceoName;
     private String partnerTelephone;
     private String writer;
-    private Long partnerUpperId;
+    private String partnerUpperIdx;
     private Integer size;
     private Integer page;
 
@@ -54,7 +53,7 @@ public class WellPartnerInfoDTO {
         this.ceoName = entity.getCeoName();
         this.partnerTelephone = entity.getPartnerTelephone();
         this.writer = entity.getWriter();
-        this.partnerUpperId = entity.getPartnerUpperId();
+        this.partnerUpperIdx = entity.getPartnerUpperIdx();
         this.size = entity.getSize();
         this.page = entity.getPage();
     }

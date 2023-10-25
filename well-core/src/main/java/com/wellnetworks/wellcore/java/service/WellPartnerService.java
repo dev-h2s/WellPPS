@@ -8,11 +8,13 @@ import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.opening.WellOpeningEntity;
 import com.wellnetworks.wellcore.java.domain.partner.*;
+import com.wellnetworks.wellcore.java.dto.FIle.WellFIleCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
 import com.wellnetworks.wellcore.java.dto.PartnerGroup.WellPartnerGroupCreateDTO;
 //import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
+import com.wellnetworks.wellcore.java.dto.PartnerUser.WellPartnerUserCreateDTO;
 import com.wellnetworks.wellcore.java.repository.File.WellPartnerFileRepository;
 import com.wellnetworks.wellcore.java.repository.File.WellVirtualAccountFileRepository;
 import com.wellnetworks.wellcore.java.repository.Partner.*;
@@ -22,6 +24,7 @@ import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyInRepository
 import com.wellnetworks.wellcore.java.repository.backup.partner.*;
 import com.wellnetworks.wellcore.java.repository.member.WellGroupRepository;
 import com.wellnetworks.wellcore.java.repository.opening.WellOpeningRepository;
+import com.wellnetworks.wellcore.java.service.File.WellFileStorageService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
@@ -32,15 +35,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Console;
 import java.lang.reflect.Member;
 import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wellnetworks.wellcore.java.domain.partner.QWellPartnerEntity.wellPartnerEntity;
@@ -51,6 +52,8 @@ public class WellPartnerService {
     @Autowired private WellPartnerRepository wellPartnerRepository;
     @Autowired private WellPartnerBackupRepository wellPartnerBackupRepository;
     @Autowired private WellPartnerGroupRepository wellPartnerGroupRepository;
+    @Autowired private WellApikeyInRepository wellApikeyInRepository;
+    @Autowired private WellFileStorageService fileStorageService;
 
     @PersistenceContext
     private EntityManager em;
@@ -75,7 +78,7 @@ public class WellPartnerService {
 
         // 해당 거래처와 연결된 파일 정보를 가져와서 리스트로 정리
         if (partnerEntity != null) {
-            List<WellFileStorageEntity> fileStorages = partnerEntity.getFiles().stream()
+            List<WellFileStorageEntity> fileStorages = partnerEntity.getPartnerFiles().stream()
                     .map(WellPartnerFIleStorageEntity::getFile)
                     .collect(Collectors.toList());
 
@@ -95,7 +98,7 @@ public class WellPartnerService {
         List<WellPartnerInfoDTO> partnerInfoList = new ArrayList<>();
 
         for (WellPartnerEntity partnerEntity : partners) {
-            List<WellFileStorageEntity> fileStorages = partnerEntity.getFiles().stream()
+            List<WellFileStorageEntity> fileStorages = partnerEntity.getPartnerFiles().stream()
                     .map(WellPartnerFIleStorageEntity::getFile)
                     .collect(Collectors.toList());
 
@@ -134,27 +137,36 @@ public class WellPartnerService {
 
     @Transactional
     public void join(WellPartnerCreateDTO createDTO) {
-        // 1. 거래처 그룹 정보 가져오기
+        // 거래처 그룹 정보 가져오기
         WellPartnerGroupEntity partnerGroup = wellPartnerGroupRepository.findByPartnerGroupId(createDTO.getPartnerGroupId());
 
-        // 로깅 1: 거래처 그룹을 찾을 때 반환된 값을 로깅
-        if (partnerGroup != null) {
-            System.out.println("Found partnerGroup: " + partnerGroup.getPartnerGroupId());
-            System.out.println("Found partnerGroup: " + (partnerGroup != null));
-
+        // API 연동 여부 확인 및 API 키 엔티티 가져오기
+        WellApikeyInEntity apikeyIn = null; // 초기화
+        if (createDTO.isInApiFlag() && createDTO.getApiKeyInIdx() != null) {
+            apikeyIn = wellApikeyInRepository.findByApiKeyInIdx(createDTO.getApiKeyInIdx());
         }
 
-        // 로깅 2: 입력된 partnerGroupId 로깅
-        System.out.println("Input createDTO: " + createDTO.getPartnerGroupId());
-
-        // 3. 입력된 partnerGroupId와 거래처 그룹의 partnerGroupId를 로깅
-        if (partnerGroup != null && !partnerGroup.getPartnerGroupId().equals(createDTO.getPartnerGroupId())) {
-            System.out.println("Mismatch between partnerGroupId and createDTO partnerGroupId.");
+        // API 연동 여부와 API 키가 설정되지 않은 경우 예외 처리
+        if (createDTO.isInApiFlag() && apikeyIn == null) {
+            throw new RuntimeException("해당 API 키를 찾을 수 없습니다.");
         }
 
         if (partnerGroup == null) {
             throw new RuntimeException("해당 거래처 그룹을 찾을 수 없습니다.");
         }
+
+
+// 파일 업로드 및 엔티티 생성
+//        List<WellPartnerFIleStorageEntity> fileEntities = new ArrayList<>();
+//        if (files != null) {
+//            for (MultipartFile file : files) {
+//                WellFIleCreateDTO fileDTO = fileStorageService.storeFile(file);
+//                WellPartnerFIleStorageEntity fileEntity = new WellPartnerFIleStorageEntity();
+//                fileEntity.setFile(fileDTO.toEntity());
+//                fileEntities.add(fileEntity);
+//            }
+//        }
+
 
         // 거래처 Entity 생성
         WellPartnerEntity partner = WellPartnerEntity.builder()
@@ -166,11 +178,31 @@ public class WellPartnerService {
                 .partnerGroup(partnerGroup) // 거래처 그룹 설정
                 .discountCategory(createDTO.getDiscountCategory())
                 .salesManager(createDTO.getSalesManager())
+                .inApiFlag(createDTO.isInApiFlag())
+                .apiKey(apikeyIn) // apikey 설정
+                .preApprovalNumber(createDTO.getPreApprovalNumber())
+                .subscriptionDate(createDTO.getSubscriptionDate())
+                .transactionStatus(createDTO.getTransactionStatus())
+                .partnerUpperIdx(createDTO.getPartnerUpperIdx()) // 상부점_id 설정
+                .ceoName(createDTO.getCeoName())
+                .ceoTelephone(createDTO.getCeoTelephone())
+                .partnerTelephone(createDTO.getPartnerTelephone())
+                .emailAddress(createDTO.getEmailAddress())
+                .commissionBankName(createDTO.getCommissionBankName())
+                .commissionDepositAccount(createDTO.getCommissionDepositAccount())
+                .commissionBankHolder(createDTO.getCommissionBankHolder())
+                .registrationNumber(createDTO.getRegistrationNumber())
+                .registrationAddress(createDTO.getRegistrationAddress())
+                .registrationDetailAddress(createDTO.getRegistrationDetailAddress())
+                .locationAddress(createDTO.getLocationAddress())
+                .locationDetailAddress(createDTO.getLocationDetailAddress())
+                .partnerMemo(createDTO.getPartnerMemo())
                 .build();
 
         // 거래처 저장
         wellPartnerRepository.save(partner);
     }
+
 
 
 
@@ -186,7 +218,7 @@ public class WellPartnerService {
 
 
         if (partnerEntity != null) {
-            List<WellFileStorageEntity> fileStorages = partnerEntity.getFiles().stream()
+            List<WellFileStorageEntity> fileStorages = partnerEntity.getPartnerFiles().stream()
                     .map(WellPartnerFIleStorageEntity::getFile)
                     .collect(Collectors.toList());
 
@@ -204,7 +236,7 @@ public class WellPartnerService {
             partnerBackup.setPartnerName(partnerEntity.getPartnerName());
             partnerBackup.setTransactionStatus(partnerEntity.getTransactionStatus());
             partnerBackup.setPartnerType(partnerEntity.getPartnerType());
-            partnerBackup.setPartnerUpperId(partnerEntity.getPartnerUpperId());
+            partnerBackup.setPartnerUpperIdx(partnerEntity.getPartnerUpperIdx());
             partnerBackup.setPartnerTelephone(partnerEntity.getPartnerTelephone());
             partnerBackup.setProductRegisterDate(partnerEntity.getProductRegisterDate());
             partnerBackup.setProductModifyDate(partnerEntity.getProductModifyDate());

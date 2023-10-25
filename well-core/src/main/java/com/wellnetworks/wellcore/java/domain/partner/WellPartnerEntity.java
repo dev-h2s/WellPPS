@@ -1,6 +1,7 @@
 package com.wellnetworks.wellcore.java.domain.partner;
 // 거래처
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.charge.WellChargeHistoryEntity;
@@ -8,12 +9,9 @@ import com.wellnetworks.wellcore.java.domain.opening.WellOpeningEntity;
 import com.wellnetworks.wellcore.java.domain.product.WellProductSearchEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -28,22 +26,19 @@ import static jakarta.persistence.FetchType.LAZY;
 @NoArgsConstructor
 public class WellPartnerEntity {
     @Id //거래처_idx
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "p_idx", columnDefinition = "uniqueidentifier")
-    private UUID partnerIdx;
+    private String partnerIdx = UUID.randomUUID().toString();
 
     @ManyToOne(fetch = LAZY) //거래처 그룹_id
     @JoinColumn(insertable = true, updatable = true)
     private WellPartnerGroupEntity partnerGroup;
 
-    @OneToOne(fetch = LAZY) //거래처_id (id를 사용하여 거래처 유저 엔티티와 1대1 연결)
-    @JoinColumn(name = "p_id", insertable = false, updatable = false)
+    @OneToOne(fetch = LAZY, mappedBy = "partner", cascade = CascadeType.PERSIST) //거래처_id (id를 사용하여 거래처 유저 엔티티와 1대1 연결)
     private WellPartnerUserEntity partnerId;
 
     // API 키와의 다대일 관계 (하나의 거래처는 하나의 API 키를 가짐)
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "api_key_in_idx", insertable=false, updatable=false)
+    @JoinColumn(insertable=true, updatable=true)
     private WellApikeyInEntity apiKey;
 
     // 가상계좌 연결 1대1
@@ -64,7 +59,11 @@ public class WellPartnerEntity {
 
     //여러 거래처 파일을 가질 수 있음
     @OneToMany(mappedBy = "partner")
-    private List<WellPartnerFIleStorageEntity> files = new ArrayList<>();
+    @JsonIgnore
+    private List<WellPartnerFIleStorageEntity> partnerFiles = new ArrayList<>();
+
+    @Column(name = "in_api_flag") //내부API연동여부
+    private Boolean inApiFlag;
 
     @Column(name = "pcode", unique = true) //거래처코드
     private String partnerCode;
@@ -78,8 +77,8 @@ public class WellPartnerEntity {
     @Column(name = "p_type", nullable = false) //거래처구분
     private String partnerType;
 
-    @Column(name = "p_upper_id") //상부점_id
-    private Long partnerUpperId;
+    @Column(name = "p_upper_idx") //상부점_id
+    private String partnerUpperIdx;
 
     @Column(name="p_tel") //사업장전화번호
     private String partnerTelephone;
@@ -188,27 +187,43 @@ public class WellPartnerEntity {
 
     @Builder
     public WellPartnerEntity(String partnerCode, String partnerName, String partnerType, boolean specialPolicyOpening, boolean specialPolicyCharge
-                            , WellPartnerGroupEntity partnerGroup, String discountCategory, String salesManager) {
+                            , WellPartnerGroupEntity partnerGroup, String discountCategory, String salesManager
+                            , boolean inApiFlag, WellApikeyInEntity apiKey, String preApprovalNumber, LocalDateTime subscriptionDate
+                            , String transactionStatus,String partnerUpperIdx, String ceoName, String ceoTelephone
+                            , String partnerTelephone, String commissionBankName, String commissionDepositAccount, String commissionBankHolder
+                            , String emailAddress, String registrationNumber
+                            , String registrationAddress, String registrationDetailAddress, String locationAddress, String locationDetailAddress
+                            , String partnerMemo) {
         this.partnerCode = partnerCode;
         this.partnerName = partnerName;
         this.partnerType = partnerType;
         this.specialPolicyCharge = specialPolicyCharge;
         this.specialPolicyOpening = specialPolicyOpening;
-        this.partnerGroup = partnerGroup;
         if (partnerGroup != null) {
             this.partnerGroup = partnerGroup;
         }
         this.discountCategory = discountCategory;
         this.salesManager = salesManager;
-    }
-
-    //동일한 거래처 나타내는지 판단
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        WellPartnerEntity other = (WellPartnerEntity) obj;
-
-        return partnerIdx != null && partnerIdx.equals(other.partnerIdx);
+        this.inApiFlag = inApiFlag;
+        if (apiKey != null) {
+            this.apiKey = apiKey;
+        }
+        this.preApprovalNumber = preApprovalNumber;
+        this.subscriptionDate = subscriptionDate;
+        this.transactionStatus = transactionStatus;
+        this.partnerUpperIdx = partnerUpperIdx;
+        this.ceoName = ceoName;
+        this.ceoTelephone = ceoTelephone;
+        this.partnerTelephone = partnerTelephone;
+        this.emailAddress = emailAddress;
+        this.commissionBankName = commissionBankName;
+        this.commissionDepositAccount = commissionDepositAccount;
+        this.commissionBankHolder = commissionBankHolder;
+        this.registrationNumber = registrationNumber;
+        this.registrationAddress = registrationAddress;
+        this.registrationDetailAddress = registrationDetailAddress;
+        this.locationAddress = locationAddress;
+        this.locationDetailAddress = locationDetailAddress;
+        this.partnerMemo = partnerMemo;
     }
 }

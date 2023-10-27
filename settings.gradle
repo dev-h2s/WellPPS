@@ -1,5 +1,5 @@
 rootProject.name = 'WellPPS'
 include 'well-core'
-include 'well-secure'
+include 'well-security'
 include 'well-webapi'
 include 'well-chargeApi'

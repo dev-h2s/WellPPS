@@ -3,6 +3,7 @@ package com.wellnetworks.wellwebapi.java.controller.member;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDTO;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDetailDTO;
 import com.wellnetworks.wellcore.java.service.member.WellEmployeeService;
+import com.wellnetworks.wellsecurity.java.config.SecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -15,11 +16,13 @@ import java.util.Optional;
 
 @RequestMapping(("/admin/hs/"))
 @RestController
-@ComponentScan(basePackages={"com.wellnetworks.wellcore"})
+@ComponentScan(basePackages={"com.wellnetworks.wellcore","com.wellnetworks.wellsecurity"})
 public class EmployeeController {
     @Autowired
     private WellEmployeeService wellEmployeeService;
 
+    @Autowired
+    private SecurityConfig securityConfig;
     // 사원 하나 조회
     @GetMapping("employee/{employeeIdx}")
     public Optional<WellEmployeeInfoDetailDTO> getEmployee(@PathVariable String employeeIdx) throws ClassNotFoundException {

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.InputStream;
 import java.util.*;
@@ -34,24 +35,35 @@ public class WellFileStorageService {
 
     @Transactional
     public Map<String, Object> saveFile(WellPartnerCreateDTO createDTO, String partnerIdx) throws Exception {
-        List<MultipartFile> multipartFile = createDTO.getMultipartFiles();
-        //결과 Map
+        List<MultipartFile> multipartFiles = createDTO.getMultipartFiles();
         Map<String, Object> result = new HashMap<String, Object>();
-
-        //파일 시퀀스 리스트
         List<Long> fileIds = new ArrayList<>();
 
         try {
-            if (multipartFile != null) {
-                if (multipartFile.size() > 0 && !multipartFile.get(0).getOriginalFilename().equals("")) {
-                    for (MultipartFile file1 : multipartFile) {
-                        String originalFileName = file1.getOriginalFilename();    //오리지날 파일명
-                        String extension = originalFileName.substring(originalFileName.lastIndexOf("."));    //파일 확장자
-                        String savedFileName = UUID.randomUUID() + extension;    //저장될 파일 명
+            if (multipartFiles != null) {
+                if (multipartFiles.size() > 0 && !multipartFiles.get(0).getOriginalFilename().equals("")) {
+                    for (MultipartFile multipartFile : multipartFiles) {
+                        String originalFileName = multipartFile.getOriginalFilename();
+                        String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+                        String savedFileName = UUID.randomUUID() + extension;
+                        String fileKind = null;
+
+                        // 화면에서 선택한 파일 이름에 따라 fileKind 설정
+                        if (fileKind.contains("사업자등록증")) {
+                            fileKind = "사업자등록증";
+                        } else if (originalFileName.contains("계약서")) {
+                            fileKind = "계약서";
+                        } else if (originalFileName.contains("대표자신분증")) {
+                            fileKind = "대표자신분증";
+                        } else if (originalFileName.contains("매장사진")) {
+                            fileKind = "매장사진";
+                        } else if (originalFileName.contains("대표자명함")) {
+                            fileKind = "대표자명함";
+                        } else {
+                            fileKind = "기타";
+                        }
 
                         File targetFile = new File(uploadDir + savedFileName);
-
-                        //초기값으로 fail 설정
                         result.put("result", "FAIL");
 
                         WellFIleCreateDTO fileDto = WellFIleCreateDTO.builder()
@@ -59,24 +71,23 @@ public class WellFileStorageService {
                                 .savedFileName(savedFileName)
                                 .uploadDir(uploadDir)
                                 .extension(extension)
-                                .size(file1.getSize())
-                                .contentType(file1.getContentType())
+                                .size(multipartFile.getSize())
+                                .contentType(multipartFile.getContentType())
+                                .fileKind(fileKind)
                                 .build();
-                        //파일 insert
+
                         WellFileStorageEntity file = fileDto.toEntity();
                         Long fileId = insertFile(file);
                         log.info("fileId={}", fileId);
 
                         try {
-                            InputStream fileStream = file1.getInputStream();
-                            FileUtils.copyInputStreamToFile(fileStream, targetFile); //파일 저장
-                            //배열에 담기
+                            InputStream fileStream = multipartFile.getInputStream();
+                            FileUtils.copyInputStreamToFile(fileStream, targetFile);
                             fileIds.add(fileId);
                             result.put("fileIdxs", fileIds.toString());
                             result.put("result", "OK");
                         } catch (Exception e) {
-                            //파일삭제
-                            FileUtils.deleteQuietly(targetFile);    //저장된 현재 파일 삭제
+                            FileUtils.deleteQuietly(targetFile);
                             e.printStackTrace();
                             result.put("result", "FAIL");
                             break;
@@ -115,5 +126,4 @@ public class WellFileStorageService {
 //        boardFile.delete("Y");
         return boardFile;
     }
-
 }

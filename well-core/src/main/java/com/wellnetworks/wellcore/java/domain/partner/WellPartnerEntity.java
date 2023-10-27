@@ -6,11 +6,13 @@ import com.wellnetworks.wellcore.java.domain.charge.WellChargeHistoryEntity;
 import com.wellnetworks.wellcore.java.domain.opening.WellOpeningEntity;
 import com.wellnetworks.wellcore.java.domain.product.WellProductSearchEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -226,5 +228,48 @@ public class WellPartnerEntity {
         this.locationAddress = locationAddress;
         this.locationDetailAddress = locationDetailAddress;
         this.partnerMemo = partnerMemo;
+    }
+
+    public void updateFromDTO(WellPartnerUpdateDTO updateDTO) {
+        this.partnerName = updateDTO.getPartnerName();
+        this.partnerType = updateDTO.getPartnerType();
+        this.specialPolicyCharge = updateDTO.isSpecialPolicyCharge();
+        this.specialPolicyOpening = updateDTO.isSpecialPolicyOpening();
+        this.discountCategory = updateDTO.getDiscountCategory();
+        this.inApiFlag = updateDTO.isInApiFlag();
+        this.preApprovalNumber = updateDTO.getPreApprovalNumber();
+        this.subscriptionDate = updateDTO.getSubscriptionDate();
+        this.transactionStatus = updateDTO.getTransactionStatus();
+        this.partnerUpperIdx = updateDTO.getPartnerUpperIdx();
+        this.salesManager = updateDTO.getSalesManager();
+        this.ceoName = updateDTO.getCeoName();
+        this.ceoTelephone = updateDTO.getCeoTelephone();
+        this.partnerTelephone = updateDTO.getPartnerTelephone();
+        this.emailAddress = updateDTO.getEmailAddress();
+        this.commissionBankName = updateDTO.getCommissionBankName();
+        this.commissionDepositAccount = updateDTO.getCommissionDepositAccount();
+        this.commissionBankHolder = updateDTO.getCommissionBankHolder();
+        this.registrationNumber = updateDTO.getRegistrationNumber();
+        this.registrationAddress = updateDTO.getRegistrationAddress();
+        this.registrationDetailAddress = updateDTO.getRegistrationDetailAddress();
+        this.locationAddress = updateDTO.getLocationAddress();
+        this.locationDetailAddress = updateDTO.getLocationDetailAddress();
+        this.partnerMemo = updateDTO.getPartnerMemo();
+    }
+
+    public WellApikeyInEntity getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(WellApikeyInEntity apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    public WellPartnerGroupEntity getPartnerGroup() {
+        return partnerGroup;
+    }
+
+    public void setPartnerGroup(WellPartnerGroupEntity partnerGroup) {
+        this.partnerGroup = partnerGroup;
     }
 }

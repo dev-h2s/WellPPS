@@ -30,6 +30,7 @@ public class WellFileStorageEntity {
     private String extension;           //확장자
     private Long size;                  //파일 사이즈
     private String contentType;         //ContentType
+    private String fileKind;            //파일 종류
     @CreatedDate
     private LocalDateTime regDate;     //등록 날짜
 
@@ -38,7 +39,7 @@ public class WellFileStorageEntity {
 
     @Builder
     public WellFileStorageEntity(Long id, String originFileName, String savedFileName
-            , String uploadDir, String extension, Long size, String contentType){
+            , String uploadDir, String extension, Long size, String contentType, String fileKind){
         this.id = id;
         this.originFileName = originFileName;
         this.savedFileName = savedFileName;
@@ -46,5 +47,6 @@ public class WellFileStorageEntity {
         this.extension = extension;
         this.size = size;
         this.contentType = contentType;
+        this.fileKind = fileKind;
     }
 }

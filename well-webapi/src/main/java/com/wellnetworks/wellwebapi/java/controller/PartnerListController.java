@@ -4,6 +4,7 @@ package com.wellnetworks.wellwebapi.java.controller;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
 import com.wellnetworks.wellcore.java.dto.PartnerGroup.WellPartnerGroupCreateDTO;
 import com.wellnetworks.wellcore.java.service.WellPartnerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +61,7 @@ public class PartnerListController {
     }
 
     //거래처 입력
-    @PostMapping(value = "partners/create")
+    @PostMapping(value = "business/create")
     public ResponseEntity<String> createPartner(WellPartnerCreateDTO createDTO) throws Exception {
          wellPartnerService.join(createDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body("거래처가 성공적으로 생성되었습니다.");
@@ -71,8 +72,10 @@ public class PartnerListController {
 
 
     //거래처 수정
-    @PatchMapping("business")
-    public void patchPartner() {
+    @PatchMapping("business/update")
+    public ResponseEntity<String> patchPartner(WellPartnerUpdateDTO updateDTO) throws Exception {
+        wellPartnerService.update(updateDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body("수정 완료.");
     }
 
     // 거래처 체크항목 삭제

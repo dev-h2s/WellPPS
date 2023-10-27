@@ -35,10 +35,10 @@ public class WellPartnerInfoDTO {
 
         for (WellPartnerFIleStorageEntity fileStorage : fileStorages) {
             if (fileStorage != null) {
-                String fileKind = fileStorage.getFile().getContentType(); // 파일 저장소 엔티티의 종류 가져오기
+                String fileKind = fileStorage.getFile().getFileKind(); // 파일 저장소 엔티티의 종류 가져오기
                 // fileKind와 원하는 종류를 비교하여 일치하는 경우에만 리스트에 추가
                 if (fileKind.equals(fileKind)) {
-                    fileKinds.add(fileStorage.getFile().getContentType()); // 첨부파일 엔티티를 리스트에 추가
+                    fileKinds.add(fileStorage.getFile().getFileKind()); // 첨부파일 엔티티를 리스트에 추가
                 }
             }
         }

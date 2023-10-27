@@ -1,18 +1,11 @@
 package com.wellnetworks.wellcore.java.domain.permission.personal;
 // 개인 dropwodn content
-import com.wellnetworks.wellcore.java.domain.charge.WellChargeHistoryEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerUserEntity;
-import com.wellnetworks.wellcore.java.domain.product.WellProductSearchEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter

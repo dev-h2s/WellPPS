@@ -1,8 +1,6 @@
 package com.wellnetworks.wellcore.java.domain.account;
 //예치금
 
-import com.wellnetworks.wellcore.java.dto.Diposit.WellDipositCreateDTO;
-import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountCreateDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

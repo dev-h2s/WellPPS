@@ -1,6 +1,5 @@
 package com.wellnetworks.wellcore.java.domain.charge;
 // 충전정책
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import jakarta.persistence.*;
 import lombok.Getter;

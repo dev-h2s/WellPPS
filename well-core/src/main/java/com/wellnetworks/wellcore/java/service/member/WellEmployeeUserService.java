@@ -2,18 +2,13 @@ package com.wellnetworks.wellcore.java.service.member;
 //회원 기능에 관련된 서비스
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDTO;
-import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
-import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

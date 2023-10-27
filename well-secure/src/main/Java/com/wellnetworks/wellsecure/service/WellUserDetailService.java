@@ -1,7 +1,6 @@
 package com.wellnetworks.wellsecure.service;
 
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
-import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeEntity;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.core.userdetails.User;

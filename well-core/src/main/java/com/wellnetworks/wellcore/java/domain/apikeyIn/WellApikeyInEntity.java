@@ -2,20 +2,16 @@ package com.wellnetworks.wellcore.java.domain.apikeyIn;
 // 내부 apikey
 
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
-import com.wellnetworks.wellcore.java.domain.product.WellProductSearchEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter

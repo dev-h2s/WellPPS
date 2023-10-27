@@ -1,17 +1,17 @@
 package com.wellnetworks.wellcore.java.domain.partner;
 // 거래처
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
-import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.charge.WellChargeHistoryEntity;
 import com.wellnetworks.wellcore.java.domain.opening.WellOpeningEntity;
 import com.wellnetworks.wellcore.java.domain.product.WellProductSearchEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
+import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,7 +23,8 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class WellPartnerEntity {
     @Id //거래처_idx
     @Column(name = "p_idx", columnDefinition = "uniqueidentifier")
@@ -58,9 +59,9 @@ public class WellPartnerEntity {
     private List<WellChargeHistoryEntity> chargeHistory = new ArrayList<>();
 
     //여러 거래처 파일을 가질 수 있음
-    @OneToMany(mappedBy = "partner")
-    @JsonIgnore
-    private List<WellPartnerFIleStorageEntity> partnerFiles = new ArrayList<>();
+//    @OneToMany(mappedBy = "partner")
+//    @JsonIgnore
+//    private List<WellPartnerFIleStorageEntity> partnerFiles = new ArrayList<>();
 
     @Column(name = "in_api_flag") //내부API연동여부
     private Boolean inApiFlag;

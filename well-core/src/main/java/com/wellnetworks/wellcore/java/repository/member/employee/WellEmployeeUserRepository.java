@@ -1,14 +1,10 @@
 package com.wellnetworks.wellcore.java.repository.member.employee;
 
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
-import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 // 사원의 계정과 관련된 레포지토리
 @Repository

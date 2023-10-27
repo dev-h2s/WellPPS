@@ -1,20 +1,14 @@
 package com.wellnetworks.wellcore.java.dto.Partner;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wellnetworks.wellcore.java.dto.FIle.WellFIleCreateDTO;
-import jakarta.persistence.Column;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class WellPartnerCreateDTO {
     @JsonProperty("p_code")
     private String parterCode;
@@ -74,5 +68,40 @@ public class WellPartnerCreateDTO {
     private String locationDetailAddress;
     @JsonProperty("partner_memo") //메모
     private String partnerMemo;
+
+    private List<MultipartFile> multipartFiles;
+
+    public WellPartnerCreateDTO(){}
+
+    @QueryProjection
+    public WellPartnerCreateDTO(String parterCode, String partnerName, String partnerType, boolean specialPolicyOpening, boolean specialPolicyCharge, Long partnerGroupId, String discountCategory, String salesManager, boolean inApiFlag, String apiKeyInIdx, String preApprovalNumber, LocalDateTime subscriptionDate, String transactionStatus, String partnerUpperIdx, String ceoName, String ceoTelephone, String partnerTelephone, String emailAddress, String commissionDepositAccount, String commissionBankName, String commissionBankHolder, String registrationNumber, String registrationAddress, String registrationDetailAddress, String locationAddress, String locationDetailAddress, String partnerMemo) {
+        this.parterCode = parterCode;
+        this.partnerName = partnerName;
+        this.partnerType = partnerType;
+        this.specialPolicyOpening = specialPolicyOpening;
+        this.specialPolicyCharge = specialPolicyCharge;
+        this.partnerGroupId = partnerGroupId;
+        this.discountCategory = discountCategory;
+        this.salesManager = salesManager;
+        this.inApiFlag = inApiFlag;
+        this.apiKeyInIdx = apiKeyInIdx;
+        this.preApprovalNumber = preApprovalNumber;
+        this.subscriptionDate = subscriptionDate;
+        this.transactionStatus = transactionStatus;
+        this.partnerUpperIdx = partnerUpperIdx;
+        this.ceoName = ceoName;
+        this.ceoTelephone = ceoTelephone;
+        this.partnerTelephone = partnerTelephone;
+        this.emailAddress = emailAddress;
+        this.commissionDepositAccount = commissionDepositAccount;
+        this.commissionBankName = commissionBankName;
+        this.commissionBankHolder = commissionBankHolder;
+        this.registrationNumber = registrationNumber;
+        this.registrationAddress = registrationAddress;
+        this.registrationDetailAddress = registrationDetailAddress;
+        this.locationAddress = locationAddress;
+        this.locationDetailAddress = locationDetailAddress;
+        this.partnerMemo = partnerMemo;
+    }
 }
 

@@ -27,7 +27,7 @@ public class WellEmployeeFileStorageEntity {
     protected WellEmployeeFileStorageEntity(){}
 
     public WellEmployeeFileStorageEntity(WellFileStorageEntity file, WellEmployeeEntity employee){
-        this.fileIdx = file.getFileIdx();
+        this.fileIdx = file.getBoardFile().getPartnerIdx();
         this.employeeIdx = employee.getEmployeeIdx();
     }
 }

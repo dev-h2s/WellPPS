@@ -1,32 +1,32 @@
 package com.wellnetworks.wellcore.java.domain.file;
 //거래처 파일
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import static jakarta.persistence.FetchType.LAZY;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class WellPartnerFIleStorageEntity {
-    @Id //파일_idx
-    @Column(name = "file_idx")
-    private String fileIdx;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "partner_file_id")
+    private Long id;            //번호
 
     @Column(name = "p_idx")
     private String partnerIdx;
 
-    @ManyToOne(fetch = LAZY) //거래처_idx
-    @JoinColumn(name = "p_idx", insertable = false, updatable = false)
-    private WellPartnerEntity partner;
-
-    @OneToOne(fetch = LAZY, cascade = CascadeType.ALL) // 거래처 파일과 첨부파일 간의 연결
-    @JoinColumn(name = "file_idx", insertable = false, updatable = false)
+    @OneToOne
+    @JoinColumn(name = "file_id")
     private WellFileStorageEntity file;
+
+    @Builder
+    public WellPartnerFIleStorageEntity(String partnerIdx, Long fileId, WellFileStorageEntity file){
+        this.partnerIdx = partnerIdx;
+        this.file = file;
+    }
 }

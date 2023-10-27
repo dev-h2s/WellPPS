@@ -83,7 +83,7 @@ public class WellPartnerUpdateDTO {
         this.locationAddress = entity.getLocationAddress();
         this.locationDetailAddress = entity.getLocationDetailAddress();
         if (file != null) {
-            this.files = file.getFileKind();
+            this.files = file.getContentType();
         }
         this.partnerMemo = entity.getPartnerMemo();
         this.salesTeamVisitDate = entity.getSalesTeamVisitDate();

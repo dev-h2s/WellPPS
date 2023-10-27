@@ -1,8 +1,6 @@
 package com.wellnetworks.wellcore.java.dto.PartnerUser;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerPermissionGroupEntity;
-import com.wellnetworks.wellcore.java.dto.PartnerUserPermission.WellPartnerUserPermissionCreateDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,8 +1,6 @@
 package com.wellnetworks.wellcore.java.repository.member.employee;
 
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeEntity;
-import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;

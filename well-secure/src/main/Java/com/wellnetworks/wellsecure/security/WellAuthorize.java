@@ -1,22 +1,9 @@
 package com.wellnetworks.wellsecure.security;
 
-import com.wellnetworks.wellcore.java.domain.permission.PermissionKey;
-import com.wellnetworks.wellcore.java.domain.permission.department.WellDepartmentDropDownContentEntity;
-import com.wellnetworks.wellcore.java.domain.permission.department.WellDepartmentDropDownEntity;
-import com.wellnetworks.wellcore.java.domain.permission.department.WellDepartmentMenuPermissionEntity;
-import com.wellnetworks.wellcore.java.domain.permission.personal.WellPersonalDropContentEntity;
-import com.wellnetworks.wellcore.java.domain.permission.personal.WellPersonalDropDownEntity;
-import com.wellnetworks.wellcore.java.domain.permission.personal.WellPersonalMenuPermissionEntity;
-import com.wellnetworks.wellcore.java.repository.member.WellGroupRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-
-
-import java.util.*;
 //
 //@Component  // 스프링 빈으로 등록하기 위한 어노테이션
 //public class WellAuthorize {

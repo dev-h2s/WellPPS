@@ -1,4 +1,4 @@
-package com.wellnetworks.wellsecurity.java.config;
+package com.wellnetworks.secure.java.config;
 
 import org.springframework.stereotype.Component;
 

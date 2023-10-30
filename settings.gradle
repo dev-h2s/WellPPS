@@ -3,3 +3,5 @@ include 'well-core'
 include 'well-security'
 include 'well-webapi'
 include 'well-chargeApi'
+include 'well-secure'
+

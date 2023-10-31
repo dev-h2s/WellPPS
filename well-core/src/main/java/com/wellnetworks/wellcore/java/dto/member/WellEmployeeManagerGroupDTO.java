@@ -1,5 +1,9 @@
 package com.wellnetworks.wellcore.java.dto.member;
 
+import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeEntity;
+import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeManagerGroupEntity;
+import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
+import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -12,9 +16,8 @@ public class WellEmployeeManagerGroupDTO {
 
     private String employeeManagerGroupKey; // 직원 관리자그룹 키
 
-    private List<String> employeeIdx; // 직원 ID 리스트 (Entity 내에 직접적인 엔터티 관계가 아닌 ID 목록으로 표현)
 
-    private String employeeManagerName; // 직원 그룹명
+    private String department;
 
     private String employeeManagerPermissions; // 직원 권한
 
@@ -24,4 +27,18 @@ public class WellEmployeeManagerGroupDTO {
 
     private LocalDateTime employeeManagerRegisterDate; // 생성 날짜와 시간
 
+
+    public WellEmployeeManagerGroupDTO (WellEmployeeManagerGroupDTO groupDTO) {
+                this.employeeManagerGroupKey = groupDTO.getEmployeeManagerGroupKey();
+                this.department = groupDTO.getDepartment();
+                this.employeeManagerPermissions = groupDTO.getEmployeeManagerPermissions();
+                this.employeeManagerDescription = groupDTO.getEmployeeManagerDescription();
+                this.employeeManagerModifyDate = groupDTO.getEmployeeManagerModifyDate();
+                this.employeeManagerRegisterDate = groupDTO.getEmployeeManagerRegisterDate();
+        ;
+
+}
+
+    public WellEmployeeManagerGroupDTO(WellEmployeeManagerGroupEntity wellEmployeeManagerGroupEntity) {
+    }
 }

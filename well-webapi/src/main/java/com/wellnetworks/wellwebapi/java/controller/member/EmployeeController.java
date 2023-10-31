@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-@RequestMapping(("/admin/hs/"))
+@RequestMapping(("/admin/hr/"))
 @RestController
 @ComponentScan(basePackages={"com.wellnetworks.wellcore","com.wellnetworks.secure"})
 public class EmployeeController {

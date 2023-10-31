@@ -11,10 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -56,6 +53,21 @@ public class WellEmployeeUserEntity implements UserDetailsService {
     @Column(name = "tmp_pwd_dt") //임시비밀번호 생성일자
     private LocalDateTime tmpPwdDate;
 
+    @Column(name = "tel_cert", columnDefinition = "bit") //전화번호 인증여부
+    private Boolean isPhoneVerified;
+
+    @Column(name = "phone_verification_code") // 휴대폰 인증 코드
+    private String phoneVerificationCode;
+
+    @Column(name = "phone_verification_attempts") // 휴대폰 인증 시도 횟수
+    private Integer phoneVerificationAttempts;
+
+    @Column(name = "phone_verification_expiration") // 휴대폰 인증 만료 시간
+    private LocalDateTime phoneVerificationExpiration;
+
+    @Column(name = "phone_verification_sent_time") // 휴대폰 인증 코드 전송 시간
+    private LocalDateTime phoneVerificationSentTime;
+
     @Column(name = "m_u_moddt") //유저정보 수정일자
     private LocalDateTime employeeUserModifyDate;
 
@@ -65,10 +77,12 @@ public class WellEmployeeUserEntity implements UserDetailsService {
     @Column(name = "Group_key") //그룹식별자
     private String groupKey;
 
-
-
-
-
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof WellEmployeeUserEntity that)) return false;
+        return Objects.equals(employeeIdx, that.employeeIdx);
+    }
 
 
     // 추가한 권한 관련 필드

@@ -55,7 +55,7 @@ public class WellEmployeeEntity {
 //    @Column(name = "department") //부서
 //    private String department;
 
-    @Column(name = "position") //직위(대표,부장 등)
+    @Column(name = "position") //직책(대표,부장 등)
     private String position;
 
     @Column(name = "level") //!!(미정의)
@@ -81,12 +81,6 @@ public class WellEmployeeEntity {
 
     @Column(name = "emp_type") //고용형태 유형(정규직, 비정규직 등)
     private String jobType;
-
-    @Column(name = "tel_cert", columnDefinition = "bit") //전화번호 인증여부
-    private Boolean certificationtel;
-
-    @Column(name = "email_cert", columnDefinition = "bit") //이메일 인증여부
-    private Boolean certificationEmail;
 
     @Column(name = "external_access_cert", columnDefinition = "bit") //외부 접속여부
     private Boolean externalAccessCert;

@@ -73,25 +73,6 @@ project (':well-core') {
 
 
 
-project (':well-security') {
-	bootJar { enabled = false }
-	jar { enabled = true }
-
-	dependencies {
-		implementation project (':well-core')
-		implementation 'org.springframework.boot:spring-boot-starter'
-		implementation 'org.springframework.boot:spring-boot-starter-security'
-		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-		implementation 'org.springframework.session:spring-session-core'
-		implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-		runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
-		runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-		testImplementation 'org.springframework.security:spring-security-test'
-		compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
-//		implementation 'com.example:library-name:version'
-//		implementation ("org.springframework.security:spring-security-config:5.6.0") // anMatchers 사용으로추가
-	}
-}
 
 project (':well-secure') {
 	bootJar { enabled = false }
@@ -118,7 +99,6 @@ project (':well-webapi') {
 
 	dependencies {
 		implementation project (':well-core')
-		implementation project (':well-security')
 		implementation project (':well-secure')
 //		implementation 'org.springframework.boot:spring-boot-starter-security'
 		implementation 'org.springframework.session:spring-session-core'

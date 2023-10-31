@@ -24,7 +24,6 @@ public class WellEmployeeUpdateDTO {
     private String employmentQuitType; // 퇴사사유
     private Float remainingLeaveDays; // 잔여연차
     private String residentRegistrationNumber;//주민등록번호
-    private Boolean certificationtel; // 전화 인증여부
     private String telWork; // 업무 전화번호
     private String eMail; // 이메일
     private String bankName; // 급여 입금계좌명
@@ -65,7 +64,6 @@ public WellEmployeeUpdateDTO(WellEmployeeEntity entity, List<WellFileStorageEnti
     this.employmentQuitType = entity.getEmploymentQuitType();
     this.remainingLeaveDays = entity.getRemainingLeaveDays();
     this.residentRegistrationNumber = entity.getResidentRegistrationNumber();
-    this.certificationtel = entity.getCertificationtel();
     this.telWork = entity.getTelWork();
     this.eMail = entity.getEmail();
     this.bankName = entity.getBankName();

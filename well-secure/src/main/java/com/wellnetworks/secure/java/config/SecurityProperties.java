@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.ConstructorBinding;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 // com.wellnetworks.wellsecure.config 패키지 내의 SecurityProperties 클래스
 // 이 클래스는 JSON Web Token(JWT) 보안 설정을 위한 구성 속성을 보유
@@ -20,6 +21,7 @@ import org.springframework.validation.annotation.Validated;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Component
 @ConfigurationProperties(prefix = "jwt-security")  // 'jwt-security' 접두사를 가진 설정 값을 이 클래스의 필드와 매핑
 @Validated  // 이 클래스의 필드 값들이 제약 조건을 충족하는지 검증
 public class SecurityProperties {

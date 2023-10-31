@@ -1,12 +1,12 @@
 package com.wellnetworks.wellcore.java.service.File;
 
+import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.dto.FIle.WellPartnerFileCreateDTO;
 import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
 import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import com.wellnetworks.wellcore.java.dto.FIle.WellFIleCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
 import com.wellnetworks.wellcore.java.repository.File.WellPartnerFileRepository;
-import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.InputStream;
 import java.util.*;
@@ -29,82 +28,28 @@ public class WellFileStorageService {
     private String uploadDir;
 
     private final WellFileStorageRepository fileStorageRepository;
-
     private final WellPartnerFileRepository partnerFileRepository;
 
-
     @Transactional
-    public Map<String, Object> saveFile(WellPartnerCreateDTO createDTO, String partnerIdx) throws Exception {
-        List<MultipartFile> multipartFiles = createDTO.getMultipartFiles();
-        Map<String, Object> result = new HashMap<String, Object>();
+    public Map<String, Object> saveFiles(WellPartnerCreateDTO createDTO, String partnerIdx) throws Exception {
+        Map<String, Object> result = new HashMap<>();
         List<Long> fileIds = new ArrayList<>();
 
-        try {
-            if (multipartFiles != null) {
-                if (multipartFiles.size() > 0 && !multipartFiles.get(0).getOriginalFilename().equals("")) {
-                    for (MultipartFile multipartFile : multipartFiles) {
-                        String originalFileName = multipartFile.getOriginalFilename();
-                        String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-                        String savedFileName = UUID.randomUUID() + extension;
-                        String fileKind = null;
+        List<MultipartFile> businessLicenseFiles = createDTO.getBusinessLicenseFiles();
+        List<MultipartFile> contractDocumentFiles = createDTO.getContractDocumentFiles();
+        List<MultipartFile> idCardFiles = createDTO.getIdCardFiles();
+        List<MultipartFile> storePhotoFiles = createDTO.getStorePhotoFiles();
+        List<MultipartFile> businessCardFiles = createDTO.getBusinessCardFiles();
 
-                        // 화면에서 선택한 파일 이름에 따라 fileKind 설정
-                        if (fileKind.contains("사업자등록증")) {
-                            fileKind = "사업자등록증";
-                        } else if (originalFileName.contains("계약서")) {
-                            fileKind = "계약서";
-                        } else if (originalFileName.contains("대표자신분증")) {
-                            fileKind = "대표자신분증";
-                        } else if (originalFileName.contains("매장사진")) {
-                            fileKind = "매장사진";
-                        } else if (originalFileName.contains("대표자명함")) {
-                            fileKind = "대표자명함";
-                        } else {
-                            fileKind = "기타";
-                        }
+        // 각 파일 업로드 필드를 처리
+        processFiles(businessLicenseFiles, "사업자등록증", partnerIdx, fileIds, result);
+        processFiles(contractDocumentFiles, "계약서", partnerIdx, fileIds, result);
+        processFiles(idCardFiles, "대표자신분증", partnerIdx, fileIds, result);
+        processFiles(storePhotoFiles, "매장사진", partnerIdx, fileIds, result);
+        processFiles(businessCardFiles, "대표자명함", partnerIdx, fileIds, result);
 
-                        File targetFile = new File(uploadDir + savedFileName);
-                        result.put("result", "FAIL");
+        // 다른 파일 업로드 필드들도 처리
 
-                        WellFIleCreateDTO fileDto = WellFIleCreateDTO.builder()
-                                .originFileName(originalFileName)
-                                .savedFileName(savedFileName)
-                                .uploadDir(uploadDir)
-                                .extension(extension)
-                                .size(multipartFile.getSize())
-                                .contentType(multipartFile.getContentType())
-                                .fileKind(fileKind)
-                                .build();
-
-                        WellFileStorageEntity file = fileDto.toEntity();
-                        Long fileId = insertFile(file);
-                        log.info("fileId={}", fileId);
-
-                        try {
-                            InputStream fileStream = multipartFile.getInputStream();
-                            FileUtils.copyInputStreamToFile(fileStream, targetFile);
-                            fileIds.add(fileId);
-                            result.put("fileIdxs", fileIds.toString());
-                            result.put("result", "OK");
-                        } catch (Exception e) {
-                            FileUtils.deleteQuietly(targetFile);
-                            e.printStackTrace();
-                            result.put("result", "FAIL");
-                            break;
-                        }
-
-                        WellPartnerFileCreateDTO partnerFileDto = WellPartnerFileCreateDTO.builder()
-                                .pIdx(partnerIdx)
-                                .build();
-
-                        WellPartnerFIleStorageEntity partnerFile = partnerFileDto.toEntity(file);
-                        insertPartnerFile(partnerFile);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         return result;
     }
 
@@ -119,11 +64,59 @@ public class WellFileStorageService {
     }
 
     @Transactional
-    public WellPartnerFIleStorageEntity deleteBoardFile(Long partnerFileId){
-        WellPartnerFIleStorageEntity boardFile = partnerFileRepository.findById(partnerFileId).get();
+    public WellPartnerFIleStorageEntity deletePartnerFile(Long partnerFileId) {
+        WellPartnerFIleStorageEntity partnerFile = partnerFileRepository.findById(partnerFileId).orElse(null);
+        if (partnerFile != null) {
+            partnerFileRepository.delete(partnerFile);
+        }
+        return partnerFile;
+    }
 
-        //삭제
-//        boardFile.delete("Y");
-        return boardFile;
+    // 각 파일 업로드 필드를 처리하는 메서드
+    private void processFiles(List<MultipartFile> files, String fileKind, String partnerIdx, List<Long> fileIds, Map<String, Object> result) {
+        if (files != null) {
+            for (MultipartFile file : files) {
+                if (file != null && !file.isEmpty()) {
+                    String originalFileName = file.getOriginalFilename();
+                    String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+                    String savedFileName = UUID.randomUUID() + extension;
+
+                    File targetFile = new File(uploadDir + savedFileName);
+
+                    WellFIleCreateDTO fileDto = WellFIleCreateDTO.builder()
+                            .originFileName(originalFileName)
+                            .savedFileName(savedFileName)
+                            .uploadDir(uploadDir)
+                            .extension(extension)
+                            .size(file.getSize())
+                            .contentType(file.getContentType())
+                            .fileKind(fileKind)
+                            .build();
+
+                    WellFileStorageEntity fileEntity = fileDto.toEntity();
+                    Long fileId = insertFile(fileEntity);
+
+                    try {
+                        InputStream fileStream = file.getInputStream();
+                        FileUtils.copyInputStreamToFile(fileStream, targetFile);
+                        fileIds.add(fileId);
+                        result.put("fileIdxs", fileIds.toString());
+                        result.put("result", "OK");
+                    } catch (Exception e) {
+                        FileUtils.deleteQuietly(targetFile);
+                        e.printStackTrace();
+                        result.put("result", "FAIL");
+                        break;
+                    }
+
+                    WellPartnerFileCreateDTO partnerFileDto = WellPartnerFileCreateDTO.builder()
+                            .pIdx(partnerIdx)
+                            .build();
+
+                    WellPartnerFIleStorageEntity partnerFileEntity = partnerFileDto.toEntity(fileEntity);
+                    insertPartnerFile(partnerFileEntity);
+                }
+            }
+        }
     }
 }

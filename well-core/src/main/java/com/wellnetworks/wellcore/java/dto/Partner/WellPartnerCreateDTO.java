@@ -2,13 +2,17 @@ package com.wellnetworks.wellcore.java.dto.Partner;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.querydsl.core.annotations.QueryProjection;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class WellPartnerCreateDTO {
     @JsonProperty("p_code")
     private String parterCode;
@@ -69,12 +73,21 @@ public class WellPartnerCreateDTO {
     @JsonProperty("partner_memo") //메모
     private String partnerMemo;
 
-    private List<MultipartFile> multipartFiles;
+    private List<String> fileKinds = new ArrayList<>();
 
-    public WellPartnerCreateDTO(){}
+    private List<MultipartFile> businessLicenseFiles;
+    private List<MultipartFile> contractDocumentFiles;
+    private List<MultipartFile> idCardFiles;
+    private List<MultipartFile> storePhotoFiles;
+    private List<MultipartFile> businessCardFiles;
 
     @QueryProjection
-    public WellPartnerCreateDTO(String parterCode, String partnerName, String partnerType, boolean specialPolicyOpening, boolean specialPolicyCharge, Long partnerGroupId, String discountCategory, String salesManager, boolean inApiFlag, String apiKeyInIdx, String preApprovalNumber, LocalDateTime subscriptionDate, String transactionStatus, String partnerUpperIdx, String ceoName, String ceoTelephone, String partnerTelephone, String emailAddress, String commissionDepositAccount, String commissionBankName, String commissionBankHolder, String registrationNumber, String registrationAddress, String registrationDetailAddress, String locationAddress, String locationDetailAddress, String partnerMemo) {
+    public WellPartnerCreateDTO(String parterCode, String partnerName, String partnerType, boolean specialPolicyOpening, boolean specialPolicyCharge, Long partnerGroupId
+                                , String discountCategory, String salesManager, boolean inApiFlag, String apiKeyInIdx, String preApprovalNumber
+                                , LocalDateTime subscriptionDate, String transactionStatus, String partnerUpperIdx, String ceoName, String ceoTelephone
+                                , String partnerTelephone, String emailAddress, String commissionDepositAccount, String commissionBankName, String commissionBankHolder
+                                , String registrationNumber, String registrationAddress, String registrationDetailAddress, String locationAddress, String locationDetailAddress
+                                , String partnerMemo, List<String> fileKinds) {
         this.parterCode = parterCode;
         this.partnerName = partnerName;
         this.partnerType = partnerType;
@@ -102,6 +115,7 @@ public class WellPartnerCreateDTO {
         this.locationAddress = locationAddress;
         this.locationDetailAddress = locationDetailAddress;
         this.partnerMemo = partnerMemo;
+        this.fileKinds = fileKinds;
     }
 }
 

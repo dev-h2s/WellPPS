@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Data
@@ -14,6 +13,9 @@ public class WellPartnerEntityBackup {
     @Id //거래처_idx
     @Column(name = "p_idx")
     private String partnerIdx;
+
+    @Column(name = "in_api_flag") //내부API연동여부
+    private Boolean inApiFlag;
 
     @Column(name = "p_id")
     private Long partnerId;
@@ -60,13 +62,13 @@ public class WellPartnerEntityBackup {
     @Column(name = "product_moddt") //종료날짜
     private LocalDateTime productModifyDate;
 
-    @Column(name = "sales_manager") //영업담당자
+    @Column(name="sales_manager") //영업담당자
     private String salesManager;
 
     @Column(name = "ceo_name") //대표자명
     private String ceoName;
 
-    @Column(name = "ceo_tel") //대표자전화번호
+    @Column(name="ceo_tel") //대표자전화번호
     private String ceoTelephone;
 
     @Column(name = "reg_addr") //사업자등록증주소
@@ -111,7 +113,7 @@ public class WellPartnerEntityBackup {
     @Column(name = "pre_approval_number") //사전승낙번호
     private String preApprovalNumber;
 
-    @Column(name = "email_addr") //이메일주소
+    @Column(name="email_addr") //이메일주소
     private String emailAddress;
 
     @Column(name = "registration_number") //사업자등록번호
@@ -126,7 +128,7 @@ public class WellPartnerEntityBackup {
     @Column(name = "sales_team_visit_memo") //영업팀방문일지
     private String salesTeamVisitMemo;
 
-    @Column(name = "commission_deposit_account") //수수료입금계좌
+    @Column(name="commission_deposit_account") //수수료입금계좌
     private String commissionDepositAccount;
 
     @Column(name = "commission_bank_name") //수수료입금계좌은행명
@@ -155,5 +157,4 @@ public class WellPartnerEntityBackup {
 
     @Column(name = "opening_note") //개통점신청비고
     private String openingNote;
-
 }

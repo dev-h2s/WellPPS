@@ -1,129 +1,122 @@
-//package com.wellnetworks.wellcore.java.service.File;
-//
-//
-//import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
-//import com.wellnetworks.wellcore.java.dto.FIle.WellFIleStorageDTO;
-//import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.core.io.Resource;
-//import org.springframework.core.io.UrlResource;
-//import org.springframework.stereotype.Service;
-//import org.springframework.transaction.annotation.Transactional;
-//
-//import java.io.File;
-//import java.io.IOException;
-//import java.nio.file.Files;
-//import java.nio.file.Path;
-//import java.nio.file.Paths;
-//import java.time.LocalDateTime;
-//import java.time.format.DateTimeFormatter;
-//import java.util.Optional;
-//
-//@Service
-//public class WellFileStorageService {
-//    private final WellFileStorageRepository wellFileStorageRepository;
-//
-//    @Value("${well.filestorage.directory}")
-//    private String uploadDirectory;
-//
-//    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMM");
-//
-//    public WellFileStorageService(WellFileStorageRepository wellFileStorageRepository) {
-//        this.wellFileStorageRepository = wellFileStorageRepository;
-//    }
-//
-//    // 파일 다운로드를 위한 메소드
-//    public Optional<WellFIleStorageDTO> getOneDownload(String fileIdx) {
-//        Optional<WellFileStorageEntity> fileItem = wellFileStorageRepository.findFirstByFileIdx(fileIdx);
-//
-//        if (fileItem.isPresent()) {
-//            return Optional.of(new WellFIleStorageDTO(fileItem.get()));
-//        }
-//
-//        return Optional.empty();
-//    }
-//
-//    // 파일 존재 여부 확인 메소드
-//    public boolean existByFileIdx(String fileIdx) {
-//        return wellFileStorageRepository.existsByFileIdx(fileIdx);
-//    }
-//
-//    // 파일 가져오기를 위한 메소드
-//    public Optional<Resource> getFile(String fileIdx) {
-//        Optional<WellFileStorageEntity> fileItem = wellFileStorageRepository.findFirstByFileIdx(fileIdx);
-//
-//        if (fileItem.isPresent()) {
-//            Path file = Paths.get(uploadDirectory).resolve(
-//                    Paths.get(fileItem.get().getFileKind() + "/" + fileItem.get().getFileName())
-//                            .resolve(fileIdx + "." + (fileItem.get().getFileExtension() != null ? fileItem.get().getFileExtension() : ""))
-//            );
-//
-//            try {
-//                Resource resource = new UrlResource(file.toUri());
-//
-//                if (resource.exists() && resource.isReadable()) {
-//                    return Optional.of(resource);
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        return Optional.empty();
-//    }
-//
-//    // 파일 저장 메소드
-//    @Transactional(rollbackFor = Exception.class)
-//    public String saveFile(WellFIleStorageDTO wellFIleStorageDTO) {
-//        String fileIdx = wellFIleStorageDTO.getFileIdx();
-//
-//        if (fileIdx == null || wellFIleStorageDTO.getFileName() == null) {
-//            return null;
-//        }
-//
-//        String createYYYYMM = LocalDateTime.now().format(DATE_FORMATTER);
-//        String orgName = wellFIleStorageDTO.getStoredFileName();
-//        long fileSize = wellFIleStorageDTO.getFileSize();
-//        String ext = null;
-//
-//        int extPosIndex = orgName.lastIndexOf(".");
-//        if (extPosIndex != -1) {
-//            ext = orgName.substring(extPosIndex + 1);
-//        }
-//
-//        String fileName = wellFIleStorageDTO.getFileKind() + "/" + wellFIleStorageDTO.getFileName() + "/" + fileIdx + "." + (ext != null ? ext : "");
-//
-//        WellFileStorageEntity createFileEntity = new WellFileStorageEntity(
-//                fileIdx, fileName, orgName, fileSize, wellFIleStorageDTO.getUploader().toUpperCase(), createYYYYMM, 0
-//        );
-//
-//        try {
-//            Files.createDirectories(Paths.get(uploadDirectory).resolve(wellFIleStorageDTO.getFileKind() + "/" + createYYYYMM + "/"));
-//            wellFileStorageRepository.save(createFileEntity);
-//            return fileIdx;
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
-//
-//    // 파일 삭제 메소드
-//    @Transactional(rollbackFor = Exception.class)
-//    public boolean deleteFile(String fileIdx) {
-//        Optional<WellFileStorageEntity> deleteFileEntity = wellFileStorageRepository.findFirstByFileIdx(fileIdx);
-//
-//        if (deleteFileEntity.isPresent()) {
-//            String fileName = deleteFileEntity.get().getFileKind() + "/" + deleteFileEntity.get().getFileName() + "/" + fileIdx + "." + (deleteFileEntity.get().getFileExtension() != null ? deleteFileEntity.get().getFileExtension() : "");
-//            File file = new File(Paths.get(uploadDirectory).resolve(fileName).toString());
-//
-//            if (file.delete()) {
-//                wellFileStorageRepository.deleteByFileIdx(fileIdx);
-//                return true;
-//            }
-//        }
-//
-//        return false;
-//    }
-//}
-//
+package com.wellnetworks.wellcore.java.service.File;
+
+import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
+import com.wellnetworks.wellcore.java.dto.FIle.WellPartnerFileCreateDTO;
+import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
+import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
+import com.wellnetworks.wellcore.java.dto.FIle.WellFIleCreateDTO;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
+import com.wellnetworks.wellcore.java.repository.File.WellPartnerFileRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.*;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class WellFileStorageService {
+
+    @Value("${upload.path}")
+    private String uploadDir;
+
+    private final WellFileStorageRepository fileStorageRepository;
+    private final WellPartnerFileRepository partnerFileRepository;
+
+    @Transactional
+    public Map<String, Object> saveFiles(WellPartnerCreateDTO createDTO, String partnerIdx) throws Exception {
+        Map<String, Object> result = new HashMap<>();
+        List<Long> fileIds = new ArrayList<>();
+
+        List<MultipartFile> businessLicenseFiles = createDTO.getBusinessLicenseFiles();
+        List<MultipartFile> contractDocumentFiles = createDTO.getContractDocumentFiles();
+        List<MultipartFile> idCardFiles = createDTO.getIdCardFiles();
+        List<MultipartFile> storePhotoFiles = createDTO.getStorePhotoFiles();
+        List<MultipartFile> businessCardFiles = createDTO.getBusinessCardFiles();
+
+        // 각 파일 업로드 필드를 처리
+        processFiles(businessLicenseFiles, "사업자등록증", partnerIdx, fileIds, result);
+        processFiles(contractDocumentFiles, "계약서", partnerIdx, fileIds, result);
+        processFiles(idCardFiles, "대표자신분증", partnerIdx, fileIds, result);
+        processFiles(storePhotoFiles, "매장사진", partnerIdx, fileIds, result);
+        processFiles(businessCardFiles, "대표자명함", partnerIdx, fileIds, result);
+
+        // 다른 파일 업로드 필드들도 처리
+
+        return result;
+    }
+
+    @Transactional
+    public Long insertFile(WellFileStorageEntity file) {
+        return fileStorageRepository.save(file).getId();
+    }
+
+    @Transactional
+    public Long insertPartnerFile(WellPartnerFIleStorageEntity partnerFile) {
+        return partnerFileRepository.save(partnerFile).getId();
+    }
+
+    @Transactional
+    public WellPartnerFIleStorageEntity deletePartnerFile(Long partnerFileId) {
+        WellPartnerFIleStorageEntity partnerFile = partnerFileRepository.findById(partnerFileId).orElse(null);
+        if (partnerFile != null) {
+            partnerFileRepository.delete(partnerFile);
+        }
+        return partnerFile;
+    }
+
+    // 각 파일 업로드 필드를 처리하는 메서드
+    private void processFiles(List<MultipartFile> files, String fileKind, String partnerIdx, List<Long> fileIds, Map<String, Object> result) {
+        if (files != null) {
+            for (MultipartFile file : files) {
+                if (file != null && !file.isEmpty()) {
+                    String originalFileName = file.getOriginalFilename();
+                    String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+                    String savedFileName = UUID.randomUUID() + extension;
+
+                    File targetFile = new File(uploadDir + savedFileName);
+
+                    WellFIleCreateDTO fileDto = WellFIleCreateDTO.builder()
+                            .originFileName(originalFileName)
+                            .savedFileName(savedFileName)
+                            .uploadDir(uploadDir)
+                            .extension(extension)
+                            .size(file.getSize())
+                            .contentType(file.getContentType())
+                            .fileKind(fileKind)
+                            .build();
+
+                    WellFileStorageEntity fileEntity = fileDto.toEntity();
+                    Long fileId = insertFile(fileEntity);
+
+                    try {
+                        InputStream fileStream = file.getInputStream();
+                        FileUtils.copyInputStreamToFile(fileStream, targetFile);
+                        fileIds.add(fileId);
+                        result.put("fileIdxs", fileIds.toString());
+                        result.put("result", "OK");
+                    } catch (Exception e) {
+                        FileUtils.deleteQuietly(targetFile);
+                        e.printStackTrace();
+                        result.put("result", "FAIL");
+                        break;
+                    }
+
+                    WellPartnerFileCreateDTO partnerFileDto = WellPartnerFileCreateDTO.builder()
+                            .pIdx(partnerIdx)
+                            .build();
+
+                    WellPartnerFIleStorageEntity partnerFileEntity = partnerFileDto.toEntity(fileEntity);
+                    insertPartnerFile(partnerFileEntity);
+                }
+            }
+        }
+    }
+}

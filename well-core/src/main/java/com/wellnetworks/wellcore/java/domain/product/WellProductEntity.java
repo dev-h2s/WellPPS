@@ -2,7 +2,6 @@ package com.wellnetworks.wellcore.java.domain.product;
 //요금제
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wellnetworks.wellcore.java.domain.opening.WellCommissionOpeningPolicyEntity;
-import com.wellnetworks.wellcore.java.domain.opening.WellOpeningEntity;
 import com.wellnetworks.wellcore.java.domain.operator.WellOperatorEntity;
 import jakarta.persistence.*;
 import lombok.Getter;

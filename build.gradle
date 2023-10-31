@@ -44,6 +44,8 @@ subprojects {
 // slf4j & logback
 		implementation('org.slf4j:jcl-over-slf4j')
 		implementation('ch.qos.logback:logback-classic')
+//파일 처리
+		implementation 'commons-io:commons-io:2.6'
 	}
 
 	test {

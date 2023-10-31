@@ -1,11 +1,18 @@
 package com.wellnetworks.wellcore.java.dto.APIKEYIN;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class WellApikeyInCreateDTO {
     @JsonProperty("api_key_in_idx")
     private String apiKeyInIdx;
@@ -17,8 +24,6 @@ public class WellApikeyInCreateDTO {
     private Boolean apiKeyInEndFlag;
     @JsonProperty("api_key_in_update")
     private LocalDateTime apiKeyInUpdate;
-    @JsonProperty("in_api_flag")
-    private Boolean inApiFlag;
     @JsonProperty("p_agree_flag")
     private Boolean partnerAgreeFlag;
     @JsonProperty("issuer")

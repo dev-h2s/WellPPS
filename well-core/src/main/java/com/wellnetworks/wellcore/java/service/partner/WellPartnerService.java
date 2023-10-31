@@ -1,71 +1,52 @@
-package com.wellnetworks.wellcore.java.service;
+package com.wellnetworks.wellcore.java.service.partner;
 
+import com.wellnetworks.wellcore.java.domain.backup.partner.WellPartnerEntityBackup;
+import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
+import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
+import com.wellnetworks.wellcore.java.repository.File.WellPartnerFileRepository;
 import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
-import com.wellnetworks.wellcore.java.domain.backup.partner.*;
-import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
-import com.wellnetworks.wellcore.java.domain.opening.WellOpeningEntity;
-import com.wellnetworks.wellcore.java.domain.partner.*;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
-import com.wellnetworks.wellcore.java.dto.PartnerGroup.WellPartnerGroupCreateDTO;
 //import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
-import com.wellnetworks.wellcore.java.repository.File.WellPartnerFileRepository;
-import com.wellnetworks.wellcore.java.repository.File.WellVirtualAccountFileRepository;
 import com.wellnetworks.wellcore.java.repository.Partner.*;
-import com.wellnetworks.wellcore.java.repository.account.WellDipositRepository;
-import com.wellnetworks.wellcore.java.repository.account.WellVirtualAccountRepository;
 import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyInRepository;
 import com.wellnetworks.wellcore.java.repository.backup.partner.*;
-import com.wellnetworks.wellcore.java.repository.member.WellGroupRepository;
-import com.wellnetworks.wellcore.java.repository.opening.WellOpeningRepository;
+import com.wellnetworks.wellcore.java.repository.search.partnerSearch;
+import com.wellnetworks.wellcore.java.service.File.WellFileStorageService;
+import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.BeanUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import java.io.Console;
-import java.lang.reflect.Member;
-import java.security.NoSuchAlgorithmException;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.wellnetworks.wellcore.java.domain.partner.QWellPartnerEntity.wellPartnerEntity;
-
 @Service
+@RequiredArgsConstructor
 public class WellPartnerService {
 
     @Autowired private WellPartnerRepository wellPartnerRepository;
     @Autowired private WellPartnerBackupRepository wellPartnerBackupRepository;
     @Autowired private WellPartnerGroupRepository wellPartnerGroupRepository;
-
+    @Autowired private WellApikeyInRepository wellApikeyInRepository;
+    @Autowired private WellFileStorageService fileStorageService;
+    @Autowired private WellPartnerFileRepository partnerFileRepository;
+    @Autowired private WellFileStorageRepository fileRepository;
     @PersistenceContext
     private EntityManager em;
-
-
-
-
-    //거래처 리스트 조회
-    public List<WellPartnerGroupEntity> getAllGroups() {
-        return wellPartnerGroupRepository.findAll();
-    }
-
-
-
-
 
 
 
@@ -73,41 +54,52 @@ public class WellPartnerService {
     public Optional<WellPartnerInfoDTO> getPartnerByPartnerIdx(String partnerIdx) {
         WellPartnerEntity partnerEntity = wellPartnerRepository.findByPartnerIdx(partnerIdx);
 
-        // 해당 거래처와 연결된 파일 정보를 가져와서 리스트로 정리
         if (partnerEntity != null) {
-            List<WellFileStorageEntity> fileStorages = partnerEntity.getFiles().stream()
-                    .map(WellPartnerFIleStorageEntity::getFile)
-                    .collect(Collectors.toList());
-
-            // 거래처가 가상계좌를 가지고 있는 경우, 예치금 정보를 가져옴
+            List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerIdx);
             WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
-            WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
+            WellDipositEntity depositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
 
-            return Optional.of(new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity));
+            Long registeredCount = wellPartnerRepository.countByTransactionStatus("등록");
+            Long preRegisteredCount = wellPartnerRepository.countByTransactionStatus("가등록");
+            Long managementCount = wellPartnerRepository.countByTransactionStatus("관리대상");
+            Long suspendedCount = wellPartnerRepository.countByTransactionStatus("거래중지");
+
+            return Optional.of(new WellPartnerInfoDTO(partnerEntity, fileStorages, depositEntity
+                    , registeredCount, preRegisteredCount, managementCount, suspendedCount
+                    ));
         } else {
             return Optional.empty();
         }
     }
 
+
+
     //거래처 리스트 조회
     public List<WellPartnerInfoDTO> getAllPartners() {
-        List<WellPartnerEntity> partners = wellPartnerRepository.findAll();
+        List<WellPartnerEntity> partners = wellPartnerRepository.findAllByOrderByProductRegisterDateDesc();
         List<WellPartnerInfoDTO> partnerInfoList = new ArrayList<>();
 
         for (WellPartnerEntity partnerEntity : partners) {
-            List<WellFileStorageEntity> fileStorages = partnerEntity.getFiles().stream()
-                    .map(WellPartnerFIleStorageEntity::getFile)
-                    .collect(Collectors.toList());
+            List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerEntity.getPartnerIdx());
 
             WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
             WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
 
-            WellPartnerInfoDTO partnerInfo = new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity);
+            Long registeredCount = wellPartnerRepository.countByTransactionStatus("등록");
+            Long preRegisteredCount = wellPartnerRepository.countByTransactionStatus("가등록");
+            Long managementCount = wellPartnerRepository.countByTransactionStatus("관리대상");
+            Long suspendedCount = wellPartnerRepository.countByTransactionStatus("거래중지");
+
+            WellPartnerInfoDTO partnerInfo = new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity
+                    , registeredCount, preRegisteredCount, managementCount, suspendedCount
+                    );
             partnerInfoList.add(partnerInfo);
         }
 
         return partnerInfoList;
     }
+
+
 
 
 
@@ -133,28 +125,21 @@ public class WellPartnerService {
     }
 
     @Transactional
-    public void join(WellPartnerCreateDTO createDTO) {
-        // 1. 거래처 그룹 정보 가져오기
+    public void join(WellPartnerCreateDTO createDTO) throws Exception {
+        // 거래처 그룹 정보 가져오기
         WellPartnerGroupEntity partnerGroup = wellPartnerGroupRepository.findByPartnerGroupId(createDTO.getPartnerGroupId());
 
-        // 로깅 1: 거래처 그룹을 찾을 때 반환된 값을 로깅
-        if (partnerGroup != null) {
-            System.out.println("Found partnerGroup: " + partnerGroup.getPartnerGroupId());
-            System.out.println("Found partnerGroup: " + (partnerGroup != null));
-
+        // API 연동 여부 확인 및 API 키 엔티티 가져오기
+        WellApikeyInEntity apikeyIn = null; // 초기화
+        if (createDTO.isInApiFlag() && createDTO.getApiKeyInIdx() != null) {
+            apikeyIn = wellApikeyInRepository.findByApiKeyInIdx(createDTO.getApiKeyInIdx());
         }
 
-        // 로깅 2: 입력된 partnerGroupId 로깅
-        System.out.println("Input createDTO: " + createDTO.getPartnerGroupId());
-
-        // 3. 입력된 partnerGroupId와 거래처 그룹의 partnerGroupId를 로깅
-        if (partnerGroup != null && !partnerGroup.getPartnerGroupId().equals(createDTO.getPartnerGroupId())) {
-            System.out.println("Mismatch between partnerGroupId and createDTO partnerGroupId.");
+        // API 연동 여부와 API 키가 설정되지 않은 경우 예외 처리
+        if (createDTO.isInApiFlag() && apikeyIn == null) {
+            throw new RuntimeException("해당 API 키를 찾을 수 없습니다.");
         }
 
-        if (partnerGroup == null) {
-            throw new RuntimeException("해당 거래처 그룹을 찾을 수 없습니다.");
-        }
 
         // 거래처 Entity 생성
         WellPartnerEntity partner = WellPartnerEntity.builder()
@@ -166,14 +151,72 @@ public class WellPartnerService {
                 .partnerGroup(partnerGroup) // 거래처 그룹 설정
                 .discountCategory(createDTO.getDiscountCategory())
                 .salesManager(createDTO.getSalesManager())
+                .inApiFlag(createDTO.isInApiFlag())
+                .apiKey(apikeyIn) // apikey 설정
+                .preApprovalNumber(createDTO.getPreApprovalNumber())
+                .subscriptionDate(createDTO.getSubscriptionDate())
+                .transactionStatus(createDTO.getTransactionStatus())
+                .partnerUpperIdx(createDTO.getPartnerUpperIdx()) // 상부점_id 설정
+                .ceoName(createDTO.getCeoName())
+                .ceoTelephone(createDTO.getCeoTelephone())
+                .partnerTelephone(createDTO.getPartnerTelephone())
+                .emailAddress(createDTO.getEmailAddress())
+                .commissionBankName(createDTO.getCommissionBankName())
+                .commissionDepositAccount(createDTO.getCommissionDepositAccount())
+                .commissionBankHolder(createDTO.getCommissionBankHolder())
+                .registrationNumber(createDTO.getRegistrationNumber())
+                .registrationAddress(createDTO.getRegistrationAddress())
+                .registrationDetailAddress(createDTO.getRegistrationDetailAddress())
+                .locationAddress(createDTO.getLocationAddress())
+                .locationDetailAddress(createDTO.getLocationDetailAddress())
+                .partnerMemo(createDTO.getPartnerMemo())
                 .build();
 
         // 거래처 저장
         wellPartnerRepository.save(partner);
+
+        // 파일 저장
+        fileStorageService.saveFiles(createDTO, partner.getPartnerIdx());
+
+        System.out.println();
     }
 
 
+    //거래처 수정
+    @Transactional
+    public void update(WellPartnerUpdateDTO updateDTO) throws Exception {
 
+        WellPartnerEntity partner = wellPartnerRepository.findByPartnerIdx(updateDTO.getPartnerIdx());
+        System.out.println(updateDTO.getPartnerIdx());
+
+        if (partner == null) {
+            throw new RuntimeException("해당 파트너를 찾을 수 없습니다.");
+        }
+
+        // 거래처 그룹 정보 가져오기
+        WellPartnerGroupEntity partnerGroup = wellPartnerGroupRepository.findByPartnerGroupId(updateDTO.getPartnerGroupId());
+
+        // API 연동 여부 확인 및 API 키 엔티티 가져오기
+        WellApikeyInEntity apikeyIn = null; // 초기화
+        if (updateDTO.isInApiFlag() && updateDTO.getApiKeyInIdx() != null) {
+            apikeyIn = wellApikeyInRepository.findByApiKeyInIdx(updateDTO.getApiKeyInIdx());
+        }
+
+        // API 연동 여부와 API 키가 설정되지 않은 경우 예외 처리
+        if (updateDTO.isInApiFlag() && apikeyIn == null) {
+            throw new RuntimeException("해당 API 키를 찾을 수 없습니다.");
+        }
+
+
+        partner.setPartnerGroup(partnerGroup); // 거래처 그룹 업데이트
+        partner.setApiKey(apikeyIn); // API 키 업데이트
+        partner.updateFromDTO(updateDTO);
+
+        // 거래처 저장
+        wellPartnerRepository.save(partner);
+
+        System.out.println();
+    }
 
 
 
@@ -186,25 +229,27 @@ public class WellPartnerService {
 
 
         if (partnerEntity != null) {
-            List<WellFileStorageEntity> fileStorages = partnerEntity.getFiles().stream()
-                    .map(WellPartnerFIleStorageEntity::getFile)
-                    .collect(Collectors.toList());
+            List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerIdx);
 
             // 거래처가 가상계좌를 가지고 있는 경우, 예치금 정보를 가져옴
             WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
             WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
 
+            Long registeredCount = wellPartnerRepository.countByTransactionStatus("등록");
+            Long preRegisteredCount = wellPartnerRepository.countByTransactionStatus("가등록");
+            Long managementCount = wellPartnerRepository.countByTransactionStatus("관리대상");
+            Long suspendedCount = wellPartnerRepository.countByTransactionStatus("거래중지");
+
             // 백업 엔티티에 복사
             WellPartnerEntityBackup partnerBackup = new WellPartnerEntityBackup();
             partnerBackup.setPartnerIdx(partnerIdx);
-            partnerBackup.setPartnerId(partnerEntity.getPartnerId().getPartnerId());
             partnerBackup.setPartnerGroupId(partnerEntity.getPartnerGroup().getPartnerGroupId());
             partnerBackup.setApiKeyInIdx(partnerEntity.getApiKey().getApiKeyInIdx());
             partnerBackup.setPartnerCode(partnerEntity.getPartnerCode());
             partnerBackup.setPartnerName(partnerEntity.getPartnerName());
             partnerBackup.setTransactionStatus(partnerEntity.getTransactionStatus());
             partnerBackup.setPartnerType(partnerEntity.getPartnerType());
-            partnerBackup.setPartnerUpperId(partnerEntity.getPartnerUpperId());
+            partnerBackup.setPartnerUpperIdx(partnerEntity.getPartnerUpperIdx());
             partnerBackup.setPartnerTelephone(partnerEntity.getPartnerTelephone());
             partnerBackup.setProductRegisterDate(partnerEntity.getProductRegisterDate());
             partnerBackup.setProductModifyDate(partnerEntity.getProductModifyDate());
@@ -240,6 +285,7 @@ public class WellPartnerService {
             partnerBackup.setOpeningProgress(partnerEntity.getOpeningProgress());
             partnerBackup.setOpeningFlag(partnerEntity.isOpeningFlag());
             partnerBackup.setOpeningNote(partnerEntity.getOpeningNote());
+            partnerBackup.setInApiFlag(partnerEntity.getInApiFlag());
 
             // 백업 테이블에 저장
             wellPartnerBackupRepository.save(partnerBackup);
@@ -247,7 +293,8 @@ public class WellPartnerService {
             // 거래처 삭제
             wellPartnerRepository.delete(partnerEntity);
 
-            return Optional.of(new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity));
+            return Optional.of(new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity
+                                                    , registeredCount, preRegisteredCount, managementCount, suspendedCount));
         } else {
             // 삭제 대상이 없을 경우 빈 Optional 반환
             return Optional.empty();
@@ -261,47 +308,25 @@ public class WellPartnerService {
         return wellPartnerRepository.findAll(pageable);
     }
 
+    public Page<WellPartnerInfoDTO> searchPartner(Pageable pageable, List<partnerSearch> searchKeywords )
+    {
+        if (searchKeywords == null || searchKeywords.isEmpty()) {
+            // 검색 조건이 없으면 모든 파트너 데이터 반환
+            Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(pageable);
+            List<WellPartnerInfoDTO> dtos = partners.stream()
+                    .map(WellPartnerInfoDTO::new)
+                    .collect(Collectors.toList());
+            return new PageImpl<>(dtos, pageable, partners.getTotalElements());
+        }
 
-//거래유무 엔티티 개수
-//거래중 개수
-//    @Query("SELECT p FROM WellPartnerEntity p " +
-//            "WHERE p.transactionStatus = '거래중'")
-//    Long countByTrading(String transactionStatus);
-//    //거래중지 개수
-//    @Query("SELECT p FROM WellPartnerEntity p " +
-//            "WHERE p.transactionStatus = '거래중지'")
-//    Long countByTradeStop(String transactionStatus);
-//    //관리대상 개수
-//    @Query("SELECT p FROM WellPartnerEntity p " +
-//            "WHERE p.transactionStatus = '관리대상'")
-//    Long countByTarget(String transactionStatus);
-//    // 가등록 개수
-//    @Query("SELECT p FROM WellPartnerEntity p " +
-//            "WHERE p.transactionStatus = '가등록'")
-//    Long countByFakeTrade(String transactionStatus);
+        Specification<WellPartnerEntity> searchSpecification = WellPartnerSearch.buildSpecification(searchKeywords);
+        Page<WellPartnerEntity> searchResult = wellPartnerRepository.findAll(searchSpecification, pageable);
+        List<WellPartnerInfoDTO> dtos = searchResult.stream()
+                .map(WellPartnerInfoDTO::new)
+                .collect(Collectors.toList());
+        return new PageImpl<>(dtos, pageable, searchResult.getTotalElements());
+    }
 
 
-    //    public WellPartnerInfoDTO getPartnerInfo(String partnerIdx) {
-//        WellPartnerEntity partnerEntity = partnerRepository.findByPartnerIdx(partnerIdx);
-//        List<WellFileCountDTO> attachments = getFileCountsByPartnerIdx(partnerIdx);
-//        WellPartnerInfoDTO partnerInfoDTO = new WellPartnerInfoDTO(partnerEntity);
-//        partnerInfoDTO.setAttachments(attachments);
-//        return partnerInfoDTO;
-//    }
 
-//    public List<WellFileCountDTO> getFileCountsByPartnerIdx(String partnerIdx) {
-//        List<WellFileCountDTO> fileCounts = new ArrayList<>();
-//
-//        // 파일 종류별 개수 가져오기
-//        int registrationCount = fileStorageRepository.countByFileKindAndPartnerFileStorage_Partner_PartnerIdx("등록증", partnerIdx);
-//        int contractCount = fileStorageRepository.countByFileKindAndPartnerFileStorage_Partner_PartnerIdx("계약서", partnerIdx);
-//
-//        WellFileCountDTO registrationDTO = new WellFileCountDTO("등록증", registrationCount);
-//        WellFileCountDTO contractDTO = new WellFileCountDTO("계약서", contractCount);
-//
-//        fileCounts.add(registrationDTO);
-//        fileCounts.add(contractDTO);
-//
-//        return fileCounts;
-//    }
 }

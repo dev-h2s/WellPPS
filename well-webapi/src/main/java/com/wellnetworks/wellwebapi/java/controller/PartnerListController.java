@@ -1,24 +1,26 @@
 package com.wellnetworks.wellwebapi.java.controller;
 // 거래처 리스트 컨트롤러
 
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
+import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
+import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
-import com.wellnetworks.wellcore.java.dto.PartnerGroup.WellPartnerGroupCreateDTO;
-import com.wellnetworks.wellcore.java.service.WellPartnerService;
-import jakarta.validation.Valid;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
+import com.wellnetworks.wellcore.java.repository.search.partnerSearch;
+import com.wellnetworks.wellcore.java.service.partner.WellPartnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(("/admin/hr/"))
@@ -27,6 +29,7 @@ public class PartnerListController {
 
     @Autowired
     private WellPartnerService wellPartnerService;
+
 
     //거래처 idx
     @GetMapping("business/{partnerIdx}")
@@ -62,19 +65,37 @@ public class PartnerListController {
     }
 
     //거래처 입력
-    @PostMapping("partners/create")
-    public ResponseEntity<String> createPartner(@RequestBody WellPartnerCreateDTO createDTO) {
-        wellPartnerService.join(createDTO); // 거래처 그룹 ID를 함께 전달
+    @PostMapping(value = "business/create")
+    public ResponseEntity<String> createPartner(WellPartnerCreateDTO createDTO) throws Exception {
+         wellPartnerService.join(createDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body("거래처가 성공적으로 생성되었습니다.");
     }
 
-
-
-
     //거래처 수정
-    @PatchMapping("business")
-    public void patchPartner() {
+    @PatchMapping("business/update")
+    public ResponseEntity<String> patchPartner(WellPartnerUpdateDTO updateDTO) throws Exception {
+        wellPartnerService.update(updateDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body("수정 완료.");
     }
+
+    @GetMapping("business/search")
+    public Page<WellPartnerInfoDTO> searchPartner(
+            Pageable pageable,
+            @RequestParam(value = "partnerName", required = false) String partnerName
+            // 다른 검색 조건을 추가할 수 있음
+    ) {
+        List<partnerSearch> searchKeywords = new ArrayList<>();
+
+        if (partnerName != null) {
+            // 거래처명으로 검색하는 경우
+            searchKeywords.add(new partnerSearch("partnerName", "%%", partnerName));
+        }
+
+        // 다른 검색 조건도 추가 가능
+
+        return wellPartnerService.searchPartner(pageable, searchKeywords);
+    }
+
 
     // 거래처 체크항목 삭제
     @DeleteMapping("business/{partnerIdx}")
@@ -91,26 +112,6 @@ public class PartnerListController {
     }
 
 
-    //거래처 그룹
-    @GetMapping("group")
-    public ResponseEntity<List<WellPartnerGroupCreateDTO>> getAllGroups() {
-        List<WellPartnerGroupEntity> groupEntities = wellPartnerService.getAllGroups();
 
-        // 엔티티를 DTO로 변환
-        List<WellPartnerGroupCreateDTO> groupDTOs = groupEntities.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(groupDTOs);
-    }
-
-    // 엔티티를 DTO로 변환하는 메서드
-    private WellPartnerGroupCreateDTO convertToDTO(WellPartnerGroupEntity entity) {
-        WellPartnerGroupCreateDTO dto = new WellPartnerGroupCreateDTO();
-        dto.setPartnerGroupId(entity.getPartnerGroupId());
-        // 나머지 필드에 대한 매핑
-
-        return dto;
-    }
 
 }

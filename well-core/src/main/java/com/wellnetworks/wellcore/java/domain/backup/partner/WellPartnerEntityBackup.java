@@ -1,21 +1,11 @@
 package com.wellnetworks.wellcore.java.domain.backup.partner;
 
-import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
-import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
-import com.wellnetworks.wellcore.java.domain.opening.WellOpeningEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerUserEntity;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Data
 @NoArgsConstructor
@@ -23,6 +13,9 @@ public class WellPartnerEntityBackup {
     @Id //거래처_idx
     @Column(name = "p_idx")
     private String partnerIdx;
+
+    @Column(name = "in_api_flag") //내부API연동여부
+    private Boolean inApiFlag;
 
     @Column(name = "p_id")
     private Long partnerId;
@@ -58,7 +51,7 @@ public class WellPartnerEntityBackup {
     private String partnerType;
 
     @Column(name = "p_upper_id") //상부점_id
-    private Long partnerUpperId;
+    private String partnerUpperIdx;
 
     @Column(name = "p_tel") //사업장전화번호
     private String partnerTelephone;
@@ -69,13 +62,13 @@ public class WellPartnerEntityBackup {
     @Column(name = "product_moddt") //종료날짜
     private LocalDateTime productModifyDate;
 
-    @Column(name = "sales_manager") //영업담당자
+    @Column(name="sales_manager") //영업담당자
     private String salesManager;
 
     @Column(name = "ceo_name") //대표자명
     private String ceoName;
 
-    @Column(name = "ceo_tel") //대표자전화번호
+    @Column(name="ceo_tel") //대표자전화번호
     private String ceoTelephone;
 
     @Column(name = "reg_addr") //사업자등록증주소
@@ -120,7 +113,7 @@ public class WellPartnerEntityBackup {
     @Column(name = "pre_approval_number") //사전승낙번호
     private String preApprovalNumber;
 
-    @Column(name = "email_addr") //이메일주소
+    @Column(name="email_addr") //이메일주소
     private String emailAddress;
 
     @Column(name = "registration_number") //사업자등록번호
@@ -135,7 +128,7 @@ public class WellPartnerEntityBackup {
     @Column(name = "sales_team_visit_memo") //영업팀방문일지
     private String salesTeamVisitMemo;
 
-    @Column(name = "commission_deposit_account") //수수료입금계좌
+    @Column(name="commission_deposit_account") //수수료입금계좌
     private String commissionDepositAccount;
 
     @Column(name = "commission_bank_name") //수수료입금계좌은행명

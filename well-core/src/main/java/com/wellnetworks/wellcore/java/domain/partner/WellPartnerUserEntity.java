@@ -1,8 +1,6 @@
 package com.wellnetworks.wellcore.java.domain.partner;
 // 거래처 유저
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,16 +12,15 @@ import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class WellPartnerUserEntity {
 
     @Id //거래처_id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "p_id")
     private Long partnerId;
 
-    @JsonIgnore //순환참조 문제 방지
-    @OneToOne(fetch = LAZY, mappedBy = "partnerId") //거래처 1대1
+    @OneToOne(fetch = LAZY) //거래처 1대1
+    @JoinColumn(name = "partnerId")
     private WellPartnerEntity partner; //거래처 엔티티 참조
 
     @ManyToOne(fetch = LAZY) //그룹별권한
@@ -46,7 +43,7 @@ public class WellPartnerUserEntity {
     private LocalDateTime tmpPwdExpiration;
 
     @Column(name = "tmp_pwd_count") //임시비밀번호 사용횟수
-    private int tmpPwdCount;
+    private Integer tmpPwdCount;
 
     @Column(name = "tmp_pwd_dt") //임시비밀번호 생성일자
     private LocalDateTime tmpPwdDate;
@@ -57,4 +54,18 @@ public class WellPartnerUserEntity {
     @Column(name = "p_u_regdt") //유저정보 생성일자
     private LocalDateTime partnerUserRegisterDate;
 
+    @Builder
+    public WellPartnerUserEntity(WellPartnerPermissionGroupEntity partnerManagerGroup, String partnerIdentification, String partnerUserPwd, String permissions, String tmpPwd, LocalDateTime tmpPwdExpiration, Integer tmpPwdCount, LocalDateTime tmpPwdDate, LocalDateTime partnerUserModifyDate, LocalDateTime partnerUserRegisterDate
+                                ) {
+        this.partnerManagerGroup = partnerManagerGroup;
+        this.partnerIdentification = partnerIdentification;
+        this.partnerUserPwd = partnerUserPwd;
+        this.permissions = permissions;
+        this.tmpPwd = tmpPwd;
+        this.tmpPwdExpiration = tmpPwdExpiration;
+        this.tmpPwdCount = tmpPwdCount;
+        this.tmpPwdDate = tmpPwdDate;
+        this.partnerUserModifyDate = partnerUserModifyDate;
+        this.partnerUserRegisterDate = partnerUserRegisterDate;
+    }
 }

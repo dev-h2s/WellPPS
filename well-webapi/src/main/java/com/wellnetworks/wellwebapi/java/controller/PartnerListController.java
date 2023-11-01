@@ -1,23 +1,19 @@
 package com.wellnetworks.wellwebapi.java.controller;
 // 거래처 리스트 컨트롤러
 
-import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
-import com.wellnetworks.wellcore.java.repository.search.partnerSearch;
+import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.service.partner.WellPartnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +25,8 @@ public class PartnerListController {
 
     @Autowired
     private WellPartnerService wellPartnerService;
+    @Autowired
+    private WellPartnerRepository wellPartnerRepository;
 
 
     //거래처 idx
@@ -79,22 +77,12 @@ public class PartnerListController {
     }
 
     @GetMapping("business/search")
-    public Page<WellPartnerInfoDTO> searchPartner(
-            Pageable pageable,
+    public List<WellPartnerInfoDTO> searchPartner(
             @RequestParam(value = "partnerName", required = false) String partnerName
-            // 다른 검색 조건을 추가할 수 있음
     ) {
-        List<partnerSearch> searchKeywords = new ArrayList<>();
-
-        if (partnerName != null) {
-            // 거래처명으로 검색하는 경우
-            searchKeywords.add(new partnerSearch("partnerName", "%%", partnerName));
-        }
-
-        // 다른 검색 조건도 추가 가능
-
-        return wellPartnerService.searchPartner(pageable, searchKeywords);
+        return wellPartnerService.searchPartnerList(partnerName);
     }
+
 
 
     // 거래처 체크항목 삭제

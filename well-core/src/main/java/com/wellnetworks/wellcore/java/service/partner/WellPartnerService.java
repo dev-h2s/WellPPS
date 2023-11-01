@@ -24,10 +24,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -308,25 +305,28 @@ public class WellPartnerService {
         return wellPartnerRepository.findAll(pageable);
     }
 
-    public Page<WellPartnerInfoDTO> searchPartner(Pageable pageable, List<partnerSearch> searchKeywords )
-    {
-        if (searchKeywords == null || searchKeywords.isEmpty()) {
-            // 검색 조건이 없으면 모든 파트너 데이터 반환
-            Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(pageable);
-            List<WellPartnerInfoDTO> dtos = partners.stream()
-                    .map(WellPartnerInfoDTO::new)
-                    .collect(Collectors.toList());
-            return new PageImpl<>(dtos, pageable, partners.getTotalElements());
+    public List<WellPartnerInfoDTO> searchPartnerList(String searchKeyword) {
+        Specification<WellPartnerEntity> spec = Specification.where(PartnerSpecification.partnerNameContains(searchKeyword));
+
+        // 다른 검색 조건을 추가하려면 아래와 같이 조합 가능
+        // spec = spec.and(PartnerSpecification.otherSearchCondition(value));
+
+        List<WellPartnerEntity> partners = wellPartnerRepository.findAll(spec);
+
+        List<WellPartnerInfoDTO> partnerInfoList = new ArrayList<>();
+
+        for (WellPartnerEntity partnerEntity : partners) {
+            List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerEntity.getPartnerIdx());
+
+            WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
+            WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
+
+            WellPartnerInfoDTO partnerInfo = new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity);
+            partnerInfoList.add(partnerInfo);
         }
 
-        Specification<WellPartnerEntity> searchSpecification = WellPartnerSearch.buildSpecification(searchKeywords);
-        Page<WellPartnerEntity> searchResult = wellPartnerRepository.findAll(searchSpecification, pageable);
-        List<WellPartnerInfoDTO> dtos = searchResult.stream()
-                .map(WellPartnerInfoDTO::new)
-                .collect(Collectors.toList());
-        return new PageImpl<>(dtos, pageable, searchResult.getTotalElements());
+        return partnerInfoList;
     }
-
 
 
 }

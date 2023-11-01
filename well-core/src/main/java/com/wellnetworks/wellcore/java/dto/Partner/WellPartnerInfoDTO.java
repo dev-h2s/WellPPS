@@ -26,7 +26,7 @@ public class WellPartnerInfoDTO {
     private Integer dipositBalance;
     private String salesManager;
     private String ceoName;
-    private String partnerTelephone;
+    private String ceoTelephone;
     private String writer;
     private String partnerUpperIdx;
     private Integer size;
@@ -38,7 +38,6 @@ public class WellPartnerInfoDTO {
     private Long suspendedCount;
 
     //거래처 1개, 리스트
-    @Builder
     public WellPartnerInfoDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, WellDipositEntity diposit
                                 , Long registeredCount, Long preRegisteredCount, Long managementCount, Long suspendedCount
                                 ) {
@@ -62,7 +61,7 @@ public class WellPartnerInfoDTO {
         }
         this.salesManager = entity.getSalesManager();
         this.ceoName = entity.getCeoName();
-        this.partnerTelephone = entity.getPartnerTelephone();
+        this.ceoTelephone = entity.getCeoTelephone();
         this.writer = entity.getWriter();
         this.partnerUpperIdx = entity.getPartnerUpperIdx();
         this.size = entity.getSize();
@@ -74,8 +73,7 @@ public class WellPartnerInfoDTO {
         this.suspendedCount = suspendedCount;
     }
 
-
-    @Builder
+    //거래처 검색
     public WellPartnerInfoDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, WellDipositEntity diposit
     ) {
         this.partnerIdx = entity.getPartnerIdx();
@@ -98,17 +96,10 @@ public class WellPartnerInfoDTO {
         }
         this.salesManager = entity.getSalesManager();
         this.ceoName = entity.getCeoName();
-        this.partnerTelephone = entity.getPartnerTelephone();
+        this.ceoTelephone = entity.getCeoTelephone();
         this.writer = entity.getWriter();
         this.partnerUpperIdx = entity.getPartnerUpperIdx();
         this.size = entity.getSize();
         this.page = entity.getPage();
-    }
-
-    // 거래처 검색
-    @Builder
-    public WellPartnerInfoDTO(String partnerName
-    ) {
-        this.partnerName = partnerName;
     }
 }

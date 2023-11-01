@@ -76,11 +76,18 @@ public class PartnerListController {
         return ResponseEntity.status(HttpStatus.CREATED).body("수정 완료.");
     }
 
+    //거래처 검색
     @GetMapping("business/search")
     public List<WellPartnerInfoDTO> searchPartner(
             @RequestParam(value = "partnerName", required = false) String partnerName
+            , @RequestParam(value = "ceoName", required = false) String ceoName
+            , @RequestParam(value = "ceoTelephone", required = false) String ceoTelephone
+            , @RequestParam(value = "partnerCode", required = false) String partnerCode
+            , @RequestParam(value = "address", required = false) String address
+            , @RequestParam(value = "writer", required = false) String writer
+            , @RequestParam(value = "partnerTelephone", required = false) String partnerTelephone
     ) {
-        return wellPartnerService.searchPartnerList(partnerName);
+        return wellPartnerService.searchPartnerList(partnerName, ceoName, ceoTelephone, partnerCode, address, writer, partnerTelephone);
     }
 
 

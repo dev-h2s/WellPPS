@@ -298,18 +298,16 @@ public class WellPartnerService {
         }
     }
 
-
-    // 페이지네이션 거래처 검색
-    public Page<WellPartnerEntity> getPaginatedPartners(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return wellPartnerRepository.findAll(pageable);
-    }
-
-    public List<WellPartnerInfoDTO> searchPartnerList(String searchKeyword) {
-        Specification<WellPartnerEntity> spec = Specification.where(PartnerSpecification.partnerNameContains(searchKeyword));
-
-        // 다른 검색 조건을 추가하려면 아래와 같이 조합 가능
-        // spec = spec.and(PartnerSpecification.otherSearchCondition(value));
+    //거래처 검색
+    public List<WellPartnerInfoDTO> searchPartnerList(String partnerName, String ceoName, String ceoTelephone, String partnerCode, String address
+                                                    , String writer, String partnerTelephone) {
+        Specification<WellPartnerEntity> spec = Specification.where(PartnerSpecification.partnerNameContains(partnerName))
+                .and(PartnerSpecification.partnerCeoNameContains(ceoName))
+                .and(PartnerSpecification.partnerCeoTelephoneContains(ceoTelephone))
+                .and(PartnerSpecification.partnerCodeContains(partnerCode))
+                .and(PartnerSpecification.partnerAddressContains(address))
+                .and(PartnerSpecification.writerContains(writer))
+                .and(PartnerSpecification.partnerTelephoneContains(partnerTelephone));
 
         List<WellPartnerEntity> partners = wellPartnerRepository.findAll(spec);
 

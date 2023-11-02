@@ -1,9 +1,8 @@
-package com.wellnetworks.wellcore.java.repository.member;
+package com.wellnetworks.wellcore.java.repository.member.employee;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 
@@ -11,9 +10,9 @@ import java.util.Optional;
 @Repository
 public interface WellEmployeeUserRepository extends JpaRepository<WellEmployeeUserEntity, String> {
 
-    //
+    //중복 id 체크하는 메서드
     Optional<WellEmployeeUserEntity> findByEmployeeIdentification(String employeeIdentification);
-    boolean existsByEmployeeIdentification(String employeeIdentification);
+//    boolean existsByEmployeeIdentification(String employeeIdentification);
 
 
     // 이미 JpaRepository에 있는 메서드이므로 삭제

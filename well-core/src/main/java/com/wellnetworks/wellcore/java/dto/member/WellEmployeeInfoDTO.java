@@ -11,9 +11,9 @@ import java.util.List;
 @Data
 public class WellEmployeeInfoDTO {
     private String employeeIdx; //pk
-    private Integer employeeId; // 번호 id
+    private Long employeeId; // 번호 id
     private String belong; // 소속
-    private String name; // 이름
+    private String employeeName; // 이름
     private String department; // 부서
     private String position; // 직급
     private LocalDateTime employeeRegisterDate; // 등록일
@@ -27,7 +27,7 @@ public class WellEmployeeInfoDTO {
         this.employeeIdx = Entity.getEmployeeIdx();
         this.employeeId = Entity.getEmployeeId();
         this.belong = Entity.getBelong();
-        this.name = Entity.getName();
+        this.employeeName = Entity.getEmployeeName();
         if (department != null) {
             this.department = department.getDepartment();
         }

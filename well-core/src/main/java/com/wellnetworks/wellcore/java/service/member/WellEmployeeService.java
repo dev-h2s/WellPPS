@@ -1,26 +1,31 @@
 package com.wellnetworks.wellcore.java.service.member;
+import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeManagerGroupEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDTO;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDetailDTO;
+import com.wellnetworks.wellcore.java.dto.member.WellEmployeeJoinDTO;
+import com.wellnetworks.wellcore.java.dto.member.WellEmployeeManagerGroupDTO;
+import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeGroupRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeRepository;
-import com.wellnetworks.wellcore.java.repository.member.WellEmployeeUserRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
 import org.springframework.stereotype.Service;
-
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-
 @Service
+@RequiredArgsConstructor
 public class WellEmployeeService {
     /*
     사원의 정부에 관련된 기능을 처리:
@@ -33,9 +38,13 @@ public class WellEmployeeService {
     */
 
     @Autowired private WellEmployeeUserRepository wellEmployeeUserRepository; // 사원에 관한
+
     @Autowired private WellEmployeeRepository wellEmployeeRepository;
-    // 레포지토리
-    @PersistenceContext private EntityManager em;
+
+    @Autowired private WellEmployeeGroupRepository wellEmployeeGroupRepository;
+
+
+
 
     // 사원 1개 조회
     public Optional<WellEmployeeInfoDetailDTO> getemployeeByemployeeIdx(String employeeIdx) {
@@ -102,43 +111,117 @@ public class WellEmployeeService {
         return employeeInfoList;
     }
 
-// 사원 생성
+    public class UserAndEmployee {
+        private WellEmployeeUserEntity userEntity;
+        private WellEmployeeEntity employeeEntity;
+
+        // 생성자
+        public UserAndEmployee(WellEmployeeUserEntity userEntity, WellEmployeeEntity employeeEntity) {
+            this.userEntity = userEntity;
+            this.employeeEntity = employeeEntity;
+        }}
 
 
 
-//@Autowired
-//    private WellPermissionRepository wellPermissionRepository; 권한 나중에
+// employee id 생성
 
-//    // 사원 상세 조회
-//    public Optional<WellEmployeeInfoDTO> getEmployeeByEmployeeIdx(String employeeIdx) {
-//        WellEmployeeEntity employeeEntity = wellEmployeeRepository.findByEmployeeIdx(employeeIdx);
-//
-//        // 해당 사원과 연결된 파일 정보를 가져와서 리스트로 정리
-//        if (employeeEntity != null) {
-//            List<WellFileStorageEntity> fileStorages = employeeEntity.getFiles().stream()
-//                    .map(WellEmployeeFileStorageEntity::getFile)
-//                    .collect(Collectors.toList());
-//
-//            return Optional.of(new WellEmployeeInfoDTO(employeeEntity, fileStorages));
-//        } else {
-//            return Optional.empty();
-//        }
-//    }
-////
-//    //사원 리스트 조회
-//    public List<WellEmployeeInfoDTO> getAllemployees() {
-//        List<WellEmployeeEntity> employees = wellEmployeeRepository.findAll();
-//        List<WellEmployeeInfoDTO> employeeInfoList = new ArrayList<>();
-//        {
-//            for (WellEmployeeEntity employeeEntity : employees) {
-//                WellEmployeeInfoDTO employeeInfo = new WellEmployeeInfoDTO(employeeEntity);
-//                employeeInfoList.add(employeeInfo);
-//            }
-//        }
-//        return employeeInfoList;
-//
-//    }
-//
+    private Long generateNextEmployeeId() {
+        // 여기에서 다음 직원 ID를 조회하고 1을 더해서 반환하도록 로직을 작성
+        // 이 로직은 현재 저장된 직원 중 가장 큰 ID를 조회하고 1을 더하는 방식으로 구현 가능
+        // 예를 들어, wellEmployeeRepository에서 가장 큰 직원 ID를 조회하는 메서드를 작성하고 활용
+
+        Long maxEmployeeId = wellEmployeeRepository.findMaxEmployeeId();
+        if (maxEmployeeId == null) {
+            return 1L; // 만약 직원이 하나도 없으면 1부터 시작
+        } else {
+            return maxEmployeeId + 1L;
+        }
+    }
+
+//패스워드 랜덤
+    public class PasswordUtil {
+        private static final String ALLOWED_STRING = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        private static final int TEMP_PWD_LENGTH = 10;
+        private static final SecureRandom RANDOM = new SecureRandom();
+
+        public static String generateRandomPassword() {
+            StringBuilder builder = new StringBuilder(TEMP_PWD_LENGTH);
+
+            for (int i = 0; i < TEMP_PWD_LENGTH; i++) {
+                builder.append(ALLOWED_STRING.charAt(RANDOM.nextInt(ALLOWED_STRING.length())));
+            }
+
+            return builder.toString();
+        }
+    }
+
+    // 사원 생성
+@Transactional
+public void employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
+
+// DTO에서 department 값을 가져옴
+    String department = joinDTO.getDepartment();
+
+    // department 값을 기준으로 WellEmployeeGroupEntity 객체 조회
+    Optional<WellEmployeeManagerGroupEntity> groupOptional = wellEmployeeGroupRepository.findByDepartment(department);
+
+    // 그룹(부서) 정보가 없으면 예외 처리
+    WellEmployeeManagerGroupEntity group = groupOptional.orElseThrow(()
+            -> new IllegalArgumentException("Invalid department: " + department));
+
+    // 휴대폰 인증 코드의 만료 시간 설정. 예를 들어, 현재 시간으로부터 10분 후로 설정.
+    LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(10);
+    LocalDateTime currentDateTime = LocalDateTime.now();
+    String newEmployeeIdx = UUID.randomUUID().toString();
+    // WellEmployeeUserEntity 객체 생성 및 설정
+    WellEmployeeUserEntity userEntity = WellEmployeeUserEntity.builder()
+            .employeeIdx(newEmployeeIdx) //생성되는 idx
+            .employeeIdentification(joinDTO.getEmployeeIdentification()) // 로그인 id
+//            .employeeUserPwd(joinDTO.getEmployeeUserPwd())
+            .isPhoneVerified(joinDTO.getIsPhoneVerified()) // user-휴대폰 인증 여부
+            .phoneVerificationCode(joinDTO.getPhoneVerificationCode()) // user-휴대폰 인증 코드
+            .phoneVerificationAttempts(joinDTO.getPhoneVerificationAttempts()) // user-휴대폰 인증 시도 횟수
+            .phoneVerificationExpiration(expirationTime) // user-휴대폰 인증 만료 시간
+            .tmpPwd(PasswordUtil.generateRandomPassword())
+            .employeeManagerGroupKey(group) // 연관 관계 설정
+            .build();
+
+    wellEmployeeUserRepository.save(userEntity);
+
+    Long newEmployeeId = generateNextEmployeeId(); // id 증가
+    // WellEmployeeEntity 객체 생성 및 설정
+    WellEmployeeEntity employeeEntity = WellEmployeeEntity.builder()
+            .employeeIdx(newEmployeeIdx)
+            .employeeId(newEmployeeId)
+            .employeeName(joinDTO.getEmployeeName())
+            .belong(joinDTO.getBelong())
+            .position(joinDTO.getPosition())
+            .employmentState(joinDTO.getEmploymentState())
+            .jobType(joinDTO.getJobType())
+            .entryDatetime(joinDTO.getEntryDatetime())
+            .employmentQuitDatetime(currentDateTime)
+            .employmentQuitType(joinDTO.getEmploymentQuitType())
+            .remainingLeaveDays(joinDTO.getRemainingLeaveDays())
+            .residentRegistrationNumber(joinDTO.getResidentRegistrationNumber())
+            .telPrivate(joinDTO.getTelPrivate())
+            .telWork(joinDTO.getTelWork())
+            .email(joinDTO.getEmail())
+            .bankName(joinDTO.getBankName())
+            .bankAccount(joinDTO.getBankAccount())
+            .bankHolder(joinDTO.getBankHolder())
+            .homeAddress1(joinDTO.getHomeAddress1())
+            .homeAddress2(joinDTO.getHomeAddress2())
+            .externalAccessCert(joinDTO.getExternalAccessCert())
+            .memo(joinDTO.getMemo())
+            .employeeRegisterDate(LocalDateTime.now())
+            .build();
+    wellEmployeeRepository.save(employeeEntity);
+
+//    return new UserAndEmployee(userEntity, employeeEntity);
+    }}
+
+
+
 //
 //    // 사용자 아이디로 사용자가 존재하는지 확인
 //    public boolean existByUserID(String userid) {
@@ -193,7 +276,7 @@ public class WellEmployeeService {
 //
 //    return employeeIdx;
 
-}
+
 //
 //    // 데이터 총 개수 가져오기
 //    public long dataTotalCount() {

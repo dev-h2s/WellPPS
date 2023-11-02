@@ -3,7 +3,9 @@ package com.wellnetworks.wellcore.java.domain.employee;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -65,6 +67,7 @@ public class WellEmployeeUserEntity implements UserDetailsService {
     @Column(name = "phone_verification_expiration") // 휴대폰 인증 만료 시간
     private LocalDateTime phoneVerificationExpiration;
 
+    @CreatedDate
     @Column(name = "phone_verification_sent_time") // 휴대폰 인증 코드 전송 시간
     private LocalDateTime phoneVerificationSentTime;
 
@@ -77,13 +80,39 @@ public class WellEmployeeUserEntity implements UserDetailsService {
     @Column(name = "Group_key") //그룹식별자
     private String groupKey;
 
+    public WellEmployeeUserEntity() {
+
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof WellEmployeeUserEntity that)) return false;
         return Objects.equals(employeeIdx, that.employeeIdx);
     }
-
+@Builder
+    public WellEmployeeUserEntity(String employeeIdx, WellEmployeeEntity employeeUser, WellEmployeeManagerGroupEntity employeeManagerGroupKey, String employeeIdentification, String employeeUserPwd, String permissions, String tmpPwd, LocalDateTime tmpPwdExpiration, Integer tmpPwdCount, LocalDateTime tmpPwdDate, Boolean isPhoneVerified, String phoneVerificationCode, Integer phoneVerificationAttempts, LocalDateTime phoneVerificationExpiration, LocalDateTime phoneVerificationSentTime, LocalDateTime employeeUserModifyDate, LocalDateTime getemployeeUserRegisterDate, String groupKey, String groupPermissionKey, List<String> permissionsKeysStringList) {
+        this.employeeIdx = employeeIdx;
+        this.employeeUser = employeeUser;
+        this.employeeManagerGroupKey = employeeManagerGroupKey;
+        this.employeeIdentification = employeeIdentification;
+        this.employeeUserPwd = employeeUserPwd;
+        this.permissions = permissions;
+        this.tmpPwd = tmpPwd;
+        this.tmpPwdExpiration = tmpPwdExpiration;
+        this.tmpPwdCount = tmpPwdCount;
+        this.tmpPwdDate = tmpPwdDate;
+        this.isPhoneVerified = isPhoneVerified;
+        this.phoneVerificationCode = phoneVerificationCode;
+        this.phoneVerificationAttempts = phoneVerificationAttempts;
+        this.phoneVerificationExpiration = phoneVerificationExpiration;
+        this.phoneVerificationSentTime = phoneVerificationSentTime;
+        this.employeeUserModifyDate = employeeUserModifyDate;
+        this.getemployeeUserRegisterDate = getemployeeUserRegisterDate;
+        this.groupKey = groupKey;
+        this.groupPermissionKey = groupPermissionKey;
+        this.permissionsKeysStringList = permissionsKeysStringList;
+    }
 
     // 추가한 권한 관련 필드
     private String groupPermissionKey;

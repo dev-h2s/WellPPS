@@ -6,7 +6,6 @@ import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
-import com.wellnetworks.wellcore.java.repository.search.partnerSearch;
 import com.wellnetworks.wellcore.java.service.partner.WellPartnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
@@ -78,23 +77,23 @@ public class PartnerListController {
         return ResponseEntity.status(HttpStatus.CREATED).body("수정 완료.");
     }
 
-    @GetMapping("business/search")
-    public Page<WellPartnerInfoDTO> searchPartner(
-            Pageable pageable,
-            @RequestParam(value = "partnerName", required = false) String partnerName
-            // 다른 검색 조건을 추가할 수 있음
-    ) {
-        List<partnerSearch> searchKeywords = new ArrayList<>();
-
-        if (partnerName != null) {
-            // 거래처명으로 검색하는 경우
-            searchKeywords.add(new partnerSearch("partnerName", "%%", partnerName));
-        }
-
-        // 다른 검색 조건도 추가 가능
-
-        return wellPartnerService.searchPartner(pageable, searchKeywords);
-    }
+//    @GetMapping("business/search")
+//    public Page<WellPartnerInfoDTO> searchPartner(
+//            Pageable pageable,
+//            @RequestParam(value = "partnerName", required = false) String partnerName
+//            // 다른 검색 조건을 추가할 수 있음
+//    ) {
+//        List<partnerSearch> searchKeywords = new ArrayList<>();
+//
+//        if (partnerName != null) {
+//            // 거래처명으로 검색하는 경우
+//            searchKeywords.add(new partnerSearch("partnerName", "%%", partnerName));
+//        }
+//
+//        // 다른 검색 조건도 추가 가능
+//
+//        return wellPartnerService.searchPartner(pageable, searchKeywords);
+//    }
 
 
     // 거래처 체크항목 삭제

@@ -2,6 +2,7 @@ package com.wellnetworks.wellcore.java.domain.employee;
 //직원 테이블
 import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,6 +20,8 @@ import static jakarta.persistence.FetchType.LAZY;
 @Table(name = "employee_tb")
 public class WellEmployeeEntity {
 
+
+
     @Id
     @Column(name= "em_idx")
     private String employeeIdx;
@@ -27,18 +30,18 @@ public class WellEmployeeEntity {
     @JoinColumn(name = "em_idx", insertable = false, updatable = false)
     private WellEmployeeUserEntity employeeUser;
 
+    @Column(name = "em_id") //직원의 아이디
+    private Long employeeId;
+
     //여러 사원 관련 파일을 가질 수 있음
     @OneToMany(mappedBy = "employee")
     private List<WellEmployeeFileStorageEntity> files = new ArrayList<>();
-
-    @Column(name = "em_id") //직원의 아이디
-    private Integer employeeId;
 
     @Column(name = "belong") // 소속회사
     private String belong;
 
     @Column(name = "name") //사원 이름
-    private String name;
+    private String employeeName;
 
     @Column(name = "e_mail") //사원 이메일
     private String email;
@@ -111,6 +114,45 @@ public class WellEmployeeEntity {
 
     @Column(name = "em_regdt") //생성 날짜와 시간
     private LocalDateTime employeeRegisterDate;
+    @Builder
+    public WellEmployeeEntity(String employeeIdx, WellEmployeeUserEntity employeeUser, List<WellEmployeeFileStorageEntity> files,
+                              Long employeeId, String belong, String employeeName, String email, String telPrivate, String telWork,
+                              String registrationNumber, String position, String level, String homeAddress1, String homeAddress2,
+                              String bankName, String bankAccount, String bankHolder, String employmentState, String jobType,
+                              Boolean externalAccessCert, LocalDateTime entryDatetime, LocalDateTime employmentQuitDatetime,
+                              String employmentQuitType, Float remainingLeaveDays, String residentRegistrationNumber, Boolean dbAccessPower,
+                              String memo, LocalDateTime employeeModifyDate, LocalDateTime employeeRegisterDate) {
+        this.employeeIdx = employeeIdx;
+        this.employeeUser = employeeUser;
+        this.files = files;
+        this.employeeId = employeeId;
+        this.belong = belong;
+        this.employeeName = employeeName;
+        this.email = email;
+        this.telPrivate = telPrivate;
+        this.telWork = telWork;
+        this.registrationNumber = registrationNumber;
+        this.position = position;
+        this.level = level;
+        this.homeAddress1 = homeAddress1;
+        this.homeAddress2 = homeAddress2;
+        this.bankName = bankName;
+        this.bankAccount = bankAccount;
+        this.bankHolder = bankHolder;
+        this.employmentState = employmentState;
+        this.jobType = jobType;
+        this.externalAccessCert = externalAccessCert;
+        this.entryDatetime = entryDatetime;
+        this.employmentQuitDatetime = employmentQuitDatetime;
+        this.employmentQuitType = employmentQuitType;
+        this.remainingLeaveDays = remainingLeaveDays;
+        this.residentRegistrationNumber = residentRegistrationNumber;
+        this.dbAccessPower = dbAccessPower;
+        this.memo = memo;
+        this.employeeModifyDate = employeeModifyDate;
+        this.employeeRegisterDate = employeeRegisterDate;
+    }
+
 
 
 

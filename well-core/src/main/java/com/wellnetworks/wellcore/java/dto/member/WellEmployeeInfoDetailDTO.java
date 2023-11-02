@@ -15,7 +15,7 @@ public class WellEmployeeInfoDetailDTO {
     private String employeeIdentification;
     //    private String tableID;
 //    private Integer employeeId;
-    private String name;
+    private String employeeName;
     private String belong;
     private String department;
     private String position;
@@ -56,7 +56,7 @@ public class WellEmployeeInfoDetailDTO {
 //        this.tableID = entity.getTableID();
 //        this.employeeId = entity.getEmployeeId();
         this.belong = entity.getBelong();
-        this.name = entity.getName();
+        this.employeeName = entity.getEmployeeName();
         this.department = department.getDepartment();
         this.email = entity.getEmail();
         this.telPrivate = entity.getTelPrivate();

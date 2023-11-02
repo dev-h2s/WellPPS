@@ -1,13 +1,15 @@
 package com.wellnetworks.wellwebapi.java.controller.member;
 
-import com.wellnetworks.secure.java.config.SecurityConfig;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDTO;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDetailDTO;
+import com.wellnetworks.wellcore.java.dto.member.WellEmployeeJoinDTO;
 import com.wellnetworks.wellcore.java.service.member.WellEmployeeService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -15,15 +17,13 @@ import java.util.List;
 import java.util.Optional;
 
 
-@RequestMapping(("/admin/hr/"))
+@RequestMapping("/admin/hr/")
 @RestController
-@ComponentScan(basePackages={"com.wellnetworks.wellcore","com.wellnetworks.secure"})
+@ComponentScan(basePackages={"com.wellnetworks.wellcore"})
 public class EmployeeController {
     @Autowired
     private WellEmployeeService wellEmployeeService;
 
-    @Autowired
-    private SecurityConfig securityConfig;
 
     // 사원 하나 조회
     @GetMapping("employee/{employeeIdx}")
@@ -54,6 +54,13 @@ public class EmployeeController {
         List<WellEmployeeInfoDTO> employeeList = wellEmployeeService.getAllemployees();
 
         return employeeList;
+    }
+
+    //사원 생성
+    @PostMapping(value = "employee/signUp")
+    public ResponseEntity<String> createEmployeeUser(WellEmployeeJoinDTO createDTO) throws Exception {
+        wellEmployeeService.employeeJoin(createDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 완료되었습니다.");
     }
 
 

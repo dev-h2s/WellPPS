@@ -1,24 +1,22 @@
 package com.wellnetworks.wellcore.java.service.partner;
 
+import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
+import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
+import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.backup.partner.WellPartnerEntityBackup;
-import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
+import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
 import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
 import com.wellnetworks.wellcore.java.repository.File.WellPartnerFileRepository;
-import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
-import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
-import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
-//import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
-import com.wellnetworks.wellcore.java.repository.Partner.*;
+import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerGroupRepository;
+import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyInRepository;
-import com.wellnetworks.wellcore.java.repository.backup.partner.*;
-import com.wellnetworks.wellcore.java.repository.search.partnerSearch;
+import com.wellnetworks.wellcore.java.repository.backup.partner.WellPartnerBackupRepository;
 import com.wellnetworks.wellcore.java.service.File.WellFileStorageService;
-import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
@@ -31,7 +29,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -308,24 +309,6 @@ public class WellPartnerService {
         return wellPartnerRepository.findAll(pageable);
     }
 
-    public Page<WellPartnerInfoDTO> searchPartner(Pageable pageable, List<partnerSearch> searchKeywords )
-    {
-        if (searchKeywords == null || searchKeywords.isEmpty()) {
-            // 검색 조건이 없으면 모든 파트너 데이터 반환
-            Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(pageable);
-            List<WellPartnerInfoDTO> dtos = partners.stream()
-                    .map(WellPartnerInfoDTO::new)
-                    .collect(Collectors.toList());
-            return new PageImpl<>(dtos, pageable, partners.getTotalElements());
-        }
-
-        Specification<WellPartnerEntity> searchSpecification = WellPartnerSearch.buildSpecification(searchKeywords);
-        Page<WellPartnerEntity> searchResult = wellPartnerRepository.findAll(searchSpecification, pageable);
-        List<WellPartnerInfoDTO> dtos = searchResult.stream()
-                .map(WellPartnerInfoDTO::new)
-                .collect(Collectors.toList());
-        return new PageImpl<>(dtos, pageable, searchResult.getTotalElements());
-    }
 
 
 

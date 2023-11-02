@@ -11,8 +11,8 @@ import java.util.List;
 @Data
 public class WellEmployeeUpdateDTO {
     private String employeeIdx; // 변동 x
-    private Integer employeeId;
-    private String name;
+    private Long employeeId;
+    private String employeeName;
     private String belong; // 소속 회사
     private String department; //부서
     private String position; // 직책
@@ -52,7 +52,7 @@ public class WellEmployeeUpdateDTO {
 public WellEmployeeUpdateDTO(WellEmployeeEntity entity, List<WellFileStorageEntity> files, WellEmployeeManagerGroupEntity group) {
     this.employeeIdx = entity.getEmployeeIdx();
     this.employeeId = entity.getEmployeeId();
-    this.name = entity.getName();
+    this.employeeName = entity.getEmployeeName();
     this.belong = entity.getBelong();
     this.department = group.getDepartment();
     this.position = entity.getPosition();

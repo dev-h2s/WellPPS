@@ -1,6 +1,6 @@
 package com.wellnetworks.secure.java.service;
 
-import com.wellnetworks.wellcore.java.repository.member.WellEmployeeUserRepository;
+import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
 import org.apache.catalina.User;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.core.userdetails.UserDetails;

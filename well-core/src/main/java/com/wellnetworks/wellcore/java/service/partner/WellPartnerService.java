@@ -57,8 +57,11 @@ public class WellPartnerService {
             WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
             WellDipositEntity depositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
 
-            String partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdx(partnerEntity.getPartnerUpperIdx());
-
+            String partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
+            String partnerUpperName = null;
+            if (partnerEntity.getPartnerUpperIdx() != null) {
+                partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx);
+            }
 
             return Optional.of(new WellPartnerInfoDTO(partnerEntity, fileStorages, depositEntity
                     , partnerUpperName
@@ -66,6 +69,7 @@ public class WellPartnerService {
         } else {
             return Optional.empty();
         }
+
     }
 
     //거래처 리스트 조회
@@ -79,9 +83,10 @@ public class WellPartnerService {
             WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
             WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
 
+            String partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
             String partnerUpperName = null;
             if (partnerEntity.getPartnerUpperIdx() != null) {
-                partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdx(partnerEntity.getPartnerUpperIdx());
+                partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx);
             }
 
             Long registeredCount = wellPartnerRepository.countByTransactionStatus("등록");
@@ -90,7 +95,8 @@ public class WellPartnerService {
             Long suspendedCount = wellPartnerRepository.countByTransactionStatus("거래중지");
 
             WellPartnerInfoDTO partnerInfo = new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity
-                    , registeredCount, preRegisteredCount, managementCount, suspendedCount, partnerUpperName
+                    , registeredCount, preRegisteredCount, managementCount, suspendedCount
+                    , partnerUpperName
             );
             partnerInfoList.add(partnerInfo);
         }
@@ -124,13 +130,20 @@ public class WellPartnerService {
 
 
         for (WellPartnerEntity partnerEntity : partners) {
-            String partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdx(partnerEntity.getPartnerUpperIdx());
+            String partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
+            String partnerUpperName = null;
+            if (partnerEntity.getPartnerUpperIdx() != null) {
+                partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx);
+            }
+
             List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerEntity.getPartnerIdx());
 
             WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
             WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
 
-            WellPartnerInfoDTO partnerInfo = new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity, partnerUpperName);
+            WellPartnerInfoDTO partnerInfo = new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity
+                    , partnerUpperName
+            );
             partnerInfoList.add(partnerInfo);
         }
 
@@ -247,8 +260,6 @@ public class WellPartnerService {
 
         // 거래처 저장
         wellPartnerRepository.save(partner);
-
-        System.out.println();
     }
 
 
@@ -262,13 +273,17 @@ public class WellPartnerService {
 
 
         if (partnerEntity != null) {
+            String partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
+            String partnerUpperName = null;
+            if (partnerEntity.getPartnerUpperIdx() != null) {
+                partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx);
+            }
+
             List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerIdx);
 
             // 거래처가 가상계좌를 가지고 있는 경우, 예치금 정보를 가져옴
             WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
             WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
-
-            String partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdx(partnerEntity.getPartnerUpperIdx());
 
             // 백업 엔티티에 복사
             WellPartnerEntityBackup partnerBackup = new WellPartnerEntityBackup();
@@ -323,7 +338,8 @@ public class WellPartnerService {
             wellPartnerRepository.delete(partnerEntity);
 
             return Optional.of(new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity
-                                                    , partnerUpperName));
+                                                    , partnerUpperName
+            ));
         } else {
             // 삭제 대상이 없을 경우 빈 Optional 반환
             return Optional.empty();

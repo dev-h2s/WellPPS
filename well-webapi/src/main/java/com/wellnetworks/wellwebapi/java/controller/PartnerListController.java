@@ -60,7 +60,8 @@ public class PartnerListController {
             @RequestParam(required = false) String partnerTelephone,
             @RequestParam(required = false) String writer,
             @RequestParam(required = false) Integer transactionStatus,
-            @RequestParam(required = false) String partnerUpperId
+            @RequestParam(required = false) String partnerUpperIdx,
+            @RequestParam(required = false) String partnerUpperName
     ) {
         List<WellPartnerInfoDTO> partnerList = wellPartnerService.getAllPartners();
 

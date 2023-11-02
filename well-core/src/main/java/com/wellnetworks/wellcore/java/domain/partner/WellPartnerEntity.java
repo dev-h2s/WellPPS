@@ -8,6 +8,7 @@ import com.wellnetworks.wellcore.java.domain.product.WellProductSearchEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -83,8 +84,13 @@ public class WellPartnerEntity {
     @Column(name = "p_type", nullable = false) //거래처구분
     private String partnerType;
 
+    @Nullable
     @Column(name = "p_upper_idx") //상부점_id
     private String partnerUpperIdx;
+
+    @Nullable
+    @Column(name = "p_upper_Name") //상부점_id
+    private String partnerUpperName;
 
     @Column(name="p_tel") //사업장전화번호
     private String partnerTelephone;

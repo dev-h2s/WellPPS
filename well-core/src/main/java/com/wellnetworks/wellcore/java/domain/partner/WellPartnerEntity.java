@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -89,6 +90,7 @@ public class WellPartnerEntity {
     private String partnerTelephone;
 
     @CreatedDate
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     @Column(name = "product_regdt") //시작날짜
     private LocalDateTime productRegisterDate;
 
@@ -127,9 +129,6 @@ public class WellPartnerEntity {
 
     @Column(name = "discount_category") //충전할인율구분
     private String discountCategory;
-
-    @Column(name = "region") //지역
-    private String region;
 
     @Column(name = "subdt") //가입승인일자
     private LocalDateTime subscriptionDate;

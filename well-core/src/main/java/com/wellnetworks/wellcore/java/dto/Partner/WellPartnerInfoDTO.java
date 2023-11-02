@@ -29,6 +29,7 @@ public class WellPartnerInfoDTO {
     private String ceoTelephone;
     private String writer;
     private String partnerUpperIdx;
+    private String partnerUpperName;
     private Integer size;
     private Integer page;
 
@@ -39,7 +40,7 @@ public class WellPartnerInfoDTO {
 
     //거래처 1개, 리스트
     public WellPartnerInfoDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, WellDipositEntity diposit
-                                , Long registeredCount, Long preRegisteredCount, Long managementCount, Long suspendedCount
+                                , Long registeredCount, Long preRegisteredCount, Long managementCount, Long suspendedCount, String partnerUpperName
                                 ) {
         this.partnerIdx = entity.getPartnerIdx();
         for (WellPartnerFIleStorageEntity fileStorage : fileStorages) {
@@ -64,6 +65,7 @@ public class WellPartnerInfoDTO {
         this.ceoTelephone = entity.getCeoTelephone();
         this.writer = entity.getWriter();
         this.partnerUpperIdx = entity.getPartnerUpperIdx();
+        this.partnerUpperName = partnerUpperName;
         this.size = entity.getSize();
         this.page = entity.getPage();
 
@@ -74,7 +76,7 @@ public class WellPartnerInfoDTO {
     }
 
     //거래처 검색
-    public WellPartnerInfoDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, WellDipositEntity diposit
+    public WellPartnerInfoDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, WellDipositEntity diposit, String partnerUpperName
     ) {
         this.partnerIdx = entity.getPartnerIdx();
         for (WellPartnerFIleStorageEntity fileStorage : fileStorages) {
@@ -99,6 +101,7 @@ public class WellPartnerInfoDTO {
         this.ceoTelephone = entity.getCeoTelephone();
         this.writer = entity.getWriter();
         this.partnerUpperIdx = entity.getPartnerUpperIdx();
+        this.partnerUpperName = partnerUpperName;
         this.size = entity.getSize();
         this.page = entity.getPage();
     }

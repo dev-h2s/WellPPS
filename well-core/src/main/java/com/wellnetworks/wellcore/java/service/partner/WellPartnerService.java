@@ -14,7 +14,6 @@ import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
 import com.wellnetworks.wellcore.java.repository.Partner.*;
 import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyInRepository;
 import com.wellnetworks.wellcore.java.repository.backup.partner.*;
-import com.wellnetworks.wellcore.java.repository.search.partnerSearch;
 import com.wellnetworks.wellcore.java.service.File.WellFileStorageService;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;

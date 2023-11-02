@@ -1,38 +1,34 @@
 package com.wellnetworks.wellcore.java.service.partner;
 
-import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
-import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
-import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.backup.partner.WellPartnerEntityBackup;
-import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
+import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
 import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
 import com.wellnetworks.wellcore.java.repository.File.WellPartnerFileRepository;
-import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerGroupRepository;
-import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
+import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
+import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
+import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
+//import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
+import com.wellnetworks.wellcore.java.repository.Partner.*;
 import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyInRepository;
-import com.wellnetworks.wellcore.java.repository.backup.partner.WellPartnerBackupRepository;
+import com.wellnetworks.wellcore.java.repository.backup.partner.*;
+import com.wellnetworks.wellcore.java.repository.search.partnerSearch;
 import com.wellnetworks.wellcore.java.service.File.WellFileStorageService;
+import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -302,14 +298,33 @@ public class WellPartnerService {
         }
     }
 
+    //거래처 검색
+    public List<WellPartnerInfoDTO> searchPartnerList(String partnerName, String ceoName, String ceoTelephone, String partnerCode, String address
+                                                    , String writer, String partnerTelephone) {
+        Specification<WellPartnerEntity> spec = Specification.where(PartnerSpecification.partnerNameContains(partnerName))
+                .and(PartnerSpecification.partnerCeoNameContains(ceoName))
+                .and(PartnerSpecification.partnerCeoTelephoneContains(ceoTelephone))
+                .and(PartnerSpecification.partnerCodeContains(partnerCode))
+                .and(PartnerSpecification.partnerAddressContains(address))
+                .and(PartnerSpecification.writerContains(writer))
+                .and(PartnerSpecification.partnerTelephoneContains(partnerTelephone));
 
-    // 페이지네이션 거래처 검색
-    public Page<WellPartnerEntity> getPaginatedPartners(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return wellPartnerRepository.findAll(pageable);
+        List<WellPartnerEntity> partners = wellPartnerRepository.findAll(spec);
+
+        List<WellPartnerInfoDTO> partnerInfoList = new ArrayList<>();
+
+        for (WellPartnerEntity partnerEntity : partners) {
+            List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerEntity.getPartnerIdx());
+
+            WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
+            WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
+
+            WellPartnerInfoDTO partnerInfo = new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity);
+            partnerInfoList.add(partnerInfo);
+        }
+
+        return partnerInfoList;
     }
-
-
 
 
 }

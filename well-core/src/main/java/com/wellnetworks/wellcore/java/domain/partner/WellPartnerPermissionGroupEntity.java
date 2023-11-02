@@ -22,21 +22,21 @@ public class WellPartnerPermissionGroupEntity {
     @Column(name = "pm_gkey")
     private String partnerManagerGroupKey;
 
-    @OneToMany(mappedBy = "partnerManagerGroup") // 유저 리스트 가져오기(양방향)
+    @OneToMany(mappedBy = "partnerManagerGroupKey") // 유저 리스트 가져오기(양방향)
     private List<WellPartnerUserEntity> partnerUsers = new ArrayList<>();
 
-    @Column(name = "pm_name") //그룹명
-    private String partnerManagerGroupName;
+    @Column(name = "department")//부서명
+    private String department;
 
-    @Column(name = "pm_permission") //권한
-    private String partnerManagerGroupPermission;
+    @Column(name = "pm_g_permissions") //직원 권한
+    private String partnerManagerPermissions;
 
-    @Column(name = "pm_description") //설명
-    private String partnerManagerGroupDescription;
+    @Column (name = "pm_g_description") //직원 권한에 대한 설명
+    private String partnerManagerDescription;
 
-    @Column(name = "pm_moddt") //권한채택일
-    private LocalDateTime partnerManagerGroupModifyDate;
+    @Column(name = "pm_g_moddt") //권한채택일
+    private LocalDateTime partnerManagerModifyDate;
 
-    @Column(name = "pm_regdt") //권한수정일
-    private LocalDateTime partnerManagerGroupRegisterDate;
+    @Column(name = "pm_g_regdt") //생성 날짜와 시간
+    private LocalDateTime partnerManagerRegisterDate;
 }

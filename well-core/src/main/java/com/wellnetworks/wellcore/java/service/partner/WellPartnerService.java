@@ -1,7 +1,11 @@
 package com.wellnetworks.wellcore.java.service.partner;
 
 import com.wellnetworks.wellcore.java.domain.backup.partner.WellPartnerEntityBackup;
+import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeManagerGroupEntity;
+import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerPermissionGroupEntity;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerUserEntity;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
 import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
@@ -18,6 +22,7 @@ import com.wellnetworks.wellcore.java.service.File.WellFileStorageService;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
+import com.wellnetworks.wellcore.java.service.member.WellEmployeeService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
@@ -27,10 +32,10 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +47,8 @@ public class WellPartnerService {
     @Autowired private WellApikeyInRepository wellApikeyInRepository;
     @Autowired private WellFileStorageService fileStorageService;
     @Autowired private WellPartnerFileRepository partnerFileRepository;
+    @Autowired private WellPartnerUserRepository partnerUserRepository;
+    @Autowired private WellPartnerPermissionGroupRepository permissionGroupRepository;
     @PersistenceContext
     private EntityManager em;
 
@@ -170,6 +177,23 @@ public class WellPartnerService {
         return partnerCode;
     }
 
+    //패스워드 랜덤
+    public class PasswordUtil {
+        private static final String ALLOWED_STRING = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        private static final int TEMP_PWD_LENGTH = 10;
+        private static final SecureRandom RANDOM = new SecureRandom();
+
+        public static String generateRandomPassword() {
+            StringBuilder builder = new StringBuilder(TEMP_PWD_LENGTH);
+
+            for (int i = 0; i < TEMP_PWD_LENGTH; i++) {
+                builder.append(ALLOWED_STRING.charAt(RANDOM.nextInt(ALLOWED_STRING.length())));
+            }
+
+            return builder.toString();
+        }
+    }
+
     @Transactional
     public void join(WellPartnerCreateDTO createDTO) throws Exception {
         // 거래처 그룹 정보 가져오기
@@ -186,9 +210,21 @@ public class WellPartnerService {
             throw new RuntimeException("해당 API 키를 찾을 수 없습니다.");
         }
 
+        // department 값을 기준으로 WellEmployeeGroupEntity 객체 조회
+        String department = createDTO.getDepartment();
+        Optional<WellPartnerPermissionGroupEntity> groupOptional = permissionGroupRepository.findByDepartment(department);
+
+        WellPartnerPermissionGroupEntity group = groupOptional.orElseThrow(()
+                -> new IllegalArgumentException("Invalid department: " + department));
+
+        // 휴대폰 인증 코드의 만료 시간 설정. 예를 들어, 현재 시간으로부터 10분 후로 설정.
+        LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(10);
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        String partnerIdx = UUID.randomUUID().toString();
 
         // 거래처 Entity 생성
         WellPartnerEntity partner = WellPartnerEntity.builder()
+                .partnerIdx(partnerIdx)
                 .partnerCode(generateUniquePartnerCode())
                 .partnerName(createDTO.getPartnerName())
                 .partnerType(createDTO.getPartnerType())
@@ -224,7 +260,21 @@ public class WellPartnerService {
         // 파일 저장
         fileStorageService.saveFiles(createDTO, partner.getPartnerIdx());
 
-        System.out.println();
+        //거래처 유저
+        WellPartnerUserEntity userEntity = WellPartnerUserEntity.builder()
+                .partnerIdx(partnerIdx) //생성되는 idx
+                .partnerIdentification(createDTO.getPartnerIdentification()) // 로그인 id
+                .isPhoneVerified(createDTO.getIsPhoneVerified()) // user-휴대폰 인증 여부
+                .phoneVerificationCode(createDTO.getPhoneVerificationCode()) // user-휴대폰 인증 코드
+                .phoneVerificationAttempts(createDTO.getPhoneVerificationAttempts()) // user-휴대폰 인증 시도 횟수
+                .phoneVerificationExpiration(expirationTime) // user-휴대폰 인증 만료 시간
+                .tmpPwd(PasswordUtil.generateRandomPassword())
+                .partnerManagerGroupKey(group) // 연관 관계 설정
+                .build();
+
+        partnerUserRepository.save(userEntity);
+
+        System.out.println("거래처, 거래처유저 생성완료");
     }
 
 
@@ -260,6 +310,7 @@ public class WellPartnerService {
 
         // 거래처 저장
         wellPartnerRepository.save(partner);
+
     }
 
 

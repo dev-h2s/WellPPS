@@ -32,16 +32,18 @@ import static jakarta.persistence.FetchType.LAZY;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 public class WellPartnerEntity {
+
     @Id //거래처_idx
     @Column(name = "p_idx", columnDefinition = "uniqueidentifier")
-    private String partnerIdx = UUID.randomUUID().toString();
+    private String partnerIdx;
 
     @ManyToOne(fetch = LAZY) //거래처 그룹_id
     @JoinColumn(insertable = true, updatable = true)
     private WellPartnerGroupEntity partnerGroup;
 
-    @OneToOne(fetch = LAZY, mappedBy = "partner", cascade = CascadeType.PERSIST) //거래처_id (id를 사용하여 거래처 유저 엔티티와 1대1 연결)
-    private WellPartnerUserEntity partnerId;
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "p_idx")
+    private WellPartnerUserEntity partnerUser;
 
     // API 키와의 다대일 관계 (하나의 거래처는 하나의 API 키를 가짐)
     @ManyToOne(fetch = LAZY)
@@ -53,21 +55,16 @@ public class WellPartnerEntity {
     private WellVirtualAccountEntity virtualAccount;
 
     // 개통 연결 1대다
-    @OneToMany(mappedBy = "partner")
-    private List<WellOpeningEntity> openings = new ArrayList<>();
+//    @OneToMany(mappedBy = "partner")
+//    private List<WellOpeningEntity> openings = new ArrayList<>();
 
     // 요금제 조회 테이블 연결 1대 다
-    @OneToMany(mappedBy = "partner")
-    private List<WellProductSearchEntity> productSearch = new ArrayList<>();
+//    @OneToMany(mappedBy = "partner")
+//    private List<WellProductSearchEntity> productSearch = new ArrayList<>();
 
     // 충전 시도내역 테이블 연결 1대 다
-    @OneToMany(mappedBy = "partner")
-    private List<WellChargeHistoryEntity> chargeHistory = new ArrayList<>();
-
-    //여러 거래처 파일을 가질 수 있음
 //    @OneToMany(mappedBy = "partner")
-//    @JsonIgnore
-//    private List<WellPartnerFIleStorageEntity> partnerFiles = new ArrayList<>();
+//    private List<WellChargeHistoryEntity> chargeHistory = new ArrayList<>();
 
     @Column(name = "in_api_flag") //내부API연동여부
     private Boolean inApiFlag;
@@ -197,7 +194,7 @@ public class WellPartnerEntity {
     private String openingNote;
 
     @Builder
-    public WellPartnerEntity(String partnerCode, String partnerName, String partnerType, boolean specialPolicyOpening, boolean specialPolicyCharge
+    public WellPartnerEntity(String partnerIdx, String partnerCode, String partnerName, String partnerType, boolean specialPolicyOpening, boolean specialPolicyCharge
                             , WellPartnerGroupEntity partnerGroup, String discountCategory, String salesManager
                             , boolean inApiFlag, WellApikeyInEntity apiKey, String preApprovalNumber, LocalDateTime subscriptionDate
                             , String transactionStatus,String partnerUpperIdx, String ceoName, String ceoTelephone
@@ -205,6 +202,7 @@ public class WellPartnerEntity {
                             , String emailAddress, String registrationNumber
                             , String registrationAddress, String registrationDetailAddress, String locationAddress, String locationDetailAddress
                             , String partnerMemo) {
+        this.partnerIdx = partnerIdx;
         this.partnerCode = partnerCode;
         this.partnerName = partnerName;
         this.partnerType = partnerType;

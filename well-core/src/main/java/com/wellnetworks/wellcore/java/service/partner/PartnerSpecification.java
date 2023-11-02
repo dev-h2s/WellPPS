@@ -106,6 +106,15 @@ public class PartnerSpecification {
 
     //------------------select박스
     //상부점
+    public static Specification<WellPartnerEntity> partnerUpperNameEquals(String searchKeyword) {
+        return (root, query, criteriaBuilder) -> {
+            if (searchKeyword == null || searchKeyword.isEmpty()) {
+                return criteriaBuilder.conjunction();
+            } else {
+                return criteriaBuilder.equal(root.get("partnerUpperIdx"), searchKeyword);
+            }
+        };
+    }
     //충전할인율구분
     public static Specification<WellPartnerEntity> discountCategoryEquals(String searchKeyword) {
         return (root, query, criteriaBuilder) -> {

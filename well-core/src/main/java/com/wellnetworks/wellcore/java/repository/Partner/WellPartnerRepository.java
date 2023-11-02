@@ -23,8 +23,8 @@ public interface WellPartnerRepository extends JpaRepository<WellPartnerEntity, 
     WellPartnerEntity findByPartnerIdx(String partnerIdx);
 
     // partnerUpperIdx를 사용하여 상부점의 이름을 조회
-    @Query("SELECT  p.partnerName FROM WellPartnerEntity p WHERE p.partnerIdx = :partnerUpperIdx")
-    String findPartnerUpperNameByPartnerUpperIdx(String partnerUpperIdx);
+    @Query("SELECT  p.partnerName FROM WellPartnerEntity p WHERE p.partnerIdx = :partnerIdx")
+    String findPartnerUpperNameByPartnerUpperIdx(String partnerIdx);
 
     default String findPartnerNameByPartnerIdxSafely(String partnerUpperIdx) {
         if (partnerUpperIdx == null) {

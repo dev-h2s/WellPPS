@@ -115,7 +115,8 @@ public class WellPartnerService {
     //거래처 검색
     public List<WellPartnerInfoDTO> searchPartnerList(String partnerName, String ceoName, String ceoTelephone, String partnerCode, String address, String writer, String partnerTelephone
             , LocalDate startDate, LocalDate endDate
-            , String discountCategory, String partnerType, String salesManager, String transactionStatus, String regionAddress) {
+            , String discountCategory, String partnerType, String salesManager, String transactionStatus, String regionAddress
+            , String partnerUpperIdx) {
         Specification<WellPartnerEntity> spec = Specification.where(PartnerSpecification.partnerNameContains(partnerName))
                 .and(PartnerSpecification.partnerCeoNameContains(ceoName))
                 .and(PartnerSpecification.partnerCeoTelephoneContains(ceoTelephone))
@@ -129,33 +130,36 @@ public class WellPartnerService {
                 .and(PartnerSpecification.salesManagerEquals(salesManager))
                 .and(PartnerSpecification.transactionStatusEquals(transactionStatus))
                 .and(PartnerSpecification.regionAddressContains(regionAddress))
-                ;
+                .and(PartnerSpecification.partnerUpperNameEquals(partnerUpperIdx));
 
         List<WellPartnerEntity> partners = wellPartnerRepository.findAll(spec);
 
         List<WellPartnerInfoDTO> partnerInfoList = new ArrayList<>();
 
-
         for (WellPartnerEntity partnerEntity : partners) {
-            String partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
-            String partnerUpperName = null;
-            if (partnerEntity.getPartnerUpperIdx() != null) {
-                partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx);
-            }
-
             List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerEntity.getPartnerIdx());
 
             WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
             WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
 
-            WellPartnerInfoDTO partnerInfo = new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity
-                    , partnerUpperName
-            );
-            partnerInfoList.add(partnerInfo);
-        }
+            partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
+            String partnerUpperName = null;
+            if (partnerEntity.getPartnerUpperIdx() != null) {
+                partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx);
+            }
+
+                    WellPartnerInfoDTO partnerInfo = new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity
+                            , partnerUpperName
+                    );
+                    partnerInfoList.add(partnerInfo);
+                }
+
 
         return partnerInfoList;
     }
+
+
+
 
     //거래처 생성
 

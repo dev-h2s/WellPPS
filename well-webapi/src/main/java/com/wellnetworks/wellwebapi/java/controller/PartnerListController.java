@@ -99,10 +99,10 @@ public class PartnerListController {
             , @RequestParam(value = "salesManager", required = false) String salesManager
             , @RequestParam(value = "transactionStatus", required = false) String transactionStatus
             , @RequestParam(value = "regionAddress", required = false) String regionAddress
+            , @RequestParam(value = "partnerUpperIdx", required = false) String partnerUpperIdx
     ) {
-
         return wellPartnerService.searchPartnerList(partnerName, ceoName, ceoTelephone, partnerCode, address, writer, partnerTelephone, startDate, endDate
-                , discountCategory, partnerType, salesManager, transactionStatus, regionAddress);
+                , discountCategory, partnerType, salesManager, transactionStatus, regionAddress, partnerUpperIdx);
     }
 
 

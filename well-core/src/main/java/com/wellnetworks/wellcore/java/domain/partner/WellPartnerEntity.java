@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Formula;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -84,10 +85,6 @@ public class WellPartnerEntity {
     @Nullable
     @Column(name = "p_upper_idx") //상부점_id
     private String partnerUpperIdx;
-
-    @Nullable
-    @Column(name = "p_upper_Name") //상부점_id
-    private String partnerUpperName;
 
     @Column(name="p_tel") //사업장전화번호
     private String partnerTelephone;

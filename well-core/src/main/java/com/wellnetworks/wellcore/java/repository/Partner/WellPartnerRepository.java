@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
@@ -19,6 +21,10 @@ public interface WellPartnerRepository extends JpaRepository<WellPartnerEntity, 
 
     //거래처_idx 조회
     WellPartnerEntity findByPartnerIdx(String partnerIdx);
+
+    // partnerUpperIdx를 사용하여 상부점의 이름을 조회
+    @Query("SELECT p.partnerName FROM WellPartnerEntity p WHERE p.partnerIdx = :partnerIdx")
+    String findPartnerNameByPartnerIdx(String partnerIdx);
 
     WellPartnerEntity findByPartnerCode(String partnerCode);
 

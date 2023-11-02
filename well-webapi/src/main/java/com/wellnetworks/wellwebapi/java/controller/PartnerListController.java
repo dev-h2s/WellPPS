@@ -14,6 +14,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -86,8 +91,17 @@ public class PartnerListController {
             , @RequestParam(value = "address", required = false) String address
             , @RequestParam(value = "writer", required = false) String writer
             , @RequestParam(value = "partnerTelephone", required = false) String partnerTelephone
+            , @RequestParam(value = "startDate", required = false) LocalDate startDate
+            , @RequestParam(value = "endDate", required = false) LocalDate endDate
+            , @RequestParam(value = "discountCategory", required = false) String discountCategory
+            , @RequestParam(value = "partnerType", required = false) String partnerType
+            , @RequestParam(value = "salesManager", required = false) String salesManager
+            , @RequestParam(value = "transactionStatus", required = false) String transactionStatus
+            , @RequestParam(value = "regionAddress", required = false) String regionAddress
     ) {
-        return wellPartnerService.searchPartnerList(partnerName, ceoName, ceoTelephone, partnerCode, address, writer, partnerTelephone);
+
+        return wellPartnerService.searchPartnerList(partnerName, ceoName, ceoTelephone, partnerCode, address, writer, partnerTelephone, startDate, endDate
+                , discountCategory, partnerType, salesManager, transactionStatus, regionAddress);
     }
 
 

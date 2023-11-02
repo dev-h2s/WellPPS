@@ -28,6 +28,8 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,7 +43,6 @@ public class WellPartnerService {
     @Autowired private WellApikeyInRepository wellApikeyInRepository;
     @Autowired private WellFileStorageService fileStorageService;
     @Autowired private WellPartnerFileRepository partnerFileRepository;
-    @Autowired private WellFileStorageRepository fileRepository;
     @PersistenceContext
     private EntityManager em;
 
@@ -53,23 +54,20 @@ public class WellPartnerService {
 
         if (partnerEntity != null) {
             List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerIdx);
+
             WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
             WellDipositEntity depositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
 
-            Long registeredCount = wellPartnerRepository.countByTransactionStatus("등록");
-            Long preRegisteredCount = wellPartnerRepository.countByTransactionStatus("가등록");
-            Long managementCount = wellPartnerRepository.countByTransactionStatus("관리대상");
-            Long suspendedCount = wellPartnerRepository.countByTransactionStatus("거래중지");
+            String partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdx(partnerEntity.getPartnerUpperIdx());
+
 
             return Optional.of(new WellPartnerInfoDTO(partnerEntity, fileStorages, depositEntity
-                    , registeredCount, preRegisteredCount, managementCount, suspendedCount
+                    , partnerUpperName
                     ));
         } else {
             return Optional.empty();
         }
     }
-
-
 
     //거래처 리스트 조회
     public List<WellPartnerInfoDTO> getAllPartners() {
@@ -82,14 +80,19 @@ public class WellPartnerService {
             WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
             WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
 
+            String partnerUpperName = null;
+            if (partnerEntity.getPartnerUpperIdx() != null) {
+                partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdx(partnerEntity.getPartnerUpperIdx());
+            }
+
             Long registeredCount = wellPartnerRepository.countByTransactionStatus("등록");
             Long preRegisteredCount = wellPartnerRepository.countByTransactionStatus("가등록");
             Long managementCount = wellPartnerRepository.countByTransactionStatus("관리대상");
             Long suspendedCount = wellPartnerRepository.countByTransactionStatus("거래중지");
 
             WellPartnerInfoDTO partnerInfo = new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity
-                    , registeredCount, preRegisteredCount, managementCount, suspendedCount
-                    );
+                    , registeredCount, preRegisteredCount, managementCount, suspendedCount, partnerUpperName
+            );
             partnerInfoList.add(partnerInfo);
         }
 
@@ -97,9 +100,43 @@ public class WellPartnerService {
     }
 
 
+    //거래처 검색
+    public List<WellPartnerInfoDTO> searchPartnerList(String partnerName, String ceoName, String ceoTelephone, String partnerCode, String address, String writer, String partnerTelephone
+            , LocalDate startDate, LocalDate endDate
+            , String discountCategory, String partnerType, String salesManager, String transactionStatus, String regionAddress) {
+        Specification<WellPartnerEntity> spec = Specification.where(PartnerSpecification.partnerNameContains(partnerName))
+                .and(PartnerSpecification.partnerCeoNameContains(ceoName))
+                .and(PartnerSpecification.partnerCeoTelephoneContains(ceoTelephone))
+                .and(PartnerSpecification.partnerCodeContains(partnerCode))
+                .and(PartnerSpecification.partnerAddressContains(address))
+                .and(PartnerSpecification.writerContains(writer))
+                .and(PartnerSpecification.partnerTelephoneContains(partnerTelephone))
+                .and(PartnerSpecification.productRegisterDateBetween(startDate, endDate))
+                .and(PartnerSpecification.discountCategoryEquals(discountCategory))
+                .and(PartnerSpecification.partnerTypeEquals(partnerType))
+                .and(PartnerSpecification.salesManagerEquals(salesManager))
+                .and(PartnerSpecification.transactionStatusEquals(transactionStatus))
+                .and(PartnerSpecification.regionAddressContains(regionAddress))
+                ;
+
+        List<WellPartnerEntity> partners = wellPartnerRepository.findAll(spec);
+
+        List<WellPartnerInfoDTO> partnerInfoList = new ArrayList<>();
 
 
+        for (WellPartnerEntity partnerEntity : partners) {
+            String partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdx(partnerEntity.getPartnerUpperIdx());
+            List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerEntity.getPartnerIdx());
 
+            WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
+            WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
+
+            WellPartnerInfoDTO partnerInfo = new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity, partnerUpperName);
+            partnerInfoList.add(partnerInfo);
+        }
+
+        return partnerInfoList;
+    }
 
     //거래처 생성
 
@@ -232,10 +269,7 @@ public class WellPartnerService {
             WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
             WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
 
-            Long registeredCount = wellPartnerRepository.countByTransactionStatus("등록");
-            Long preRegisteredCount = wellPartnerRepository.countByTransactionStatus("가등록");
-            Long managementCount = wellPartnerRepository.countByTransactionStatus("관리대상");
-            Long suspendedCount = wellPartnerRepository.countByTransactionStatus("거래중지");
+            String partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdx(partnerEntity.getPartnerUpperIdx());
 
             // 백업 엔티티에 복사
             WellPartnerEntityBackup partnerBackup = new WellPartnerEntityBackup();
@@ -261,7 +295,6 @@ public class WellPartnerService {
             partnerBackup.setSize(partnerEntity.getSize());
             partnerBackup.setPage(partnerEntity.getPage());
             partnerBackup.setDiscountCategory(partnerEntity.getDiscountCategory());
-            partnerBackup.setRegion(partnerEntity.getRegion());
             partnerBackup.setSubscriptionDate(partnerEntity.getSubscriptionDate());
             partnerBackup.setSpecialPolicyOpening(partnerEntity.isSpecialPolicyOpening());
             partnerBackup.setSpecialPolicyCharge(partnerEntity.isSpecialPolicyCharge());
@@ -291,40 +324,10 @@ public class WellPartnerService {
             wellPartnerRepository.delete(partnerEntity);
 
             return Optional.of(new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity
-                                                    , registeredCount, preRegisteredCount, managementCount, suspendedCount));
+                                                    , partnerUpperName));
         } else {
             // 삭제 대상이 없을 경우 빈 Optional 반환
             return Optional.empty();
         }
     }
-
-    //거래처 검색
-    public List<WellPartnerInfoDTO> searchPartnerList(String partnerName, String ceoName, String ceoTelephone, String partnerCode, String address
-                                                    , String writer, String partnerTelephone) {
-        Specification<WellPartnerEntity> spec = Specification.where(PartnerSpecification.partnerNameContains(partnerName))
-                .and(PartnerSpecification.partnerCeoNameContains(ceoName))
-                .and(PartnerSpecification.partnerCeoTelephoneContains(ceoTelephone))
-                .and(PartnerSpecification.partnerCodeContains(partnerCode))
-                .and(PartnerSpecification.partnerAddressContains(address))
-                .and(PartnerSpecification.writerContains(writer))
-                .and(PartnerSpecification.partnerTelephoneContains(partnerTelephone));
-
-        List<WellPartnerEntity> partners = wellPartnerRepository.findAll(spec);
-
-        List<WellPartnerInfoDTO> partnerInfoList = new ArrayList<>();
-
-        for (WellPartnerEntity partnerEntity : partners) {
-            List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerEntity.getPartnerIdx());
-
-            WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
-            WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
-
-            WellPartnerInfoDTO partnerInfo = new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity);
-            partnerInfoList.add(partnerInfo);
-        }
-
-        return partnerInfoList;
-    }
-
-
 }

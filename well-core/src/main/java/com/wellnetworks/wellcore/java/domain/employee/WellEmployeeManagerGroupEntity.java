@@ -22,7 +22,7 @@ public class WellEmployeeManagerGroupEntity{
     @OneToMany(mappedBy = "employeeManagerGroupKey") // 양방향 일때 직원 리스트 가져오기
     private List<WellEmployeeUserEntity> employee = new ArrayList<>();
 
-    @Column(name = "department")//부서명
+    @Column(name = "department", nullable = false)//부서명
     private String department;
 
     @Column(name = "em_g_permissions") //직원 권한

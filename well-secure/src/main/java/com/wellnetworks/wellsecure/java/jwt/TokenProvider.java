@@ -1,11 +1,13 @@
-package com.wellnetworks.secure.java.jwt;
+package com.wellnetworks.wellsecure.java.jwt;
 
-import com.wellnetworks.secure.java.config.SecurityProperties;
-import com.wellnetworks.secure.java.service.WellUserDetailService;
+import com.wellnetworks.wellsecure.java.config.SecurityProperties;
+import com.wellnetworks.wellsecure.java.service.WellUserDetailService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import org.slf4j.Logger;
 
 // 클래스에 대한 주석: JWT 토큰 생성 및 검증 역할을 하는 클래스
 @Component
@@ -29,6 +32,10 @@ public class TokenProvider {
     private Key key;
     // JWT 토큰의 유효 기간
     private Date tokenValidity;
+    private static final Logger log = LoggerFactory.getLogger(TokenProvider.class);
+
+    private Date accessTokenValidity; // acess 토큰 인증 만료 기간
+    private Date refreshTokenValidity; // refresh 토큰 시간
     // 생성자에서 의존성 주입
     public TokenProvider(SecurityProperties securityProperties, WellUserDetailService wellUserDetailService) {
         this.securityProperties = securityProperties;
@@ -45,6 +52,7 @@ public class TokenProvider {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, securityProperties.getExpirationTime());
         this.tokenValidity = calendar.getTime();
+
     }
 
     // 사용자 인증 정보를 기반으로 JWT 토큰을 생성하는 메서드
@@ -53,11 +61,33 @@ public class TokenProvider {
         // 권한 정보를 리스트에 저장
         authentication.getAuthorities().forEach(claim -> authClaims.add(claim.toString()));
 
+        // 현재 시간으로부터 accessToken 만료 시간을 설정
+        this.accessTokenValidity = new Date(System.currentTimeMillis() +
+                (long) securityProperties.getAccessTokenExpirationTime() * 3600 * 1000);
+
+
         // JWT 토큰 생성 및 반환
         return Jwts.builder()
                 .setSubject(authentication.getName()) // 사용자 이름 설정
                 .claim("auth", authClaims) // 권한 정보 설정
                 .setExpiration(tokenValidity) // 토큰 만료 시간 설정
+                .signWith(key, SignatureAlgorithm.HS512) // 암호화 알고리즘 및 키로 서명
+                .compact();
+    }
+
+
+
+    // refreshToken 생성 메서드
+    public String createRefreshToken(Authentication authentication) {
+        // 현재 시간으로부터 refreshToken 만료 시간을 설정
+        this.refreshTokenValidity = new Date(System.currentTimeMillis() +
+                (long) securityProperties.getRefreshTokenExpirationTime() * 3600 * 1000);
+
+        // refreshToken 생성 코드...
+        // refreshToken은 사용자의 권한이나 다른 정보 없이, 오직 사용자 이름만 포함하는 것이 일반적
+        return Jwts.builder()
+                .setSubject(authentication.getName()) // 사용자 이름 설정
+                .setExpiration(refreshTokenValidity) // 토큰 만료 시간 설정
                 .signWith(key, SignatureAlgorithm.HS512) // 암호화 알고리즘 및 키로 서명
                 .compact();
     }
@@ -84,9 +114,9 @@ public class TokenProvider {
             var principal = new User(userDetail.getUsername(), "", userDetail.getAuthorities());
             return new UsernamePasswordAuthenticationToken(principal, token, userDetail.getAuthorities());
         } catch (Exception e) {
-            // 예외가 발생한 경우, 에러 메시지를 출력하고 null 반환.
-            System.out.println(e.getMessage());
-            return null;
+            log.error("Authentication error: {}", e.getMessage(), e);
+            // 스프링 시큐리티의 인증 실패 예외를 던집니다.
+            throw new BadCredentialsException("Invalid token", e);
         }
-}
+    }
 }

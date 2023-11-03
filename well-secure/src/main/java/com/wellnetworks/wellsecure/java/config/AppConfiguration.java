@@ -1,4 +1,4 @@
-package com.wellnetworks.secure.java.config;
+package com.wellnetworks.wellsecure.java.config;
 
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

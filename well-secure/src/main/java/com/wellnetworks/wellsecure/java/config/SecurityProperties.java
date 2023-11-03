@@ -1,4 +1,4 @@
-package com.wellnetworks.secure.java.config;
+package com.wellnetworks.wellsecure.java.config;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
@@ -33,8 +33,14 @@ public class SecurityProperties {
     @Positive  // 이 필드는 양수여야 함
     private int expirationTime = 31;  // 단위: 일(days)
 
-    @Positive  // 이 필드는 양수여야 함
+    @Positive  // 이 필드는 양수여야 함 복잡성 정도
     private int strength = 10;
+
+    @Positive
+    private int accessTokenExpirationTime = 1; // 단위: 시간(hours)
+
+    @Positive
+    private int refreshTokenExpirationTime = 336; // 단위: 시간(hours), 2주
 
     private final String tokenPrefix = "Bearer ";
     private final String headerString = "Authorization";

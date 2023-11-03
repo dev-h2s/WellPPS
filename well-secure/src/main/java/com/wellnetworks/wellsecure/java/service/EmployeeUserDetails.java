@@ -1,19 +1,22 @@
-package com.wellnetworks.secure.java.service;
+package com.wellnetworks.wellsecure.java.service;
 
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Objects;
+
 /**
  * EmployeeUserDetails 클래스는 Spring Security에서 사용자의 세부 정보를 담는데 사용됨
  * 이 클래스는 UserDetails 인터페이스를 구현하여 Spring Security가 사용자 인증과 권한 부여를 수행할 수 있도록 함
  */
+@Getter
 public class EmployeeUserDetails implements UserDetails {
 
     private String username;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
-
     /**
      * EmployeeUserDetails 객체를 생성합니다.
      *
@@ -26,6 +29,7 @@ public class EmployeeUserDetails implements UserDetails {
         this.password = password;
         this.authorities = authorities;
     }
+
 
     /**
      * 사용자에게 부여된 권한을 반환합니다.
@@ -95,5 +99,19 @@ public class EmployeeUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EmployeeUserDetails that = (EmployeeUserDetails) o;
+        return Objects.equals(username, that.username);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username);
     }
 }

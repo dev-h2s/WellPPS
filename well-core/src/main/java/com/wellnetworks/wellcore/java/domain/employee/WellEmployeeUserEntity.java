@@ -20,7 +20,7 @@ import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @Table(name = "employee_user_tb")
-public class WellEmployeeUserEntity implements UserDetailsService {
+public class WellEmployeeUserEntity  {
 
     @Id
     @Column(name = "em_idx", columnDefinition = "uniqueidentifier") //맴버 고유 식별자 idx
@@ -34,11 +34,11 @@ public class WellEmployeeUserEntity implements UserDetailsService {
     @JoinColumn(name = "em_gkey")
     private WellEmployeeManagerGroupEntity employeeManagerGroupKey;
 
-    @Column(name = "m_identification") //로그인시 아이디
+    @Column(name = "m_identification", unique = true) //로그인시 아이디
     private String employeeIdentification;
 
     @Column(name = "pwd") //로그인시 비밀번호
-    private String employeeUserPwd;
+    private String employeeUserPwd = null;
 
     @Column(name = "permissions") //권한
     private String permissions;
@@ -74,12 +74,14 @@ public class WellEmployeeUserEntity implements UserDetailsService {
     @Column(name = "m_u_moddt") //유저정보 수정일자
     private LocalDateTime employeeUserModifyDate;
 
-    @Column(name = "m_u_regdt") //유저정보 수정일자
+    @Column(name = "m_u_regdt") //유저정보 생성일자
     private LocalDateTime getemployeeUserRegisterDate;
 
     @Column(name = "Group_key") //그룹식별자
     private String groupKey;
 
+    @Column(name = "password_reset_required") // 패스워드 변경해야하나 true면 임시패스워드로 로그인 가능
+    private Boolean isPasswordResetRequired = true;
     public WellEmployeeUserEntity() {
 
     }
@@ -91,7 +93,7 @@ public class WellEmployeeUserEntity implements UserDetailsService {
         return Objects.equals(employeeIdx, that.employeeIdx);
     }
 @Builder
-    public WellEmployeeUserEntity(String employeeIdx, WellEmployeeEntity employeeUser, WellEmployeeManagerGroupEntity employeeManagerGroupKey, String employeeIdentification, String employeeUserPwd, String permissions, String tmpPwd, LocalDateTime tmpPwdExpiration, Integer tmpPwdCount, LocalDateTime tmpPwdDate, Boolean isPhoneVerified, String phoneVerificationCode, Integer phoneVerificationAttempts, LocalDateTime phoneVerificationExpiration, LocalDateTime phoneVerificationSentTime, LocalDateTime employeeUserModifyDate, LocalDateTime getemployeeUserRegisterDate, String groupKey, String groupPermissionKey, List<String> permissionsKeysStringList) {
+    public WellEmployeeUserEntity(String employeeIdx, WellEmployeeEntity employeeUser, WellEmployeeManagerGroupEntity employeeManagerGroupKey, String employeeIdentification, String employeeUserPwd, String permissions, String tmpPwd, LocalDateTime tmpPwdExpiration, Integer tmpPwdCount, LocalDateTime tmpPwdDate, Boolean isPhoneVerified, String phoneVerificationCode, Integer phoneVerificationAttempts, LocalDateTime phoneVerificationExpiration, LocalDateTime phoneVerificationSentTime, LocalDateTime employeeUserModifyDate, LocalDateTime getemployeeUserRegisterDate, String groupKey, String groupPermissionKey, Boolean isPasswordResetRequired, List<String> permissionsKeysStringList) {
         this.employeeIdx = employeeIdx;
         this.employeeUser = employeeUser;
         this.employeeManagerGroupKey = employeeManagerGroupKey;
@@ -112,7 +114,9 @@ public class WellEmployeeUserEntity implements UserDetailsService {
         this.groupKey = groupKey;
         this.groupPermissionKey = groupPermissionKey;
         this.permissionsKeysStringList = permissionsKeysStringList;
+        this.isPasswordResetRequired =true  ;
     }
+
 
     // 추가한 권한 관련 필드
     private String groupPermissionKey;
@@ -137,12 +141,12 @@ public class WellEmployeeUserEntity implements UserDetailsService {
         return authorities;
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // 여기에 사용자를 조회하는 로직을 구현하십시오.
-        // 만약 사용자를 찾을 수 없다면 UsernameNotFoundException을 발생시켜야 합니다.
-        // 찾은 사용자 정보를 바탕으로 UserDetails 객체를 반환하십시오.
-        throw new UsernameNotFoundException("User not found with username: " + username);
-    }
+//    @Override
+//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//        // 여기에 사용자를 조회하는 로직을 구현하십시오.
+//        // 만약 사용자를 찾을 수 없다면 UsernameNotFoundException을 발생시켜야 합니다.
+//        // 찾은 사용자 정보를 바탕으로 UserDetails 객체를 반환하십시오.
+//        throw new UsernameNotFoundException("User not found with username: " + username);
+//    }
 
 }

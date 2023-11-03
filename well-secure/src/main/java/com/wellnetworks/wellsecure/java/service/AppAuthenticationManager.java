@@ -1,4 +1,4 @@
-package com.wellnetworks.secure.java.service;
+package com.wellnetworks.wellsecure.java.service;
 
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,22 +23,22 @@ public class AppAuthenticationManager implements AuthenticationManager {
         this.wellUserDetailService = wellUserDetailService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
-
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+
+        String username = authentication.getName();
         // 사용자가 입력한 비밀번호
         String password = authentication.getCredentials().toString();
 
-        // 사용자의 상세 정보를 가져옴
-        var user = (org.springframework.security.core.userdetails.User) wellUserDetailService.loadUserByUsername(authentication.getName());
+        // 여기서 EmployeeUserDetails를 반환하도록 WellUserDetailService 클래스가 수정되었다고 가정합니다.
+        EmployeeUserDetails userDetails = (EmployeeUserDetails) wellUserDetailService.loadUserByUsername(username);
 
-        // 저장된 비밀번호와 사용자가 입력한 비밀번호가 일치하는지 확인
-        if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
-            throw new BadCredentialsException("Bad credentials");  // 비밀번호가 일치하지 않으면 예외 발생
+        if (!bCryptPasswordEncoder.matches(password, userDetails.getPassword())) {
+            throw new BadCredentialsException("Bad credentials");
         }
 
-        // 인증 성공 시, 인증 객체 반환
-        return new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), user.getAuthorities());
+        // 인증 성공 시, 인증 객체에 EmployeeUserDetails를 포함하여 반환
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
 }

@@ -1,4 +1,4 @@
-package com.wellnetworks.secure.java.service;
+package com.wellnetworks.wellsecure.java.service;
 
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeManagerGroupDTO;
 import com.wellnetworks.wellcore.java.repository.member.WellGroupRepository;

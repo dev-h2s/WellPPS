@@ -1,4 +1,4 @@
-package com.wellnetworks.secure.java.request;
+package com.wellnetworks.wellsecure.java.request;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;

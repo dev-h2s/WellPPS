@@ -1,5 +1,4 @@
 package com.wellnetworks.wellcore.java.service.member;
-import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeManagerGroupEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
@@ -7,7 +6,6 @@ import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDTO;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDetailDTO;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeJoinDTO;
-import com.wellnetworks.wellcore.java.dto.member.WellEmployeeManagerGroupDTO;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeGroupRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
@@ -15,6 +13,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -43,8 +42,7 @@ public class WellEmployeeService {
 
     @Autowired private WellEmployeeGroupRepository wellEmployeeGroupRepository;
 
-
-
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     // 사원 1개 조회
     public Optional<WellEmployeeInfoDetailDTO> getemployeeByemployeeIdx(String employeeIdx) {
@@ -140,24 +138,35 @@ public class WellEmployeeService {
 
 //패스워드 랜덤
     public class PasswordUtil {
-        private static final String ALLOWED_STRING = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        private static final String ALLOWED_STRING = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()";
         private static final int TEMP_PWD_LENGTH = 10;
         private static final SecureRandom RANDOM = new SecureRandom();
+        private static final BCryptPasswordEncoder ENCODER = new BCryptPasswordEncoder();
 
-        public static String generateRandomPassword() {
-            StringBuilder builder = new StringBuilder(TEMP_PWD_LENGTH);
+    public static String[] generateRandomPassword() {
+        StringBuilder builder = new StringBuilder(TEMP_PWD_LENGTH);
 
-            for (int i = 0; i < TEMP_PWD_LENGTH; i++) {
-                builder.append(ALLOWED_STRING.charAt(RANDOM.nextInt(ALLOWED_STRING.length())));
-            }
-
-            return builder.toString();
+        for (int i = 0; i < TEMP_PWD_LENGTH; i++) {
+            builder.append(ALLOWED_STRING.charAt(RANDOM.nextInt(ALLOWED_STRING.length())));
         }
+
+        String rawPassword = builder.toString();
+        String encryptedPassword = ENCODER.encode(rawPassword); // 암호화된 비밀번호를 반환
+        return new String[] {rawPassword, encryptedPassword};
+    }
     }
 
     // 사원 생성
 @Transactional
-public void employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
+public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
+    // 중복 아이디 검사
+    boolean exists = wellEmployeeUserRepository.existsByEmployeeIdentification(joinDTO.getEmployeeIdentification());
+    if (exists) {
+        throw new IllegalArgumentException("사용 불가능한 아이디 입니다");
+    }
+    String[] passwords = PasswordUtil.generateRandomPassword();
+    String tempPasswordPlainText = passwords[0]; // 사용자에게 전달할 임시 비밀번호 평문
+    String tempPasswordEncrypted = passwords[1]; // 데이터베이스에 저장할 암호화된 비밀번호
 
 // DTO에서 department 값을 가져옴
     String department = joinDTO.getDepartment();
@@ -167,7 +176,7 @@ public void employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
 
     // 그룹(부서) 정보가 없으면 예외 처리
     WellEmployeeManagerGroupEntity group = groupOptional.orElseThrow(()
-            -> new IllegalArgumentException("Invalid department: " + department));
+            -> new IllegalArgumentException("없는 부서 입니다: " + department));
 
     // 휴대폰 인증 코드의 만료 시간 설정. 예를 들어, 현재 시간으로부터 10분 후로 설정.
     LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(10);
@@ -182,7 +191,7 @@ public void employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
             .phoneVerificationCode(joinDTO.getPhoneVerificationCode()) // user-휴대폰 인증 코드
             .phoneVerificationAttempts(joinDTO.getPhoneVerificationAttempts()) // user-휴대폰 인증 시도 횟수
             .phoneVerificationExpiration(expirationTime) // user-휴대폰 인증 만료 시간
-            .tmpPwd(PasswordUtil.generateRandomPassword())
+            .tmpPwd(tempPasswordEncrypted) // 임시 암호화된 비밀번호를 설정
             .employeeManagerGroupKey(group) // 연관 관계 설정
             .build();
 
@@ -216,110 +225,13 @@ public void employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
             .employeeRegisterDate(LocalDateTime.now())
             .build();
     wellEmployeeRepository.save(employeeEntity);
-
-//    return new UserAndEmployee(userEntity, employeeEntity);
-    }}
-
-
-
-//
-//    // 사용자 아이디로 사용자가 존재하는지 확인
-//    public boolean existByUserID(String userid) {
-//        // 사용자 존재 유무를 반환
-//        return WellEmployeeUserRepository.existsByUserID(userid);
-//    }
-//
-    // 사용자 생성
-//public String createEmployee(WellEmployeeInsertDTO employeeInsertDTO) {
-//    // 사용자 식별자를 WellEmployeeUserService클래스의 createUser 메서드에서 가져와야한다
-////    String employeeIdx = UUID.randomUUID().toString().toUpperCase();
-//    String employeeIdx = employeeInsertDTO.getEmployeeIdx();
-//    // WellEmployeeUserEntity 객체를 생성하여 저장
-//    WellEmployeeEntity employeeEntity = new WellEmployeeEntity(
-//            employeeIdx,
-//            employeeInsertDTO.getEmployeeIdx(),
-//            null,  // employeeUser에 대한 정보는 DTO에 없으므로 null 또는 적절한 값을 설정
-//            new ArrayList<>(), // files 초기화
-//            null,  // tableID에 대한 정보는 DTO에 없으므로 null 또는 적절한 값을 설정
-//            employeeInsertDTO.getEmployeeId(),
-//            employeeInsertDTO.getBelong(),
-//            employeeInsertDTO.getName(),
-//            employeeInsertDTO.getEMail(),
-//            null,  // telPrivate 정보는 DTO에 없으므로 null 또는 적절한 값을 설정
-//            employeeInsertDTO.getTelWork(),
-//            null,  // registrationNumber 정보는 DTO에 없으므로 null 또는 적절한 값을 설정
-//            employeeInsertDTO.getDepartment(),
-//            employeeInsertDTO.getPosition(),
-//            null,  // level 정보는 DTO에 없으므로 null 또는 적절한 값을 설정
-//            employeeInsertDTO.getHomeAddress1(),
-//            employeeInsertDTO.getHomeAddress2(),
-//            employeeInsertDTO.getBankName(),
-//            employeeInsertDTO.getBankAccount(),
-//            employeeInsertDTO.getBankHolder(),
-//            employeeInsertDTO.getEmploymentState(),
-//            employeeInsertDTO.getJobType(),
-//            employeeInsertDTO.isCertificationtel(),
-//            false,  // certificationEmail 정보는 DTO에 없으므로 기본값으로 설정
-//            employeeInsertDTO.isExternalAccessCert(),
-//            employeeInsertDTO.getEntryDatetime(),
-//            employeeInsertDTO.getEmploymentQuitDatetime(),
-//            employeeInsertDTO.getEmploymentQuitType(),
-//            employeeInsertDTO.getRemainingLeaveDays(),
-//            employeeInsertDTO.getResidentRegistrationNumber(),
-//            false,  // dbAccessPower 정보는 DTO에 없으므로 기본값으로 설정
-//            employeeInsertDTO.getMemo(),
-//            null,  // employeeModifyDate 정보는 DTO에 없으므로 null 또는 적절한 값을 설정
-//            null   // employeeRegisterDate 정보는 DTO에 없으므로 null 또는 적절한 값을 설정
-//    );
-//
-//    employeeUserRepository.save(employeeUserEntity);
-//
-//    return employeeIdx;
+    // 임시 비밀번호 반환
+    return tempPasswordPlainText; // 호출하는 곳에서 임시 비밀번호를 받아 화면에 출력할 수 있음
+    }
 
 
-//
-//    // 데이터 총 개수 가져오기
-//    public long dataTotalCount() {
-//        // 전체 사용자 수를 반환
-//        return wellUserRepository.count();
-//    }
-//
-//    // 권한 목록 가져오기
-//    public List<WellPermissionDTO> getPermissionList() {
-//        // 모든 권한을 조회하여 DTO로 변환
-//        return wellPermissionRepository.findAll().stream()
-//                .map(WellPermissionEntity::getWellPermissionDTO)
-//                .collect(Collectors.toList());
-//    }
-//
-//    // 비밀번호 업데이트
-//    @Transactional(rollbackFor = Exception.class)  // 예외가 발생하면 트랜잭션 롤백
-//    public boolean updatePassword(WellUserDTOUpdate user) {
-//        try {
-//            // 사용자 정보 조회
-//            WellUserEntity currentEntity = wellUserRepository.findByIdx(user.getIdx().toUpperCase()).orElse(null);
-//            if (currentEntity == null) {
-//                return false;
-//            }
-//
-//            // TODO: 'updateDto' 메서드의 정의가 필요함
-//            // currentEntity.updateDto(user);
-//
-//            // 업데이트된 사용자 정보 저장
-//            wellUserRepository.save(currentEntity);
-//        } catch (Exception e) {
-//            return false;
-//        }
-//
-//        return true;
-//    }
-//
-//    // 특정 사용자의 임시 비밀번호 생성 횟수 가져오기
-//    public byte getTmpPassCountByIdx(String idx) {
-//        // 사용자 정보를 조회
-//        Optional<WellUserEntity> user = wellUserRepository.findByIdx(idx);
-//
-//        // 임시 비밀번호 생성 횟수 반환
-//        return user.map(WellUserEntity::getTemporaryPasswordCreateCount).orElse((byte) 0);
-//    }
+}
+
+
+
 

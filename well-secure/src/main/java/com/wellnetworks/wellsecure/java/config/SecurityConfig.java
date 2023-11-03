@@ -1,18 +1,17 @@
-package com.wellnetworks.secure.java.config;
+package com.wellnetworks.wellsecure.java.config;
 
-import com.wellnetworks.secure.java.jwt.JwtAuthenticationFilter;
-import com.wellnetworks.secure.java.jwt.JwtAuthorizationFilter;
-import com.wellnetworks.secure.java.jwt.TokenProvider;
-import com.wellnetworks.secure.java.service.AppAuthenticationManager;
+import com.wellnetworks.wellsecure.java.jwt.JwtAuthenticationFilter;
+import com.wellnetworks.wellsecure.java.jwt.JwtAuthorizationFilter;
+import com.wellnetworks.wellsecure.java.jwt.TokenProvider;
+import com.wellnetworks.wellsecure.java.service.AppAuthenticationManager;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -27,18 +26,17 @@ import java.util.List;
 @Configuration  // 이 클래스를 스프링의 설정 클래스로 선언
 @EnableWebSecurity  // 웹 보안을 활성화
 @EnableMethodSecurity  // 메소드 레벨의 보안을 활성화
+@ComponentScan("com.wellnetworks.wellsecure")
 public class SecurityConfig {
     private final SecurityProperties securityProperties;
     private final AppAuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
 
-    // 생성자를 통한 의존성 주입
     public SecurityConfig(SecurityProperties securityProperties, AppAuthenticationManager authenticationManager, TokenProvider tokenProvider) {
         this.securityProperties = securityProperties;
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
     }
-
     /**
      * Spring Security의 Filter Chain 설정을 제공합니다.
      */
@@ -53,7 +51,7 @@ public class SecurityConfig {
                 .logout()
                 .logoutUrl("/logout")  // 로그아웃 경로 설정
                 .logoutSuccessUrl("/login")  // 로그아웃 후 리다이렉트할 경로 설정
-                .invalidateHttpSession(true)  // 로그아웃 시 세션 무효화
+//                .invalidateHttpSession(true)  // 로그아웃 시 세션 무효화
                 .deleteCookies("JSESSIONID", "remember-me");  // 로그아웃 시 쿠키 삭제
 
         http.authorizeRequests()
@@ -66,7 +64,7 @@ public class SecurityConfig {
                 .requestMatchers("/login").permitAll()
                 .requestMatchers("/logout").permitAll()
                 .requestMatchers("/signup").permitAll()
-                .requestMatchers("/**").permitAll() // 나머지 모든 요청은 누구나 접근 가능
+//                .requestMatchers("/**").permitAll() // 나머지 모든 요청은 누구나 접근 가능
                 .anyRequest().authenticated();// 그 외 나머지 요청은 인증된 사용자만 접근 가능
 
         return http.build();

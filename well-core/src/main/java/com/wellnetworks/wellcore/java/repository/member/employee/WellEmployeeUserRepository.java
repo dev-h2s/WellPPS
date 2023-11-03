@@ -14,7 +14,8 @@ public interface WellEmployeeUserRepository extends JpaRepository<WellEmployeeUs
     Optional<WellEmployeeUserEntity> findByEmployeeIdentification(String employeeIdentification);
 //    boolean existsByEmployeeIdentification(String employeeIdentification);
 
-
+    // 아이디 중복검사
+    boolean existsByEmployeeIdentification(String employeeIdentification);
     // 이미 JpaRepository에 있는 메서드이므로 삭제
     // Page<WellEmployeeUserEntity> findAll(Pageable pageable);
 

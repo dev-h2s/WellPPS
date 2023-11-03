@@ -1,9 +1,9 @@
-package com.wellnetworks.secure.java.jwt;
+package com.wellnetworks.wellsecure.java.jwt;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wellnetworks.secure.java.config.SecurityProperties;
-import com.wellnetworks.secure.java.request.UserLoginReq;
+import com.wellnetworks.wellsecure.java.config.SecurityProperties;
+import com.wellnetworks.wellsecure.java.request.UserLoginReq;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

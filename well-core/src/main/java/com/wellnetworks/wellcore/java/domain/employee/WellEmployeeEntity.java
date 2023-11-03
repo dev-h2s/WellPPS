@@ -27,7 +27,7 @@ public class WellEmployeeEntity {
     private String employeeIdx;
 
     @OneToOne(fetch = LAZY)
-    @JoinColumn(name = "em_idx", insertable = false, updatable = false)
+    @JoinColumn(name = "em_idx", insertable = false, updatable = false, nullable = false)
     private WellEmployeeUserEntity employeeUser;
 
     @Column(name = "em_id") //직원의 아이디
@@ -37,16 +37,16 @@ public class WellEmployeeEntity {
     @OneToMany(mappedBy = "employee")
     private List<WellEmployeeFileStorageEntity> files = new ArrayList<>();
 
-    @Column(name = "belong") // 소속회사
+    @Column(name = "belong", nullable = false) // 소속회사
     private String belong;
 
-    @Column(name = "name") //사원 이름
+    @Column(name = "name", nullable = false) //사원 이름
     private String employeeName;
 
     @Column(name = "e_mail") //사원 이메일
     private String email;
 
-    @Column(name = "tel_private") // 개인 전화번호
+    @Column(name = "tel_private", nullable = false) // 개인 전화번호
     private String telPrivate;
 
     @Column(name = "tel_work") // 직장 전화번호
@@ -58,11 +58,11 @@ public class WellEmployeeEntity {
 //    @Column(name = "department") //부서
 //    private String department;
 
-    @Column(name = "position") //직책(대표,부장 등)
+    @Column(name = "position", nullable = false) //직책(대표,부장 등)
     private String position;
 
-    @Column(name = "level") //!!(미정의)
-    private String level;
+//    @Column(name = "level") //!!(미정의)
+//    private String level;
 
     @Column(name = "home_addr1") //도로명주소
     private String homeAddress1;
@@ -79,16 +79,16 @@ public class WellEmployeeEntity {
     @Column(name = "bank_holder") //은행 계좌 소유자
     private String bankHolder;
 
-    @Column(name = "emp_state") //재직 상태(재직,퇴사 등)
+    @Column(name = "emp_state", nullable = false) //재직 상태(재직,퇴사 등)
     private String employmentState;
 
-    @Column(name = "emp_type") //고용형태 유형(정규직, 비정규직 등)
+    @Column(name = "emp_type", nullable = false) //고용형태 유형(정규직, 비정규직 등)
     private String jobType;
 
     @Column(name = "external_access_cert", columnDefinition = "bit") //외부 접속여부
     private Boolean externalAccessCert;
 
-    @Column(name = "entry_dt") //입사 일자
+    @Column(name = "entry_dt", nullable = false) //입사 일자
     private LocalDateTime entryDatetime;
 
     @Column(name = "retire_dt") //퇴사 일자
@@ -133,7 +133,7 @@ public class WellEmployeeEntity {
         this.telWork = telWork;
         this.registrationNumber = registrationNumber;
         this.position = position;
-        this.level = level;
+//        this.level = level;
         this.homeAddress1 = homeAddress1;
         this.homeAddress2 = homeAddress2;
         this.bankName = bankName;

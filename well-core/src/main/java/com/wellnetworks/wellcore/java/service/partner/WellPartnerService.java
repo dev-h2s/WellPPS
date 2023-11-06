@@ -148,7 +148,7 @@ public class WellPartnerService {
     public List<WellPartnerInfoDTO> searchPartnerList(String partnerName, String ceoName, String ceoTelephone, String partnerCode, String address, String writer, String partnerTelephone
             , LocalDate startDate, LocalDate endDate
             , String discountCategory, String partnerType, String salesManager, String transactionStatus, String regionAddress
-            , String partnerUpperIdx, Boolean hasBusinessLicense) {
+            , String partnerUpperIdx, Boolean hasBusinessLicense, Boolean hasContractDocument) {
         Specification<WellPartnerEntity> spec = Specification.where(PartnerSpecification.partnerNameContains(partnerName))
                 .and(PartnerSpecification.partnerCeoNameContains(ceoName))
                 .and(PartnerSpecification.partnerCeoTelephoneContains(ceoTelephone))
@@ -163,7 +163,8 @@ public class WellPartnerService {
                 .and(PartnerSpecification.transactionStatusEquals(transactionStatus))
                 .and(PartnerSpecification.regionAddressContains(regionAddress))
                 .and(PartnerSpecification.partnerUpperNameEquals(partnerUpperIdx))
-                .and(PartnerSpecification.businessLicenseEquals(hasBusinessLicense));
+                .and(PartnerSpecification.businessLicenseEquals(hasBusinessLicense))
+                .and(PartnerSpecification.contractDocumentEquals(hasContractDocument));
 
         List<WellPartnerEntity> partners = wellPartnerRepository.findAll(spec);
 

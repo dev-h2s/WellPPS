@@ -155,31 +155,41 @@ public class PartnerSpecification {
             if (searchKeyword == null) {
                 return criteriaBuilder.conjunction(); // 모든 정보 가져오기
             } else if (searchKeyword) {
-                // "사업자등록증"이 있는 거래처를 검색
-                Subquery<String> subquery = query.subquery(String.class);
-                Root<WellPartnerFIleStorageEntity> subRoot = subquery.from(WellPartnerFIleStorageEntity.class);
+                    // "사업자등록증"이 있는 거래처를 검색
+                    Subquery<String> subquery = query.subquery(String.class);
+                    Root<WellPartnerFIleStorageEntity> subRoot = subquery.from(WellPartnerFIleStorageEntity.class);
 
-                // 조인 WellFileStorageEntity와 연결
-                Join<WellPartnerFIleStorageEntity, WellFileStorageEntity> fileJoin = subRoot.join("file");
+                    // 조인 WellFileStorageEntity와 연결
+                    Join<WellPartnerFIleStorageEntity, WellFileStorageEntity> fileJoin = subRoot.join("file");
 
-                subquery.select(subRoot.get("partnerIdx"));
-                subquery.where(criteriaBuilder.equal(fileJoin.get("fileKind"), "사업자등록증"));
+                    subquery.select(subRoot.get("partnerIdx"));
+                    subquery.where(criteriaBuilder.equal(fileJoin.get("fileKind"), "사업자등록증"));
 
-                Predicate predicate = criteriaBuilder.in(root.get("partnerIdx")).value(subquery);
-                return predicate;
+                    Predicate predicate = criteriaBuilder.in(root.get("partnerIdx")).value(subquery);
+                    return predicate;
             } else {
-                // "사업자등록증"이 없는 거래처와 "사업자등록증"이 등록되지 않은 거래처 검색
                 Subquery<String> subquery1 = query.subquery(String.class);
                 Root<WellPartnerFIleStorageEntity> subRoot1 = subquery1.from(WellPartnerFIleStorageEntity.class);
-
-                // 조인 WellFileStorageEntity와 연결
                 Join<WellPartnerFIleStorageEntity, WellFileStorageEntity> fileJoin1 = subRoot1.join("file");
-
                 subquery1.select(subRoot1.get("partnerIdx"));
                 subquery1.where(criteriaBuilder.notEqual(fileJoin1.get("fileKind"), "사업자등록증"));
 
+                // 거래처 엔티티의 idx와 일치하지 않는 거래처 파일 엔티티의 partnerIdx를 검색
+                Subquery<String> subquery2 = query.subquery(String.class);
+                Root<WellPartnerFIleStorageEntity> subRoot2 = subquery2.from(WellPartnerFIleStorageEntity.class);
+                subquery2.select(subRoot2.get("partnerIdx"));
+                subquery2.where(criteriaBuilder.equal(subRoot2.get("partnerIdx"), root.get("partnerIdx")));
+
+                // "사업자등록증"이 없는 거래처 또는 "사업자등록증"이 등록되지 않은 거래처 검색
+                query.select(root.get("partnerIdx"));
+                query.where(criteriaBuilder.or(
+                        criteriaBuilder.in(root.get("partnerIdx")).value(subquery1),
+                        criteriaBuilder.in(root.get("partnerIdx")).value(subquery2)
+                ));
+
                 Predicate predicate = criteriaBuilder.or(
-                        criteriaBuilder.in(root.get("partnerIdx")).value(subquery1)
+                        criteriaBuilder.in(root.get("partnerIdx")).value(subquery1),
+                        criteriaBuilder.not(root.get("partnerIdx").in(subquery2))
                 );
 
                 return predicate;
@@ -190,10 +200,56 @@ public class PartnerSpecification {
 
 
 
-
-
-
     //계약서여부
+    public static Specification<WellPartnerEntity> contractDocumentEquals(Boolean searchKeyword) {
+        return (root, query, criteriaBuilder) -> {
+            if (searchKeyword == null) {
+                return criteriaBuilder.conjunction(); // 모든 정보 가져오기
+            } else if (searchKeyword) {
+                // "사업자등록증"이 있는 거래처를 검색
+                Subquery<String> subquery = query.subquery(String.class);
+                Root<WellPartnerFIleStorageEntity> subRoot = subquery.from(WellPartnerFIleStorageEntity.class);
+
+                // 조인 WellFileStorageEntity와 연결
+                Join<WellPartnerFIleStorageEntity, WellFileStorageEntity> fileJoin = subRoot.join("file");
+
+                subquery.select(subRoot.get("partnerIdx"));
+                subquery.where(criteriaBuilder.equal(fileJoin.get("fileKind"), "계약서"));
+
+                Predicate predicate = criteriaBuilder.in(root.get("partnerIdx")).value(subquery);
+                return predicate;
+            } else {
+                Subquery<String> subquery1 = query.subquery(String.class);
+                Root<WellPartnerFIleStorageEntity> subRoot1 = subquery1.from(WellPartnerFIleStorageEntity.class);
+                Join<WellPartnerFIleStorageEntity, WellFileStorageEntity> fileJoin1 = subRoot1.join("file");
+                subquery1.select(subRoot1.get("partnerIdx"));
+                subquery1.where(criteriaBuilder.notEqual(fileJoin1.get("fileKind"), "계약서"));
+
+                // 거래처 엔티티의 idx와 일치하지 않는 거래처 파일 엔티티의 partnerIdx를 검색
+                Subquery<String> subquery2 = query.subquery(String.class);
+                Root<WellPartnerFIleStorageEntity> subRoot2 = subquery2.from(WellPartnerFIleStorageEntity.class);
+                subquery2.select(subRoot2.get("partnerIdx"));
+                subquery2.where(criteriaBuilder.equal(subRoot2.get("partnerIdx"), root.get("partnerIdx")));
+
+                // "사업자등록증"이 없는 거래처 또는 "사업자등록증"이 등록되지 않은 거래처 검색
+                query.select(root.get("partnerIdx"));
+                query.where(criteriaBuilder.or(
+                        criteriaBuilder.in(root.get("partnerIdx")).value(subquery1),
+                        criteriaBuilder.in(root.get("partnerIdx")).value(subquery2)
+                ));
+
+                Predicate predicate = criteriaBuilder.or(
+                        criteriaBuilder.in(root.get("partnerIdx")).value(subquery1),
+                        criteriaBuilder.not(root.get("partnerIdx").in(subquery2))
+                );
+
+                return predicate;
+            }
+        };
+    }
+
+
+
     //거래유무
     public static Specification<WellPartnerEntity> transactionStatusEquals(String searchKeyword) {
         return (root, query, criteriaBuilder) -> {

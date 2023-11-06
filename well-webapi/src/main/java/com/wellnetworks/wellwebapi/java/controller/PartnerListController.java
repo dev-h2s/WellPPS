@@ -110,9 +110,10 @@ public class PartnerListController {
             , @RequestParam(value = "regionAddress", required = false) String regionAddress
             , @RequestParam(value = "partnerUpperIdx", required = false) String partnerUpperIdx
             , @RequestParam(value = "hasBusinessLicense", required = false) Boolean hasBusinessLicense
+            , @RequestParam(value = "hasContractDocument", required = false) Boolean hasContractDocument
     ) {
         return wellPartnerService.searchPartnerList(partnerName, ceoName, ceoTelephone, partnerCode, address, writer, partnerTelephone, startDate, endDate
-                , discountCategory, partnerType, salesManager, transactionStatus, regionAddress, partnerUpperIdx, hasBusinessLicense);
+                , discountCategory, partnerType, salesManager, transactionStatus, regionAddress, partnerUpperIdx, hasBusinessLicense, hasContractDocument);
     }
 
 

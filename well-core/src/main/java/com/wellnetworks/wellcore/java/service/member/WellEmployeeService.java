@@ -193,6 +193,8 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
             .phoneVerificationExpiration(expirationTime) // user-휴대폰 인증 만료 시간
             .tmpPwd(tempPasswordEncrypted) // 임시 암호화된 비밀번호를 설정
             .employeeManagerGroupKey(group) // 연관 관계 설정
+            .isFirstLogin(true)
+            .isPasswordResetRequired(true)
             .build();
 
     wellEmployeeUserRepository.save(userEntity);

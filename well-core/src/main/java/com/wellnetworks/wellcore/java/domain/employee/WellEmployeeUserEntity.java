@@ -75,13 +75,16 @@ public class WellEmployeeUserEntity  {
     private LocalDateTime employeeUserModifyDate;
 
     @Column(name = "m_u_regdt") //유저정보 생성일자
-    private LocalDateTime getemployeeUserRegisterDate;
+    private LocalDateTime employeeUserRegisterDate;
 
     @Column(name = "Group_key") //그룹식별자
     private String groupKey;
 
     @Column(name = "password_reset_required") // 패스워드 변경해야하나 true면 임시패스워드로 로그인 가능
-    private Boolean isPasswordResetRequired = true;
+    private Boolean isPasswordResetRequired ;
+
+    @Column
+    private Boolean isFirstLogin ; // 첫로그이 여부
     public WellEmployeeUserEntity() {
 
     }
@@ -93,7 +96,14 @@ public class WellEmployeeUserEntity  {
         return Objects.equals(employeeIdx, that.employeeIdx);
     }
 @Builder
-    public WellEmployeeUserEntity(String employeeIdx, WellEmployeeEntity employeeUser, WellEmployeeManagerGroupEntity employeeManagerGroupKey, String employeeIdentification, String employeeUserPwd, String permissions, String tmpPwd, LocalDateTime tmpPwdExpiration, Integer tmpPwdCount, LocalDateTime tmpPwdDate, Boolean isPhoneVerified, String phoneVerificationCode, Integer phoneVerificationAttempts, LocalDateTime phoneVerificationExpiration, LocalDateTime phoneVerificationSentTime, LocalDateTime employeeUserModifyDate, LocalDateTime getemployeeUserRegisterDate, String groupKey, String groupPermissionKey, Boolean isPasswordResetRequired, List<String> permissionsKeysStringList) {
+    public WellEmployeeUserEntity(String employeeIdx, WellEmployeeEntity employeeUser, WellEmployeeManagerGroupEntity employeeManagerGroupKey,
+                                  String employeeIdentification, String employeeUserPwd,
+                                  String permissions, String tmpPwd, LocalDateTime tmpPwdExpiration,
+                                  Integer tmpPwdCount, LocalDateTime tmpPwdDate, Boolean isPhoneVerified,
+                                  String phoneVerificationCode, Integer phoneVerificationAttempts, LocalDateTime phoneVerificationExpiration,
+                                  LocalDateTime phoneVerificationSentTime, LocalDateTime employeeUserModifyDate, LocalDateTime employeeUserRegisterDate,
+                                  String groupKey, String groupPermissionKey, Boolean isPasswordResetRequired,
+                                  Boolean isFirstLogin, List<String> permissionsKeysStringList) {
         this.employeeIdx = employeeIdx;
         this.employeeUser = employeeUser;
         this.employeeManagerGroupKey = employeeManagerGroupKey;
@@ -110,13 +120,16 @@ public class WellEmployeeUserEntity  {
         this.phoneVerificationExpiration = phoneVerificationExpiration;
         this.phoneVerificationSentTime = phoneVerificationSentTime;
         this.employeeUserModifyDate = employeeUserModifyDate;
-        this.getemployeeUserRegisterDate = getemployeeUserRegisterDate;
+        this.employeeUserRegisterDate = employeeUserRegisterDate;
         this.groupKey = groupKey;
         this.groupPermissionKey = groupPermissionKey;
         this.permissionsKeysStringList = permissionsKeysStringList;
-        this.isPasswordResetRequired =true  ;
+        this.isPasswordResetRequired = isPasswordResetRequired ;
+        this.isFirstLogin = isFirstLogin;
     }
-
+    public void markFirstLoginComplete() {
+        this.isFirstLogin = false;
+    }
 
     // 추가한 권한 관련 필드
     private String groupPermissionKey;

@@ -167,34 +167,25 @@ public class PartnerSpecification {
 
                 Predicate predicate = criteriaBuilder.in(root.get("partnerIdx")).value(subquery);
                 return predicate;
-            } else if (!searchKeyword) {
+            } else {
+                // "사업자등록증"이 없는 거래처와 "사업자등록증"이 등록되지 않은 거래처 검색
+                Subquery<String> subquery1 = query.subquery(String.class);
+                Root<WellPartnerFIleStorageEntity> subRoot1 = subquery1.from(WellPartnerFIleStorageEntity.class);
 
-// Subquery1: "사업자등록증"이 없는 거래처 검색
-                Subquery<Long> subquery = query.subquery(Long.class);
-                Root<WellPartnerFIleStorageEntity> subRoot = subquery.from(WellPartnerFIleStorageEntity.class);
-                Join<WellPartnerFIleStorageEntity, WellFileStorageEntity> fileJoin = subRoot.join("file");
-                subquery.select(subRoot.get("partnerIdx"));
-                subquery.where(criteriaBuilder.notEqual(fileJoin.get("fileKind"), "사업자등록증"));
+                // 조인 WellFileStorageEntity와 연결
+                Join<WellPartnerFIleStorageEntity, WellFileStorageEntity> fileJoin1 = subRoot1.join("file");
 
-// Subquery2: WellPartnerEntity가 WellPartnerFileStorageEntity의 partnerIdx를 가지고 있지 않는 거래처 검색
-                Subquery<Long> subquery2 = query.subquery(Long.class);
-                Root<WellPartnerEntity> subRoot2 = subquery2.from(WellPartnerEntity.class);
-                subquery2.select(subRoot2.get("partnerIdx"));
-                subquery2.where(criteriaBuilder.notEqual(subRoot2.get("partnerIdx"), subRoot.get("partnerIdx")));
+                subquery1.select(subRoot1.get("partnerIdx"));
+                subquery1.where(criteriaBuilder.notEqual(fileJoin1.get("fileKind"), "사업자등록증"));
 
-                Predicate predicate = criteriaBuilder.and(
-                        criteriaBuilder.in(root.get("partnerIdx")).value(subquery)
-//                        ,
-//                        criteriaBuilder.not(root.get("partnerIdx").in(subquery2))
+                Predicate predicate = criteriaBuilder.or(
+                        criteriaBuilder.in(root.get("partnerIdx")).value(subquery1)
                 );
 
                 return predicate;
-
             }
-            return criteriaBuilder.conjunction();
         };
     }
-
 
 
 

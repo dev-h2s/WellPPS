@@ -111,13 +111,6 @@ public class WellPartnerService {
         }
     }
 
-
-
-
-
-
-
-
     //거래처 리스트 조회
     public List<WellPartnerInfoDTO> getAllPartners() {
         List<WellPartnerEntity> partners = wellPartnerRepository.findAllByOrderByProductRegisterDateDesc();

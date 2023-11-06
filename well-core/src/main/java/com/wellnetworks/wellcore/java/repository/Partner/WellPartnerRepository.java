@@ -39,7 +39,9 @@ public interface WellPartnerRepository extends JpaRepository<WellPartnerEntity, 
         }
     }
 
-
+    // 상부점의 하부점 목록 가져오기
+    @Query("SELECT p FROM WellPartnerEntity p WHERE p.partnerUpperIdx = :partnerUpperIdx")
+    List<WellPartnerEntity> findSubPartnersByPartnerUpperIdx(String partnerUpperIdx);
 
     WellPartnerEntity findByPartnerCode(String partnerCode);
 

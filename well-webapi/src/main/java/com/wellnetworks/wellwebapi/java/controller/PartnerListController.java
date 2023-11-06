@@ -1,6 +1,7 @@
 package com.wellnetworks.wellwebapi.java.controller;
 // 거래처 리스트 컨트롤러
 
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerDetailDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
@@ -30,8 +31,6 @@ public class PartnerListController {
 
     @Autowired
     private WellPartnerService wellPartnerService;
-    @Autowired
-    private WellPartnerRepository wellPartnerRepository;
 
 
     //거래처 idx
@@ -42,6 +41,16 @@ public class PartnerListController {
             throw new ClassNotFoundException(String.format("IDX[%s] not found", partnerIdx));
         }
         return partnerInfoDTO;
+    }
+
+    //상세 거래처 idx
+    @GetMapping("business/detail/{partnerIdx}")
+    public Optional<WellPartnerDetailDTO> getDetailPartner(@PathVariable String partnerIdx) throws ClassNotFoundException {
+        Optional<WellPartnerDetailDTO> partnerDetailDTO = wellPartnerService.getDetailPartnerByPartnerIdx(partnerIdx);
+        if (partnerDetailDTO == null) {
+            throw new ClassNotFoundException(String.format("IDX[%s] not found", partnerIdx));
+        }
+        return partnerDetailDTO;
     }
 
     //거래처 리스트
@@ -100,9 +109,10 @@ public class PartnerListController {
             , @RequestParam(value = "transactionStatus", required = false) String transactionStatus
             , @RequestParam(value = "regionAddress", required = false) String regionAddress
             , @RequestParam(value = "partnerUpperIdx", required = false) String partnerUpperIdx
+            , @RequestParam(value = "hasBusinessLicense", required = false) Boolean hasBusinessLicense
     ) {
         return wellPartnerService.searchPartnerList(partnerName, ceoName, ceoTelephone, partnerCode, address, writer, partnerTelephone, startDate, endDate
-                , discountCategory, partnerType, salesManager, transactionStatus, regionAddress, partnerUpperIdx);
+                , discountCategory, partnerType, salesManager, transactionStatus, regionAddress, partnerUpperIdx, hasBusinessLicense);
     }
 
 

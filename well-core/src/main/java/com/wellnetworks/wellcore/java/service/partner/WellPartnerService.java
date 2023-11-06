@@ -6,6 +6,7 @@ import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerPermissionGroupEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerUserEntity;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerDetailDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
 import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
@@ -49,10 +50,6 @@ public class WellPartnerService {
     @Autowired private WellPartnerFileRepository partnerFileRepository;
     @Autowired private WellPartnerUserRepository partnerUserRepository;
     @Autowired private WellPartnerPermissionGroupRepository permissionGroupRepository;
-    @PersistenceContext
-    private EntityManager em;
-
-
 
     // 거래처 1개 조회
     public Optional<WellPartnerInfoDTO> getPartnerByPartnerIdx(String partnerIdx) {
@@ -76,8 +73,50 @@ public class WellPartnerService {
         } else {
             return Optional.empty();
         }
-
     }
+
+    // 거래처 상세 조회
+    public Optional<WellPartnerDetailDTO> getDetailPartnerByPartnerIdx(String partnerIdx) {
+        WellPartnerEntity partnerEntity = wellPartnerRepository.findByPartnerIdx(partnerIdx);
+
+        if (partnerEntity != null) {
+            List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerIdx);
+
+            WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
+            WellDipositEntity depositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
+
+            String partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
+            String partnerUpperName = null;
+
+            if (partnerUpperIdx != null) {
+                partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx);
+            }
+
+            // 상부점의 하부점 목록 가져오기
+            List<WellPartnerEntity> subPartnerEntities = wellPartnerRepository.findSubPartnersByPartnerUpperIdx(partnerIdx);
+
+            if (subPartnerEntities.isEmpty()) {
+                subPartnerEntities = wellPartnerRepository.findSubPartnersByPartnerUpperIdx(partnerUpperIdx);
+            }
+
+            WellPartnerGroupEntity partnerGroupEntity = wellPartnerGroupRepository.findByPartnerGroupId(partnerEntity.getPartnerGroup().getPartnerGroupId());
+            WellApikeyInEntity apikeyInEntity = wellApikeyInRepository.findByApiKeyInIdx(partnerEntity.getApiKey().getApiKeyInIdx());
+
+            // WellPartnerDetailDTO 생성자 수정을 통해 상부점과 하부점 관계 설정
+            WellPartnerDetailDTO detailDTO = new WellPartnerDetailDTO(partnerEntity, fileStorages, depositEntity, partnerUpperName, partnerGroupEntity, apikeyInEntity, subPartnerEntities);
+
+            return Optional.of(detailDTO);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+
+
+
+
+
+
 
     //거래처 리스트 조회
     public List<WellPartnerInfoDTO> getAllPartners() {
@@ -116,7 +155,7 @@ public class WellPartnerService {
     public List<WellPartnerInfoDTO> searchPartnerList(String partnerName, String ceoName, String ceoTelephone, String partnerCode, String address, String writer, String partnerTelephone
             , LocalDate startDate, LocalDate endDate
             , String discountCategory, String partnerType, String salesManager, String transactionStatus, String regionAddress
-            , String partnerUpperIdx) {
+            , String partnerUpperIdx, Boolean hasBusinessLicense) {
         Specification<WellPartnerEntity> spec = Specification.where(PartnerSpecification.partnerNameContains(partnerName))
                 .and(PartnerSpecification.partnerCeoNameContains(ceoName))
                 .and(PartnerSpecification.partnerCeoTelephoneContains(ceoTelephone))
@@ -130,7 +169,8 @@ public class WellPartnerService {
                 .and(PartnerSpecification.salesManagerEquals(salesManager))
                 .and(PartnerSpecification.transactionStatusEquals(transactionStatus))
                 .and(PartnerSpecification.regionAddressContains(regionAddress))
-                .and(PartnerSpecification.partnerUpperNameEquals(partnerUpperIdx));
+                .and(PartnerSpecification.partnerUpperNameEquals(partnerUpperIdx))
+                .and(PartnerSpecification.businessLicenseEquals(hasBusinessLicense));
 
         List<WellPartnerEntity> partners = wellPartnerRepository.findAll(spec);
 

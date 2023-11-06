@@ -1,8 +1,12 @@
 package com.wellnetworks.wellcore.java.service.partner;
 
+import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
+import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
-import jakarta.persistence.criteria.Expression;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.criteria.*;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
@@ -146,6 +150,58 @@ public class PartnerSpecification {
         };
     }
     //등록증여부
+    public static Specification<WellPartnerEntity> businessLicenseEquals(Boolean searchKeyword) {
+        return (root, query, criteriaBuilder) -> {
+            if (searchKeyword == null) {
+                return criteriaBuilder.conjunction(); // 모든 정보 가져오기
+            } else if (searchKeyword) {
+                // "사업자등록증"이 있는 거래처를 검색
+                Subquery<String> subquery = query.subquery(String.class);
+                Root<WellPartnerFIleStorageEntity> subRoot = subquery.from(WellPartnerFIleStorageEntity.class);
+
+                // 조인 WellFileStorageEntity와 연결
+                Join<WellPartnerFIleStorageEntity, WellFileStorageEntity> fileJoin = subRoot.join("file");
+
+                subquery.select(subRoot.get("partnerIdx"));
+                subquery.where(criteriaBuilder.equal(fileJoin.get("fileKind"), "사업자등록증"));
+
+                Predicate predicate = criteriaBuilder.in(root.get("partnerIdx")).value(subquery);
+                return predicate;
+            } else if (!searchKeyword) {
+
+// Subquery1: "사업자등록증"이 없는 거래처 검색
+                Subquery<Long> subquery = query.subquery(Long.class);
+                Root<WellPartnerFIleStorageEntity> subRoot = subquery.from(WellPartnerFIleStorageEntity.class);
+                Join<WellPartnerFIleStorageEntity, WellFileStorageEntity> fileJoin = subRoot.join("file");
+                subquery.select(subRoot.get("partnerIdx"));
+                subquery.where(criteriaBuilder.notEqual(fileJoin.get("fileKind"), "사업자등록증"));
+
+// Subquery2: WellPartnerEntity가 WellPartnerFileStorageEntity의 partnerIdx를 가지고 있지 않는 거래처 검색
+                Subquery<Long> subquery2 = query.subquery(Long.class);
+                Root<WellPartnerEntity> subRoot2 = subquery2.from(WellPartnerEntity.class);
+                subquery2.select(subRoot2.get("partnerIdx"));
+                subquery2.where(criteriaBuilder.notEqual(subRoot2.get("partnerIdx"), subRoot.get("partnerIdx")));
+
+                Predicate predicate = criteriaBuilder.and(
+                        criteriaBuilder.in(root.get("partnerIdx")).value(subquery)
+//                        ,
+//                        criteriaBuilder.not(root.get("partnerIdx").in(subquery2))
+                );
+
+                return predicate;
+
+            }
+            return criteriaBuilder.conjunction();
+        };
+    }
+
+
+
+
+
+
+
+
     //계약서여부
     //거래유무
     public static Specification<WellPartnerEntity> transactionStatusEquals(String searchKeyword) {

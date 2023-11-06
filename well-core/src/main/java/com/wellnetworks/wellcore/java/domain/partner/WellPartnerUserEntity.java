@@ -4,8 +4,15 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -14,18 +21,17 @@ import static jakarta.persistence.FetchType.LAZY;
 @NoArgsConstructor
 public class WellPartnerUserEntity {
 
-    @Id //거래처_id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "p_id")
-    private Long partnerId;
+    @Id //거래처_idx
+    @Column(name = "p_idx")
+    private String partnerIdx;
 
     @OneToOne(fetch = LAZY) //거래처 1대1
-    @JoinColumn(name = "partnerId")
-    private WellPartnerEntity partner; //거래처 엔티티 참조
+    @JoinColumn(name = "p_idx")
+    private WellPartnerEntity partner;
 
     @ManyToOne(fetch = LAZY) //그룹별권한
-    @JoinColumn(name = "pm_gkey", insertable = false, updatable = false)
-    private WellPartnerPermissionGroupEntity partnerManagerGroup; //거래처유저그룹 엔티티 참조
+    @JoinColumn(name = "pm_gkey")
+    private WellPartnerPermissionGroupEntity partnerManagerGroupKey; //거래처유저그룹 엔티티 참조
 
     @Column(name = "p_identification") //로그인시 아이디
     private String partnerIdentification;
@@ -48,16 +54,38 @@ public class WellPartnerUserEntity {
     @Column(name = "tmp_pwd_dt") //임시비밀번호 생성일자
     private LocalDateTime tmpPwdDate;
 
+    @Column(name = "tel_cert", columnDefinition = "bit") //전화번호 인증여부
+    private Boolean isPhoneVerified;
+
+    @Column(name = "phone_verification_code") // 휴대폰 인증 코드
+    private String phoneVerificationCode;
+
+    @Column(name = "phone_verification_attempts") // 휴대폰 인증 시도 횟수
+    private Integer phoneVerificationAttempts;
+
+    @Column(name = "phone_verification_expiration") // 휴대폰 인증 만료 시간
+    private LocalDateTime phoneVerificationExpiration;
+
+    @CreatedDate
+    @Column(name = "phone_verification_sent_time") // 휴대폰 인증 코드 전송 시간
+    private LocalDateTime phoneVerificationSentTime;
+
     @Column(name = "p_u_moddt") //유저정보 수정일자
     private LocalDateTime partnerUserModifyDate;
 
     @Column(name = "p_u_regdt") //유저정보 생성일자
     private LocalDateTime partnerUserRegisterDate;
 
+    @Column(name = "Group_key") //그룹식별자
+    private String groupKey;
+
     @Builder
-    public WellPartnerUserEntity(WellPartnerPermissionGroupEntity partnerManagerGroup, String partnerIdentification, String partnerUserPwd, String permissions, String tmpPwd, LocalDateTime tmpPwdExpiration, Integer tmpPwdCount, LocalDateTime tmpPwdDate, LocalDateTime partnerUserModifyDate, LocalDateTime partnerUserRegisterDate
-                                ) {
-        this.partnerManagerGroup = partnerManagerGroup;
+    public WellPartnerUserEntity(String partnerIdx, WellPartnerEntity partner, WellPartnerPermissionGroupEntity partnerManagerGroupKey, String partnerIdentification, String partnerUserPwd, String permissions, String tmpPwd, LocalDateTime tmpPwdExpiration, Integer tmpPwdCount, LocalDateTime tmpPwdDate, LocalDateTime partnerUserModifyDate, LocalDateTime partnerUserRegisterDate
+                                , Boolean isPhoneVerified, String phoneVerificationCode, Integer phoneVerificationAttempts, LocalDateTime phoneVerificationExpiration, LocalDateTime phoneVerificationSentTime, String groupKey
+                                , String groupPermissionKey, List<String> permissionsKeysStringList) {
+        this.partnerIdx = partnerIdx;
+        this.partner = partner;
+        this.partnerManagerGroupKey = partnerManagerGroupKey;
         this.partnerIdentification = partnerIdentification;
         this.partnerUserPwd = partnerUserPwd;
         this.permissions = permissions;
@@ -65,7 +93,38 @@ public class WellPartnerUserEntity {
         this.tmpPwdExpiration = tmpPwdExpiration;
         this.tmpPwdCount = tmpPwdCount;
         this.tmpPwdDate = tmpPwdDate;
+        this.isPhoneVerified = isPhoneVerified;
+        this.phoneVerificationCode = phoneVerificationCode;
+        this.phoneVerificationAttempts = phoneVerificationAttempts;
+        this.phoneVerificationExpiration = phoneVerificationExpiration;
+        this.phoneVerificationSentTime = phoneVerificationSentTime;
         this.partnerUserModifyDate = partnerUserModifyDate;
         this.partnerUserRegisterDate = partnerUserRegisterDate;
+        this.groupKey = groupKey;
+        this.groupPermissionKey = groupPermissionKey;
+        this.permissionsKeysStringList = permissionsKeysStringList;
+    }
+
+    // 추가한 권한 관련 필드
+    private String groupPermissionKey;
+    @ElementCollection //값 타입의 컬렉션임을 나타냅니다.
+    @CollectionTable(name = "employee_permissions", joinColumns = @JoinColumn(name = "employee_idx")) //컬렉션 값을 저장할 테이블을 지정
+    @Column(name = "permission")
+    private List<String> permissionsKeysStringList = Collections.emptyList();  // 예제 필드, 실제 필드와는 다를 수 있습니다.
+
+    public Collection<GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+
+        // 그룹 권한 추가
+        if (groupPermissionKey != null && !groupPermissionKey.isEmpty()) {
+            authorities.add(new SimpleGrantedAuthority(groupPermissionKey));
+        }
+
+        // 개별 권한 목록 추가
+        for (String permission : permissionsKeysStringList) {
+            authorities.add(new SimpleGrantedAuthority(permission));
+        }
+
+        return authorities;
     }
 }

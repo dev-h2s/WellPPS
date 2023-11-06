@@ -4,10 +4,14 @@ import com.querydsl.core.annotations.QueryProjection;
 import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.Column;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,9 +42,13 @@ public class WellPartnerInfoDTO {
     private Long managementCount;
     private Long suspendedCount;
 
+
+    private WellPartnerRepository wellPartnerRepository;
+
     //거래처 1개, 리스트
     public WellPartnerInfoDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, WellDipositEntity diposit
-                                , Long registeredCount, Long preRegisteredCount, Long managementCount, Long suspendedCount, String partnerUpperName
+                                , Long registeredCount, Long preRegisteredCount, Long managementCount, Long suspendedCount
+            , String partnerUpperName
                                 ) {
         this.partnerIdx = entity.getPartnerIdx();
         for (WellPartnerFIleStorageEntity fileStorage : fileStorages) {
@@ -65,7 +73,12 @@ public class WellPartnerInfoDTO {
         this.ceoTelephone = entity.getCeoTelephone();
         this.writer = entity.getWriter();
         this.partnerUpperIdx = entity.getPartnerUpperIdx();
-        this.partnerUpperName = partnerUpperName;
+        if (partnerUpperIdx != null) {
+            this.partnerUpperName = partnerUpperName;
+        }
+        else {
+            this.partnerUpperName = null;
+        }
         this.size = entity.getSize();
         this.page = entity.getPage();
 
@@ -76,7 +89,8 @@ public class WellPartnerInfoDTO {
     }
 
     //거래처 검색
-    public WellPartnerInfoDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, WellDipositEntity diposit, String partnerUpperName
+    public WellPartnerInfoDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, WellDipositEntity diposit
+                              , String partnerUpperName
     ) {
         this.partnerIdx = entity.getPartnerIdx();
         for (WellPartnerFIleStorageEntity fileStorage : fileStorages) {
@@ -101,7 +115,12 @@ public class WellPartnerInfoDTO {
         this.ceoTelephone = entity.getCeoTelephone();
         this.writer = entity.getWriter();
         this.partnerUpperIdx = entity.getPartnerUpperIdx();
-        this.partnerUpperName = partnerUpperName;
+        if (partnerUpperIdx != null) {
+            this.partnerUpperName = partnerUpperName;
+        }
+        else {
+            this.partnerUpperName = null;
+        }
         this.size = entity.getSize();
         this.page = entity.getPage();
     }

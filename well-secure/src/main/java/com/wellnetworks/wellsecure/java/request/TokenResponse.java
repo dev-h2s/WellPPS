@@ -1,4 +1,4 @@
-package com.wellnetworks.wellcore.java.service.member;
+package com.wellnetworks.wellsecure.java.request;
 
 import lombok.Getter;
 import lombok.Setter;

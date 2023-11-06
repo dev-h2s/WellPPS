@@ -11,6 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -130,6 +131,14 @@ public class WellEmployeeUserEntity  {
     public void markFirstLoginComplete() {
         this.isFirstLogin = false;
     }
+
+    public void changePasswordAndInvalidateTempPassword(String newPassword, BCryptPasswordEncoder passwordEncoder) {
+        this.employeeUserPwd = passwordEncoder.encode(newPassword);
+        this.tmpPwd = null; // 임시 비밀번호 null로 설정
+        this.isFirstLogin = false; // 첫 로그인 상태 업데이트
+        this.isPasswordResetRequired = false;
+    }
+
 
     // 추가한 권한 관련 필드
     private String groupPermissionKey;

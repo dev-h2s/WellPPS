@@ -30,7 +30,7 @@ public class AppAuthenticationManager implements AuthenticationManager {
         // 사용자가 입력한 비밀번호
         String password = authentication.getCredentials().toString();
 
-        // 여기서 EmployeeUserDetails를 반환하도록 WellUserDetailService 클래스가 수정되었다고 가정합니다.
+        // 여기서 EmployeeUserDetails를 반환하도록 WellUserDetailService 클래스가 수정되었다고 가정
         EmployeeUserDetails userDetails = (EmployeeUserDetails) wellUserDetailService.loadUserByUsername(username);
 
         if (!bCryptPasswordEncoder.matches(password, userDetails.getPassword())) {

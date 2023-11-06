@@ -3,6 +3,7 @@ import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeManagerGroupEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
+import com.wellnetworks.wellcore.java.dto.member.ChangePasswordRequest;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDTO;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDetailDTO;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeJoinDTO;
@@ -13,7 +14,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -43,6 +46,7 @@ public class WellEmployeeService {
     @Autowired private WellEmployeeGroupRepository wellEmployeeGroupRepository;
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
 
     // 사원 1개 조회
     public Optional<WellEmployeeInfoDetailDTO> getemployeeByemployeeIdx(String employeeIdx) {
@@ -231,6 +235,25 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
     return tempPasswordPlainText; // 호출하는 곳에서 임시 비밀번호를 받아 화면에 출력할 수 있음
     }
 
+    //패스워드 변경
+    public void changePassword(ChangePasswordRequest changePasswordRequest) {
+        if (!changePasswordRequest.getNewPassword().equals(changePasswordRequest.getConfirmPassword())) {
+            throw new IllegalArgumentException("새 비밀번호가 일치하지 않습니다.");
+        }
+
+        WellEmployeeUserEntity userEntity = wellEmployeeUserRepository.findByEmployeeIdentification(changePasswordRequest.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+
+        // 임시 비밀번호로 로그인된 상태인지 확인
+//        if (!passwordEncoder.matches(changePasswordRequest.getCurrentPassword(), userEntity.getTmpPwd())) {
+//            throw new IllegalArgumentException("Current password is incorrect.");
+//        }
+
+        // 새 비밀번호 설정 및 임시 비밀번호 무효화
+        userEntity.changePasswordAndInvalidateTempPassword(changePasswordRequest.getNewPassword(), passwordEncoder);
+
+        wellEmployeeUserRepository.save(userEntity);
+    }
 
 }
 

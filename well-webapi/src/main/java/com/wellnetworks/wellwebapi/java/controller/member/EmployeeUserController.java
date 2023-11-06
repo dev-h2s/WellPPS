@@ -3,7 +3,8 @@ package com.wellnetworks.wellwebapi.java.controller.member;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
 
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
-import com.wellnetworks.wellcore.java.service.member.TokenResponse;
+import com.wellnetworks.wellsecure.java.request.ApiResponse;
+import com.wellnetworks.wellsecure.java.request.TokenResponse;
 
 import com.wellnetworks.wellsecure.java.jwt.TokenProvider;
 import com.wellnetworks.wellsecure.java.request.UserLoginReq;
@@ -28,8 +29,9 @@ public class EmployeeUserController {
 
     private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
+
     @Autowired
-    public EmployeeUserController(AuthenticationManager authenticationManager, TokenProvider tokenProvider ) {
+    public EmployeeUserController(AuthenticationManager authenticationManager, TokenProvider tokenProvider) {
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
     }
@@ -38,6 +40,7 @@ public class EmployeeUserController {
     @PostMapping(value = "employee/login")
     public ResponseEntity<ApiResponse> login(@RequestBody UserLoginReq loginReq) {
 
+        WellEmployeeUserEntity userEntity = null;
         try {
             // 사용자의 인증 정보를 검증
             Authentication authentication = authenticationManager.authenticate(
@@ -49,7 +52,7 @@ public class EmployeeUserController {
 
             // UserDetails 객체를 조회하여 첫 로그인 여부를 확인
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            WellEmployeeUserEntity userEntity = employeeUserRepository.findByEmployeeIdentification(userDetails.getUsername())
+            userEntity = employeeUserRepository.findByEmployeeIdentification(userDetails.getUsername())
                     .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
 
             // 응답 객체를 생성
@@ -69,6 +72,7 @@ public class EmployeeUserController {
             return ResponseEntity.ok(response);
         } catch (BadCredentialsException e) {
             System.out.println("username은" + loginReq.getUsername() + "password는" + loginReq.getPassword());
+//            System.out.println(userEntity.getIsPasswordResetRequired());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("올바르지 않은 사용자 이름 또는 비밀번호입니다.", null));
         } catch (LockedException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("계정이 잠겼습니다. 관리자에게 문의하세요.", null));
@@ -77,26 +81,8 @@ public class EmployeeUserController {
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("인증 중 오류가 발생하였습니다.", null));
         }
-        }
-
-//        @PostMapping(value = "employee/update_pwd")
-//        public ResponseEntity<ApiResponse> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
-//            try {
-//                // 사용자를 찾고, 패스워드 변경 로직 수행 ...
-//                // 패스워드 변경이 성공하면 isFirstLogin 상태 업데이트
-//                WellEmployeeUserEntity userEntity = employeeUserRepository.findByEmployeeIdentification(changePasswordRequest.getUsername())
-//                        .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
-//
-//                if (userEntity.getIsFirstLogin()) {
-//                    userEntity.markFirstLoginComplete();
-//                    employeeUserRepository.save(userEntity);
-//                }
-//
-//                // 응답 반환
-//                return ResponseEntity.ok(new ApiResponse("패스워드 변경 성공", null));
-//            } catch (Exception e) {
-//                // 에러 처리
-//                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("패스워드 변경 중 오류가 발생했습니다.", null));
-//            }
-
     }
+
+
+
+}

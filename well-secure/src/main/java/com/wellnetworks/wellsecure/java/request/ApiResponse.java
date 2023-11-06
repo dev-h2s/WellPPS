@@ -1,6 +1,6 @@
-package com.wellnetworks.wellwebapi.java.controller.member;
+package com.wellnetworks.wellsecure.java.request;
 
-import com.wellnetworks.wellcore.java.service.member.TokenResponse;
+import com.wellnetworks.wellsecure.java.request.TokenResponse;
 import lombok.Getter;
 import lombok.Setter;
 

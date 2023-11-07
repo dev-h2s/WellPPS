@@ -188,7 +188,6 @@ public class WellPartnerService {
                     partnerInfoList.add(partnerInfo);
                 }
 
-
         return partnerInfoList;
     }
 

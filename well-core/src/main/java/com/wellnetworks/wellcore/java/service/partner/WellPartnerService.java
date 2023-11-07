@@ -111,16 +111,38 @@ public class WellPartnerService {
         }
     }
 
-    //거래처 리스트 조회
     public List<WellPartnerInfoDTO> getAllPartners() {
         List<WellPartnerEntity> partners = wellPartnerRepository.findAllByOrderByProductRegisterDateDesc();
         List<WellPartnerInfoDTO> partnerInfoList = new ArrayList<>();
+        Long totalPartnerCount = (long) partners.size();
+        Long totalBusinessLicenseCount = 0L;
+        Long totalContractDocumentCount = 0L;
 
         for (WellPartnerEntity partnerEntity : partners) {
             List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerEntity.getPartnerIdx());
 
             WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
             WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
+
+            Long businessLicenseCount = 0L;
+            for (WellPartnerFIleStorageEntity fileStorage : fileStorages) {
+                if (fileStorage != null) {
+                    String fileKind = fileStorage.getFile().getFileKind();
+                    if ("사업자등록증".equals(fileKind)) {
+                        businessLicenseCount++;
+                    }
+                }
+            }
+
+            Long contractDocumentCount = 0L;
+            for (WellPartnerFIleStorageEntity fileStorage : fileStorages) {
+                if (fileStorage != null) {
+                    String fileKind = fileStorage.getFile().getFileKind();
+                    if ("계약서".equals(fileKind)) {
+                        contractDocumentCount++;
+                    }
+                }
+            }
 
             String partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
             String partnerUpperName = null;
@@ -135,13 +157,37 @@ public class WellPartnerService {
 
             WellPartnerInfoDTO partnerInfo = new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity
                     , registeredCount, preRegisteredCount, managementCount, suspendedCount
-                    , partnerUpperName
+                    , partnerUpperName, businessLicenseCount, contractDocumentCount
             );
             partnerInfoList.add(partnerInfo);
+
+            // 각 거래처의 businessLicenseCount를 totalBusinessLicenseCount에 누적
+            totalBusinessLicenseCount += businessLicenseCount;
+
+            totalContractDocumentCount += contractDocumentCount;
         }
+
+        // totalBusinessLicenseCount를 사용하여 NonBusinessLicenseCount 계산
+        Long NonBusinessLicenseCount = totalPartnerCount - totalBusinessLicenseCount;
+
+        Long NonContractDocumentCount = totalPartnerCount - totalContractDocumentCount;
+
+        // 최종 결과에 모든 거래처의 totalBusinessLicenseCount를 설정
+        for (WellPartnerInfoDTO partnerInfo : partnerInfoList) {
+            partnerInfo.setBusinessLicenseCount(NonBusinessLicenseCount);
+        }
+
+        for (WellPartnerInfoDTO partnerInfo : partnerInfoList) {
+            partnerInfo.setContractDocumentCount(NonContractDocumentCount);
+        }
+
 
         return partnerInfoList;
     }
+
+
+
+
 
 
     //거래처 검색

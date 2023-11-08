@@ -2,21 +2,28 @@ package com.wellnetworks.wellcore.java.service.File;
 
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.dto.FIle.WellPartnerFileCreateDTO;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
 import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
 import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import com.wellnetworks.wellcore.java.dto.FIle.WellFIleCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
 import com.wellnetworks.wellcore.java.repository.File.WellPartnerFileRepository;
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.*;
 
 @Service
@@ -119,4 +126,14 @@ public class WellFileStorageService {
             }
         }
     }
+
+    @Transactional
+    public void deleteBoardFile(Long fileId) {
+        // 데이터베이스에서 파일 레코드 삭제
+        partnerFileRepository.deleteByFileId(fileId);
+        fileStorageRepository.deleteById(fileId);
+
+        // 나머지 로직 (파일을 물리적으로 삭제하는 등)은 여기에 추가
+    }
+
 }

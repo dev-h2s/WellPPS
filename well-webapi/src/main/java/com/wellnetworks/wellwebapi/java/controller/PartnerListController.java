@@ -85,9 +85,13 @@ public class PartnerListController {
     }
 
     //거래처 수정
-    @PatchMapping("business/update")
-    public ResponseEntity<String> patchPartner(WellPartnerUpdateDTO updateDTO) throws Exception {
-        wellPartnerService.update(updateDTO);
+    @PatchMapping("business/update/{partnerIdx}")
+    public ResponseEntity<String> patchPartner(WellPartnerUpdateDTO updateDTO,
+                                               @PathVariable String partnerIdx) throws Exception {
+        wellPartnerService.update(partnerIdx, updateDTO);
+        if (partnerIdx == null) {
+            throw new ClassNotFoundException(String.format("IDX[%s] not found", partnerIdx));
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body("수정 완료.");
     }
 

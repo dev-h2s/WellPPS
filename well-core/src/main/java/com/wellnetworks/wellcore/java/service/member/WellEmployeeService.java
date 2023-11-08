@@ -1,8 +1,13 @@
 package com.wellnetworks.wellcore.java.service.member;
+import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
+import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeManagerGroupEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
+import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.dto.member.ChangePasswordRequest;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDTO;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDetailDTO;
@@ -10,13 +15,16 @@ import com.wellnetworks.wellcore.java.dto.member.WellEmployeeJoinDTO;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeGroupRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
+import com.wellnetworks.wellcore.java.service.partner.PartnerSpecification;
+import io.micrometer.common.KeyValues;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -46,6 +54,7 @@ public class WellEmployeeService {
     @Autowired private WellEmployeeGroupRepository wellEmployeeGroupRepository;
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private KeyValues baseSpec;
 
 
     // 사원 1개 조회
@@ -106,7 +115,7 @@ public class WellEmployeeService {
                 department = employeeUser.getEmployeeManagerGroupKey();
             }
 
-            WellEmployeeInfoDTO employeeInfo = new WellEmployeeInfoDTO(employeeEntity, fileStorages, department);
+            WellEmployeeInfoDTO employeeInfo = new WellEmployeeInfoDTO(employeeEntity, department);
             employeeInfoList.add(employeeInfo);
         }
 
@@ -253,6 +262,69 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
         userEntity.changePasswordAndInvalidateTempPassword(changePasswordRequest.getNewPassword(), passwordEncoder);
 
         wellEmployeeUserRepository.save(userEntity);
+    }
+
+
+
+
+    // 사원 검색 서비스 메소드
+    public List<WellEmployeeInfoDTO> searchEmployeeList(String belong, String employmentState,
+                                                        String nameKeyword,
+                                                        String employeeIdentificationKeyword,
+                                                        String positionKeyword,
+                                                        String telPrivateKeyword,
+                                                        String departmentKeyword,
+                                                        String searchColumn,
+                                                        String searchKeyword
+    ) {
+        // 복합 검색 조건에 대한 Specification 생성
+        Specification<WellEmployeeUserEntity> spec = // Specification을 WellEmployeeUserEntity에 대해 적용
+                Specification.where(EmployeeSpecification.belongContains(belong))
+                        .and(EmployeeSpecification.employmentStateContains(employmentState));
+
+// 추가 검색 조건
+        if (nameKeyword != null && !nameKeyword.isEmpty()) {
+            spec = spec.and(EmployeeSpecification.nameContains(nameKeyword));
+        }
+        if (employeeIdentificationKeyword != null && !employeeIdentificationKeyword.isEmpty()) {
+            spec = spec.and(EmployeeSpecification.employeeIdentificationContains(employeeIdentificationKeyword));
+        }
+
+
+
+        // "기타 검색"을 위한 Specification 조건 추가
+        if (searchColumn != null && !searchKeyword.isEmpty()) {
+            switch (searchColumn) {
+                case "name":
+                    spec = spec.and(EmployeeSpecification.nameContains(searchKeyword));
+                    break;
+                case "position":
+                    spec = spec.and(EmployeeSpecification.positionContains(searchKeyword));
+                    break;
+                case "telPrivate":
+                    spec = spec.and(EmployeeSpecification.telPrivateContains(searchKeyword));
+                    break;
+                case "department":
+                    spec = spec.and(EmployeeSpecification.departmentContains(searchKeyword));
+                    break;
+                case "employeeIdentification":
+                    spec = spec.and(EmployeeSpecification.employeeIdentificationContains(searchKeyword));
+                    break;
+            }
+        }
+
+        // 검색 조건에 맞는 데이터 조회
+        List<WellEmployeeUserEntity> employeeUsers = wellEmployeeUserRepository.findAll(spec);
+
+        // 검색된 WellEmployeeUserEntity 리스트를 WellEmployeeInfoDTO 리스트로 변환
+        List<WellEmployeeInfoDTO> employeeInfoDTOList = employeeUsers.stream()
+                .map(user -> {
+                    WellEmployeeEntity employeeEntity = user.getEmployeeEntity();
+                    WellEmployeeManagerGroupEntity managerGroupEntity = user.getManagerGroupEntity();
+                    return new WellEmployeeInfoDTO(employeeEntity, managerGroupEntity);
+                })
+                .collect(Collectors.toList());
+        return employeeInfoDTOList;
     }
 
 }

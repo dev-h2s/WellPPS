@@ -1,6 +1,8 @@
 package com.wellnetworks.wellcore.java.repository.member.employee;
+import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -8,7 +10,7 @@ import java.util.Optional;
 
 // 사원의 계정과 관련된 레포지토리
 @Repository
-public interface WellEmployeeUserRepository extends JpaRepository<WellEmployeeUserEntity, String> {
+public interface WellEmployeeUserRepository extends JpaRepository<WellEmployeeUserEntity, String>, JpaSpecificationExecutor<WellEmployeeUserEntity> {
 
     //중복 id 체크하는 메서드
     Optional<WellEmployeeUserEntity> findByEmployeeIdentification(String employeeIdentification);

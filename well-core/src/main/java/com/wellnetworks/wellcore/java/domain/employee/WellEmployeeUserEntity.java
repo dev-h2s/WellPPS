@@ -27,8 +27,8 @@ public class WellEmployeeUserEntity  {
     @Column(name = "em_idx", columnDefinition = "uniqueidentifier") //맴버 고유 식별자 idx
     private String employeeIdx;
 
-    @OneToOne
-    private WellEmployeeEntity employeeUser;
+    @OneToOne(mappedBy = "employeeUser", fetch = LAZY)
+    private WellEmployeeEntity employee;
 
     @JsonIgnore //순환참조 문제 방지
     @ManyToOne(fetch = LAZY) //양방향 일때 유저의 맴버 그룹_id 연결
@@ -86,6 +86,13 @@ public class WellEmployeeUserEntity  {
 
     @Column
     private Boolean isFirstLogin ; // 첫로그이 여부
+    public WellEmployeeEntity getEmployeeEntity() {
+        return this.employee;
+    }
+
+    public WellEmployeeManagerGroupEntity getManagerGroupEntity() {
+        return this.employeeManagerGroupKey;
+    }
     public WellEmployeeUserEntity() {
 
     }
@@ -97,7 +104,7 @@ public class WellEmployeeUserEntity  {
         return Objects.equals(employeeIdx, that.employeeIdx);
     }
 @Builder
-    public WellEmployeeUserEntity(String employeeIdx, WellEmployeeEntity employeeUser, WellEmployeeManagerGroupEntity employeeManagerGroupKey,
+    public WellEmployeeUserEntity(String employeeIdx, WellEmployeeEntity employee, WellEmployeeManagerGroupEntity employeeManagerGroupKey,
                                   String employeeIdentification, String employeeUserPwd,
                                   String permissions, String tmpPwd, LocalDateTime tmpPwdExpiration,
                                   Integer tmpPwdCount, LocalDateTime tmpPwdDate, Boolean isPhoneVerified,
@@ -106,7 +113,7 @@ public class WellEmployeeUserEntity  {
                                   String groupKey, String groupPermissionKey, Boolean isPasswordResetRequired,
                                   Boolean isFirstLogin, List<String> permissionsKeysStringList) {
         this.employeeIdx = employeeIdx;
-        this.employeeUser = employeeUser;
+        this.employee = employee;
         this.employeeManagerGroupKey = employeeManagerGroupKey;
         this.employeeIdentification = employeeIdentification;
         this.employeeUserPwd = employeeUserPwd;
@@ -132,6 +139,7 @@ public class WellEmployeeUserEntity  {
         this.isFirstLogin = false;
     }
 
+    //로그인시 패스워드 상태 매서드
     public void changePasswordAndInvalidateTempPassword(String newPassword, BCryptPasswordEncoder passwordEncoder) {
         this.employeeUserPwd = passwordEncoder.encode(newPassword);
         this.tmpPwd = null; // 임시 비밀번호 null로 설정
@@ -162,6 +170,8 @@ public class WellEmployeeUserEntity  {
 
         return authorities;
     }
+
+
 
 //    @Override
 //    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

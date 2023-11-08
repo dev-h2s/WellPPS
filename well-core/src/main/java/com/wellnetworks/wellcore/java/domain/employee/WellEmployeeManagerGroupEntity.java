@@ -39,40 +39,4 @@ public class WellEmployeeManagerGroupEntity{
 
 
 
-//    public WellEmployeeManagerGroupDTO toDto() {
-//        List<String> employeeIdx = employee.stream()
-//                .map(WellEmployeeUserEntity::getEmployeeIdx) // 가정: WellEmployeeUserEntity에서 Idx를 가져오는 메서드
-//                .collect(Collectors.toList());
-//        return new WellEmployeeManagerGroupDTO(
-//                this.employeeManagerGroupKey.toUpperCase(),
-//                employeeIdx,
-//                this.employeeManagerName,
-//                this.employeeManagerPermissions,
-//                this.employeeManagerDescription,
-//                this.employeeManagerModifyDate,
-//                this.employeeManagerRegisterDate
-//        );
-//    }
-
-
-
-
-
-
-//    public WellEmployeeManagerGroupDTO toDto() {
-//        // WellEmployeeEntity에서 ID만 추출
-////        List<String> employeeIds = employee.stream()
-////                .map(WellEmployeeUserEntity::getId) // 가정: WellEmployeeEntity에 getId() 메서드가 있다고 가정합니다.
-////                .collect(Collectors.toList());
-//
-//        return new WellEmployeeManagerGroupDTO(
-//                this.employeeManagerGroupKey,
-//                employeeIds,  // 여기에 추가
-//                this.employeeManagerName,
-//                this.employeeManagerPermissions,
-//                this.employeeManagerDescription,
-//                this.employeeManagerModifyDate,
-//                this.employeeManagerRegisterDate
-//        );
-//    }
 }

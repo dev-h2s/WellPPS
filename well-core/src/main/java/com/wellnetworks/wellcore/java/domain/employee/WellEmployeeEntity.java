@@ -55,10 +55,8 @@ public class WellEmployeeEntity {
     @Column(name = "reg_num") //사원 등록번호
     private String registrationNumber;
 
-//    @Column(name = "department") //부서
-//    private String department;
 
-    @Column(name = "position", nullable = false) //직책(대표,부장 등)
+    @Column(name = "position", nullable = false) //직급(대표,부장 등)
     private String position;
 
 //    @Column(name = "level") //!!(미정의)

@@ -21,22 +21,20 @@ public class WellEmployeeInfoDTO {
     private String email; // 이매일
     private String employmentState; // 재직상태
 
-    public WellEmployeeInfoDTO(WellEmployeeEntity employeeEntity) {}
     //    생성자
-    public WellEmployeeInfoDTO(WellEmployeeEntity Entity, List<WellFileStorageEntity> fileStorages, WellEmployeeManagerGroupEntity department) {
+    public WellEmployeeInfoDTO(WellEmployeeEntity Entity, WellEmployeeManagerGroupEntity managerGroupEntity) {
         this.employeeIdx = Entity.getEmployeeIdx();
         this.employeeId = Entity.getEmployeeId();
         this.belong = Entity.getBelong();
         this.employeeName = Entity.getEmployeeName();
-        if (department != null) {
-            this.department = department.getDepartment();
-        }
+        this.department = (managerGroupEntity != null) ? managerGroupEntity.getDepartment() : null;
         this.position = Entity.getPosition();
         this.employeeRegisterDate = Entity.getEmployeeRegisterDate();
         this.telPrivate = Entity.getTelPrivate();
         this.email = Entity.getEmail();
         this.employmentState = Entity.getEmploymentState();
     }
+
 
 }
 

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @RequestMapping("/admin/hr/")
 @RestController
@@ -72,11 +73,12 @@ public class EmployeeController {
             System.out.println("생성된 임시 비밀번호: " + tempPassword);
             return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 완료되었습니다. 임시 비밀번호: " + tempPassword);
         } catch (Exception e) {
-            // 예외 처리
+//            // 예외 처리
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원가입 중 오류가 발생하였습니다.");
         }
     }
 
+    //패스워드 변경
     @PostMapping(value = "employee/updatePwd")
     public ResponseEntity<ApiResponse> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
         try {
@@ -90,4 +92,40 @@ public class EmployeeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("An error occurred while changing the password.", null));
         }
     }
+
+
+    private static final Logger LOGGER = Logger.getLogger(EmployeeController.class.getName());
+
+    // 검색
+    @GetMapping("employee/search")
+    public List<WellEmployeeInfoDTO> searchEmployeeList(
+            @RequestParam(value = "belong", required = false) String belong,
+            @RequestParam(value = "employmentState", required = false) String employmentState,
+            @RequestParam(value = "searchKeyword", required = false) String searchKeyword,
+            @RequestParam(value = "searchColumn", required = false) String searchColumn,
+            @RequestParam(value = "nameKeyword", required = false) String nameKeyword,
+            @RequestParam(value = "employeeIdentificationKeyword", required = false) String employeeIdentificationKeyword,
+            @RequestParam(value = "positionKeyword", required = false) String positionKeyword,
+            @RequestParam(value = "telPrivateKeyword", required = false) String telPrivateKeyword,
+            @RequestParam(value = "departmentKeyword", required = false) String departmentKeyword
+    ) {
+
+        LOGGER.info("검색 요청: searchColumn = " + searchColumn + ", searchKeyword = " + searchKeyword);
+
+
+        // 서비스 레이어의 검색 메서드 호출
+        return wellEmployeeService.searchEmployeeList(
+                belong,
+                employmentState,
+                nameKeyword,
+                employeeIdentificationKeyword,
+                positionKeyword,
+                telPrivateKeyword,
+                departmentKeyword,
+                searchColumn,
+                searchKeyword );
+
+    }
+
+
 }

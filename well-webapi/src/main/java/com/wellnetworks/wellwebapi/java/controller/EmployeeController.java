@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 @RequestMapping("/admin/hr/")
 @RestController
@@ -94,38 +93,31 @@ public class EmployeeController {
     }
 
 
-    private static final Logger LOGGER = Logger.getLogger(EmployeeController.class.getName());
 
     // 검색
     @GetMapping("employee/search")
     public List<WellEmployeeInfoDTO> searchEmployeeList(
             @RequestParam(value = "belong", required = false) String belong,
             @RequestParam(value = "employmentState", required = false) String employmentState,
-            @RequestParam(value = "searchKeyword", required = false) String searchKeyword,
-            @RequestParam(value = "searchColumn", required = false) String searchColumn,
-            @RequestParam(value = "nameKeyword", required = false) String nameKeyword,
-            @RequestParam(value = "employeeIdentificationKeyword", required = false) String employeeIdentificationKeyword,
-            @RequestParam(value = "positionKeyword", required = false) String positionKeyword,
-            @RequestParam(value = "telPrivateKeyword", required = false) String telPrivateKeyword,
-            @RequestParam(value = "departmentKeyword", required = false) String departmentKeyword
+            @RequestParam(value = "employeeName", required = false) String employeeName,
+            @RequestParam(value = "employeeIdentification", required = false) String employeeIdentification,
+            @RequestParam(value = "position", required = false) String position,
+            @RequestParam(value = "telPrivate", required = false) String telPrivate,
+            @RequestParam(value = "department", required = false) String department
     ) {
-
-        LOGGER.info("검색 요청: searchColumn = " + searchColumn + ", searchKeyword = " + searchKeyword);
-
-
         // 서비스 레이어의 검색 메서드 호출
         return wellEmployeeService.searchEmployeeList(
                 belong,
                 employmentState,
-                nameKeyword,
-                employeeIdentificationKeyword,
-                positionKeyword,
-                telPrivateKeyword,
-                departmentKeyword,
-                searchColumn,
-                searchKeyword );
-
+                employeeName,
+                employeeIdentification,
+                position,
+                telPrivate,
+                department
+    );
     }
+
+
 
 
 }

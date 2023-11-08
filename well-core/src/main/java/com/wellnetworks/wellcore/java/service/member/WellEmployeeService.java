@@ -268,50 +268,24 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
 
 
     // 사원 검색 서비스 메소드
+
     public List<WellEmployeeInfoDTO> searchEmployeeList(String belong, String employmentState,
-                                                        String nameKeyword,
-                                                        String employeeIdentificationKeyword,
-                                                        String positionKeyword,
-                                                        String telPrivateKeyword,
-                                                        String departmentKeyword,
-                                                        String searchColumn,
-                                                        String searchKeyword
+                                                        String employeeName,
+                                                        String employeeIdentification,
+                                                        String position,
+                                                        String telPrivate,
+                                                        String department
+
     ) {
         // 복합 검색 조건에 대한 Specification 생성
         Specification<WellEmployeeUserEntity> spec = // Specification을 WellEmployeeUserEntity에 대해 적용
                 Specification.where(EmployeeSpecification.belongContains(belong))
-                        .and(EmployeeSpecification.employmentStateContains(employmentState));
-
-// 추가 검색 조건
-        if (nameKeyword != null && !nameKeyword.isEmpty()) {
-            spec = spec.and(EmployeeSpecification.nameContains(nameKeyword));
-        }
-        if (employeeIdentificationKeyword != null && !employeeIdentificationKeyword.isEmpty()) {
-            spec = spec.and(EmployeeSpecification.employeeIdentificationContains(employeeIdentificationKeyword));
-        }
-
-
-
-        // "기타 검색"을 위한 Specification 조건 추가
-        if (searchColumn != null && !searchKeyword.isEmpty()) {
-            switch (searchColumn) {
-                case "name":
-                    spec = spec.and(EmployeeSpecification.nameContains(searchKeyword));
-                    break;
-                case "position":
-                    spec = spec.and(EmployeeSpecification.positionContains(searchKeyword));
-                    break;
-                case "telPrivate":
-                    spec = spec.and(EmployeeSpecification.telPrivateContains(searchKeyword));
-                    break;
-                case "department":
-                    spec = spec.and(EmployeeSpecification.departmentContains(searchKeyword));
-                    break;
-                case "employeeIdentification":
-                    spec = spec.and(EmployeeSpecification.employeeIdentificationContains(searchKeyword));
-                    break;
-            }
-        }
+                        .and(EmployeeSpecification.employmentStateContains(employmentState))
+                        .and(EmployeeSpecification.nameContains(employeeName)) // 이름 조건 추가
+                        .and(EmployeeSpecification.employeeIdentificationContains(employeeIdentification)) // 사원 식별번호 조건 추가
+                        .and(EmployeeSpecification.positionContains(position))
+                        .and(EmployeeSpecification.telPrivateContains(telPrivate))
+                        .and(EmployeeSpecification.departmentContains(department));
 
         // 검색 조건에 맞는 데이터 조회
         List<WellEmployeeUserEntity> employeeUsers = wellEmployeeUserRepository.findAll(spec);

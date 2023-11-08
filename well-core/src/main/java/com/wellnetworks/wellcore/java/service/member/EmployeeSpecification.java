@@ -34,66 +34,66 @@ public class EmployeeSpecification {
                 return criteriaBuilder.conjunction();
             } else {
                 Join<WellEmployeeUserEntity, WellEmployeeEntity> employeeJoin = root.join("employee", JoinType.INNER);
-                return criteriaBuilder.equal(employeeJoin.get("employmentState"), searchKeyword);
+                return criteriaBuilder.like(employeeJoin.get("employmentState"), "%" + searchKeyword + "%");
             }
         };
     }
 
 
     // 이름으로 검색하는 조건
-    public static Specification<WellEmployeeUserEntity> nameContains(String nameKeyword) {
+    public static Specification<WellEmployeeUserEntity> nameContains(String searchKeyword) {
         return (root, query, criteriaBuilder) -> {
-            if (nameKeyword == null || nameKeyword.isEmpty()) {
+            if (searchKeyword == null || searchKeyword.isEmpty()) {
                 return criteriaBuilder.conjunction();
             } else {
                 Join<WellEmployeeUserEntity, WellEmployeeEntity> employeeJoin = root.join("employee", JoinType.INNER);
-                return criteriaBuilder.like(employeeJoin.get("employeeName"), "%" + nameKeyword + "%");
+                return criteriaBuilder.like(employeeJoin.get("employeeName"), "%" + searchKeyword + "%");
             }
         };
     }
 
     // 직위로 검색하는 조건
-    public static Specification<WellEmployeeUserEntity> positionContains(String positionKeyword) {
+    public static Specification<WellEmployeeUserEntity> positionContains(String searchKeyword) {
         return (root, query, criteriaBuilder) -> {
-            if (positionKeyword == null || positionKeyword.isEmpty()) {
+            if (searchKeyword == null || searchKeyword.isEmpty()) {
                 return criteriaBuilder.conjunction();
             } else {
-                Join<WellEmployeeUserEntity, WellEmployeeEntity> employeeJoin = root.join("employee");
-                return criteriaBuilder.like(employeeJoin.get("position"), "%" + positionKeyword + "%");
+                Join<WellEmployeeUserEntity, WellEmployeeEntity> employeeJoin = root.join("employee", JoinType.INNER);
+                return criteriaBuilder.like(employeeJoin.get("position"), "%" + searchKeyword + "%");
             }
         };
     }
 
     // 전화번호로 검색하는 조건
-    public static Specification<WellEmployeeUserEntity> telPrivateContains(String telPrivateKeyword) {
+    public static Specification<WellEmployeeUserEntity> telPrivateContains(String searchKeyword) {
         return (root, query, criteriaBuilder) -> {
-            if (telPrivateKeyword == null || telPrivateKeyword.isEmpty()) {
+            if (searchKeyword == null || searchKeyword.isEmpty()) {
                 return criteriaBuilder.conjunction();
             } else {
-                Join<WellEmployeeUserEntity, WellEmployeeEntity> employeeJoin = root.join("employee");
-                return criteriaBuilder.like(employeeJoin.get("telPrivate"), "%" + telPrivateKeyword + "%");
+                Join<WellEmployeeUserEntity, WellEmployeeEntity> employeeJoin = root.join("employee", JoinType.INNER);
+                return criteriaBuilder.like(employeeJoin.get("telPrivate"), "%" + searchKeyword + "%");
             }
         };
     }
 
 
     // 부서로 검색
-    public static Specification<WellEmployeeUserEntity> departmentContains(String departmentKeyword) {
+    public static Specification<WellEmployeeUserEntity> departmentContains(String searchKeyword) {
         return (root, query, criteriaBuilder) -> {
-            if (departmentKeyword == null || departmentKeyword.isEmpty()) {
+            if (searchKeyword == null || searchKeyword.isEmpty()) {
                 return criteriaBuilder.conjunction();
             } else {
                 Join<WellEmployeeUserEntity, WellEmployeeManagerGroupEntity> managerGroupJoin = root.join("employeeManagerGroupKey", JoinType.LEFT);
-                return criteriaBuilder.like(managerGroupJoin.get("department"), "%" + departmentKeyword + "%");
+                return criteriaBuilder.like(managerGroupJoin.get("department"), "%" + searchKeyword + "%");
             }
         };
     }
 
     // 사원 식별번호로 검색하는 조건
-    public static Specification<WellEmployeeUserEntity> employeeIdentificationContains(String identificationKeyword) {
-        return (root, query, criteriaBuilder) -> identificationKeyword == null || identificationKeyword.isEmpty() ?
+    public static Specification<WellEmployeeUserEntity> employeeIdentificationContains(String searchKeyword) {
+        return (root, query, criteriaBuilder) -> searchKeyword == null || searchKeyword.isEmpty() ?
                 criteriaBuilder.conjunction() :
-                criteriaBuilder.like(root.get("employeeIdentification"), identificationKeyword);
+                criteriaBuilder.like(root.get("employeeIdentification"), "%" + searchKeyword + "%");
     }
 
 

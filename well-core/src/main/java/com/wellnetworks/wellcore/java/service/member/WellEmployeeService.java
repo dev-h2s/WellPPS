@@ -1,13 +1,12 @@
 package com.wellnetworks.wellcore.java.service.member;
 import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
+
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeManagerGroupEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
+
 import com.wellnetworks.wellcore.java.dto.member.ChangePasswordRequest;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDTO;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDetailDTO;
@@ -15,9 +14,8 @@ import com.wellnetworks.wellcore.java.dto.member.WellEmployeeJoinDTO;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeGroupRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
-import com.wellnetworks.wellcore.java.service.partner.PartnerSpecification;
+
 import io.micrometer.common.KeyValues;
-import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -300,6 +298,8 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
                 .collect(Collectors.toList());
         return employeeInfoDTOList;
     }
+
+
 
 }
 

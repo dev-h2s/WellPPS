@@ -1,10 +1,9 @@
-package com.wellnetworks.wellcore.java.domain.backup.partner;
+package com.wellnetworks.wellcore.java.domain.backup.employee;
 
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;

@@ -10,4 +10,6 @@ public interface WellPartnerFileRepository extends JpaRepository<WellPartnerFIle
 
     //apikey_idx 검색
     List<WellPartnerFIleStorageEntity> findByPartnerIdx(String partnerIdx);
+
+    void deleteByFileId(Long fileId);
 }

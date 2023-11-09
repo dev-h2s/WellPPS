@@ -85,9 +85,13 @@ public class PartnerListController {
     }
 
     //거래처 수정
-    @PatchMapping("business/update")
-    public ResponseEntity<String> patchPartner(WellPartnerUpdateDTO updateDTO) throws Exception {
-        wellPartnerService.update(updateDTO);
+    @PatchMapping("business/update/{partnerIdx}")
+    public ResponseEntity<String> patchPartner(WellPartnerUpdateDTO updateDTO,
+                                               @PathVariable String partnerIdx) throws Exception {
+        wellPartnerService.update(partnerIdx, updateDTO);
+        if (partnerIdx == null) {
+            throw new ClassNotFoundException(String.format("IDX[%s] not found", partnerIdx));
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body("수정 완료.");
     }
 
@@ -110,9 +114,10 @@ public class PartnerListController {
             , @RequestParam(value = "regionAddress", required = false) String regionAddress
             , @RequestParam(value = "partnerUpperIdx", required = false) String partnerUpperIdx
             , @RequestParam(value = "hasBusinessLicense", required = false) Boolean hasBusinessLicense
+            , @RequestParam(value = "hasContractDocument", required = false) Boolean hasContractDocument
     ) {
         return wellPartnerService.searchPartnerList(partnerName, ceoName, ceoTelephone, partnerCode, address, writer, partnerTelephone, startDate, endDate
-                , discountCategory, partnerType, salesManager, transactionStatus, regionAddress, partnerUpperIdx, hasBusinessLicense);
+                , discountCategory, partnerType, salesManager, transactionStatus, regionAddress, partnerUpperIdx, hasBusinessLicense, hasContractDocument);
     }
 
 

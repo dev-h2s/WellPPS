@@ -28,10 +28,12 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.SecureRandom;
 import java.time.LocalDate;
@@ -115,12 +117,35 @@ public class WellPartnerService {
     public List<WellPartnerInfoDTO> getAllPartners() {
         List<WellPartnerEntity> partners = wellPartnerRepository.findAllByOrderByProductRegisterDateDesc();
         List<WellPartnerInfoDTO> partnerInfoList = new ArrayList<>();
+        Long totalPartnerCount = (long) partners.size();
+        Long totalBusinessLicenseCount = 0L;
+        Long totalContractDocumentCount = 0L;
 
         for (WellPartnerEntity partnerEntity : partners) {
             List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerEntity.getPartnerIdx());
 
             WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
             WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
+
+            Long businessLicenseCount = 0L;
+            for (WellPartnerFIleStorageEntity fileStorage : fileStorages) {
+                if (fileStorage != null) {
+                    String fileKind = fileStorage.getFile().getFileKind();
+                    if ("사업자등록증".equals(fileKind)) {
+                        businessLicenseCount++;
+                    }
+                }
+            }
+
+            Long contractDocumentCount = 0L;
+            for (WellPartnerFIleStorageEntity fileStorage : fileStorages) {
+                if (fileStorage != null) {
+                    String fileKind = fileStorage.getFile().getFileKind();
+                    if ("계약서".equals(fileKind)) {
+                        contractDocumentCount++;
+                    }
+                }
+            }
 
             String partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
             String partnerUpperName = null;
@@ -135,20 +160,31 @@ public class WellPartnerService {
 
             WellPartnerInfoDTO partnerInfo = new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity
                     , registeredCount, preRegisteredCount, managementCount, suspendedCount
-                    , partnerUpperName
+                    , partnerUpperName, businessLicenseCount, contractDocumentCount
             );
             partnerInfoList.add(partnerInfo);
+
+            totalBusinessLicenseCount += businessLicenseCount;
+            totalContractDocumentCount += contractDocumentCount;
+        }
+        Long NonBusinessLicenseCount = totalPartnerCount - totalBusinessLicenseCount;
+        Long NonContractDocumentCount = totalPartnerCount - totalContractDocumentCount;
+
+        for (WellPartnerInfoDTO partnerInfo : partnerInfoList) {
+            partnerInfo.setBusinessLicenseCount(NonBusinessLicenseCount);
         }
 
+        for (WellPartnerInfoDTO partnerInfo : partnerInfoList) {
+            partnerInfo.setContractDocumentCount(NonContractDocumentCount);
+        }
         return partnerInfoList;
     }
-
 
     //거래처 검색
     public List<WellPartnerInfoDTO> searchPartnerList(String partnerName, String ceoName, String ceoTelephone, String partnerCode, String address, String writer, String partnerTelephone
             , LocalDate startDate, LocalDate endDate
             , String discountCategory, String partnerType, String salesManager, String transactionStatus, String regionAddress
-            , String partnerUpperIdx, Boolean hasBusinessLicense) {
+            , String partnerUpperIdx, Boolean hasBusinessLicense, Boolean hasContractDocument) {
         Specification<WellPartnerEntity> spec = Specification.where(PartnerSpecification.partnerNameContains(partnerName))
                 .and(PartnerSpecification.partnerCeoNameContains(ceoName))
                 .and(PartnerSpecification.partnerCeoTelephoneContains(ceoTelephone))
@@ -163,7 +199,8 @@ public class WellPartnerService {
                 .and(PartnerSpecification.transactionStatusEquals(transactionStatus))
                 .and(PartnerSpecification.regionAddressContains(regionAddress))
                 .and(PartnerSpecification.partnerUpperNameEquals(partnerUpperIdx))
-                .and(PartnerSpecification.businessLicenseEquals(hasBusinessLicense));
+                .and(PartnerSpecification.businessLicenseEquals(hasBusinessLicense))
+                .and(PartnerSpecification.contractDocumentEquals(hasContractDocument));
 
         List<WellPartnerEntity> partners = wellPartnerRepository.findAll(spec);
 
@@ -180,19 +217,14 @@ public class WellPartnerService {
             if (partnerEntity.getPartnerUpperIdx() != null) {
                 partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx);
             }
-
                     WellPartnerInfoDTO partnerInfo = new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity
                             , partnerUpperName
                     );
                     partnerInfoList.add(partnerInfo);
                 }
 
-
         return partnerInfoList;
     }
-
-
-
 
     //거래처 생성
 
@@ -291,6 +323,9 @@ public class WellPartnerService {
                 .partnerMemo(createDTO.getPartnerMemo())
                 .build();
 
+        //p_code
+        String userId = partner.getPartnerCode();
+
         // 거래처 저장
         wellPartnerRepository.save(partner);
 
@@ -300,7 +335,7 @@ public class WellPartnerService {
         //거래처 유저
         WellPartnerUserEntity userEntity = WellPartnerUserEntity.builder()
                 .partnerIdx(partnerIdx) //생성되는 idx
-                .partnerIdentification(createDTO.getPartnerIdentification()) // 로그인 id
+                .partnerIdentification(userId) // 로그인 id(p_code)
                 .isPhoneVerified(createDTO.getIsPhoneVerified()) // user-휴대폰 인증 여부
                 .phoneVerificationCode(createDTO.getPhoneVerificationCode()) // user-휴대폰 인증 코드
                 .phoneVerificationAttempts(createDTO.getPhoneVerificationAttempts()) // user-휴대폰 인증 시도 횟수
@@ -317,39 +352,27 @@ public class WellPartnerService {
 
     //거래처 수정
     @Transactional
-    public void update(WellPartnerUpdateDTO updateDTO) throws Exception {
-
-        WellPartnerEntity partner = wellPartnerRepository.findByPartnerIdx(updateDTO.getPartnerIdx());
-        System.out.println(updateDTO.getPartnerIdx());
+    public void update(String partnerIdx, WellPartnerUpdateDTO updateDTO) throws Exception {
+        WellPartnerEntity partner = wellPartnerRepository.findByPartnerIdx(partnerIdx);
 
         if (partner == null) {
             throw new RuntimeException("해당 파트너를 찾을 수 없습니다.");
         }
 
-        // 거래처 그룹 정보 가져오기
         WellPartnerGroupEntity partnerGroup = wellPartnerGroupRepository.findByPartnerGroupId(updateDTO.getPartnerGroupId());
 
-        // API 연동 여부 확인 및 API 키 엔티티 가져오기
-        WellApikeyInEntity apikeyIn = null; // 초기화
+        WellApikeyInEntity apikeyIn = null;
         if (updateDTO.isInApiFlag() && updateDTO.getApiKeyInIdx() != null) {
             apikeyIn = wellApikeyInRepository.findByApiKeyInIdx(updateDTO.getApiKeyInIdx());
         }
 
-        // API 연동 여부와 API 키가 설정되지 않은 경우 예외 처리
-        if (updateDTO.isInApiFlag() && apikeyIn == null) {
-            throw new RuntimeException("해당 API 키를 찾을 수 없습니다.");
-        }
+        BeanUtils.copyProperties(updateDTO, partner);
 
-
-        partner.setPartnerGroup(partnerGroup); // 거래처 그룹 업데이트
-        partner.setApiKey(apikeyIn); // API 키 업데이트
+        partner.setPartnerGroup(partnerGroup);
+        partner.setApiKey(apikeyIn);
         partner.updateFromDTO(updateDTO);
 
-        // 거래처 저장
-        wellPartnerRepository.save(partner);
-
     }
-
 
 
     //거래처 삭제 (관련 엔티티 백업 후 삭제)

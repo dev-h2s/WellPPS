@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class WellPartnerInfoDTO {
     private String partnerIdx;
     private List<String> fileKinds = new ArrayList<>();
@@ -42,13 +42,15 @@ public class WellPartnerInfoDTO {
     private Long managementCount;
     private Long suspendedCount;
 
+    private Long businessLicenseCount;
+    private Long contractDocumentCount;
 
     private WellPartnerRepository wellPartnerRepository;
 
     //거래처 1개, 리스트
     public WellPartnerInfoDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, WellDipositEntity diposit
                                 , Long registeredCount, Long preRegisteredCount, Long managementCount, Long suspendedCount
-            , String partnerUpperName
+            , String partnerUpperName, Long businessLicenseCount, Long contractDocumentCount
                                 ) {
         this.partnerIdx = entity.getPartnerIdx();
         for (WellPartnerFIleStorageEntity fileStorage : fileStorages) {
@@ -86,6 +88,9 @@ public class WellPartnerInfoDTO {
         this.preRegisteredCount = preRegisteredCount;
         this.managementCount = managementCount;
         this.suspendedCount = suspendedCount;
+
+        this.businessLicenseCount = businessLicenseCount;
+        this.contractDocumentCount = contractDocumentCount;
     }
 
     //거래처 검색

@@ -4,23 +4,18 @@ import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerUserReposito
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-/**
- * WellUserDetailService 클래스는 사용자의 세부 정보를 조회하는 서비스
- * Spring Security에서 사용자 인증을 위해 UserDetailsService 인터페이스를 구현
- */
 @Component  // 스프링의 빈으로 등록하기 위한 어노테이션
 @ComponentScan("com.wellnetworks.wellcore.repository")  // 지정된 패키지에서 스프링 빈을 검색하는 어노테이션
-public class WellUserDetailService implements UserDetailsService {
-    private final WellEmployeeUserRepository employeeUserRepository;  // 사용자 정보를 조회하는 레포지토리
+public class WellPartnerUserDetailService {
+    private final WellPartnerUserRepository partnerUserRepository;
 
     // WellUserDetailService 클래스의 생성자
     // @param employeeUserRepository 사용자 정보를 조회하는 레포지토리
-    public WellUserDetailService(WellEmployeeUserRepository employeeUserRepository) {
-        this.employeeUserRepository = employeeUserRepository;
+    public WellUserDetailService( WellPartnerUserRepository partnerUserRepository) {
+        this.partnerUserRepository = partnerUserRepository;
     }
 
 
@@ -54,7 +49,4 @@ public class WellUserDetailService implements UserDetailsService {
         );
     }
 
-
-
-
-    }
+}

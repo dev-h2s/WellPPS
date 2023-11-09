@@ -323,6 +323,9 @@ public class WellPartnerService {
                 .partnerMemo(createDTO.getPartnerMemo())
                 .build();
 
+        //p_code
+        String userId = partner.getPartnerCode();
+
         // 거래처 저장
         wellPartnerRepository.save(partner);
 
@@ -332,7 +335,7 @@ public class WellPartnerService {
         //거래처 유저
         WellPartnerUserEntity userEntity = WellPartnerUserEntity.builder()
                 .partnerIdx(partnerIdx) //생성되는 idx
-                .partnerIdentification(createDTO.getPartnerIdentification()) // 로그인 id
+                .partnerIdentification(userId) // 로그인 id(p_code)
                 .isPhoneVerified(createDTO.getIsPhoneVerified()) // user-휴대폰 인증 여부
                 .phoneVerificationCode(createDTO.getPhoneVerificationCode()) // user-휴대폰 인증 코드
                 .phoneVerificationAttempts(createDTO.getPhoneVerificationAttempts()) // user-휴대폰 인증 시도 횟수

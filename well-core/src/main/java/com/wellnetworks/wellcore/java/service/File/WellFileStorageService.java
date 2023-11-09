@@ -133,7 +133,6 @@ public class WellFileStorageService {
         partnerFileRepository.deleteByFileId(fileId);
         fileStorageRepository.deleteById(fileId);
 
-        // 나머지 로직 (파일을 물리적으로 삭제하는 등)은 여기에 추가
     }
 
 }

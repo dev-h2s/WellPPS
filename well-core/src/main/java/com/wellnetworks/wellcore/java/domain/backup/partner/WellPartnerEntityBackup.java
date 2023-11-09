@@ -1,5 +1,6 @@
 package com.wellnetworks.wellcore.java.domain.backup.partner;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,7 +39,8 @@ public class WellPartnerEntityBackup {
     @Column(name = "file_idx")
     private String fileIdx;
 
-    @Column(name = "pcode", unique = true) //거래처코드
+    @Nullable
+    @Column(name = "pcode") //거래처코드
     private String partnerCode;
 
     @Column(name = "p_name", nullable = false) //거래처명

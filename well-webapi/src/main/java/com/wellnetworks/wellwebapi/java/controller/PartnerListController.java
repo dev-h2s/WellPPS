@@ -80,8 +80,16 @@ public class PartnerListController {
     //거래처 입력
     @PostMapping(value = "business/create")
     public ResponseEntity<String> createPartner(WellPartnerCreateDTO createDTO) throws Exception {
-         wellPartnerService.join(createDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body("거래처가 성공적으로 생성되었습니다.");
+
+        try {
+            String tempPassword = wellPartnerService.join(createDTO);
+
+            // 콘솔에 임시 비밀번호 출력
+            return ResponseEntity.status(HttpStatus.CREATED).body("거래처가 성공적으로 생성되었습니다. 생성된 아이디"+" 임시 비밀번호: " + tempPassword);
+        } catch (Exception e) {
+//            // 예외 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원가입 중 오류가 발생하였습니다.");
+        }
     }
 
     //거래처 수정

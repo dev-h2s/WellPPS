@@ -8,6 +8,8 @@ import com.wellnetworks.wellsecure.java.request.TokenResponse;
 
 import com.wellnetworks.wellsecure.java.jwt.TokenProvider;
 import com.wellnetworks.wellsecure.java.request.UserLoginReq;
+import com.wellnetworks.wellsecure.java.service.EmployeeUserDetails;
+import com.wellnetworks.wellsecure.java.service.PartnerUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
@@ -22,7 +24,7 @@ import org.springframework.security.core.Authentication;
 @RequestMapping("/admin/hr/")
 @RestController
 @ComponentScan(basePackages={"com.wellnetworks.wellcore","com.wellnetworks.wellsecure"})
-public class EmployeeUserController {
+public class UserController {
 
     @Autowired
     private WellEmployeeUserRepository employeeUserRepository;
@@ -31,13 +33,13 @@ public class EmployeeUserController {
     private final TokenProvider tokenProvider;
 
     @Autowired
-    public EmployeeUserController(AuthenticationManager authenticationManager, TokenProvider tokenProvider) {
+    public UserController(AuthenticationManager authenticationManager, TokenProvider tokenProvider) {
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
     }
 
     //로그인
-    @PostMapping(value = "employee/login")
+    @PostMapping(value = "user/login")
     public ResponseEntity<ApiResponse> login(@RequestBody UserLoginReq loginReq) {
 
         WellEmployeeUserEntity userEntity = null;
@@ -52,24 +54,27 @@ public class EmployeeUserController {
 
             // UserDetails 객체를 조회하여 첫 로그인 여부를 확인
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            userEntity = employeeUserRepository.findByEmployeeIdentification(userDetails.getUsername())
-                    .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+            boolean isFirstLogin = false;
+
+
+            // 첫 로그인 여부 확인
+            if (userDetails instanceof EmployeeUserDetails) {
+                isFirstLogin = ((EmployeeUserDetails) userDetails).isFirstLogin();
+            } else if (userDetails instanceof PartnerUserDetails) {
+                isFirstLogin = ((PartnerUserDetails) userDetails).isFirstLogin();
+            }
+
 
             // 응답 객체를 생성
-            ApiResponse response;
-            if (userEntity.getIsFirstLogin()) {
-                // isFirstLogin 상태를 업데이트
-//                userEntity.markFirstLoginComplete(); // 이 메서드는 상태를 변경하는 로직을 수행합니다.
-                employeeUserRepository.save(userEntity);
-                // 클라이언트에게 패스워드 변경을 요청하는 응답을 보내기
-                response = new ApiResponse("첫 로그인시. 패스워드를 변경해주세요.", new TokenResponse(accessToken, refreshToken));
-            } else {
-                // 첫 로그인이 아니면 정상적인 로그인 응답을 보낸다
-                response = new ApiResponse("로그인 성공", new TokenResponse(accessToken, refreshToken));
-            }
+            ApiResponse response = isFirstLogin
+                    ? new ApiResponse("첫 로그인시. 패스워드를 변경해주세요.", new TokenResponse(accessToken, refreshToken))
+                    : new ApiResponse("로그인 성공", new TokenResponse(accessToken, refreshToken));
 
             // JWT 토큰을 클라이언트에게 응답으로 반환
             return ResponseEntity.ok(response);
+        }catch (UsernameNotFoundException e) {
+            // 사용자를 찾을 수 없을 때의 예외 처리
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("없는 사용자입니다.", null));
         } catch (BadCredentialsException e) {
             System.out.println("username은" + loginReq.getUsername() + "password는" + loginReq.getPassword());
 //            System.out.println(userEntity.getIsPasswordResetRequired());

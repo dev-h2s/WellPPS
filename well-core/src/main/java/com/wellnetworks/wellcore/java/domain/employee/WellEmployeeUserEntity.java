@@ -85,7 +85,7 @@ public class WellEmployeeUserEntity  {
     private Boolean isPasswordResetRequired ;
 
     @Column
-    private Boolean isFirstLogin ; // 첫로그이 여부
+    private Boolean isFirstLogin ; // 첫로그인 여부
     public WellEmployeeEntity getEmployeeEntity() {
         return this.employee;
     }
@@ -134,9 +134,6 @@ public class WellEmployeeUserEntity  {
         this.permissionsKeysStringList = permissionsKeysStringList;
         this.isPasswordResetRequired = isPasswordResetRequired ;
         this.isFirstLogin = isFirstLogin;
-    }
-    public void markFirstLoginComplete() {
-        this.isFirstLogin = false;
     }
 
     //로그인시 패스워드 상태 매서드

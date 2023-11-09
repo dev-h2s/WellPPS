@@ -60,6 +60,7 @@ public class SecurityConfig {
                 .requestMatchers("/", "/**", "/init/**").permitAll()
                 .requestMatchers("/admin/hr/business/**").permitAll()
                 .requestMatchers("/admin/hr/employee/**").permitAll()
+                .requestMatchers("/admin/hr/user/**").permitAll()
                 .requestMatchers("/file/**").permitAll()
                 .requestMatchers("/login").permitAll()
                 .requestMatchers("/logout").permitAll()

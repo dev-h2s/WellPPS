@@ -13,7 +13,7 @@ public class PartnerUserDetails implements UserDetails {
     private String username;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
-
+    private boolean isFirstLogin; // 첫 로그인 여부
     /**
      * EmployeeUserDetails 객체를 생성합니다.
      *
@@ -21,10 +21,12 @@ public class PartnerUserDetails implements UserDetails {
      * @param password    사용자의 비밀번호
      * @param authorities 사용자에게 부여된 권한
      */
-    public PartnerUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities) {
+    public PartnerUserDetails(String username, String password,Boolean isFirstLogin , Collection<? extends GrantedAuthority> authorities) {
         this.username = username;
         this.password = password;
         this.authorities = authorities;
+        this.isFirstLogin = isFirstLogin;
+
     }
 
 
@@ -46,6 +48,10 @@ public class PartnerUserDetails implements UserDetails {
     @Override
     public String getPassword() {
         return password;
+    }
+
+    public void getFirstLogin(boolean isFirstLogin) {
+        this.isFirstLogin = isFirstLogin;
     }
 
     /**

@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 /**
  * WellUserDetailService 클래스는 사용자의 세부 정보를 조회하는 서비스
  * Spring Security에서 사용자 인증을 위해 UserDetailsService 인터페이스를 구현
@@ -16,13 +18,14 @@ import org.springframework.stereotype.Component;
 @ComponentScan("com.wellnetworks.wellcore.repository")  // 지정된 패키지에서 스프링 빈을 검색하는 어노테이션
 public class WellUserDetailService implements UserDetailsService {
     private final WellEmployeeUserRepository employeeUserRepository;  // 사용자 정보를 조회하는 레포지토리
+    private final WellPartnerUserRepository partnerUserRepository;
 
     // WellUserDetailService 클래스의 생성자
     // @param employeeUserRepository 사용자 정보를 조회하는 레포지토리
-    public WellUserDetailService(WellEmployeeUserRepository employeeUserRepository) {
+    public WellUserDetailService(WellEmployeeUserRepository employeeUserRepository, WellPartnerUserRepository partnerUserRepository) {
         this.employeeUserRepository = employeeUserRepository;
+        this.partnerUserRepository = partnerUserRepository;
     }
-
 
 
     /**
@@ -36,22 +39,30 @@ public class WellUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        // 사용자 이름(username)을 기반으로 해당 사용자의 정보를 데이터베이스에서 조회
-        var userEntity = employeeUserRepository.findByEmployeeIdentification(username)
-                .orElseThrow(() -> new UsernameNotFoundException("사용자 이름 " + username + "을 찾을 수 없습니다."));
+        // 먼저 사원 저장소에서 사용자 조회
+        Optional<UserDetails> userDetails = employeeUserRepository.findByEmployeeIdentification(username)
+                .map(user -> {
+                    String effectivePassword = user.getIsPasswordResetRequired() ?
+                            user.getTmpPwd() : user.getEmployeeUserPwd();
+                    return new EmployeeUserDetails(
+                            user.getEmployeeIdentification(),
+                            effectivePassword,
+                            user.getIsFirstLogin(),
+                            user.getAuthorities());
 
-        // 임시 비밀번호가 존재하고 사용해야 하는지 확인
-        String effectivePassword = userEntity.getIsPasswordResetRequired() ?
-                userEntity.getTmpPwd() : userEntity.getEmployeeUserPwd();
+                });
 
-        // 비밀번호 로그 출력 (보안 상의 이유로 실제 비밀번호를 로그에 출력하는 것은 권장되지 않습니다.)
-        // logger.info("Effective password: {}", effectivePassword);
-        // 결정된 실제 사용할 비밀번호로 UserDetails 객체를 생성
-        return new EmployeeUserDetails(
-                userEntity.getEmployeeIdentification(),
-                effectivePassword,
-                userEntity.getAuthorities()
-        );
+        // 사원이 존재하면 반환, 없으면 파트너 저장소에서 조회
+        return userDetails.orElseGet(() -> partnerUserRepository.findByPartnerIdentification(username)
+                .map(partner -> {
+                    String effectivePassword = partner.getIsPasswordResetRequired() ?
+                            partner.getTmpPwd() : partner.getPartnerUserPwd();
+                    return new PartnerUserDetails(
+                            partner.getPartnerIdentification(),
+                            effectivePassword,
+                            partner.getIsFirstLogin(),
+                            partner.getAuthorities());
+                }).orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username)));
     }
 
 

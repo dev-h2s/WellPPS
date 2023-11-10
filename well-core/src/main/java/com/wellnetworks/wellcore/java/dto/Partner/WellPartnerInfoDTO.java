@@ -28,7 +28,7 @@ public class WellPartnerInfoDTO {
     private String partnerName;
     private String partnerType;
     private String discountCategory;
-    private Integer dipositBalance;
+    private int dipositBalance;
     private String salesManager;
     private String ceoName;
     private String ceoTelephone;

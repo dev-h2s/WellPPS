@@ -30,6 +30,7 @@ import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +51,7 @@ public class WellPartnerService {
                 .map(entity -> {
                     List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerIdx);
                     WellVirtualAccountEntity virtualAccountEntity = entity.getVirtualAccount();
-                    WellDipositEntity depositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
+                    WellDipositEntity depositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : new WellDipositEntity();
                     String partnerUpperIdx = entity.getPartnerUpperIdx();
                     String partnerUpperName = partnerUpperIdx != null ? wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx) : null;
                     return new WellPartnerInfoDTO(entity, fileStorages, depositEntity, partnerUpperName);
@@ -62,25 +63,34 @@ public class WellPartnerService {
         return Optional.ofNullable(wellPartnerRepository.findByPartnerIdx(partnerIdx))
                 .map(entity -> {
                     List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerIdx);
+
                     WellVirtualAccountEntity virtualAccountEntity = entity.getVirtualAccount();
-                    WellDipositEntity depositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
+                    WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : new WellDipositEntity();
 
                     String partnerUpperIdx = entity.getPartnerUpperIdx();
                     String partnerUpperName = partnerUpperIdx != null ? wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx) : null;
 
-                    // 상부점의 하부점 목록 가져오기
                     List<WellPartnerEntity> subPartnerEntities = wellPartnerRepository.findSubPartnersByPartnerUpperIdx(partnerIdx);
                     if (subPartnerEntities.isEmpty()) {
                         subPartnerEntities = wellPartnerRepository.findSubPartnersByPartnerUpperIdx(partnerUpperIdx);
                     }
 
-                    WellPartnerGroupEntity partnerGroupEntity = wellPartnerGroupRepository.findByPartnerGroupId(entity.getPartnerGroup().getPartnerGroupId());
+                    Long groupId = entity.getPartnerGroup().getPartnerGroupId();
+
+                    WellPartnerGroupEntity partnerGroupEntity = wellPartnerGroupRepository.findByPartnerGroupId(groupId);
+                    String PartnerGroupName = groupId != null ? entity.getPartnerGroup().getPartnerGroupName() : null;
                     WellApikeyInEntity apikeyInEntity = wellApikeyInRepository.findByApiKeyInIdx(entity.getApiKey().getApiKeyInIdx());
 
-                    // WellPartnerDetailDTO 생성자 수정을 통해 상부점과 하부점 관계 설정
-                    return new WellPartnerDetailDTO(entity, fileStorages, depositEntity, partnerUpperName, partnerGroupEntity, apikeyInEntity, subPartnerEntities);
+                    WellPartnerDetailDTO dto = new WellPartnerDetailDTO(entity, fileStorages, dipositEntity, partnerUpperName, partnerGroupEntity, apikeyInEntity, subPartnerEntities, PartnerGroupName);
+
+                    // 하위 거래처들의 이름을 설정
+                    dto.setSubPartnerNames(subPartnerEntities.stream().map(WellPartnerEntity::getPartnerName).collect(Collectors.toList()));
+
+                    return dto;
                 });
     }
+
+
 
     //거래처 조회
     public List<WellPartnerInfoDTO> searchPartnerList(String partnerName, String ceoName, String ceoTelephone, String partnerCode, String address, String writer, String partnerTelephone
@@ -115,7 +125,7 @@ public class WellPartnerService {
             List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerEntity.getPartnerIdx());
 
             WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
-            WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
+            WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : new WellDipositEntity();
 
             partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
             String partnerUpperName = null;

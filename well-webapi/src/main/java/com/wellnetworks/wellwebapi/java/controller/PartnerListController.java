@@ -66,6 +66,15 @@ public class PartnerListController {
     @PostMapping(value = "business/create")
     public ResponseEntity<String> createPartner(@Valid WellPartnerCreateDTO createDTO) throws Exception {
         wellPartnerService.join(createDTO);
+        if (createDTO.getBusinessLicenseFiles() == null || createDTO.getBusinessLicenseFiles().isEmpty()) {
+            throw new Exception("사업자 등록증 파일은 필수 입력 항목입니다.");
+        }
+        if (createDTO.getContractDocumentFiles() == null || createDTO.getContractDocumentFiles().isEmpty()) {
+            throw new Exception("계약서 파일은 필수 입력 항목입니다.");
+        }
+        if (createDTO.getIdCardFiles() == null || createDTO.getIdCardFiles().isEmpty()) {
+            throw new Exception("대표자 신분증 파일은 필수 입력 항목입니다.");
+        }
 
         return ResponseEntity.status(HttpStatus.CREATED).body("거래처가 성공적으로 생성되었습니다.");
     }

@@ -1,10 +1,13 @@
 package com.wellnetworks.wellcore.java.dto.FIle;
 
 import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class WellFIleCreateDTO {
     private Long id;                    //id
     private String originFileName;      //원본 파일명
@@ -14,8 +17,6 @@ public class WellFIleCreateDTO {
     private Long size;                  //파일 사이즈
     private String contentType;         //ContentType
     private String fileKind;            //파일 종류
-
-    public WellFIleCreateDTO(){}
 
     @Builder
     public WellFIleCreateDTO(Long id, String originFileName, String savedFileName, String uploadDir

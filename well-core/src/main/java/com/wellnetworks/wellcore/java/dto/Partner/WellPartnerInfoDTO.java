@@ -13,6 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.List;
 public class WellPartnerInfoDTO {
     private String partnerIdx;
     private List<String> fileKinds = new ArrayList<>();
-    private LocalDateTime productModifyDate;
+    private LocalDate productRegisterDate;
     private String partnerCode;
     private String partnerName;
     private String partnerType;
@@ -31,6 +32,7 @@ public class WellPartnerInfoDTO {
     private String salesManager;
     private String ceoName;
     private String ceoTelephone;
+    private String transactionStatus;
     private String writer;
     private String partnerUpperIdx;
     private String partnerUpperName;
@@ -62,7 +64,7 @@ public class WellPartnerInfoDTO {
                 }
             }
         }
-        this.productModifyDate = entity.getProductModifyDate();
+        this.productRegisterDate = LocalDate.from(entity.getProductRegisterDate());
         this.partnerCode = entity.getPartnerCode();
         this.partnerName = entity.getPartnerName();
         this.partnerType = entity.getPartnerType();
@@ -73,6 +75,7 @@ public class WellPartnerInfoDTO {
         this.salesManager = entity.getSalesManager();
         this.ceoName = entity.getCeoName();
         this.ceoTelephone = entity.getCeoTelephone();
+        this.transactionStatus = entity.getTransactionStatus();
         this.writer = entity.getWriter();
         this.partnerUpperIdx = entity.getPartnerUpperIdx();
         if (partnerUpperIdx != null) {
@@ -107,7 +110,7 @@ public class WellPartnerInfoDTO {
                 }
             }
         }
-        this.productModifyDate = entity.getProductModifyDate();
+        this.productRegisterDate = LocalDate.from(entity.getProductRegisterDate());
         this.partnerCode = entity.getPartnerCode();
         this.partnerName = entity.getPartnerName();
         this.partnerType = entity.getPartnerType();
@@ -118,6 +121,7 @@ public class WellPartnerInfoDTO {
         this.salesManager = entity.getSalesManager();
         this.ceoName = entity.getCeoName();
         this.ceoTelephone = entity.getCeoTelephone();
+        this.transactionStatus = entity.getTransactionStatus();
         this.writer = entity.getWriter();
         this.partnerUpperIdx = entity.getPartnerUpperIdx();
         if (partnerUpperIdx != null) {

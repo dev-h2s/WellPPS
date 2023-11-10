@@ -25,8 +25,8 @@ public class WellPartnerCreateDTO {
     private String partnerName;
     @NotBlank(message = "거래처 출력은 필수 입력 항목입니다.")
     private String partnerType;
-    private boolean specialPolicyOpening;
-    private boolean specialPolicyCharge;
+    private Boolean specialPolicyOpening;
+    private Boolean specialPolicyCharge;
 
     private Long partnerGroupId; // 거래처 그룹 정보 추가
 
@@ -98,7 +98,7 @@ public class WellPartnerCreateDTO {
 
 
     @QueryProjection
-    public WellPartnerCreateDTO(String partnerCode, String partnerName, String partnerType, boolean specialPolicyOpening, boolean specialPolicyCharge, Long partnerGroupId
+    public WellPartnerCreateDTO(String partnerCode, String partnerName, String partnerType, Boolean specialPolicyOpening, Boolean specialPolicyCharge, Long partnerGroupId
                                 , String discountCategory, String salesManager, boolean inApiFlag, String apiKeyInIdx, String preApprovalNumber
                                 , LocalDateTime subscriptionDate, String transactionStatus, String partnerUpperIdx, String ceoName, String ceoTelephone
                                 , String partnerTelephone, String emailAddress, String commissionDepositAccount, String commissionBankName, String commissionBankHolder

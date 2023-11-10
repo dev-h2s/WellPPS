@@ -104,10 +104,10 @@ public class WellPartnerEntityBackup {
     private LocalDateTime subscriptionDate;
 
     @Column(name = "special_policy_opening") //특수정책개통
-    private boolean specialPolicyOpening;
+    private Boolean specialPolicyOpening;
 
     @Column(name = "special_policy_charge") //특수정책충전
-    private boolean specialPolicyCharge;
+    private Boolean specialPolicyCharge;
 
     @Column(name = "pwd") //비밀번호
     private String password;

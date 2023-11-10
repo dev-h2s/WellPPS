@@ -21,8 +21,8 @@ public class WellPartnerDetailDTO {
     private String partnerCode;
     private String partnerName;
     private String partnerType;
-    private boolean specialPolicyOpening;
-    private boolean specialPolicyCharge;
+    private Boolean specialPolicyOpening;
+    private Boolean specialPolicyCharge;
 
     private Long partnerGroupId;
 
@@ -64,8 +64,8 @@ public class WellPartnerDetailDTO {
         this.partnerCode = entity.getPartnerCode();
         this.partnerName = entity.getPartnerName();
         this.partnerType = entity.getPartnerType();
-        this.specialPolicyOpening = entity.isSpecialPolicyOpening();
-        this.specialPolicyCharge = entity.isSpecialPolicyCharge();
+        this.specialPolicyOpening = entity.getSpecialPolicyOpening();
+        this.specialPolicyCharge = entity.getSpecialPolicyCharge();
         if (group != null) {
             this.partnerGroupId = group.getPartnerGroupId();
         }

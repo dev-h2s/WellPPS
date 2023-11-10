@@ -259,8 +259,8 @@ public class WellPartnerService {
                     .partnerCode(generateUniquePartnerCode())
                     .partnerName(createDTO.getPartnerName())
                     .partnerType(createDTO.getPartnerType())
-                    .specialPolicyCharge(createDTO.isSpecialPolicyCharge())
-                    .specialPolicyOpening(createDTO.isSpecialPolicyOpening())
+                    .specialPolicyCharge(createDTO.getSpecialPolicyCharge())
+                    .specialPolicyOpening(createDTO.getSpecialPolicyOpening())
                     .partnerGroup(partnerGroup) // 거래처 그룹 설정
                     .discountCategory(createDTO.getDiscountCategory())
                     .salesManager(createDTO.getSalesManager())
@@ -407,8 +407,8 @@ public class WellPartnerService {
             partnerBackup.setPage(partnerEntity.getPage());
             partnerBackup.setDiscountCategory(partnerEntity.getDiscountCategory());
             partnerBackup.setSubscriptionDate(partnerEntity.getSubscriptionDate());
-            partnerBackup.setSpecialPolicyOpening(partnerEntity.isSpecialPolicyOpening());
-            partnerBackup.setSpecialPolicyCharge(partnerEntity.isSpecialPolicyCharge());
+            partnerBackup.setSpecialPolicyOpening(partnerEntity.getSpecialPolicyOpening());
+            partnerBackup.setSpecialPolicyCharge(partnerEntity.getSpecialPolicyCharge());
             partnerBackup.setPassword(partnerEntity.getPassword());
             partnerBackup.setPreApprovalNumber(partnerEntity.getPreApprovalNumber());
             partnerBackup.setEmailAddress(partnerEntity.getEmailAddress());

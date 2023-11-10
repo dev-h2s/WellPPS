@@ -82,7 +82,6 @@ public class WellPartnerEntity {
     @Column(name = "p_type", nullable = false) //거래처구분
     private String partnerType;
 
-    @Nullable
     @Column(name = "p_upper_idx") //상부점_id
     private String partnerUpperIdx;
 
@@ -134,10 +133,10 @@ public class WellPartnerEntity {
     private LocalDateTime subscriptionDate;
 
     @Column(name = "special_policy_opening") //특수정책개통
-    private boolean specialPolicyOpening;
+    private Boolean specialPolicyOpening;
 
     @Column(name = "special_policy_charge") //특수정책충전
-    private boolean specialPolicyCharge;
+    private Boolean specialPolicyCharge;
 
     @Column(name = "pwd") //비밀번호
     private String password;
@@ -191,7 +190,7 @@ public class WellPartnerEntity {
     private String openingNote;
 
     @Builder
-    public WellPartnerEntity(String partnerIdx, String partnerCode, String partnerName, String partnerType, boolean specialPolicyOpening, boolean specialPolicyCharge
+    public WellPartnerEntity(String partnerIdx, String partnerCode, String partnerName, String partnerType, Boolean specialPolicyOpening, Boolean specialPolicyCharge
                             , WellPartnerGroupEntity partnerGroup, String discountCategory, String salesManager
                             , boolean inApiFlag, WellApikeyInEntity apiKey, String preApprovalNumber, LocalDateTime subscriptionDate
                             , String transactionStatus,String partnerUpperIdx, String ceoName, String ceoTelephone
@@ -236,8 +235,8 @@ public class WellPartnerEntity {
     public void updateFromDTO(WellPartnerUpdateDTO updateDTO) {
         this.partnerName = updateDTO.getPartnerName();
         this.partnerType = updateDTO.getPartnerType();
-        this.specialPolicyCharge = updateDTO.isSpecialPolicyCharge();
-        this.specialPolicyOpening = updateDTO.isSpecialPolicyOpening();
+        this.specialPolicyCharge = updateDTO.getSpecialPolicyCharge();
+        this.specialPolicyOpening = updateDTO.getSpecialPolicyOpening();
         this.discountCategory = updateDTO.getDiscountCategory();
         this.inApiFlag = updateDTO.isInApiFlag();
         this.preApprovalNumber = updateDTO.getPreApprovalNumber();

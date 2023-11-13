@@ -39,7 +39,6 @@ public class WellFileStorageService {
 
     private final WellFileStorageRepository fileStorageRepository;
     private final WellPartnerFileRepository partnerFileRepository;
-    private final WellPartnerRepository wellPartnerRepository;
 
     @Transactional
     public Map<String, Object> saveFiles(WellPartnerCreateDTO createDTO, String partnerIdx) throws Exception {
@@ -51,6 +50,29 @@ public class WellFileStorageService {
         List<MultipartFile> idCardFiles = createDTO.getIdCardFiles();
         List<MultipartFile> storePhotoFiles = createDTO.getStorePhotoFiles();
         List<MultipartFile> businessCardFiles = createDTO.getBusinessCardFiles();
+
+        // 각 파일 업로드 필드를 처리
+        processFiles(businessLicenseFiles, "사업자등록증", partnerIdx, fileIds, result);
+        processFiles(contractDocumentFiles, "계약서", partnerIdx, fileIds, result);
+        processFiles(idCardFiles, "대표자신분증", partnerIdx, fileIds, result);
+        processFiles(storePhotoFiles, "매장사진", partnerIdx, fileIds, result);
+        processFiles(businessCardFiles, "대표자명함", partnerIdx, fileIds, result);
+
+        // 다른 파일 업로드 필드들도 처리
+
+        return result;
+    }
+
+    @Transactional
+    public Map<String, Object> updateFiles(WellPartnerUpdateDTO updateDTO, String partnerIdx) throws Exception {
+        Map<String, Object> result = new HashMap<>();
+        List<Long> fileIds = new ArrayList<>();
+
+        List<MultipartFile> businessLicenseFiles = updateDTO.getBusinessLicenseFiles();
+        List<MultipartFile> contractDocumentFiles = updateDTO.getContractDocumentFiles();
+        List<MultipartFile> idCardFiles = updateDTO.getIdCardFiles();
+        List<MultipartFile> storePhotoFiles = updateDTO.getStorePhotoFiles();
+        List<MultipartFile> businessCardFiles = updateDTO.getBusinessCardFiles();
 
         // 각 파일 업로드 필드를 처리
         processFiles(businessLicenseFiles, "사업자등록증", partnerIdx, fileIds, result);
@@ -128,38 +150,5 @@ public class WellFileStorageService {
         partnerFileRepository.deleteByFileId(fileId);
         fileStorageRepository.deleteById(fileId);
 
-    }
-
-    @Transactional
-    public void deleteFiles(String partnerIdx) {
-        // 해당 거래처에 속하는 파일을 삭제
-        List<WellPartnerFIleStorageEntity> partnerFiles = partnerFileRepository.findByPartnerIdx(partnerIdx);
-        for (WellPartnerFIleStorageEntity partnerFile : partnerFiles) {
-            partnerFileRepository.delete(partnerFile);
-            fileStorageRepository.deleteById(partnerFile.getFile().getId());
-        }
-    }
-
-    @Transactional
-    public Map<String, Object> updateFiles(WellPartnerUpdateDTO updateDTO, String partnerIdx) throws Exception {
-        Map<String, Object> result = new HashMap<>();
-        List<Long> fileIds = new ArrayList<>();
-
-        List<MultipartFile> businessLicenseFiles = updateDTO.getBusinessLicenseFiles();
-        List<MultipartFile> contractDocumentFiles = updateDTO.getContractDocumentFiles();
-        List<MultipartFile> idCardFiles = updateDTO.getIdCardFiles();
-        List<MultipartFile> storePhotoFiles = updateDTO.getStorePhotoFiles();
-        List<MultipartFile> businessCardFiles = updateDTO.getBusinessCardFiles();
-
-        // 각 파일 업로드 필드를 처리
-        processFiles(businessLicenseFiles, "사업자등록증", partnerIdx, fileIds, result);
-        processFiles(contractDocumentFiles, "계약서", partnerIdx, fileIds, result);
-        processFiles(idCardFiles, "대표자신분증", partnerIdx, fileIds, result);
-        processFiles(storePhotoFiles, "매장사진", partnerIdx, fileIds, result);
-        processFiles(businessCardFiles, "대표자명함", partnerIdx, fileIds, result);
-
-        // 다른 파일 업로드 필드들도 처리
-
-        return result;
     }
 }

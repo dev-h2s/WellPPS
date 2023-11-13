@@ -329,35 +329,30 @@ public class WellPartnerService {
     //거래처 수정
     @Transactional(rollbackOn = Exception.class)
     public void update(String partnerIdx, WellPartnerUpdateDTO updateDTO) throws Exception {
-        // 파트너 조회
-        WellPartnerEntity partner = wellPartnerRepository.findByPartnerIdx(partnerIdx);
-
-        // 파트너가 없으면 예외 처리
-        if (partner == null) {throw new RuntimeException("해당 파트너를 찾을 수 없습니다.");}
-
-        // 거래처 그룹 정보 가져오기
-        WellPartnerGroupEntity partnerGroup = wellPartnerGroupRepository.findByPartnerGroupId(updateDTO.getPartnerGroupId());
-
-        // API 연동 여부 확인 및 API 키 엔티티 가져오기
-        WellApikeyInEntity apikeyIn = null;
-        if (updateDTO.isInApiFlag() && updateDTO.getApiKeyInIdx() != null) {
-            apikeyIn = wellApikeyInRepository.findByApiKeyInIdx(updateDTO.getApiKeyInIdx());
-        }
-
-        // 거래처 그룹이나 API 키를 찾을 수 없는 경우 예외 처리
-        if (partnerGroup == null) {throw new RuntimeException("해당 거래처 그룹을 찾을 수 없습니다.");}
-
-        if (updateDTO.isInApiFlag() && apikeyIn == null) {throw new RuntimeException("해당 API 키를 찾을 수 없습니다.");}
-
         try {
             // DTO를 통해 엔티티 업데이트
+            WellPartnerEntity partner = wellPartnerRepository.findByPartnerIdx(partnerIdx);
             BeanUtils.copyProperties(updateDTO, partner);
 
             // 거래처 그룹 및 API 키 설정
+            WellPartnerGroupEntity partnerGroup = wellPartnerGroupRepository.findByPartnerGroupId(updateDTO.getPartnerGroupId());
+            WellApikeyInEntity apikeyIn = null;
+            if (updateDTO.isInApiFlag() && updateDTO.getApiKeyInIdx() != null) {
+                apikeyIn = wellApikeyInRepository.findByApiKeyInIdx(updateDTO.getApiKeyInIdx());
+            }
+
+            if (partnerGroup == null) {
+                throw new RuntimeException("해당 거래처 그룹을 찾을 수 없습니다.");
+            }
+
+            if (updateDTO.isInApiFlag() && apikeyIn == null) {
+                throw new RuntimeException("해당 API 키를 찾을 수 없습니다.");
+            }
+
             partner.setPartnerGroup(partnerGroup);
             partner.setApiKey(apikeyIn);
 
-            fileStorageService.updateFiles(updateDTO, partner.getPartnerIdx());
+            System.out.println("1111111111111" + fileStorageService.updateFiles(updateDTO, partnerIdx));
 
             // 엔티티의 업데이트 메서드 호출
             partner.updateFromDTO(updateDTO);

@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ public class WellPartnerDetailDTO {
     private String apiKeyInIdx;
 
     private String preApprovalNumber;
-    private LocalDateTime subscriptionDate;
+    private LocalDate subscriptionDate;
     private String transactionStatus;
 
     private String partnerUpperIdx;
@@ -80,7 +81,7 @@ public class WellPartnerDetailDTO {
         this.apiKeyInIdx = apikey.getApiKeyInIdx();
 
         this.preApprovalNumber = entity.getPreApprovalNumber();
-        this.subscriptionDate = entity.getSubscriptionDate();
+        this.subscriptionDate = LocalDate.from(entity.getSubscriptionDate());
         this.transactionStatus = entity.getTransactionStatus();
         this.partnerUpperIdx = entity.getPartnerUpperIdx();
         if (partnerUpperIdx != null) {

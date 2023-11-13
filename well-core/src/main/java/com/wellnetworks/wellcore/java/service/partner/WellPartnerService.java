@@ -92,7 +92,7 @@ public class WellPartnerService {
 
 
 
-    //거래처 조회
+    //거래처 검색
     public List<WellPartnerInfoDTO> searchPartnerList(String partnerName, String ceoName, String ceoTelephone, String partnerCode, String address, String writer, String partnerTelephone
             , LocalDate startDate, LocalDate endDate
             , String discountCategory, String partnerType, String salesManager, String transactionStatus, String regionAddress
@@ -357,10 +357,11 @@ public class WellPartnerService {
             partner.setPartnerGroup(partnerGroup);
             partner.setApiKey(apikeyIn);
 
+            fileStorageService.updateFiles(updateDTO, partner.getPartnerIdx());
+
             // 엔티티의 업데이트 메서드 호출
             partner.updateFromDTO(updateDTO);
 
-            System.out.println("거래처 수정 완료");
         } catch (Exception e) {
             // 롤백을 위해 예외 발생
             throw new RuntimeException("거래처 수정 중 오류 발생", e);

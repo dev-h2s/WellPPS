@@ -259,18 +259,9 @@ public class WellPartnerEntity {
         this.partnerMemo = updateDTO.getPartnerMemo();
     }
 
-    public WellApikeyInEntity getApiKey() {
-        return apiKey;
-    }
-
     public void setApiKey(WellApikeyInEntity apiKey) {
         this.apiKey = apiKey;
     }
-
-    public WellPartnerGroupEntity getPartnerGroup() {
-        return partnerGroup;
-    }
-
     public void setPartnerGroup(WellPartnerGroupEntity partnerGroup) {
         this.partnerGroup = partnerGroup;
     }

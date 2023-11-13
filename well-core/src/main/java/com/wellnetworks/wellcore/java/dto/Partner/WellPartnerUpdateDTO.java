@@ -70,14 +70,8 @@ public class WellPartnerUpdateDTO {
     private String locationDetailAddress;
     private String partnerMemo;
 
-    //    @Valid
-//    @NotNull(message = "사업자 등록증 파일은 필수 입력 항목입니다.")
     private List<MultipartFile> businessLicenseFiles;
-    //    @Valid
-//    @NotNull(message = "계약서 파일은 필수 입력 항목입니다.")
     private List<MultipartFile> contractDocumentFiles;
-    //    @Valid
-//    @NotNull(message = "대표자 신분증 파일은 필수 입력 항목입니다.")
     private List<MultipartFile> idCardFiles;
     private List<MultipartFile> storePhotoFiles;
     private List<MultipartFile> businessCardFiles;

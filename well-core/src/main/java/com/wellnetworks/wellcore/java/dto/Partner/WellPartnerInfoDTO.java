@@ -23,7 +23,7 @@ import java.util.List;
 public class WellPartnerInfoDTO {
     private String partnerIdx;
     private List<String> fileKinds = new ArrayList<>();
-    private LocalDate productRegisterDate;
+    private LocalDate subscriptionDate;
     private String partnerCode;
     private String partnerName;
     private String partnerType;
@@ -36,8 +36,6 @@ public class WellPartnerInfoDTO {
     private String writer;
     private String partnerUpperIdx;
     private String partnerUpperName;
-    private Integer size;
-    private Integer page;
 
     private Long registeredCount;
     private Long preRegisteredCount;
@@ -46,8 +44,6 @@ public class WellPartnerInfoDTO {
 
     private Long businessLicenseCount;
     private Long contractDocumentCount;
-
-    private WellPartnerRepository wellPartnerRepository;
 
     //거래처 1개, 리스트
     public WellPartnerInfoDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, WellDipositEntity diposit
@@ -64,7 +60,9 @@ public class WellPartnerInfoDTO {
                 }
             }
         }
-        this.productRegisterDate = LocalDate.from(entity.getProductRegisterDate());
+        if (entity.getSubscriptionDate() != null){
+            this.subscriptionDate = LocalDate.from(entity.getSubscriptionDate());
+        }
         this.partnerCode = entity.getPartnerCode();
         this.partnerName = entity.getPartnerName();
         this.partnerType = entity.getPartnerType();
@@ -84,8 +82,6 @@ public class WellPartnerInfoDTO {
         else {
             this.partnerUpperName = null;
         }
-        this.size = entity.getSize();
-        this.page = entity.getPage();
 
         this.registeredCount = registeredCount;
         this.preRegisteredCount = preRegisteredCount;
@@ -110,7 +106,9 @@ public class WellPartnerInfoDTO {
                 }
             }
         }
-        this.productRegisterDate = LocalDate.from(entity.getProductRegisterDate());
+        if (entity.getSubscriptionDate() != null){
+            this.subscriptionDate = LocalDate.from(entity.getSubscriptionDate());
+        }
         this.partnerCode = entity.getPartnerCode();
         this.partnerName = entity.getPartnerName();
         this.partnerType = entity.getPartnerType();
@@ -130,7 +128,5 @@ public class WellPartnerInfoDTO {
         else {
             this.partnerUpperName = null;
         }
-        this.size = entity.getSize();
-        this.page = entity.getPage();
     }
 }

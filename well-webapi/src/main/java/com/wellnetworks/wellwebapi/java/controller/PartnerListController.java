@@ -78,7 +78,7 @@ public class PartnerListController {
         if (partnerIdx == null) {
             throw new ClassNotFoundException(String.format("IDX[%s] not found", partnerIdx));
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body("수정 완료.");
+        return ResponseEntity.status(HttpStatus.CREATED).body("거래처가 성공적으로 수정되었습니다.");
     }
 
     //거래처 검색
@@ -109,17 +109,11 @@ public class PartnerListController {
 
 
     // 거래처 체크항목 삭제
-    @DeleteMapping("business/{partnerIdx}")
-    public ResponseEntity<String> deletePartner(@PathVariable String partnerIdx) throws ClassNotFoundException {
-        Optional<WellPartnerInfoDTO> partnerInfoDTO = wellPartnerService.deletePartnerIdx(partnerIdx);
+    @DeleteMapping("business/delete/{partnerIdx}")
+    public ResponseEntity<String> deletePartner(@PathVariable String partnerIdx) throws Exception {
+        wellPartnerService.deletePartnerIdx(partnerIdx);
 
-        if (!partnerInfoDTO.isPresent()) {
-            // 삭제 대상을 찾지 못한 경우 404 Not Found를 반환
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("IDX[%s] not found", partnerIdx));
-        } else {
-            // 삭제 성공한 경우 204 No Content를 반환
-            return ResponseEntity.noContent().build();
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body("거래처가 성공적으로 삭제되었습니다.");
     }
 
 

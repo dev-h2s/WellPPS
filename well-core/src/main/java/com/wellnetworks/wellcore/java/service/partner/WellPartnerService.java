@@ -352,7 +352,7 @@ public class WellPartnerService {
             partner.setPartnerGroup(partnerGroup);
             partner.setApiKey(apikeyIn);
 
-            System.out.println("1111111111111" + fileStorageService.updateFiles(updateDTO, partnerIdx));
+            fileStorageService.updateFiles(updateDTO, partnerIdx);
 
             // 엔티티의 업데이트 메서드 호출
             partner.updateFromDTO(updateDTO);

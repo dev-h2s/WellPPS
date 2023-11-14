@@ -8,6 +8,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -121,7 +122,7 @@ public class WellPartnerUserEntity {
     }
 
     //로그인시 패스워드 상태 매서드
-    public void changePasswordAndInvalidateTempPassword(String newPassword, BCryptPasswordEncoder passwordEncoder) {
+    public void changePasswordAndInvalidateTempPassword(String newPassword, PasswordEncoder passwordEncoder) {
         this.partnerUserPwd = passwordEncoder.encode(newPassword);
         this.tmpPwd = null; // 임시 비밀번호 null로 설정
         this.isFirstLogin = false; // 첫 로그인 상태 업데이트

@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -137,7 +138,7 @@ public class WellEmployeeUserEntity  {
     }
 
     //로그인시 패스워드 상태 매서드
-    public void changePasswordAndInvalidateTempPassword(String newPassword, BCryptPasswordEncoder passwordEncoder) {
+    public void changePasswordAndInvalidateTempPassword(String newPassword, PasswordEncoder passwordEncoder) {
         this.employeeUserPwd = passwordEncoder.encode(newPassword);
         this.tmpPwd = null; // 임시 비밀번호 null로 설정
         this.isFirstLogin = false; // 첫 로그인 상태 업데이트

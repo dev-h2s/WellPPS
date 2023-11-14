@@ -1,11 +1,16 @@
 package com.wellnetworks.wellsecure.java.service;
 
+import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerUserEntity;
+import com.wellnetworks.wellcore.java.dto.member.ChangePasswordRequest;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerUserRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -19,6 +24,7 @@ import java.util.Optional;
 public class WellUserDetailService implements UserDetailsService {
     private final WellEmployeeUserRepository employeeUserRepository;  // 사용자 정보를 조회하는 레포지토리
     private final WellPartnerUserRepository partnerUserRepository;
+    private PasswordEncoder passwordEncoder;
 
     // WellUserDetailService 클래스의 생성자
     // @param employeeUserRepository 사용자 정보를 조회하는 레포지토리
@@ -64,6 +70,39 @@ public class WellUserDetailService implements UserDetailsService {
                             partner.getAuthorities());
                 }).orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username)));
     }
+
+
+    @Transactional  // 데이터베이스 변경 사항을 하나의 트랜잭션으로 처리
+    public void changePassword(ChangePasswordRequest request) {
+        // 새 비밀번호와 확인 비밀번호가 일치하는지 검증
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new IllegalArgumentException("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
+        }
+
+        // 사용자 이름으로 사용자 세부 정보를 불러옴
+        UserDetails userDetails = loadUserByUsername(request.getUsername());
+
+        // 사용자가 사원인 경우
+        if (userDetails instanceof EmployeeUserDetails) {
+            WellEmployeeUserEntity employee = employeeUserRepository.findByEmployeeIdentification(request.getUsername())
+                    .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+            // 비밀번호 변경 메서드 호출
+            employee.changePasswordAndInvalidateTempPassword(request.getNewPassword(), passwordEncoder);
+            employeeUserRepository.save(employee); // 변경 사항을 데이터베이스에 저장
+        }
+        // 사용자가 파트너인 경우
+        else if (userDetails instanceof PartnerUserDetails) {
+            WellPartnerUserEntity partner = partnerUserRepository.findByPartnerIdentification(request.getUsername())
+                    .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+            // 비밀번호 변경 메서드 호출
+            partner.changePasswordAndInvalidateTempPassword(request.getNewPassword(), passwordEncoder);
+            partnerUserRepository.save(partner); // 변경 사항을 데이터베이스에 저장
+        }
+        else {
+            throw new UsernameNotFoundException("사용자 이름에 해당하는 사용자를 찾을 수 없습니다.: " + request.getUsername());
+        }
+    }
+
 
 
 

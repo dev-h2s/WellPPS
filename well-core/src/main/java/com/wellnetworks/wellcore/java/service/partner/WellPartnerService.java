@@ -24,6 +24,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -44,6 +45,7 @@ public class WellPartnerService {
     @Autowired private WellPartnerFileRepository partnerFileRepository;
     @Autowired private WellPartnerUserRepository partnerUserRepository;
     @Autowired private WellPartnerPermissionGroupRepository permissionGroupRepository;
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     // 거래처 1개 조회
     public Optional<WellPartnerInfoDTO> getPartnerByPartnerIdx(String partnerIdx) {
@@ -219,23 +221,26 @@ public class WellPartnerService {
 
     //패스워드 랜덤
     public class PasswordUtil {
-        private static final String ALLOWED_STRING = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        private static final String ALLOWED_STRING = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()";
         private static final int TEMP_PWD_LENGTH = 10;
         private static final SecureRandom RANDOM = new SecureRandom();
+        private static final BCryptPasswordEncoder ENCODER = new BCryptPasswordEncoder();
 
-        public static String generateRandomPassword() {
+        public static String[] generateRandomPassword() {
             StringBuilder builder = new StringBuilder(TEMP_PWD_LENGTH);
 
             for (int i = 0; i < TEMP_PWD_LENGTH; i++) {
                 builder.append(ALLOWED_STRING.charAt(RANDOM.nextInt(ALLOWED_STRING.length())));
             }
 
-            return builder.toString();
+            String rawPassword = builder.toString();
+            String encryptedPassword = ENCODER.encode(rawPassword); // 암호화된 비밀번호를 반환
+            return new String[] {rawPassword, encryptedPassword};
         }
     }
 
     @Transactional(rollbackOn = Exception.class)
-    public void join(WellPartnerCreateDTO createDTO) throws Exception {
+    public String join(WellPartnerCreateDTO createDTO) throws Exception {
         // 거래처 그룹 정보 가져오기
         WellPartnerGroupEntity partnerGroup = wellPartnerGroupRepository.findByPartnerGroupId(createDTO.getPartnerGroupId());
 
@@ -244,6 +249,13 @@ public class WellPartnerService {
         if (createDTO.isInApiFlag() && createDTO.getApiKeyInIdx() != null) {
             apikeyIn = wellApikeyInRepository.findByApiKeyInIdx(createDTO.getApiKeyInIdx());
         }
+
+
+        String[] passwords = WellPartnerService.PasswordUtil.generateRandomPassword();
+        String tempPasswordPlainText = passwords[0]; // 사용자에게 전달할 임시 비밀번호 평문
+        String tempPasswordEncrypted = passwords[1]; // 데이터베이스에 저장할 암호화된 비밀번호
+
+
 
         // API 연동 여부와 API 키가 설정되지 않은 경우 예외 처리
         if (createDTO.isInApiFlag() && apikeyIn == null) {
@@ -312,7 +324,9 @@ public class WellPartnerService {
                     .phoneVerificationCode(createDTO.getPhoneVerificationCode()) // user-휴대폰 인증 코드
                     .phoneVerificationAttempts(createDTO.getPhoneVerificationAttempts()) // user-휴대폰 인증 시도 횟수
                     .phoneVerificationExpiration(expirationTime) // user-휴대폰 인증 만료 시간
-                    .tmpPwd(PasswordUtil.generateRandomPassword())
+                    .tmpPwd(tempPasswordEncrypted)
+                    .isFirstLogin(true)
+                    .isPasswordResetRequired(true)
                     .partnerManagerGroupKey(group) // 연관 관계 설정
                     .build();
 
@@ -323,6 +337,8 @@ public class WellPartnerService {
             // 롤백을 위해 예외 발생
             throw new RuntimeException("거래처 생성 중 오류 발생", e);
         }
+        System.out.println("거래처, 거래처유저 생성완료");
+        return tempPasswordPlainText;
     }
 
 

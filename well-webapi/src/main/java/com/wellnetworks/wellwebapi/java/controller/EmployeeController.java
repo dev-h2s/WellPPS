@@ -1,6 +1,5 @@
 package com.wellnetworks.wellwebapi.java.controller;
 
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDTO;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDetailDTO;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeJoinDTO;

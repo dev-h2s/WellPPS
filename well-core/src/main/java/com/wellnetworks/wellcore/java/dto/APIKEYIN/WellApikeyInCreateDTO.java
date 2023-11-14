@@ -1,37 +1,41 @@
 package com.wellnetworks.wellcore.java.dto.APIKEYIN;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.querydsl.core.annotations.QueryProjection;
+import jakarta.persistence.ElementCollection;
+import jakarta.validation.constraints.NotBlank;
+import lombok.*;
+import org.springframework.validation.annotation.Validated;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Validated
 public class WellApikeyInCreateDTO {
-    @JsonProperty("api_key_in_idx")
-    private String apiKeyInIdx;
-    @JsonProperty("api_key_in")
     private String apiKeyIn;
-    @JsonProperty("api_key_in_reg_dt")
-    private LocalDateTime apiKeyInRegisterDate;
-    @JsonProperty("api_key_in_end_flag")
-    private Boolean apiKeyInEndFlag;
-    @JsonProperty("api_key_in_update")
-    private LocalDateTime apiKeyInUpdate;
-    @JsonProperty("p_agree_flag")
-    private Boolean partnerAgreeFlag;
-    @JsonProperty("issuer")
+    private LocalDate apiKeyInRegisterDate;
+    private String partnerName; // 거래처의 거래처명
+    private boolean apiKeyInEndFlag; // 기본값 false
+    private boolean partnerAgreeFlag; // 기본값 false
     private String issuer;
-    @JsonProperty("server_url")
-    private String serverUrl;
-    @JsonProperty("api_server_ip")
-    private String apiServerIp;
-    @JsonProperty("memo")
+    private List<String> serverUrl;
+    private List<String> apiServerIp;
     private String memo;
+
+    @Builder
+    public WellApikeyInCreateDTO(String apiKeyIn, LocalDate apiKeyInRegisterDate, boolean apiKeyInEndFlag, boolean partnerAgreeFlag, String issuer
+                                , List<String> serverUrl, List<String> apiServerIp, String memo) {
+        this.apiKeyIn = apiKeyIn;
+        this.apiKeyInRegisterDate = apiKeyInRegisterDate;
+        this.apiKeyInEndFlag = apiKeyInEndFlag;
+        this.partnerAgreeFlag = partnerAgreeFlag;
+        this.issuer = issuer;
+        this.serverUrl = serverUrl;
+        this.apiServerIp = apiServerIp;
+        this.memo = memo;
+    }
 }

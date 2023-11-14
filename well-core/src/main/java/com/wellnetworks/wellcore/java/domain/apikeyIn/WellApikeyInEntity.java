@@ -3,21 +3,18 @@ package com.wellnetworks.wellcore.java.domain.apikeyIn;
 
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class WellApikeyInEntity {
 
     @Id //APIKEY_idx
@@ -32,26 +29,38 @@ public class WellApikeyInEntity {
     private String apiKeyIn;
 
     @Column(name = "api_key_in_reg_dt") //생성일
-    private LocalDateTime apiKeyInRegisterDate;
+    private LocalDate apiKeyInRegisterDate;
 
     @Column(name = "api_key_in_end_flag") //내부APIKEY만료여부
-    private Boolean apiKeyInEndFlag;
-
-    @Column(name = "api_key_in_update") //내부APIKEY업데이트
-    private LocalDateTime apiKeyInUpdate;
+    private boolean apiKeyInEndFlag;
 
     @Column(name = "p_agree_flag") //거래처제공여부
-    private Boolean partnerAgreeFlag;
+    private boolean partnerAgreeFlag;
 
     @Column(name = "issuer") //발급자
     private String issuer;
 
-    @Column(name = "server_url") //SERVER_URL
-    private String serverUrl;
+    @ElementCollection(targetClass=String.class)
+    @Column(name = "server_url")
+    private List<String> serverUrl;
 
+    @ElementCollection(targetClass=String.class)
     @Column(name = "api_server_ip") //API서버IP
-    private String apiServerIp;
+    private List<String> apiServerIp;
 
     @Column(name = "memo", length = 2000) //메모
     private String memo;
+
+    @Builder
+    public WellApikeyInEntity(String apiKeyIn, LocalDate apiKeyInRegisterDate, boolean apiKeyInEndFlag
+                              , boolean partnerAgreeFlag, String issuer, List<String> serverUrl, List<String> apiServerIp, String memo) {
+        this.apiKeyIn = apiKeyIn;
+        this.apiKeyInRegisterDate = apiKeyInRegisterDate;
+        this.apiKeyInEndFlag = apiKeyInEndFlag;
+        this.partnerAgreeFlag = partnerAgreeFlag;
+        this.issuer = issuer;
+        this.serverUrl = serverUrl;
+        this.apiServerIp = apiServerIp;
+        this.memo = memo;
+    }
 }

@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @RestController
+@RequestMapping(("/admin/hr/"))
 @RequiredArgsConstructor
 public class FIleStorageController {
     private final WellFileStorageRepository fileRepository;

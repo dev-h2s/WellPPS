@@ -7,22 +7,23 @@ import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.service.partner.WellPartnerService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping(("/admin/hr/"))
@@ -55,52 +56,29 @@ public class PartnerListController {
 
     //거래처 리스트
     @GetMapping("business")
-    public List<WellPartnerInfoDTO> getPartnerList(
-            @RequestParam(required = false) String partnerIdx,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date productRegisterDate,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date productModifyDate,
-            @RequestParam(required = false) String partnerCode,
-            @RequestParam(required = false) String partnerName,
-            @RequestParam(required = false) String partnerType,
-            @RequestParam(required = false) String discountCategory,
-            @RequestParam(required = false) Integer dipositBalance,
-            @RequestParam(required = false) String salesManager,
-            @RequestParam(required = false) String ceoName,
-            @RequestParam(required = false) String partnerTelephone,
-            @RequestParam(required = false) String writer,
-            @RequestParam(required = false) Integer transactionStatus,
-            @RequestParam(required = false) String partnerUpperIdx,
-            @RequestParam(required = false) String partnerUpperName
-    ) {
+    public List<WellPartnerInfoDTO> getPartnerList() {
         List<WellPartnerInfoDTO> partnerList = wellPartnerService.getAllPartners();
 
         return partnerList;
     }
 
-    //거래처 입력
+    //거래처 생성
     @PostMapping(value = "business/create")
-    public ResponseEntity<String> createPartner(WellPartnerCreateDTO createDTO) throws Exception {
+    public ResponseEntity<String> createPartner(@Valid WellPartnerCreateDTO createDTO) throws Exception {
+        wellPartnerService.join(createDTO);
 
-        try {
-            String tempPassword = wellPartnerService.join(createDTO);
-
-            // 콘솔에 임시 비밀번호 출력
-            return ResponseEntity.status(HttpStatus.CREATED).body("거래처가 성공적으로 생성되었습니다. 생성된 아이디"+" 임시 비밀번호: " + tempPassword);
-        } catch (Exception e) {
-//            // 예외 처리
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원가입 중 오류가 발생하였습니다.");
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body("거래처가 성공적으로 생성되었습니다.");
     }
 
     //거래처 수정
     @PatchMapping("business/update/{partnerIdx}")
-    public ResponseEntity<String> patchPartner(WellPartnerUpdateDTO updateDTO,
+    public ResponseEntity<String> patchPartner(@Valid WellPartnerUpdateDTO updateDTO,
                                                @PathVariable String partnerIdx) throws Exception {
         wellPartnerService.update(partnerIdx, updateDTO);
         if (partnerIdx == null) {
             throw new ClassNotFoundException(String.format("IDX[%s] not found", partnerIdx));
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body("수정 완료.");
+        return ResponseEntity.status(HttpStatus.CREATED).body("거래처가 성공적으로 수정되었습니다.");
     }
 
     //거래처 검색
@@ -131,20 +109,22 @@ public class PartnerListController {
 
 
     // 거래처 체크항목 삭제
-    @DeleteMapping("business/{partnerIdx}")
-    public ResponseEntity<String> deletePartner(@PathVariable String partnerIdx) throws ClassNotFoundException {
-        Optional<WellPartnerInfoDTO> partnerInfoDTO = wellPartnerService.deletePartnerIdx(partnerIdx);
+    @DeleteMapping("business/delete/{partnerIdx}")
+    public ResponseEntity<String> deletePartner(@PathVariable String partnerIdx) throws Exception {
+        wellPartnerService.deletePartnerIdx(partnerIdx);
 
-        if (!partnerInfoDTO.isPresent()) {
-            // 삭제 대상을 찾지 못한 경우 404 Not Found를 반환
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("IDX[%s] not found", partnerIdx));
-        } else {
-            // 삭제 성공한 경우 204 No Content를 반환
-            return ResponseEntity.noContent().build();
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body("거래처가 성공적으로 삭제되었습니다.");
     }
 
 
-
-
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleValidationException(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
+        for (FieldError fieldError : fieldErrors) {
+            errors.put(fieldError.getField(), fieldError.getDefaultMessage());
+        }
+        return errors;
+    }
 }

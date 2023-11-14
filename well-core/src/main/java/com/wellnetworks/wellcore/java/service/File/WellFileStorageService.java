@@ -1,6 +1,7 @@
 package com.wellnetworks.wellcore.java.service.File;
 
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.dto.FIle.WellPartnerFileCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
 import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
@@ -8,10 +9,12 @@ import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import com.wellnetworks.wellcore.java.dto.FIle.WellFIleCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
 import com.wellnetworks.wellcore.java.repository.File.WellPartnerFileRepository;
+import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -61,6 +64,29 @@ public class WellFileStorageService {
     }
 
     @Transactional
+    public Map<String, Object> updateFiles(WellPartnerUpdateDTO updateDTO, String partnerIdx) throws Exception {
+        Map<String, Object> result = new HashMap<>();
+        List<Long> fileIds = new ArrayList<>();
+
+        List<MultipartFile> businessLicenseFiles = updateDTO.getBusinessLicenseFiles();
+        List<MultipartFile> contractDocumentFiles = updateDTO.getContractDocumentFiles();
+        List<MultipartFile> idCardFiles = updateDTO.getIdCardFiles();
+        List<MultipartFile> storePhotoFiles = updateDTO.getStorePhotoFiles();
+        List<MultipartFile> businessCardFiles = updateDTO.getBusinessCardFiles();
+
+        // 각 파일 업로드 필드를 처리
+        processFiles(businessLicenseFiles, "사업자등록증", partnerIdx, fileIds, result);
+        processFiles(contractDocumentFiles, "계약서", partnerIdx, fileIds, result);
+        processFiles(idCardFiles, "대표자신분증", partnerIdx, fileIds, result);
+        processFiles(storePhotoFiles, "매장사진", partnerIdx, fileIds, result);
+        processFiles(businessCardFiles, "대표자명함", partnerIdx, fileIds, result);
+
+        // 다른 파일 업로드 필드들도 처리
+
+        return result;
+    }
+
+    @Transactional
     public Long insertFile(WellFileStorageEntity file) {
         return fileStorageRepository.save(file).getId();
     }
@@ -68,15 +94,6 @@ public class WellFileStorageService {
     @Transactional
     public Long insertPartnerFile(WellPartnerFIleStorageEntity partnerFile) {
         return partnerFileRepository.save(partnerFile).getId();
-    }
-
-    @Transactional
-    public WellPartnerFIleStorageEntity deletePartnerFile(Long partnerFileId) {
-        WellPartnerFIleStorageEntity partnerFile = partnerFileRepository.findById(partnerFileId).orElse(null);
-        if (partnerFile != null) {
-            partnerFileRepository.delete(partnerFile);
-        }
-        return partnerFile;
     }
 
     // 각 파일 업로드 필드를 처리하는 메서드
@@ -129,10 +146,9 @@ public class WellFileStorageService {
 
     @Transactional
     public void deleteBoardFile(Long fileId) {
-        // 데이터베이스에서 파일 레코드 삭제
+        // 원하는 파일id삭제
         partnerFileRepository.deleteByFileId(fileId);
         fileStorageRepository.deleteById(fileId);
 
     }
-
 }

@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +22,11 @@ public class WellPartnerDetailDTO {
     private String partnerCode;
     private String partnerName;
     private String partnerType;
-    private boolean specialPolicyOpening;
-    private boolean specialPolicyCharge;
+    private Boolean specialPolicyOpening;
+    private Boolean specialPolicyCharge;
 
     private Long partnerGroupId;
+    private String PartnerGroupName;
 
     private String discountCategory;
     private String salesManager;
@@ -33,15 +35,16 @@ public class WellPartnerDetailDTO {
     private String apiKeyInIdx;
 
     private String preApprovalNumber;
-    private LocalDateTime subscriptionDate;
+    private LocalDate subscriptionDate;
     private String transactionStatus;
 
     private String partnerUpperIdx;
     private String partnerUpperName;
 
     private List<String> subPartners = new ArrayList<>();
+    private List<String> subPartnerNames = new ArrayList<>();
 
-    private Integer dipositBalance;
+    private int dipositBalance;
     private String ceoName;
     private String ceoTelephone;
     private String partnerTelephone;
@@ -59,15 +62,17 @@ public class WellPartnerDetailDTO {
     private List<String> fileKinds = new ArrayList<>();
 
     public WellPartnerDetailDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, WellDipositEntity diposit
-            , String partnerUpperName, WellPartnerGroupEntity group, WellApikeyInEntity apikey, List<WellPartnerEntity> subPartners) {
+            , String partnerUpperName, WellPartnerGroupEntity group, WellApikeyInEntity apikey, List<WellPartnerEntity> subPartners
+            , String PartnerGroupName) {
         this.partnerIdx = entity.getPartnerIdx();
         this.partnerCode = entity.getPartnerCode();
         this.partnerName = entity.getPartnerName();
         this.partnerType = entity.getPartnerType();
-        this.specialPolicyOpening = entity.isSpecialPolicyOpening();
-        this.specialPolicyCharge = entity.isSpecialPolicyCharge();
+        this.specialPolicyOpening = entity.getSpecialPolicyOpening();
+        this.specialPolicyCharge = entity.getSpecialPolicyCharge();
         if (group != null) {
             this.partnerGroupId = group.getPartnerGroupId();
+            this.PartnerGroupName = PartnerGroupName;
         }
         this.discountCategory = entity.getDiscountCategory();
         this.salesManager = entity.getSalesManager();
@@ -76,7 +81,7 @@ public class WellPartnerDetailDTO {
         this.apiKeyInIdx = apikey.getApiKeyInIdx();
 
         this.preApprovalNumber = entity.getPreApprovalNumber();
-        this.subscriptionDate = entity.getSubscriptionDate();
+        this.subscriptionDate = LocalDate.from(entity.getSubscriptionDate());
         this.transactionStatus = entity.getTransactionStatus();
         this.partnerUpperIdx = entity.getPartnerUpperIdx();
         if (partnerUpperIdx != null) {
@@ -86,6 +91,10 @@ public class WellPartnerDetailDTO {
             this.partnerUpperName = null;
         }
         this.subPartners = subPartners.stream().map(WellPartnerEntity::getPartnerIdx).collect(Collectors.toList());
+        for (WellPartnerEntity subPartner : subPartners) {
+            subPartnerNames.add(subPartner.getPartnerName());
+        }
+
 
         if (diposit != null) {
             this.dipositBalance = diposit.getDipositBalance();

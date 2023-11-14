@@ -27,7 +27,7 @@ public class WellDipositEntity {
         private WellVirtualAccountEntity virtualAccount;
 
         @Column(name = "dipo_balance") //예치금잔액
-        private Integer dipositBalance;
+        private int dipositBalance;
 
         @Column(name = "depo_adjustment") //예치금조정
         private String depositAdjustment;

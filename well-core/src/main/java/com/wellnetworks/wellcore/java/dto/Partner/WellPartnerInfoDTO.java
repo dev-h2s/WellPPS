@@ -13,6 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,20 +23,19 @@ import java.util.List;
 public class WellPartnerInfoDTO {
     private String partnerIdx;
     private List<String> fileKinds = new ArrayList<>();
-    private LocalDateTime productModifyDate;
+    private LocalDate subscriptionDate;
     private String partnerCode;
     private String partnerName;
     private String partnerType;
     private String discountCategory;
-    private Integer dipositBalance;
+    private int dipositBalance;
     private String salesManager;
     private String ceoName;
     private String ceoTelephone;
+    private String transactionStatus;
     private String writer;
     private String partnerUpperIdx;
     private String partnerUpperName;
-    private Integer size;
-    private Integer page;
 
     private Long registeredCount;
     private Long preRegisteredCount;
@@ -44,8 +44,6 @@ public class WellPartnerInfoDTO {
 
     private Long businessLicenseCount;
     private Long contractDocumentCount;
-
-    private WellPartnerRepository wellPartnerRepository;
 
     //거래처 1개, 리스트
     public WellPartnerInfoDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, WellDipositEntity diposit
@@ -62,7 +60,9 @@ public class WellPartnerInfoDTO {
                 }
             }
         }
-        this.productModifyDate = entity.getProductModifyDate();
+        if (entity.getSubscriptionDate() != null){
+            this.subscriptionDate = LocalDate.from(entity.getSubscriptionDate());
+        }
         this.partnerCode = entity.getPartnerCode();
         this.partnerName = entity.getPartnerName();
         this.partnerType = entity.getPartnerType();
@@ -73,6 +73,7 @@ public class WellPartnerInfoDTO {
         this.salesManager = entity.getSalesManager();
         this.ceoName = entity.getCeoName();
         this.ceoTelephone = entity.getCeoTelephone();
+        this.transactionStatus = entity.getTransactionStatus();
         this.writer = entity.getWriter();
         this.partnerUpperIdx = entity.getPartnerUpperIdx();
         if (partnerUpperIdx != null) {
@@ -81,8 +82,6 @@ public class WellPartnerInfoDTO {
         else {
             this.partnerUpperName = null;
         }
-        this.size = entity.getSize();
-        this.page = entity.getPage();
 
         this.registeredCount = registeredCount;
         this.preRegisteredCount = preRegisteredCount;
@@ -107,7 +106,9 @@ public class WellPartnerInfoDTO {
                 }
             }
         }
-        this.productModifyDate = entity.getProductModifyDate();
+        if (entity.getSubscriptionDate() != null){
+            this.subscriptionDate = LocalDate.from(entity.getSubscriptionDate());
+        }
         this.partnerCode = entity.getPartnerCode();
         this.partnerName = entity.getPartnerName();
         this.partnerType = entity.getPartnerType();
@@ -118,6 +119,7 @@ public class WellPartnerInfoDTO {
         this.salesManager = entity.getSalesManager();
         this.ceoName = entity.getCeoName();
         this.ceoTelephone = entity.getCeoTelephone();
+        this.transactionStatus = entity.getTransactionStatus();
         this.writer = entity.getWriter();
         this.partnerUpperIdx = entity.getPartnerUpperIdx();
         if (partnerUpperIdx != null) {
@@ -126,7 +128,5 @@ public class WellPartnerInfoDTO {
         else {
             this.partnerUpperName = null;
         }
-        this.size = entity.getSize();
-        this.page = entity.getPage();
     }
 }

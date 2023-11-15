@@ -52,10 +52,18 @@ public class WellApikeyInEntity {
     @Column(name = "partner_idx")
     private String partnerIdx;
 
+    private boolean home;
+    private boolean dream;
+    private boolean valueCom;
+    private boolean iz;
+    private boolean asia;
+    private boolean PDS;
+
     @Builder
     public WellApikeyInEntity(String apiKeyInIdx, String apiKeyIn, LocalDate apiKeyInRegisterDate, boolean apiKeyInEndFlag
                               , boolean partnerAgreeFlag, String issuer, List<String> serverUrl, List<String> apiServerIp, String memo
-                              , String partnerIdx) {
+                              , String partnerIdx
+            , boolean home, boolean dream, boolean valueCom, boolean iz, boolean asia, boolean PDS) {
         this.apiKeyInIdx = apiKeyInIdx;
         this.apiKeyIn = apiKeyIn;
         this.apiKeyInRegisterDate = apiKeyInRegisterDate;
@@ -66,6 +74,13 @@ public class WellApikeyInEntity {
         this.apiServerIp = apiServerIp;
         this.memo = memo;
         this.partnerIdx = partnerIdx;
+
+        this.home = home;
+        this.dream = dream;
+        this.valueCom = valueCom;
+        this.iz = iz;
+        this.asia = asia;
+        this.PDS = PDS;
     }
 
     public void setPartnerIdx(String partnerIdx) {

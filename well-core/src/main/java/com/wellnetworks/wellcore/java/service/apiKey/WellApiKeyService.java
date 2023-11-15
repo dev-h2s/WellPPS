@@ -47,12 +47,18 @@ public class WellApiKeyService {
                     .partnerIdx(partnerEntity.getPartnerIdx())
                     .apiKeyIn(generatedApiKey)
                     .apiKeyInRegisterDate(createDTO.getApiKeyInRegisterDate())
-                    .apiKeyInEndFlag(false) // 기본값 false
-                    .partnerAgreeFlag(false) // 기본값 false
+                    .apiKeyInEndFlag(createDTO.isApiKeyInEndFlag())
+                    .partnerAgreeFlag(createDTO.isPartnerAgreeFlag())
                     .issuer(createDTO.getIssuer())
                     .serverUrl(createDTO.getServerUrl())
                     .apiServerIp(createDTO.getApiServerIp())
                     .memo(createDTO.getMemo())
+                    .home(createDTO.isHome())
+                    .dream(createDTO.isDream())
+                    .valueCom(createDTO.isValueCom())
+                    .iz(createDTO.isIz())
+                    .asia(createDTO.isAsia())
+                    .PDS(createDTO.isPDS())
                     .build();
 
             // API 키 저장

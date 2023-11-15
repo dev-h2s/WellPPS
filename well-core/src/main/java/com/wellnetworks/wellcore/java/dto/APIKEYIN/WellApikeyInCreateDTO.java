@@ -28,9 +28,17 @@ public class WellApikeyInCreateDTO {
     private String memo;
     private String partnerIdx;
 
+    private boolean home;
+    private boolean dream;
+    private boolean valueCom;
+    private boolean iz;
+    private boolean asia;
+    private boolean PDS;
+
     @Builder
     public WellApikeyInCreateDTO(String apiKeyInIdx, String apiKeyIn, LocalDate apiKeyInRegisterDate, boolean apiKeyInEndFlag, boolean partnerAgreeFlag, String issuer
-                                , List<String> serverUrl, List<String> apiServerIp, String memo, String partnerIdx) {
+                                , List<String> serverUrl, List<String> apiServerIp, String memo, String partnerIdx
+                                , boolean home, boolean dream, boolean valueCom, boolean iz, boolean asia, boolean PDS) {
         this.apiKeyInIdx = apiKeyInIdx;
         this.apiKeyIn = apiKeyIn;
         this.apiKeyInRegisterDate = apiKeyInRegisterDate;
@@ -41,5 +49,12 @@ public class WellApikeyInCreateDTO {
         this.apiServerIp = apiServerIp;
         this.memo = memo;
         this.partnerIdx = partnerIdx;
+
+        this.home = home;
+        this.dream = dream;
+        this.valueCom = valueCom;
+        this.iz = iz;
+        this.asia = asia;
+        this.PDS = PDS;
     }
 }

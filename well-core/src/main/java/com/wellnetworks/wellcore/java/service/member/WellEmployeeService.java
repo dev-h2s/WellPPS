@@ -7,10 +7,12 @@ import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeManagerGroupEn
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 
+import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.dto.member.ChangePasswordRequest;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDTO;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDetailDTO;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeJoinDTO;
+import com.wellnetworks.wellcore.java.repository.File.WellEmployeeFileRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeGroupRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
@@ -51,23 +53,24 @@ public class WellEmployeeService {
 
     @Autowired private WellEmployeeGroupRepository wellEmployeeGroupRepository;
 
+    @Autowired private WellEmployeeFileStorageService employeeFileService;
+
+    @Autowired private  WellEmployeeFileRepository employeeFileRepository;
+
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private KeyValues baseSpec;
 
 
-    // 사원 1개 조회
-    public Optional<WellEmployeeInfoDetailDTO> getemployeeByemployeeIdx(String employeeIdx) {
+    // 사원 상세 조회
+    public Optional<WellEmployeeInfoDetailDTO> getEmployeeByEmployeeIdx(String employeeIdx) {
         // 사원의 인덱스를 기반으로 DB에서 사원 정보 조회
         WellEmployeeEntity employeeEntity = wellEmployeeRepository.findByEmployeeIdx(employeeIdx);
 
-
-        // employeeEntity와 연결된 파일 정보를 가져와 리스트로 변환
-        // Java Streams를 사용하여 employeeEntity에 연결된 파일들을 가져온 후,
-        // 그 파일 정보만을 추출하여 List에 담는다
         if (employeeEntity != null) {
-            List<WellFileStorageEntity> fileStorages = employeeEntity.getFiles().stream()
-                    .map(WellEmployeeFileStorageEntity::getFile)
-                    .collect(Collectors.toList());
+            // employeeEntity와 연결된 파일 정보를 가져와 리스트로 변환
+            // Java Streams를 사용하여 employeeEntity에 연결된 파일들을 가져온 후,
+            // 그 파일 정보만을 추출하여 List에 담는다
+            List<WellEmployeeFileStorageEntity> fileStorages = employeeFileRepository.findByEmployeeIdx(employeeIdx);
 
 
             // WellEmployeeEntity에서 WellEmployeeUserEntity 가져오기
@@ -86,11 +89,13 @@ public class WellEmployeeService {
             // WellEmployeeInfoDTO 객체를 생성하여 반환
             // 이 DTO 객체는 사원 정보, 파일 정보, 부서 정보를 포함한다
             return Optional.of(new WellEmployeeInfoDetailDTO(employeeEntity, identification, department, fileStorages));
-        } else {
+
+        }else {
             // 해당 사원 정보가 DB에 없는 경우, 빈 Optional 객체를 반환
             return Optional.empty();
         }
     }
+
 
     //사원 리스트 조회
     public List<WellEmployeeInfoDTO> getAllemployees() {
@@ -98,9 +103,7 @@ public class WellEmployeeService {
         List<WellEmployeeInfoDTO> employeeInfoList = new ArrayList<>();
 
         for (WellEmployeeEntity employeeEntity : employees) {
-            List<WellFileStorageEntity> fileStorages = employeeEntity.getFiles().stream()
-                    .map(WellEmployeeFileStorageEntity::getFile)
-                    .collect(Collectors.toList());
+            List<WellEmployeeFileStorageEntity> fileStorages = employeeFileRepository.findByEmployeeIdx(employeeEntity.getEmployeeIdx());
 
             // WellEmployeeEntity에서 WellEmployeeUserEntity 가져오기
             WellEmployeeUserEntity employeeUser = employeeEntity.getEmployeeUser();
@@ -189,6 +192,7 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
     WellEmployeeManagerGroupEntity group = groupOptional.orElseThrow(()
             -> new IllegalArgumentException("없는 부서 입니다: " + department));
 
+
     // 휴대폰 인증 코드의 만료 시간 설정. 예를 들어, 현재 시간으로부터 10분 후로 설정.
     LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(10);
     LocalDateTime currentDateTime = LocalDateTime.now();
@@ -238,29 +242,31 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
             .employeeRegisterDate(LocalDateTime.now())
             .build();
     wellEmployeeRepository.save(employeeEntity);
+
+    employeeFileService.saveFiles(joinDTO, employeeEntity.getEmployeeIdx());
     // 임시 비밀번호 반환
     return tempPasswordPlainText; // 호출하는 곳에서 임시 비밀번호를 받아 화면에 출력할 수 있음
     }
 
-    //패스워드 변경
-    public void changePassword(ChangePasswordRequest changePasswordRequest) {
-        if (!changePasswordRequest.getNewPassword().equals(changePasswordRequest.getConfirmPassword())) {
-            throw new IllegalArgumentException("새 비밀번호가 일치하지 않습니다.");
-        }
-
-        WellEmployeeUserEntity userEntity = wellEmployeeUserRepository.findByEmployeeIdentification(changePasswordRequest.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
-
-        // 임시 비밀번호로 로그인된 상태인지 확인
-//        if (!passwordEncoder.matches(changePasswordRequest.getCurrentPassword(), userEntity.getTmpPwd())) {
-//            throw new IllegalArgumentException("Current password is incorrect.");
+    //패스워드 변경 : user pwd 통일
+//    public void changePassword(ChangePasswordRequest changePasswordRequest) {
+//        if (!changePasswordRequest.getNewPassword().equals(changePasswordRequest.getConfirmPassword())) {
+//            throw new IllegalArgumentException("새 비밀번호가 일치하지 않습니다.");
 //        }
-
-        // 새 비밀번호 설정 및 임시 비밀번호 무효화
-        userEntity.changePasswordAndInvalidateTempPassword(changePasswordRequest.getNewPassword(), passwordEncoder);
-
-        wellEmployeeUserRepository.save(userEntity);
-    }
+//
+//        WellEmployeeUserEntity userEntity = wellEmployeeUserRepository.findByEmployeeIdentification(changePasswordRequest.getUsername())
+//                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+//
+//        // 임시 비밀번호로 로그인된 상태인지 확인
+////        if (!passwordEncoder.matches(changePasswordRequest.getCurrentPassword(), userEntity.getTmpPwd())) {
+////            throw new IllegalArgumentException("Current password is incorrect.");
+////        }
+//
+//        // 새 비밀번호 설정 및 임시 비밀번호 무효화
+//        userEntity.changePasswordAndInvalidateTempPassword(changePasswordRequest.getNewPassword(), passwordEncoder);
+//
+//        wellEmployeeUserRepository.save(userEntity);
+//    }
 
 
 

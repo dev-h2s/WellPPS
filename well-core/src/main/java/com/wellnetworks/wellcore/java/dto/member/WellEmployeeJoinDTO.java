@@ -46,15 +46,10 @@ public class WellEmployeeJoinDTO {
     private String employeeUserPwd; // user-패스워드
     private String tmpPwd; // user-임시패스워드
     private LocalDateTime employeeRegisterDate;
-//    private List<String> files = new ArrayList<>();
-//
-//    private List<MultipartFile> files1;
-//    private List<MultipartFile> file2;
-//    private List<MultipartFile> file3;
-//    private List<MultipartFile> file4;
-//    private List<MultipartFile> file5;
 
-    //이후 파일,권한등 고려..
+    private List<String> fileKinds = new ArrayList<>();
+    private List<MultipartFile> files;
+
 
 
 
@@ -66,7 +61,7 @@ public class WellEmployeeJoinDTO {
                                Float remainingLeaveDays, String residentRegistrationNumber, String telPrivate, Boolean isPhoneVerified, String phoneVerificationCode,
                                Integer phoneVerificationAttempts, LocalDateTime phoneVerificationExpiration, LocalDateTime phoneVerificationSentTime, String telWork,
                                String email, String bankName, String bankAccount, String bankHolder, String homeAddress1, String homeAddress2, Boolean externalAccessCert,
-                               String memo, String employeeUserPwd, String tmpPwd, LocalDateTime employeeRegisterDate, String employeeManagerGroupKey, List<String> files) {
+                               String memo, String employeeUserPwd, String tmpPwd, LocalDateTime employeeRegisterDate, String employeeManagerGroupKey, List<String> fileKinds) {
         this.employeeIdx = employeeIdx;
         this.employeeId = employeeId;
         this.employeeIdentification = employeeIdentification;
@@ -98,9 +93,8 @@ public class WellEmployeeJoinDTO {
         this.memo = memo;
         this.tmpPwd = tmpPwd;
         this.employeeUserPwd = employeeUserPwd;
-//        this.tmpPwd = tmpPwd;
         this.employeeRegisterDate = employeeRegisterDate;
         this.employeeManagerGroupKey = employeeManagerGroupKey;
-//        this.files = files;
+        this.fileKinds = fileKinds;
     }
 }

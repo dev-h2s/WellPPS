@@ -63,6 +63,9 @@ public class WellFileStorageService {
         return result;
     }
 
+
+
+
     @Transactional
     public Map<String, Object> updateFiles(WellPartnerUpdateDTO updateDTO, String partnerIdx) throws Exception {
         Map<String, Object> result = new HashMap<>();

@@ -34,8 +34,8 @@ public class WellEmployeeEntity {
     private Long employeeId;
 
     //여러 사원 관련 파일을 가질 수 있음
-    @OneToMany(mappedBy = "employee")
-    private List<WellEmployeeFileStorageEntity> files = new ArrayList<>();
+//    @OneToMany(mappedBy = "employee")
+//    private List<WellEmployeeFileStorageEntity> files = new ArrayList<>();
 
     @Column(name = "belong", nullable = false) // 소속회사
     private String belong;
@@ -122,7 +122,7 @@ public class WellEmployeeEntity {
                               String memo, LocalDateTime employeeModifyDate, LocalDateTime employeeRegisterDate) {
         this.employeeIdx = employeeIdx;
         this.employeeUser = employeeUser;
-        this.files = files;
+//        this.files = files;
         this.employeeId = employeeId;
         this.belong = belong;
         this.employeeName = employeeName;

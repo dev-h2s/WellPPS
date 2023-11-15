@@ -35,7 +35,7 @@ public class EmployeeController {
     // 사원 하나 조회
     @GetMapping("employee/{employeeIdx}")
     public Optional<WellEmployeeInfoDetailDTO> getEmployee(@PathVariable String employeeIdx) throws ClassNotFoundException {
-        Optional<WellEmployeeInfoDetailDTO> wellEmployeeInfoDetailDTO = wellEmployeeService.getemployeeByemployeeIdx(employeeIdx);
+        Optional<WellEmployeeInfoDetailDTO> wellEmployeeInfoDetailDTO = wellEmployeeService.getEmployeeByEmployeeIdx(employeeIdx);
         if (wellEmployeeInfoDetailDTO == null) {
             throw new ClassNotFoundException(String.format("IDX[%s] not found", employeeIdx));
         }
@@ -66,31 +66,31 @@ public class EmployeeController {
     //사원 생성
     @PostMapping(value = "employee/signUp")
     public ResponseEntity<String> createEmployeeUser(WellEmployeeJoinDTO createDTO) throws Exception {
-        try {
+//        try {
             String tempPassword = wellEmployeeService.employeeJoin(createDTO);
             // 콘솔에 임시 비밀번호 출력
             System.out.println("생성된 임시 비밀번호: " + tempPassword);
             return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 완료되었습니다. 임시 비밀번호: " + tempPassword);
-        } catch (Exception e) {
+//        } catch (Exception e) {
 //            // 예외 처리
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원가입 중 오류가 발생하였습니다.");
-        }
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원가입 중 오류가 발생하였습니다.");
+//        }
     }
 
-    //패스워드 변경
-    @PostMapping(value = "employee/updatePwd")
-    public ResponseEntity<ApiResponse> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
-        try {
-            wellEmployeeService.changePassword(changePasswordRequest);
-            return ResponseEntity.ok(new ApiResponse("패스워드가 변경되었습니다", null));
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().body(new ApiResponse(ex.getMessage(), null));
-        } catch (UsernameNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("User not found.", null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("An error occurred while changing the password.", null));
-        }
-    }
+    //패스워드 변경 : 유저에서 사용
+//    @PostMapping(value = "employee/updatePwd")
+//    public ResponseEntity<ApiResponse> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+//        try {
+//            wellEmployeeService.changePassword(changePasswordRequest);
+//            return ResponseEntity.ok(new ApiResponse("패스워드가 변경되었습니다", null));
+//        } catch (IllegalArgumentException ex) {
+//            return ResponseEntity.badRequest().body(new ApiResponse(ex.getMessage(), null));
+//        } catch (UsernameNotFoundException ex) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("User not found.", null));
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("An error occurred while changing the password.", null));
+//        }
+//    }
 
 
 

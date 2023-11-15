@@ -1,17 +1,21 @@
 package com.wellnetworks.wellcore.java.service.apiKey;
 
+import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
+import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
+import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyInfoDTO;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApikeyInCreateDTO;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyInRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -22,6 +26,24 @@ public class WellApiKeyService {
 
 
     //apikey 1개 조회
+    public Optional<WellApiKeyInfoDTO> getApikeyByApikeyIdx(String apiKeyInIdx) {
+        return Optional.ofNullable(apikeyInRepository.findByApiKeyInIdx(apiKeyInIdx))
+                .map(entity -> {
+                    String partnerIdx = entity.getPartnerIdx();
+                    String partnerName = null;
+
+                    // partnerIdx가 null이 아닌 경우에만 거래처명 조회
+                    if (partnerIdx != null) {
+                        WellPartnerEntity partnerEntity = partnerRepository.findByPartnerIdx(partnerIdx);
+                        if (partnerEntity != null) {
+                            partnerName = partnerEntity.getPartnerName();
+                        }
+                    }
+                    return new WellApiKeyInfoDTO(entity, partnerName);
+                });
+    }
+
+
     //apikey 리스트 조회
     //apikey 상세 조회
     //apikey  검색

@@ -1,20 +1,13 @@
 package com.wellnetworks.wellcore.java.dto.Partner;
 
-import com.querydsl.core.annotations.QueryProjection;
 import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
-import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
-import jakarta.annotation.Nullable;
-import jakarta.persistence.Column;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -266,4 +266,7 @@ public class WellPartnerEntity {
     public void setPartnerGroup(WellPartnerGroupEntity partnerGroup) {
         this.partnerGroup = partnerGroup;
     }
+    public void setInApiFlag(Boolean inApiFlag) {
+        this.inApiFlag = inApiFlag;
+    }
 }

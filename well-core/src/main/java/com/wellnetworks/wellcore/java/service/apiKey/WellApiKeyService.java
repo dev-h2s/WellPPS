@@ -64,6 +64,7 @@ public class WellApiKeyService {
             // API 키 저장
             apikeyInRepository.save(apikeyInEntity);
 
+            partnerEntity.setInApiFlag(true);
             partnerEntity.setApiKey(apikeyInEntity);
             partnerRepository.save(partnerEntity);
 

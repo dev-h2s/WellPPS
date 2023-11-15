@@ -16,6 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Validated
 public class WellApikeyInCreateDTO {
+    private String apiKeyInIdx;
     private String apiKeyIn;
     private LocalDate apiKeyInRegisterDate;
     private String partnerName; // 거래처의 거래처명
@@ -25,10 +26,12 @@ public class WellApikeyInCreateDTO {
     private List<String> serverUrl;
     private List<String> apiServerIp;
     private String memo;
+    private String partnerIdx;
 
     @Builder
-    public WellApikeyInCreateDTO(String apiKeyIn, LocalDate apiKeyInRegisterDate, boolean apiKeyInEndFlag, boolean partnerAgreeFlag, String issuer
-                                , List<String> serverUrl, List<String> apiServerIp, String memo) {
+    public WellApikeyInCreateDTO(String apiKeyInIdx, String apiKeyIn, LocalDate apiKeyInRegisterDate, boolean apiKeyInEndFlag, boolean partnerAgreeFlag, String issuer
+                                , List<String> serverUrl, List<String> apiServerIp, String memo, String partnerIdx) {
+        this.apiKeyInIdx = apiKeyInIdx;
         this.apiKeyIn = apiKeyIn;
         this.apiKeyInRegisterDate = apiKeyInRegisterDate;
         this.apiKeyInEndFlag = apiKeyInEndFlag;
@@ -37,5 +40,6 @@ public class WellApikeyInCreateDTO {
         this.serverUrl = serverUrl;
         this.apiServerIp = apiServerIp;
         this.memo = memo;
+        this.partnerIdx = partnerIdx;
     }
 }

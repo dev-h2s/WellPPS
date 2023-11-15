@@ -17,7 +17,6 @@ import java.util.UUID;
 @Validated
 public class WellApikeyInCreateDTO {
     private String apiKeyInIdx;
-    @NotBlank(message = "API KEY는 필수 입력 항목입니다.")
     private String apiKeyIn;
     private LocalDate apiKeyInRegisterDate;
     private String partnerName; // 거래처의 거래처명

@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -45,6 +46,30 @@ public class WellApiKeyService {
 
 
     //apikey 리스트 조회
+    public List<WellApiKeyInfoDTO> getAllApikeys() {
+        List<WellApikeyInEntity> apikeys = apikeyInRepository.findAll();
+        List<WellApiKeyInfoDTO> apiKeyInfoList = new ArrayList<>();
+
+        for (WellApikeyInEntity apiKeyEntity : apikeys) {
+            String partnerIdx = apiKeyEntity.getPartnerIdx();
+            String partnerName = null;
+
+            // partnerIdx가 null이 아닌 경우에만 거래처명 조회
+            if (partnerIdx != null) {
+                WellPartnerEntity partnerEntity = partnerRepository.findByPartnerIdx(partnerIdx);
+                if (partnerEntity != null) {
+                    partnerName = partnerEntity.getPartnerName();
+                }
+            }
+
+            WellApiKeyInfoDTO apiKeyInfo = new WellApiKeyInfoDTO(apiKeyEntity, partnerName);
+            apiKeyInfoList.add(apiKeyInfo);
+        }
+
+        return apiKeyInfoList;
+    }
+
+
     //apikey 상세 조회
     //apikey  검색
     //apikey 생성

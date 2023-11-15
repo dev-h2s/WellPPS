@@ -8,6 +8,7 @@ import com.wellnetworks.wellcore.java.domain.product.WellProductSearchEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
+import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyInRepository;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -46,9 +47,9 @@ public class WellPartnerEntity {
     @JoinColumn(name = "p_idx")
     private WellPartnerUserEntity partnerUser;
 
-    // API 키와의 다대일 관계 (하나의 거래처는 하나의 API 키를 가짐)
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(insertable=true, updatable=true)
+    // API 키와의 다대일 관계 (하나의 거래처는 API 키를 가짐)
+    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "apikey_in_idx")
     private WellApikeyInEntity apiKey;
 
     // 가상계좌 연결 1대1
@@ -264,5 +265,8 @@ public class WellPartnerEntity {
     }
     public void setPartnerGroup(WellPartnerGroupEntity partnerGroup) {
         this.partnerGroup = partnerGroup;
+    }
+    public void setInApiFlag(Boolean inApiFlag) {
+        this.inApiFlag = inApiFlag;
     }
 }

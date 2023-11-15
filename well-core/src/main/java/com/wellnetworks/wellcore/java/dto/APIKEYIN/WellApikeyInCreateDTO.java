@@ -16,6 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Validated
 public class WellApikeyInCreateDTO {
+    private String apiKeyInIdx;
     private String apiKeyIn;
     private LocalDate apiKeyInRegisterDate;
     private String partnerName; // 거래처의 거래처명
@@ -25,10 +26,20 @@ public class WellApikeyInCreateDTO {
     private List<String> serverUrl;
     private List<String> apiServerIp;
     private String memo;
+    private String partnerIdx;
+
+    private boolean home;
+    private boolean dream;
+    private boolean valueCom;
+    private boolean iz;
+    private boolean asia;
+    private boolean PDS;
 
     @Builder
-    public WellApikeyInCreateDTO(String apiKeyIn, LocalDate apiKeyInRegisterDate, boolean apiKeyInEndFlag, boolean partnerAgreeFlag, String issuer
-                                , List<String> serverUrl, List<String> apiServerIp, String memo) {
+    public WellApikeyInCreateDTO(String apiKeyInIdx, String apiKeyIn, LocalDate apiKeyInRegisterDate, boolean apiKeyInEndFlag, boolean partnerAgreeFlag, String issuer
+                                , List<String> serverUrl, List<String> apiServerIp, String memo, String partnerIdx
+                                , boolean home, boolean dream, boolean valueCom, boolean iz, boolean asia, boolean PDS) {
+        this.apiKeyInIdx = apiKeyInIdx;
         this.apiKeyIn = apiKeyIn;
         this.apiKeyInRegisterDate = apiKeyInRegisterDate;
         this.apiKeyInEndFlag = apiKeyInEndFlag;
@@ -37,5 +48,13 @@ public class WellApikeyInCreateDTO {
         this.serverUrl = serverUrl;
         this.apiServerIp = apiServerIp;
         this.memo = memo;
+        this.partnerIdx = partnerIdx;
+
+        this.home = home;
+        this.dream = dream;
+        this.valueCom = valueCom;
+        this.iz = iz;
+        this.asia = asia;
+        this.PDS = PDS;
     }
 }

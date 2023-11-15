@@ -5,11 +5,9 @@ import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -19,7 +17,7 @@ public class WellApikeyInEntity {
 
     @Id //APIKEY_idx
     @Column(name = "api_key_in_idx", columnDefinition = "uniqueidentifier")
-    private String apiKeyInIdx = UUID.randomUUID().toString();
+    private String apiKeyInIdx;
 
     // 거래처와의 일대다 관계 (하나의 API 키는 여러 개의 거래처를 가질 수 있음)
     @OneToMany(mappedBy = "apiKey")
@@ -51,9 +49,22 @@ public class WellApikeyInEntity {
     @Column(name = "memo", length = 2000) //메모
     private String memo;
 
+    @Column(name = "partner_idx")
+    private String partnerIdx;
+
+    private boolean home;
+    private boolean dream;
+    private boolean valueCom;
+    private boolean iz;
+    private boolean asia;
+    private boolean PDS;
+
     @Builder
-    public WellApikeyInEntity(String apiKeyIn, LocalDate apiKeyInRegisterDate, boolean apiKeyInEndFlag
-                              , boolean partnerAgreeFlag, String issuer, List<String> serverUrl, List<String> apiServerIp, String memo) {
+    public WellApikeyInEntity(String apiKeyInIdx, String apiKeyIn, LocalDate apiKeyInRegisterDate, boolean apiKeyInEndFlag
+                              , boolean partnerAgreeFlag, String issuer, List<String> serverUrl, List<String> apiServerIp, String memo
+                              , String partnerIdx
+            , boolean home, boolean dream, boolean valueCom, boolean iz, boolean asia, boolean PDS) {
+        this.apiKeyInIdx = apiKeyInIdx;
         this.apiKeyIn = apiKeyIn;
         this.apiKeyInRegisterDate = apiKeyInRegisterDate;
         this.apiKeyInEndFlag = apiKeyInEndFlag;
@@ -62,5 +73,17 @@ public class WellApikeyInEntity {
         this.serverUrl = serverUrl;
         this.apiServerIp = apiServerIp;
         this.memo = memo;
+        this.partnerIdx = partnerIdx;
+
+        this.home = home;
+        this.dream = dream;
+        this.valueCom = valueCom;
+        this.iz = iz;
+        this.asia = asia;
+        this.PDS = PDS;
+    }
+
+    public void setPartnerIdx(String partnerIdx) {
+        this.partnerIdx = partnerIdx;
     }
 }

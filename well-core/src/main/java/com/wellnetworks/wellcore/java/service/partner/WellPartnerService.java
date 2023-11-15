@@ -82,7 +82,13 @@ public class WellPartnerService {
 
                     WellPartnerGroupEntity partnerGroupEntity = wellPartnerGroupRepository.findByPartnerGroupId(groupId);
                     String PartnerGroupName = groupId != null ? entity.getPartnerGroup().getPartnerGroupName() : null;
-                    WellApikeyInEntity apikeyInEntity = wellApikeyInRepository.findByApiKeyInIdx(entity.getApiKey().getApiKeyInIdx());
+
+                    WellApikeyInEntity apikeyInEntity = entity.getApiKey();
+                    if (apikeyInEntity == null) {
+                        return null;
+                    }
+
+                    apikeyInEntity = wellApikeyInRepository.findByApiKeyInIdx(apikeyInEntity.getApiKeyInIdx());
 
                     WellPartnerDetailDTO dto = new WellPartnerDetailDTO(entity, fileStorages, dipositEntity, partnerUpperName, partnerGroupEntity, apikeyInEntity, subPartnerEntities, PartnerGroupName);
 

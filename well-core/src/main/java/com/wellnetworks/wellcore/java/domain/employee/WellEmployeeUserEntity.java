@@ -132,7 +132,7 @@ public class WellEmployeeUserEntity  {
         this.employeeUserRegisterDate = employeeUserRegisterDate;
         this.groupKey = groupKey;
         this.groupPermissionKey = groupPermissionKey;
-        this.permissionsKeysStringList = permissionsKeysStringList;
+//        this.permissionsKeysStringList = permissionsKeysStringList;
         this.isPasswordResetRequired = isPasswordResetRequired ;
         this.isFirstLogin = isFirstLogin;
     }
@@ -151,7 +151,7 @@ public class WellEmployeeUserEntity  {
     @ElementCollection //값 타입의 컬렉션임을 나타냅니다.
     @CollectionTable(name = "employee_permissions", joinColumns = @JoinColumn(name = "employee_idx")) //컬렉션 값을 저장할 테이블을 지정
     @Column(name = "permission")
-    private List<String> permissionsKeysStringList = Collections.emptyList();  // 예제 필드, 실제 필드와는 다를 수 있습니다.
+//    private List<String> permissionsKeysStringList = new ArrayList<>();  // 예제 필드, 실제 필드와는 다를 수 있습니다.
 
     public Collection<GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -162,9 +162,9 @@ public class WellEmployeeUserEntity  {
         }
 
         // 개별 권한 목록 추가
-        for (String permission : permissionsKeysStringList) {
-            authorities.add(new SimpleGrantedAuthority(permission));
-        }
+//        for (String permission : permissionsKeysStringList) {
+//            authorities.add(new SimpleGrantedAuthority(permission));
+//        }
 
         return authorities;
     }

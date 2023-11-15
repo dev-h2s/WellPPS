@@ -28,9 +28,10 @@ public class WellUserDetailService implements UserDetailsService {
 
     // WellUserDetailService 클래스의 생성자
     // @param employeeUserRepository 사용자 정보를 조회하는 레포지토리
-    public WellUserDetailService(WellEmployeeUserRepository employeeUserRepository, WellPartnerUserRepository partnerUserRepository) {
+    public WellUserDetailService(WellEmployeeUserRepository employeeUserRepository, WellPartnerUserRepository partnerUserRepository, PasswordEncoder passwordEncoder) {
         this.employeeUserRepository = employeeUserRepository;
         this.partnerUserRepository = partnerUserRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -71,7 +72,7 @@ public class WellUserDetailService implements UserDetailsService {
                 }).orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username)));
     }
 
-
+//패스워드 변경
     @Transactional  // 데이터베이스 변경 사항을 하나의 트랜잭션으로 처리
     public void changePassword(ChangePasswordRequest request) {
         // 새 비밀번호와 확인 비밀번호가 일치하는지 검증

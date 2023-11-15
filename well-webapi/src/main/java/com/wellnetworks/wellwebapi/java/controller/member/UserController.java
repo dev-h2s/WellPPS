@@ -79,15 +79,18 @@ public class UserController {
         }catch (UsernameNotFoundException e) {
             // 사용자를 찾을 수 없을 때의 예외 처리
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("없는 사용자입니다.", null));
-        } catch (BadCredentialsException e) {
+        }
+        catch (BadCredentialsException e) {
             System.out.println("username은" + loginReq.getUsername() + "password는" + loginReq.getPassword());
-//            System.out.println(userEntity.getIsPasswordResetRequired());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("올바르지 않은 사용자 이름 또는 비밀번호입니다.", null));
-        } catch (LockedException e) {
+        }
+        catch (LockedException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("계정이 잠겼습니다. 관리자에게 문의하세요.", null));
-        } catch (DisabledException e) {
+        }
+        catch (DisabledException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("계정이 비활성화되었습니다.", null));
-        } catch (AuthenticationException e) {
+        }
+        catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("인증 중 오류가 발생하였습니다.", null));
         }
     }

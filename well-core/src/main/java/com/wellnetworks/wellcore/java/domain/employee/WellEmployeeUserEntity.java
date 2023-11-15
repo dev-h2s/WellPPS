@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -131,13 +132,13 @@ public class WellEmployeeUserEntity  {
         this.employeeUserRegisterDate = employeeUserRegisterDate;
         this.groupKey = groupKey;
         this.groupPermissionKey = groupPermissionKey;
-        this.permissionsKeysStringList = permissionsKeysStringList;
+//        this.permissionsKeysStringList = permissionsKeysStringList;
         this.isPasswordResetRequired = isPasswordResetRequired ;
         this.isFirstLogin = isFirstLogin;
     }
 
     //로그인시 패스워드 상태 매서드
-    public void changePasswordAndInvalidateTempPassword(String newPassword, BCryptPasswordEncoder passwordEncoder) {
+    public void changePasswordAndInvalidateTempPassword(String newPassword, PasswordEncoder passwordEncoder) {
         this.employeeUserPwd = passwordEncoder.encode(newPassword);
         this.tmpPwd = null; // 임시 비밀번호 null로 설정
         this.isFirstLogin = false; // 첫 로그인 상태 업데이트
@@ -150,7 +151,7 @@ public class WellEmployeeUserEntity  {
     @ElementCollection //값 타입의 컬렉션임을 나타냅니다.
     @CollectionTable(name = "employee_permissions", joinColumns = @JoinColumn(name = "employee_idx")) //컬렉션 값을 저장할 테이블을 지정
     @Column(name = "permission")
-    private List<String> permissionsKeysStringList = Collections.emptyList();  // 예제 필드, 실제 필드와는 다를 수 있습니다.
+//    private List<String> permissionsKeysStringList = new ArrayList<>();  // 예제 필드, 실제 필드와는 다를 수 있습니다.
 
     public Collection<GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
@@ -161,9 +162,9 @@ public class WellEmployeeUserEntity  {
         }
 
         // 개별 권한 목록 추가
-        for (String permission : permissionsKeysStringList) {
-            authorities.add(new SimpleGrantedAuthority(permission));
-        }
+//        for (String permission : permissionsKeysStringList) {
+//            authorities.add(new SimpleGrantedAuthority(permission));
+//        }
 
         return authorities;
     }

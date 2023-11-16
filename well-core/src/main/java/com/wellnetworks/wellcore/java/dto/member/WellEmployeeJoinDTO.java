@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+
 public class WellEmployeeJoinDTO {
     private String employeeIdx; // user-idx
     private Long employeeId;

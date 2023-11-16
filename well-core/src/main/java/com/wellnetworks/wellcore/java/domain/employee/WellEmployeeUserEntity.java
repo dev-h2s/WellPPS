@@ -169,6 +169,9 @@ public class WellEmployeeUserEntity  {
         return authorities;
     }
 
+    public void setEmployeeGroup(WellEmployeeManagerGroupEntity employeeManagerGroupKey){
+        this.employeeManagerGroupKey = employeeManagerGroupKey;
+    }
 
 
 //    @Override

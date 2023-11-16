@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface WellEmployeeGroupRepository  extends CrudRepository<WellEmployeeManagerGroupEntity, String> {
     // 그룹 권한 키 찾기
-    Optional<WellEmployeeManagerGroupEntity> findByEmployeeManagerGroupKey(String employeeManagerGroupKey);
+    WellEmployeeManagerGroupEntity findByEmployeeManagerGroupKey(String employeeManagerGroupKey);
     Optional<WellEmployeeManagerGroupEntity> findByDepartment(String department);
 
     // 모든 정보 찾기

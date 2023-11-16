@@ -3,18 +3,22 @@ package com.wellnetworks.wellcore.java.dto.member;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeManagerGroupEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class WellEmployeeUpdateDTO {
     private String employeeIdx; // 변동 x
     private Long employeeId;
-    private String employeeName;
+    private String employeeName; //이름
     private String belong; // 소속 회사
-    private String department; //부서
+//    private String department; //부서
     private String position; // 직책
     private String employmentState; // 재직상태
     private String jobType; // 고용형태
@@ -23,8 +27,9 @@ public class WellEmployeeUpdateDTO {
     private String employmentQuitType; // 퇴사사유
     private Float remainingLeaveDays; // 잔여연차
     private String residentRegistrationNumber;//주민등록번호
+    private String telPrivate; // 개인전화번호
     private String telWork; // 업무 전화번호
-    private String eMail; // 이메일
+    private String email; // 이메일
     private String bankName; // 급여 입금계좌명
     private String bankAccount; // 급여 입금계좌번호
     private String bankHolder; // 예금주
@@ -32,48 +37,7 @@ public class WellEmployeeUpdateDTO {
     private String homeAddress2; // 자택 주소2
     private Boolean externalAccessCert; // 외부접속 여부
     private String memo; // 메모
-    private List<WellFileStorageEntity> files;
-    //권한정보 들어와야함
-
-//    private String telPrivate;
-//    private String registrationNumber;
-//    private boolean certificationEmail;
-//    private boolean dbAccessPower;
-
-//    private LocalDateTime employeeModifyDate;
-//    private LocalDateTime employeeRegisterDate;
-
-    //기본 생성자
-    public WellEmployeeUpdateDTO() {
-    }
-
-//    생성자
-
-public WellEmployeeUpdateDTO(WellEmployeeEntity entity, List<WellFileStorageEntity> files, WellEmployeeManagerGroupEntity group) {
-    this.employeeIdx = entity.getEmployeeIdx();
-    this.employeeId = entity.getEmployeeId();
-    this.employeeName = entity.getEmployeeName();
-    this.belong = entity.getBelong();
-    this.department = group.getDepartment();
-    this.position = entity.getPosition();
-    this.employmentState = entity.getEmploymentState();
-    this.jobType = entity.getJobType();
-    this.entryDatetime = entity.getEntryDatetime();
-    this.employmentQuitDatetime = entity.getEmploymentQuitDatetime();
-    this.employmentQuitType = entity.getEmploymentQuitType();
-    this.remainingLeaveDays = entity.getRemainingLeaveDays();
-    this.residentRegistrationNumber = entity.getResidentRegistrationNumber();
-    this.telWork = entity.getTelWork();
-    this.eMail = entity.getEmail();
-    this.bankName = entity.getBankName();
-    this.bankAccount = entity.getBankAccount();
-    this.bankHolder = entity.getBankHolder();
-    this.homeAddress1 = entity.getHomeAddress1();
-    this.homeAddress2 = entity.getHomeAddress2();
-    this.externalAccessCert = entity.getExternalAccessCert();
-    this.memo = entity.getMemo();
-    this.files = files;
-}
-
+    private List<MultipartFile> files; //첨부파일
+    private String employeeManagerGroupKey; //매니저 그룹키
 
 }

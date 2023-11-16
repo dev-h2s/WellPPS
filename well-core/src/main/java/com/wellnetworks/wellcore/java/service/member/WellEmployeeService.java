@@ -2,24 +2,27 @@ package com.wellnetworks.wellcore.java.service.member;
 import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 
+import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeManagerGroupEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
-import com.wellnetworks.wellcore.java.dto.member.ChangePasswordRequest;
-import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDTO;
-import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDetailDTO;
-import com.wellnetworks.wellcore.java.dto.member.WellEmployeeJoinDTO;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
+import com.wellnetworks.wellcore.java.dto.member.*;
 import com.wellnetworks.wellcore.java.repository.File.WellEmployeeFileRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeGroupRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
 
+import com.wellnetworks.wellcore.java.service.File.WellFileStorageService;
 import io.micrometer.common.KeyValues;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
 import org.springframework.data.jpa.domain.Specification;
@@ -50,7 +53,7 @@ public class WellEmployeeService {
     @Autowired private WellEmployeeUserRepository wellEmployeeUserRepository; // 사원에 관한
 
     @Autowired private WellEmployeeRepository wellEmployeeRepository;
-
+    @Autowired private WellFileStorageService fileStorageService;
     @Autowired private WellEmployeeGroupRepository wellEmployeeGroupRepository;
 
     @Autowired private WellEmployeeFileStorageService employeeFileService;
@@ -305,6 +308,36 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
         return employeeInfoDTOList;
     }
 
+
+    //거래처 수정
+    @Transactional(rollbackOn = Exception.class)
+    public void update(String employeeIdx, WellEmployeeUpdateDTO updateDTO) throws Exception {
+        try {
+            // DTO를 통해 엔티티 업데이트
+            WellEmployeeEntity employee = wellEmployeeRepository.findByEmployeeIdx(employeeIdx);
+            WellEmployeeUserEntity employeeUser = wellEmployeeUserRepository.findByEmployeeIdx(employeeIdx);
+            BeanUtils.copyProperties(updateDTO, employee);
+
+            // 거래처 그룹 및 API 키 설정
+            WellEmployeeManagerGroupEntity employeeGroup = wellEmployeeGroupRepository.findByEmployeeManagerGroupKey(updateDTO.getEmployeeManagerGroupKey());
+
+
+            if (employeeGroup == null) {
+                throw new RuntimeException("해당 사원 그룹을 찾을 수 없습니다.");
+            }
+
+            employeeUser.setEmployeeGroup(employeeGroup);
+
+            employeeFileService.updateFiles(updateDTO, employeeIdx);
+
+            // 엔티티의 업데이트 메서드 호출
+            employee.updateFromDTO(updateDTO);
+
+        } catch (Exception e) {
+            // 롤백을 위해 예외 발생
+            throw new RuntimeException("사원 수정 중 오류 발생", e);
+        }
+    }
 
 
 }

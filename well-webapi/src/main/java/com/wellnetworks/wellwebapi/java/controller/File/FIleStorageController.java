@@ -4,6 +4,7 @@ package com.wellnetworks.wellwebapi.java.controller.File;
 import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
 import com.wellnetworks.wellcore.java.service.File.WellFileStorageService;
+import com.wellnetworks.wellcore.java.service.member.WellEmployeeFileStorageService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ import java.nio.file.Paths;
 public class FIleStorageController {
     private final WellFileStorageRepository fileRepository;
     private final WellFileStorageService fileStorageService;
+    private final WellEmployeeFileStorageService employeeFileStorageService;
 
     //다운로드
     @GetMapping(value = {"/fileDownload/{fileId}"})
@@ -92,6 +94,14 @@ public class FIleStorageController {
 
         //게시판 파일삭제
         fileStorageService.deleteBoardFile(fileId);
+
+    }
+
+    @DeleteMapping("employee/boardFileDelete/{fileId}")
+    public void employeeBoardFileDelete(@PathVariable Long fileId){
+
+        //게시판 파일삭제
+        employeeFileStorageService.deleteBoardFile(fileId);
 
     }
 }

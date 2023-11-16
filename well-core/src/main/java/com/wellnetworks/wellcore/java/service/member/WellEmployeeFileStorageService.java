@@ -5,6 +5,7 @@ import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import com.wellnetworks.wellcore.java.dto.FIle.WellEmployeeFileCreateDTO;
 import com.wellnetworks.wellcore.java.dto.FIle.WellFIleCreateDTO;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeJoinDTO;
+import com.wellnetworks.wellcore.java.dto.member.WellEmployeeUpdateDTO;
 import com.wellnetworks.wellcore.java.repository.File.WellEmployeeFileRepository;
 import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
 import lombok.RequiredArgsConstructor;
@@ -108,5 +109,31 @@ public class WellEmployeeFileStorageService {
             }
         }
     }
+//파일 수정
+    @Transactional
+    public Map<String, Object> updateFiles(WellEmployeeUpdateDTO updateDTO, String employeeIdx) throws Exception {
+        Map<String, Object> result = new HashMap<>(); // 파일 저장 결과를 저장할 Map 객체 초기화
+        List<Long> fileIds = new ArrayList<>(); // 업로드된 파일의 고유 식별자(ID)를 저장할 리스트 초기화
+
+        List<MultipartFile> files = updateDTO.getFiles();  // WellEmployeeJoinDTO에서 업로드된 파일 목록 가져오기
+
+
+        // 각 파일 업로드 필드를 처리하는 processFiles 메서드 호출
+        // "첨부파일"은 파일 종류 또는 카테고리를 나타내며, employeeIdx는 사원을 식별하는 인덱스를 전달
+        processFiles(files, "첨부파일", employeeIdx, fileIds, result);
+
+        // 파일 저장 결과 Map 반환
+        return result;
+    }
+
+
+// 파일삭제
+@Transactional
+public void deleteBoardFile(Long fileId) {
+    // 원하는 파일id삭제
+    employeeFileRepository.deleteByFileId(fileId);
+    fileStorageRepository.deleteById(fileId);
 
 }
+}
+

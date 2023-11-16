@@ -1,6 +1,8 @@
 package com.wellnetworks.wellcore.java.domain.employee;
 //직원 테이블
 import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
+import com.wellnetworks.wellcore.java.dto.member.WellEmployeeUpdateDTO;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -150,9 +152,29 @@ public class WellEmployeeEntity {
         this.employeeModifyDate = employeeModifyDate;
         this.employeeRegisterDate = employeeRegisterDate;
     }
-
-
-
+    public void updateFromDTO(WellEmployeeUpdateDTO updateDTO) {
+        this.employeeName = updateDTO.getEmployeeName(); //이름
+        this.belong = updateDTO.getBelong(); // 소속 회사
+//        this.department; //부서
+        this.position = updateDTO.getPosition(); // 직책
+        this.employmentState = updateDTO.getEmploymentState(); // 재직상태
+        this.jobType = updateDTO.getJobType(); // 고용형태
+        this.entryDatetime = updateDTO.getEntryDatetime(); // 입사일자
+        this.employmentQuitDatetime = updateDTO.getEmploymentQuitDatetime(); // 퇴사일자
+        this.employmentQuitType = updateDTO.getEmploymentQuitType(); // 퇴사사유
+        this.remainingLeaveDays = updateDTO.getRemainingLeaveDays(); // 잔여연차
+        this.residentRegistrationNumber = updateDTO.getResidentRegistrationNumber();//주민등록번호
+        this.telPrivate = updateDTO.getTelPrivate(); // 개인전화번호
+        this.telWork = updateDTO.getTelWork(); // 업무 전화번호
+        this.email = updateDTO.getEmail(); // 이메일
+        this.bankName = updateDTO.getBankName(); // 급여 입금계좌명
+        this.bankAccount = updateDTO.getBankAccount(); // 급여 입금계좌번호
+        this.bankHolder = updateDTO.getBankHolder(); // 예금주
+        this.homeAddress1 = updateDTO.getHomeAddress1(); // 자택 주소1
+        this.homeAddress2 = updateDTO.getHomeAddress2(); // 자택 주소2
+        this.externalAccessCert = updateDTO.getExternalAccessCert(); // 외부접속 여부
+        this.memo = updateDTO.getMemo(); // 메모
+    }
 
     @Override
     public boolean equals(Object o) {

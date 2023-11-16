@@ -1,11 +1,10 @@
 package com.wellnetworks.wellwebapi.java.controller;
 
-import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDTO;
-import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDetailDTO;
-import com.wellnetworks.wellcore.java.dto.member.WellEmployeeJoinDTO;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
+import com.wellnetworks.wellcore.java.dto.member.*;
 import com.wellnetworks.wellcore.java.service.member.WellEmployeeService;
 import com.wellnetworks.wellsecure.java.request.ApiResponse;
-import com.wellnetworks.wellcore.java.dto.member.ChangePasswordRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -118,6 +117,15 @@ public class EmployeeController {
     }
 
 
-
+    //사원 수정
+    @PatchMapping("employee/update/{employeeIdx}")
+    public ResponseEntity<String> UpdateEmployee(@Valid WellEmployeeUpdateDTO updateDTO,
+                                               @PathVariable String employeeIdx) throws Exception {
+        wellEmployeeService.update(employeeIdx, updateDTO);
+        if (employeeIdx == null) {
+            throw new ClassNotFoundException(String.format("IDX[%s] not found", employeeIdx));
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body("사원 정보가 성공적으로 수정되었습니다.");
+    }
 
 }

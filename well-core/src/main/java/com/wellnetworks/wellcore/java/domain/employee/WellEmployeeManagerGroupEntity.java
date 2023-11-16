@@ -4,6 +4,7 @@ package com.wellnetworks.wellcore.java.domain.employee;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor
 @Table(name = "employee_manager_group_tb")
 public class WellEmployeeManagerGroupEntity{
 

@@ -19,7 +19,6 @@ public class WellApikeyInCreateDTO {
     private String apiKeyInIdx;
     private String apiKeyIn;
     private LocalDate apiKeyInRegisterDate;
-    private String partnerName; // 거래처의 거래처명
     private boolean apiKeyInEndFlag; // 기본값 false
     private boolean partnerAgreeFlag; // 기본값 false
     private String issuer;

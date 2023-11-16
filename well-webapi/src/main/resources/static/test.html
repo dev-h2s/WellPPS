@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Key Generator</title>
+</head>
+<body>
+
+<h1>API Key Generator</h1>
+<!-- form 태그에서 onsubmit 이벤트 추가 -->
+<form action="/apikey/generate" method="post" onsubmit="return onSubmitForm()">
+    <button type="button" id="generateButton">Generate API Key</button>
+
+    <div>
+        <h2>Generated API Key</h2>
+        <input id="apiKeyIn" name="apiKeyIn" readonly>
+    </div>
+
+    <input type="hidden" id="partnerIdx" name="partnerIdx" value="499BE963-5CC9-44CE-9F83-F3F0BB95CD97">
+    <input type="hidden" id="apiKeyInRegisterDate" name="apiKeyInRegisterDate" value="2023-11-10">
+    <input type="hidden" id="apiKeyInEndFlag" name="apiKeyInEndFlag" value="false">
+    <input type="hidden" id="partnerAgreeFlag" name="partnerAgreeFlag" value="true">
+    <input type="hidden" id="issuer" name="issuer" value="exampleIssuer">
+    <input type="hidden" id="serverUrl" name="serverUrl" value="http://example.com">
+    <input type="hidden" id="apiServerIp" name="apiServerIp" value="127.0.0.1">
+    <input type="hidden" id="memo" name="memo" value="Example memo">
+    <input type="hidden" id="home" name="home" value="true">
+    <input type="hidden" id="dream" name="dream" value="true">
+    <input type="hidden" id="valueCom" name="valueCom" value="false">
+    <input type="hidden" id="iz" name="iz" value="true">
+    <input type="hidden" id="asia" name="asia" value="false">
+    <input type="hidden" id="PDS" name="PDS" value="true">
+
+    <!-- 버튼이 아닌 input 타입 submit을 사용하도록 변경 -->
+    <input type="submit" value="저장">
+</form>
+
+<script>
+    document.getElementById('generateButton').addEventListener('click', function() {
+        // API Key를 랜덤으로 생성
+        const apiKeyIn = generateRandomApiKey();
+
+        // 생성된 API Key를 페이지에 표시
+        document.getElementById('apiKeyIn').value = apiKeyIn;
+    });
+
+    // form 제출 전에 호출되는 함수
+    function onSubmitForm() {
+        // 저장 버튼을 누를 때만 서버로 전송
+        if (document.activeElement.type === 'submit') {
+            // 서버로 API Key 전송
+            const apiKeyIn = document.getElementById('apiKeyIn').value;
+
+            // 디버깅 출력
+            console.log('API Key sent to the server:', apiKeyIn);
+
+            fetch('/apikey/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    apiKeyIn: apiKeyIn,
+                    // 다른 필요한 정보들도 추가할 수 있음
+                }),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('API Key 생성 및 저장 완료');
+                    } else {
+                        console.error('API Key 생성 중 오류 발생:', response.statusText);
+                    }
+                })
+                .catch(error => {
+                    console.error('API Key 생성 중 오류 발생:', error.message);
+                });
+        }
+
+        // 폼 제출 여부 반환
+        return true;
+    }
+
+
+    function generateRandomApiKey() {
+        // 랜덤한 UUID 생성 (간단한 형태)
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            const r = Math.random() * 16 | 0;
+            const v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+</script>
+
+</body>
+</html>

@@ -5,8 +5,10 @@ import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyDetailDTO;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyInfoDTO;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApikeyInCreateDTO;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerDetailDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyInRepository;
 import com.wellnetworks.wellcore.java.service.apiKey.WellApiKeyService;
@@ -45,6 +47,18 @@ public class ApiKeyController {
         List<WellApiKeyInfoDTO> apiKeyList = apiKeyService.getAllApikeys();
 
         return apiKeyList;
+    }
+
+
+
+    //상세 조회
+    @GetMapping("info/detail/{apiKeyInIdx}")
+    public Optional<WellApiKeyDetailDTO> getDetailApiKeyByApiKeyInIdx(@PathVariable String apiKeyInIdx) throws ClassNotFoundException {
+        Optional<WellApiKeyDetailDTO> apiKeyDetailDTO = apiKeyService.getDetailApiKeyByApiKeyInIdx(apiKeyInIdx);
+        if (apiKeyDetailDTO == null) {
+            throw new ClassNotFoundException(String.format("IDX[%s] not found", apiKeyInIdx));
+        }
+        return apiKeyDetailDTO;
     }
 
     //생성

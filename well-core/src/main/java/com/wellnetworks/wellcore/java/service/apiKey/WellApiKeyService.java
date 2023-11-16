@@ -1,18 +1,17 @@
 package com.wellnetworks.wellcore.java.service.apiKey;
 
-import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
-import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyDetailDTO;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyInfoDTO;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApikeyInCreateDTO;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyInRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +44,8 @@ public class WellApiKeyService {
     }
 
 
+
+
     //apikey 리스트 조회
     public List<WellApiKeyInfoDTO> getAllApikeys() {
         List<WellApikeyInEntity> apikeys = apikeyInRepository.findAll();
@@ -71,14 +72,30 @@ public class WellApiKeyService {
 
 
     //apikey 상세 조회
+    public Optional<WellApiKeyDetailDTO> getDetailApiKeyByApiKeyInIdx(String apiKeyInIdx) {
+        return Optional.ofNullable(apikeyInRepository.findByApiKeyInIdx(apiKeyInIdx))
+                .map(entity -> {
+                    String partnerIdx = entity.getPartnerIdx();
+                    String partnerName = null;
+
+                    // partnerIdx가 null이 아닌 경우에만 거래처명 조회
+                    if (partnerIdx != null) {
+                        WellPartnerEntity partnerEntity = partnerRepository.findByPartnerIdx(partnerIdx);
+                        if (partnerEntity != null) {
+                            partnerName = partnerEntity.getPartnerName();
+                        }
+                    }
+                    return new WellApiKeyDetailDTO(entity, partnerName);
+                });
+    }
+
     //apikey  검색
+
     //apikey 생성
     @Transactional(rollbackOn = Exception.class)
     public void join(WellApikeyInCreateDTO createDTO) throws Exception {
         try {
             String apiKeyInIdx = UUID.randomUUID().toString();
-            //apikeyin 랜덤값
-            String generatedApiKey = UUID.randomUUID().toString();
 
             WellPartnerEntity partnerEntity = partnerRepository.findByPartnerIdx(createDTO.getPartnerIdx());
 
@@ -92,7 +109,7 @@ public class WellApiKeyService {
             WellApikeyInEntity apikeyInEntity = WellApikeyInEntity.builder()
                     .apiKeyInIdx(apiKeyInIdx)
                     .partnerIdx(partnerEntity.getPartnerIdx())
-                    .apiKeyIn(generatedApiKey)
+                    .apiKeyIn(createDTO.getApiKeyIn())
                     .apiKeyInRegisterDate(createDTO.getApiKeyInRegisterDate())
                     .apiKeyInEndFlag(createDTO.isApiKeyInEndFlag())
                     .partnerAgreeFlag(createDTO.isPartnerAgreeFlag())
@@ -108,6 +125,8 @@ public class WellApiKeyService {
                     .PDS(createDTO.isPDS())
                     .build();
 
+
+            System.out.println(createDTO.getApiKeyIn());
             // API 키 저장
             apikeyInRepository.save(apikeyInEntity);
 

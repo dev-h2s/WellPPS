@@ -8,6 +8,7 @@ import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyDetailDTO;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyInfoDTO;
+import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApikeyExpireDTO;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApikeyInCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerDetailDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
@@ -82,4 +83,17 @@ public class ApiKeyController {
         }
     }
 
+
+    //만료 처리
+    @PatchMapping("/expire/{apiKeyInIdx}")
+    public ResponseEntity<String> expireApiKey(@Valid WellApikeyExpireDTO expireDTO
+                                                , @PathVariable String apiKeyInIdx) {
+        try {
+            apiKeyService.expireApikey(apiKeyInIdx, expireDTO);
+            return ResponseEntity.ok("API 키 만료 처리 완료");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("API 키 만료 중 오류 발생: " + e.getMessage());
+        }
+    }
 }

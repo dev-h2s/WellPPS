@@ -5,15 +5,15 @@ import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyIssueEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyDetailDTO;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyInfoDTO;
+import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApikeyExpireDTO;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApikeyInCreateDTO;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyInRepository;
 import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyIssueRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,6 @@ public class WellApiKeyService {
     private final WellApikeyInRepository apikeyInRepository;
     private final WellPartnerRepository partnerRepository;
     private final WellApikeyIssueRepository apikeyIssueRepository;
-
 
     //apikey 1개 조회
     public Optional<WellApiKeyInfoDTO> getApikeyByApikeyIdx(String apiKeyInIdx) {
@@ -139,7 +138,6 @@ public class WellApiKeyService {
                         .apiKeyIn(generatedApiKey)
                         .apiKeyInRegisterDate(createDTO.getApiKeyInRegisterDate())
                         .apiKeyInEndFlag(createDTO.isApiKeyInEndFlag())
-                        .partnerAgreeFlag(createDTO.isPartnerAgreeFlag())
                         .issuer(createDTO.getIssuer())
                         .serverUrl(createDTO.getServerUrl())
                         .apiServerIp(createDTO.getApiServerIp())
@@ -173,6 +171,43 @@ public class WellApiKeyService {
 
 
     //apikey 수정
-    //apikey 체크항목만료
+//apikey 체크항목만료
+    @Transactional(rollbackOn = Exception.class)
+    public void expireApikey(String apiKeyInIdx, WellApikeyExpireDTO expireDTO) {
+        try {
+            // 입력받은 API Key로 해당 API 키를 조회
+            WellApikeyInEntity apikeyInEntity = apikeyInRepository.findByApiKeyInIdx(expireDTO.getApiKeyInIdx());
+
+            // API 키가 존재하면 만료 처리
+            if (apikeyInEntity != null) {
+                apikeyInEntity.setApiKeyInEndFlag(true);
+                WellPartnerEntity partnerEntity = partnerRepository.findByPartnerIdx(apikeyInEntity.getPartnerIdx());
+
+                apikeyInEntity.setPartnerIdx(null);
+                apikeyInRepository.save(apikeyInEntity);
+
+                if (partnerEntity != null) {
+                    partnerEntity.removeApikeyInIdx();
+                    partnerRepository.save(partnerEntity);
+                    System.out.println("거래처 연결 해제 완료");
+                } else {
+                    System.out.println("해당 거래처를 찾을 수 없습니다.");
+                    // 예외 발생 또는 메시지 처리 등 필요한 작업 수행
+                }
+
+                System.out.println("API 키 만료 처리 완료");
+            } else {
+                System.out.println("해당 API 키를 찾을 수 없습니다.");
+                // 예외 발생 또는 메시지 처리 등 필요한 작업 수행
+            }
+        } catch (Exception e) {
+            System.out.println("API 키 만료 중 오류 발생: " + e.getMessage());
+            // 롤백을 위해 예외 발생
+            throw new RuntimeException("API 키 만료 중 오류 발생", e);
+        }
+    }
+
+
+
     //apikey 삭제
 }

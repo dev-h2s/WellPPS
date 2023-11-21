@@ -20,7 +20,6 @@ public class WellApikeyInCreateDTO {
     private String apiKeyIn;
     private LocalDate apiKeyInRegisterDate;
     private boolean apiKeyInEndFlag; // 기본값 false
-    private boolean partnerAgreeFlag; // 기본값 false
     private String issuer;
     private List<String> serverUrl;
     private List<String> apiServerIp;
@@ -35,14 +34,13 @@ public class WellApikeyInCreateDTO {
     private boolean PDS;
 
     @Builder
-    public WellApikeyInCreateDTO(String apiKeyInIdx, String apiKeyIn, LocalDate apiKeyInRegisterDate, boolean apiKeyInEndFlag, boolean partnerAgreeFlag, String issuer
+    public WellApikeyInCreateDTO(String apiKeyInIdx, String apiKeyIn, LocalDate apiKeyInRegisterDate, boolean apiKeyInEndFlag, String issuer
                                 , List<String> serverUrl, List<String> apiServerIp, String memo, String partnerIdx
                                 , boolean home, boolean dream, boolean valueCom, boolean iz, boolean asia, boolean PDS) {
         this.apiKeyInIdx = apiKeyInIdx;
         this.apiKeyIn = apiKeyIn;
         this.apiKeyInRegisterDate = apiKeyInRegisterDate;
         this.apiKeyInEndFlag = apiKeyInEndFlag;
-        this.partnerAgreeFlag = partnerAgreeFlag;
         this.issuer = issuer;
         this.serverUrl = serverUrl;
         this.apiServerIp = apiServerIp;

@@ -32,9 +32,6 @@ public class WellApikeyInEntity {
     @Column(name = "api_key_in_end_flag") //내부APIKEY만료여부
     private boolean apiKeyInEndFlag;
 
-    @Column(name = "p_agree_flag") //거래처제공여부
-    private boolean partnerAgreeFlag;
-
     @Column(name = "issuer") //발급자
     private String issuer;
 
@@ -61,14 +58,13 @@ public class WellApikeyInEntity {
 
     @Builder
     public WellApikeyInEntity(String apiKeyInIdx, String apiKeyIn, LocalDate apiKeyInRegisterDate, boolean apiKeyInEndFlag
-                              , boolean partnerAgreeFlag, String issuer, List<String> serverUrl, List<String> apiServerIp, String memo
+                              , String issuer, List<String> serverUrl, List<String> apiServerIp, String memo
                               , String partnerIdx
             , boolean home, boolean dream, boolean valueCom, boolean iz, boolean asia, boolean PDS) {
         this.apiKeyInIdx = apiKeyInIdx;
         this.apiKeyIn = apiKeyIn;
         this.apiKeyInRegisterDate = apiKeyInRegisterDate;
         this.apiKeyInEndFlag = apiKeyInEndFlag;
-        this.partnerAgreeFlag = partnerAgreeFlag;
         this.issuer = issuer;
         this.serverUrl = serverUrl;
         this.apiServerIp = apiServerIp;
@@ -85,5 +81,8 @@ public class WellApikeyInEntity {
 
     public void setPartnerIdx(String partnerIdx) {
         this.partnerIdx = partnerIdx;
+    }
+    public void setApiKeyInEndFlag(boolean apiKeyInEndFlag) {
+        this.apiKeyInEndFlag = apiKeyInEndFlag;
     }
 }

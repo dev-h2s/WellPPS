@@ -19,7 +19,6 @@ public class WellApiKeyDetailDTO {
     private String partnerName;
 
     private boolean apiKeyInEndFlag;
-    private boolean partnerAgreeFlag;
     private String issuer;
     private List<String> serverUrl;
     private List<String> apiServerIp;
@@ -48,7 +47,6 @@ public class WellApiKeyDetailDTO {
 
 
         this.apiKeyInEndFlag = apikey.isApiKeyInEndFlag();
-        this.partnerAgreeFlag = apikey.isPartnerAgreeFlag();
         this.serverUrl = apikey.getServerUrl();
         this.apiServerIp = apikey.getApiServerIp();
         this.issuer = apikey.getIssuer();

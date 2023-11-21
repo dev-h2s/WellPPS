@@ -24,7 +24,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
-@RequestMapping("/admin/hr/")
+//@RequestMapping("/init")
 @RestController
 @ComponentScan(basePackages={"com.wellnetworks.wellcore","com.wellnetworks.wellsecure"})
 public class UserController {
@@ -43,7 +43,7 @@ public class UserController {
     }
 
     //로그인
-    @PostMapping(value = "user/login")
+    @PostMapping(value = "/init/login")
     public ResponseEntity<ApiResponse> login(@RequestBody UserLoginReq loginReq) {
 
         WellEmployeeUserEntity userEntity = null;
@@ -82,6 +82,7 @@ public class UserController {
         }
         catch (BadCredentialsException e) {
             System.out.println("username은" + loginReq.getUsername() + "password는" + loginReq.getPassword());
+//            System.out.println(userEntity.getIsPasswordResetRequired());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("올바르지 않은 사용자 이름 또는 비밀번호입니다.", null));
         }
         catch (LockedException e) {
@@ -95,7 +96,7 @@ public class UserController {
         }
     }
     // 패스워드 변경
-    @PostMapping(value = "user/updatePwd")
+    @PostMapping(value = "/updatePwd")
     public ResponseEntity<ApiResponse> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
         // 비밀번호 변경 시도
         try {

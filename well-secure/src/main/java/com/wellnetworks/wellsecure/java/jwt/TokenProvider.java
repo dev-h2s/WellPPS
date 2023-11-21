@@ -115,7 +115,7 @@ public class TokenProvider {
             return new UsernamePasswordAuthenticationToken(principal, token, userDetail.getAuthorities());
         } catch (Exception e) {
             log.error("Authentication error: {}", e.getMessage(), e);
-            // 스프링 시큐리티의 인증 실패 예외를 던집니다.
+            // 스프링 시큐리티의 인증 실패 예외를 던짐
             throw new BadCredentialsException("Invalid token", e);
         }
     }

@@ -3,6 +3,7 @@ package com.wellnetworks.wellwebapi.java.controller.apiKey;
 import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
+import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyIssueEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyDetailDTO;
@@ -19,9 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping(("/apikey/"))
@@ -29,7 +28,6 @@ import java.util.Optional;
 public class ApiKeyController {
 
     @Autowired private WellApiKeyService apiKeyService;
-    @Autowired private WellApikeyInRepository apikeyInRepository;
 
     //1개 조회
     @GetMapping("info/{apiKeyInIdx}")
@@ -61,14 +59,27 @@ public class ApiKeyController {
         return apiKeyDetailDTO;
     }
 
-    //생성
-    @PostMapping("generate")
-    public ResponseEntity<String> generateApiKey(@Valid WellApikeyInCreateDTO createDTO) {
+    //발급
+    @PostMapping("issue")
+    public ResponseEntity<String> apiKeyIssue(@Valid WellApikeyIssueEntity issueEntity) {
         try {
-            apiKeyService.join(createDTO);
-            return ResponseEntity.ok("API 키 생성 완료");
+            String generatedApiKey = apiKeyService.issue(issueEntity);
+            return ResponseEntity.ok(generatedApiKey);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("API 키 생성 중 오류 발생: " + e.getMessage());
         }
     }
+
+
+    // 생성
+    @PostMapping("generate")
+    public ResponseEntity<String> generateApiKey(@Valid WellApikeyInCreateDTO createDTO) {
+        try {
+            apiKeyService.join(createDTO);
+            return ResponseEntity.ok("API 키 생성 및 저장 완료");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("API 키 생성 및 저장 중 오류 발생: " + e.getMessage());
+        }
+    }
+
 }

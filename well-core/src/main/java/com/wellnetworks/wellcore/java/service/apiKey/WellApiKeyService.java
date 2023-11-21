@@ -1,12 +1,14 @@
 package com.wellnetworks.wellcore.java.service.apiKey;
 
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
+import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyIssueEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyDetailDTO;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyInfoDTO;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApikeyInCreateDTO;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyInRepository;
+import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyIssueRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ import java.util.UUID;
 public class WellApiKeyService {
     private final WellApikeyInRepository apikeyInRepository;
     private final WellPartnerRepository partnerRepository;
+    private final WellApikeyIssueRepository apikeyIssueRepository;
 
 
     //apikey 1개 조회
@@ -91,6 +94,23 @@ public class WellApiKeyService {
 
     //apikey  검색
 
+
+    //apikey 발급
+    private String lastGeneratedApiKey;
+    @Transactional(rollbackOn = Exception.class)
+    public String issue(WellApikeyIssueEntity issueEntity) throws Exception {
+        if (lastGeneratedApiKey != null) {
+            issueEntity.setApiKeyIn(lastGeneratedApiKey);
+        } else {
+            // 새로운 API 키 생성
+            String apiKeyIn = UUID.randomUUID().toString();
+            issueEntity.setApiKeyIn(apiKeyIn);
+            lastGeneratedApiKey = apiKeyIn;
+            apikeyIssueRepository.save(issueEntity);
+        }
+        return issueEntity.getApiKeyIn();
+    }
+
     //apikey 생성
     @Transactional(rollbackOn = Exception.class)
     public void join(WellApikeyInCreateDTO createDTO) throws Exception {
@@ -106,35 +126,44 @@ public class WellApiKeyService {
             }
 
             // API 키 생성
-            WellApikeyInEntity apikeyInEntity = WellApikeyInEntity.builder()
-                    .apiKeyInIdx(apiKeyInIdx)
-                    .partnerIdx(partnerEntity.getPartnerIdx())
-                    .apiKeyIn(createDTO.getApiKeyIn())
-                    .apiKeyInRegisterDate(createDTO.getApiKeyInRegisterDate())
-                    .apiKeyInEndFlag(createDTO.isApiKeyInEndFlag())
-                    .partnerAgreeFlag(createDTO.isPartnerAgreeFlag())
-                    .issuer(createDTO.getIssuer())
-                    .serverUrl(createDTO.getServerUrl())
-                    .apiServerIp(createDTO.getApiServerIp())
-                    .memo(createDTO.getMemo())
-                    .home(createDTO.isHome())
-                    .dream(createDTO.isDream())
-                    .valueCom(createDTO.isValueCom())
-                    .iz(createDTO.isIz())
-                    .asia(createDTO.isAsia())
-                    .PDS(createDTO.isPDS())
-                    .build();
+            String generatedApiKey = issue(new WellApikeyIssueEntity());
 
-
+            System.out.println(generatedApiKey);
             System.out.println(createDTO.getApiKeyIn());
-            // API 키 저장
-            apikeyInRepository.save(apikeyInEntity);
 
-            partnerEntity.setInApiFlag(true);
-            partnerEntity.setApiKey(apikeyInEntity);
-            partnerRepository.save(partnerEntity);
+            // 발급 시 저장된 API 키와 생성 시 입력된 API 키가 같은지 확인
+            if (generatedApiKey.equals(createDTO.getApiKeyIn())) {
+                WellApikeyInEntity apikeyInEntity = WellApikeyInEntity.builder()
+                        .apiKeyInIdx(apiKeyInIdx)
+                        .partnerIdx(partnerEntity.getPartnerIdx())
+                        .apiKeyIn(generatedApiKey)
+                        .apiKeyInRegisterDate(createDTO.getApiKeyInRegisterDate())
+                        .apiKeyInEndFlag(createDTO.isApiKeyInEndFlag())
+                        .partnerAgreeFlag(createDTO.isPartnerAgreeFlag())
+                        .issuer(createDTO.getIssuer())
+                        .serverUrl(createDTO.getServerUrl())
+                        .apiServerIp(createDTO.getApiServerIp())
+                        .memo(createDTO.getMemo())
+                        .home(createDTO.isHome())
+                        .dream(createDTO.isDream())
+                        .valueCom(createDTO.isValueCom())
+                        .iz(createDTO.isIz())
+                        .asia(createDTO.isAsia())
+                        .PDS(createDTO.isPDS())
+                        .build();
 
-            System.out.println("API 키 생성 및 저장 완료");
+                apikeyInRepository.save(apikeyInEntity);
+
+                partnerEntity.setInApiFlag(true);
+                partnerEntity.setApiKey(apikeyInEntity);
+                partnerRepository.save(partnerEntity);
+
+                System.out.println("API 키 생성 및 저장 완료");
+            } else {
+                System.out.println("생성된 API 키와 입력된 API 키가 일치하지 않습니다.");
+                // 일치하지 않을 경우 예외 발생
+                throw new RuntimeException("생성된 API 키와 입력된 API 키가 일치하지 않습니다.");
+            }
         } catch (Exception e) {
             // 롤백을 위해 예외 발생
             throw new RuntimeException("API 키 생성 및 저장 중 오류 발생", e);

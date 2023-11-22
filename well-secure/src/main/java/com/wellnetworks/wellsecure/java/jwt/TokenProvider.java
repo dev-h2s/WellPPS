@@ -70,6 +70,7 @@ public class TokenProvider {
         return Jwts.builder()
                 .setSubject(authentication.getName()) // 사용자 이름 설정
                 .claim("auth", authClaims) // 권한 정보 설정
+                .setIssuedAt(new Date()) // 토큰 발급 시간 설정
                 .setExpiration(tokenValidity) // 토큰 만료 시간 설정
                 .signWith(key, SignatureAlgorithm.HS512) // 암호화 알고리즘 및 키로 서명
                 .compact();

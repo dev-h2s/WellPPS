@@ -87,6 +87,13 @@ public class WellPartnerUserEntity {
 
     @Column
     private Boolean isFirstLogin ; // 첫로그인 여부
+    @Column(name = "refresh_token") // 리프레쉬 토큰
+    private String refreshToken;
+
+    // 리프레쉬 토큰 업데이트용
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 
     @Builder
     public WellPartnerUserEntity(String partnerIdx, WellPartnerEntity partner, WellPartnerPermissionGroupEntity partnerManagerGroupKey, String partnerIdentification, String partnerUserPwd, String permissions, String tmpPwd, LocalDateTime tmpPwdExpiration, Integer tmpPwdCount, LocalDateTime tmpPwdDate, LocalDateTime partnerUserModifyDate, LocalDateTime partnerUserRegisterDate

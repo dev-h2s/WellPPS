@@ -24,6 +24,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 //@RequestMapping("/init")
 @RestController
 @ComponentScan(basePackages={"com.wellnetworks.wellcore","com.wellnetworks.wellsecure"})
@@ -73,6 +77,13 @@ public class UserController {
             ApiResponse response = isFirstLogin
                     ? new ApiResponse("첫 로그인시. 패스워드를 변경해주세요.", new TokenResponse(accessToken, refreshToken))
                     : new ApiResponse("로그인 성공", new TokenResponse(accessToken, refreshToken));
+
+            ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+
+            executorService.scheduleAtFixedRate(() -> {
+                String newAccessToken = tokenProvider.createToken(authentication); // 새로운 토큰 생성 로직
+                System.out.println("New access token: " + newAccessToken);
+            }, 0, 10, TimeUnit.SECONDS);
 
             // JWT 토큰을 클라이언트에게 응답으로 반환
             return ResponseEntity.ok(response);

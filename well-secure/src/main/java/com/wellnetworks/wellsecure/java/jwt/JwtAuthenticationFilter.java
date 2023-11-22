@@ -3,20 +3,24 @@ package com.wellnetworks.wellsecure.java.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wellnetworks.wellsecure.java.config.SecurityProperties;
+import com.wellnetworks.wellsecure.java.request.TokenResponse;
 import com.wellnetworks.wellsecure.java.request.UserLoginReq;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import org.springframework.security.core.AuthenticationException;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * JWT를 활용한 사용자 인증 필터.
@@ -74,12 +78,65 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public void successfulAuthentication(HttpServletRequest req, HttpServletResponse res,
                                          FilterChain chain, Authentication authentication)
             throws IOException, ServletException {
-        // 인증된 사용자의 정보를 기반으로 JWT 토큰을 생성한다.
-        String token = tokenProvider.createToken(authentication);
-        // 응답 헤더에 토큰을 추가한다.
-        res.addHeader(securityProperties.getHeaderString(), securityProperties.getTokenPrefix() + token);
+//        // 인증된 사용자의 정보를 기반으로 JWT 토큰을 생성한다.
+//        String token = tokenProvider.createToken(authentication);
+//        // 응답 헤더에 토큰을 추가한다.
+//        res.addHeader(securityProperties.getHeaderString(), securityProperties.getTokenPrefix() + token);
+// 여기서 JWT 토큰을 생성합니다.
+        String accessToken = tokenProvider.createToken(authentication);
+        String refreshToken = tokenProvider.createRefreshToken(authentication);
+
+        // 최종 응답 객체를 생성
+        Map<String, Object> responseMap = new LinkedHashMap<>(); // 순서 보장
+        responseMap.put("message", "로그인 성공");
+
+        Map<String, String> tokenMap = new LinkedHashMap<>();
+        tokenMap.put("accessToken", accessToken);
+        tokenMap.put("refreshToken", refreshToken);
+
+        responseMap.put("data", tokenMap);
+
+        // JSON으로 변환하여 응답
+        res.setContentType("application/json");
+        res.setCharacterEncoding("UTF-8");
+        res.getWriter().write(new ObjectMapper().writeValueAsString(responseMap));
+
     }
 
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        // 인증 실패 시 응답에 포함될 데이터를 담을 맵을 생성
+        Map<String, Object> responseData = new HashMap<>();
+        // 현재 시간을 ISO 8601 형식으로 설정합니다.
+        responseData.put("timestamp", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()));
+        // HTTP 응답 상태 코드로 '401 Unauthorized'를 설정
+        responseData.put("status", HttpServletResponse.SC_UNAUTHORIZED);
+        // 오류 메시지로 'Unauthorized'를 설정
+        responseData.put("error", "Unauthorized");
+        // 요청된 URI를 응답에 포함
+        responseData.put("path", request.getRequestURI());
+
+        // 인증 실패의 구체적 원인에 따라 오류 메시지를 설정
+        String errorMessage;
+        if (failed instanceof UsernameNotFoundException) {
+            errorMessage = "존재하지 않는 사용자 이름입니다."; // 사용자를 찾을 수 없을 때의 오류 메시지
+        } else if (failed instanceof BadCredentialsException) {
+            errorMessage = "비밀번호가 정확하지 않습니다."; // 비밀번호가 틀렸을 때의 오류 메시지
+        } else {
+            errorMessage = "인증에 실패했습니다."; // 그 외 다른 인증 오류에 대한 일반적인 메시지
+        }
+        responseData.put("message", errorMessage);
+
+        // HTTP 응답 상태 코드를 '401 Unauthorized'로 설정
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+        // 응답의 Content-Type을 'application/json'으로 설정하고, 문자 인코딩은 'UTF-8'로 설정
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        // JSON 형태로 변환하여 응답 데이터를 작성하고 클라이언트에게 보낸다
+        new ObjectMapper().writeValue(response.getWriter(), responseData);
+    }
 
 
 }

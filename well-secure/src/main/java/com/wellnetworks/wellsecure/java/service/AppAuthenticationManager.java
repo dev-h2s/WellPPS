@@ -11,8 +11,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.security.core.AuthenticationException;
 
 /**
- *  클래스는 사용자의 인증을 처리하는 클래스
- * 주로 사용자가 제공한 사용자명과 비밀번호를 검증하고 해당 사용자에게 필요한 권한 정보를 반환
+ * AppAuthenticationManager 클래스는 스프링 시큐리티에서 정의된 AuthenticationManager 인터페이스의 구현체이다.
+ * 사용자 인증을 담당하며, 사용자가 제공한 사용자명(username)과 비밀번호(password)를 검증한다.
+ * 사용자명과 비밀번호가 유효한 경우, 해당 사용자의 권한과 상세 정보를 포함하는 Authentication 객체를 반환한다.
  */
 @Component  // 스프링의 빈으로 등록하기 위한 어노테이션
 public class AppAuthenticationManager implements AuthenticationManager {
@@ -27,14 +28,14 @@ public class AppAuthenticationManager implements AuthenticationManager {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
-        String username = authentication.getName();
-        // 사용자가 입력한 비밀번호
-        String password = authentication.getCredentials().toString();
+        String username = authentication.getName(); // 인증 요청에서 제공된 사용자명
+
+        String password = authentication.getCredentials().toString(); // 사용자가 입력한 비밀번호
 
         UserDetails userDetails = wellUserDetailService.loadUserByUsername(username);
-
+        // 제공된 비밀번호와 저장된 비밀번호를 비교한다.
         if (!bCryptPasswordEncoder.matches(password, userDetails.getPassword())) {
-            throw new BadCredentialsException("Bad credentials");
+            throw new BadCredentialsException("비밀번호가 일치하지 않습니다");
         }
 
 

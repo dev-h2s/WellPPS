@@ -2,6 +2,8 @@ package com.wellnetworks.wellcore.java.domain.apikeyIn;
 // 내부 apikey
 
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyUpdateDTO;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -77,6 +79,24 @@ public class WellApikeyInEntity {
         this.iz = iz;
         this.asia = asia;
         this.PDS = PDS;
+    }
+
+    public void updateFormDTO(WellApiKeyUpdateDTO updateDTO) {
+        this.apiKeyIn = updateDTO.getApiKeyIn();
+        this.apiKeyInRegisterDate = updateDTO.getApiKeyInRegisterDate();
+        this.apiKeyInEndFlag = updateDTO.isApiKeyInEndFlag();
+        this.issuer = updateDTO.getIssuer();
+        this.serverUrl = updateDTO.getServerUrl();
+        this.apiServerIp = updateDTO.getApiServerIp();
+        this.memo = updateDTO.getMemo();
+        this.partnerIdx = updateDTO.getPartnerIdx();
+
+        this.home = updateDTO.isHome();
+        this.dream = updateDTO.isDream();
+        this.valueCom = updateDTO.isValueCom();
+        this.iz = updateDTO.isIz();
+        this.asia = updateDTO.isAsia();
+        this.PDS = updateDTO.isPDS();
     }
 
     public void setPartnerIdx(String partnerIdx) {

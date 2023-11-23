@@ -3,16 +3,14 @@ package com.wellnetworks.wellcore.java.service.apiKey;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyIssueEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
-import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyDetailDTO;
-import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyInfoDTO;
-import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApikeyExpireDTO;
-import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApikeyInCreateDTO;
+import com.wellnetworks.wellcore.java.dto.APIKEYIN.*;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyInRepository;
 import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyIssueRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -174,6 +172,27 @@ public class WellApiKeyService {
 
 
     //apikey 수정
+    @Transactional(rollbackOn = Exception.class)
+    public void update(String apiKeyInIdx, WellApiKeyUpdateDTO updateDTO) throws Exception {
+        try {
+            WellApikeyInEntity apikey = apikeyInRepository.findByApiKeyInIdx(apiKeyInIdx);
+            BeanUtils.copyProperties(updateDTO, apikey);
+
+
+            apikey.updateFormDTO(updateDTO);
+
+            // expire 값에 따라 처리(만료 버튼 여부)
+            if (updateDTO.isExpire()) {
+                WellApikeyExpireDTO expireDTO = new WellApikeyExpireDTO();
+                expireDTO.setApiKeyInIdx(apiKeyInIdx);
+                expireApikey(expireDTO);
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("api 수정 중 오류 발생", e);
+        }
+    }
+
 //apikey 체크항목만료
     @Transactional(rollbackOn = Exception.class)
     public void expireApikey(WellApikeyExpireDTO expireDTO) {

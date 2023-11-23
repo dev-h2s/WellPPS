@@ -6,10 +6,7 @@ import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyIssueEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
-import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyDetailDTO;
-import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyInfoDTO;
-import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApikeyExpireDTO;
-import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApikeyInCreateDTO;
+import com.wellnetworks.wellcore.java.dto.APIKEYIN.*;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerDetailDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyInRepository;
@@ -83,9 +80,20 @@ public class ApiKeyController {
         }
     }
 
+    //수정
+    @PatchMapping("update/{apiKeyInIdx}")
+    public ResponseEntity<String> patchApiKey(@Valid WellApiKeyUpdateDTO updateDTO,
+                                              @PathVariable String apiKeyInIdx) throws Exception {
+        apiKeyService.update(apiKeyInIdx, updateDTO);
+        if (apiKeyInIdx == null) {
+            throw new ClassNotFoundException(String.format("IDX[%s] not found", apiKeyInIdx));
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body("ApiKey가 성공적으로 수정되었습니다.");
+    }
+
 
     //만료 처리
-    @PatchMapping("/expire/{apiKeyInIdx}")
+    @PatchMapping("expire/{apiKeyInIdx}")
     public ResponseEntity<String> expireApiKey(@Valid WellApikeyExpireDTO expireDTO) {
         try {
             apiKeyService.expireApikey(expireDTO);
@@ -97,7 +105,7 @@ public class ApiKeyController {
     }
 
     //삭제
-    @DeleteMapping("/delete/{apiKeyInIdx}")
+    @DeleteMapping("delete/{apiKeyInIdx}")
     public ResponseEntity<String> deleteApiKey(@Valid @PathVariable String apiKeyInIdx) throws Exception {
         try {
         apiKeyService.deleteApiKey(apiKeyInIdx);

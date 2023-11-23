@@ -78,10 +78,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public void successfulAuthentication(HttpServletRequest req, HttpServletResponse res,
                                          FilterChain chain, Authentication authentication)
             throws IOException, ServletException {
+
 //        // 인증된 사용자의 정보를 기반으로 JWT 토큰을 생성한다.
-//        String token = tokenProvider.createToken(authentication);
+        String token = tokenProvider.createToken(authentication);
 //        // 응답 헤더에 토큰을 추가한다.
-//        res.addHeader(securityProperties.getHeaderString(), securityProperties.getTokenPrefix() + token);
+        res.addHeader(securityProperties.getHeaderString(), securityProperties.getTokenPrefix() + token);
 // 여기서 JWT 토큰을 생성합니다.
         String accessToken = tokenProvider.createToken(authentication);
         String refreshToken = tokenProvider.createRefreshToken(authentication);
@@ -119,9 +120,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 인증 실패의 구체적 원인에 따라 오류 메시지를 설정
         String errorMessage;
         if (failed instanceof UsernameNotFoundException) {
-            errorMessage = "존재하지 않는 사용자 이름입니다."; // 사용자를 찾을 수 없을 때의 오류 메시지
+            errorMessage = "존재하지 않는 아이디 입니다."; // 사용자를 찾을 수 없을 때의 오류 메시지
         } else if (failed instanceof BadCredentialsException) {
-            errorMessage = "비밀번호가 정확하지 않습니다."; // 비밀번호가 틀렸을 때의 오류 메시지
+            errorMessage = "비밀번호가 일치하지 않습니다."; // 비밀번호가 틀렸을 때의 오류 메시지
         } else {
             errorMessage = "인증에 실패했습니다."; // 그 외 다른 인증 오류에 대한 일반적인 메시지
         }

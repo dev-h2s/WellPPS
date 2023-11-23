@@ -85,9 +85,8 @@ public class WellEmployeeUserEntity  {
     @Column
     private Boolean isFirstLogin ; // 첫로그인 여부
 
-    @OneToMany(mappedBy = "employeeUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<EmployeeRefreshToken> refreshTokens = new ArrayList<>(); // 리프레쉬 토큰
-
+    @OneToOne(mappedBy = "employeeUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private EmployeeRefreshToken refreshToken; // 토큰 연결
     public WellEmployeeEntity getEmployeeEntity() {
         return this.employee;
     }
@@ -113,7 +112,7 @@ public class WellEmployeeUserEntity  {
                                   String phoneVerificationCode, Integer phoneVerificationAttempts, LocalDateTime phoneVerificationExpiration,
                                   LocalDateTime phoneVerificationSentTime, LocalDateTime employeeUserModifyDate, LocalDateTime employeeUserRegisterDate,
                                   String groupKey, String groupPermissionKey, Boolean isPasswordResetRequired,
-                                  Boolean isFirstLogin, List<String> permissionsKeysStringList) {
+                                  Boolean isFirstLogin,List<EmployeeRefreshToken> refreshTokens ,List<String> permissionsKeysStringList) {
         this.employeeIdx = employeeIdx;
         this.employee = employee;
         this.employeeManagerGroupKey = employeeManagerGroupKey;

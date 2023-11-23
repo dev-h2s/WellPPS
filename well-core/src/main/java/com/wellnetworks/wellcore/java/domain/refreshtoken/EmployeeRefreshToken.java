@@ -19,7 +19,7 @@ public class EmployeeRefreshToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_idx")
     private WellEmployeeUserEntity employeeUser;
 

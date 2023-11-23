@@ -88,9 +88,9 @@ public class WellPartnerUserEntity {
 
     @Column
     private Boolean isFirstLogin ; // 첫로그인 여부
-    
-    @OneToMany(mappedBy = "partnerUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<PartnerRefreshToken> refreshTokens = new ArrayList<>();  //리프레쉬 토큰
+
+    @OneToOne(mappedBy = "partnerUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private PartnerRefreshToken refreshTokens;// 토큰 연결
 
     @Builder
     public WellPartnerUserEntity(String partnerIdx, WellPartnerEntity partner, WellPartnerPermissionGroupEntity partnerManagerGroupKey, String partnerIdentification, String partnerUserPwd, String permissions, String tmpPwd, LocalDateTime tmpPwdExpiration, Integer tmpPwdCount, LocalDateTime tmpPwdDate, LocalDateTime partnerUserModifyDate, LocalDateTime partnerUserRegisterDate
@@ -120,6 +120,8 @@ public class WellPartnerUserEntity {
         this.isPasswordResetRequired = isPasswordResetRequired ;
         this.isFirstLogin = isFirstLogin;
     }
+
+
 
     public void markFirstLoginComplete() {
         this.isFirstLogin = false;

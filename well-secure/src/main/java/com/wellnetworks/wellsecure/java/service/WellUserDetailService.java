@@ -74,34 +74,7 @@ public class WellUserDetailService implements UserDetailsService {
                 }).orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username)));
     }
 
-//    @Transactional
-//    public String createAndStoreRefreshToken(Authentication authentication) {
-//        // 인증 정보로부터 사용자 이름을 가져옵니다.
-//        String username = authentication.getName();
-//
-//        // 리프레시 토큰 생성
-//        String refreshToken = tokenProvider.createRefreshToken(
-//                new UsernamePasswordAuthenticationToken(username, null, authentication.getAuthorities())
-//        );
-//
-//        // 사용자가 사원인지 파트너인지 확인하고 DB에 저장
-//        UserDetails userDetails = loadUserByUsername(username);
-//        if (userDetails instanceof EmployeeUserDetails) {
-//            WellEmployeeUserEntity employee = employeeUserRepository.findByEmployeeIdentification(username)
-//                    .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
-//            employee.updateRefreshToken(refreshToken);
-//            employeeUserRepository.save(employee);
-//        } else if (userDetails instanceof PartnerUserDetails) {
-//            WellPartnerUserEntity partner = partnerUserRepository.findByPartnerIdentification(username)
-//                    .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
-//            partner.updateRefreshToken(refreshToken);
-//            partnerUserRepository.save(partner);
-//        } else {
-//            throw new UsernameNotFoundException("사용자 이름에 해당하는 사용자를 찾을 수 없습니다.: " + username);
-//        }
-//
-//        return refreshToken;
-//    }
+
 
 //패스워드 변경
     @Transactional  // 데이터베이스 변경 사항을 하나의 트랜잭션으로 처리

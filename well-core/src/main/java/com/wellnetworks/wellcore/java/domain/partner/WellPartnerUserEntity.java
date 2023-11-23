@@ -1,5 +1,6 @@
 package com.wellnetworks.wellcore.java.domain.partner;
 // 거래처 유저
+import com.wellnetworks.wellcore.java.domain.refreshtoken.PartnerRefreshToken;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -87,13 +88,9 @@ public class WellPartnerUserEntity {
 
     @Column
     private Boolean isFirstLogin ; // 첫로그인 여부
-    @Column(name = "refresh_token") // 리프레쉬 토큰
-    private String refreshToken;
-
-    // 리프레쉬 토큰 업데이트용
-    public void updateRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
+    
+    @OneToMany(mappedBy = "partnerUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PartnerRefreshToken> refreshTokens = new ArrayList<>();  //리프레쉬 토큰
 
     @Builder
     public WellPartnerUserEntity(String partnerIdx, WellPartnerEntity partner, WellPartnerPermissionGroupEntity partnerManagerGroupKey, String partnerIdentification, String partnerUserPwd, String permissions, String tmpPwd, LocalDateTime tmpPwdExpiration, Integer tmpPwdCount, LocalDateTime tmpPwdDate, LocalDateTime partnerUserModifyDate, LocalDateTime partnerUserRegisterDate

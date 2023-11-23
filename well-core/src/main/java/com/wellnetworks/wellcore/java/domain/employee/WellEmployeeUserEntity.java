@@ -2,16 +2,13 @@ package com.wellnetworks.wellcore.java.domain.employee;
 //직원 유저 테이블
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wellnetworks.wellcore.java.domain.refreshtoken.EmployeeRefreshToken;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
@@ -88,13 +85,8 @@ public class WellEmployeeUserEntity  {
     @Column
     private Boolean isFirstLogin ; // 첫로그인 여부
 
-    @Column(name = "refresh_token") // 리프레쉬 토큰
-    private String refreshToken;
-
-    // 리프레쉬 토큰 업데이트용
-    public void updateRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
+    @OneToMany(mappedBy = "employeeUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<EmployeeRefreshToken> refreshTokens = new ArrayList<>(); // 리프레쉬 토큰
 
     public WellEmployeeEntity getEmployeeEntity() {
         return this.employee;
@@ -106,7 +98,6 @@ public class WellEmployeeUserEntity  {
     public WellEmployeeUserEntity() {
 
     }
-
 
     @Override
     public boolean equals(Object o) {

@@ -7,6 +7,7 @@ import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyDetailDTO;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyInfoDTO;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApikeyExpireDTO;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApikeyInCreateDTO;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyInRepository;
 import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyIssueRepository;
@@ -119,6 +120,7 @@ public class WellApiKeyService {
             WellPartnerEntity partnerEntity = partnerRepository.findByPartnerIdx(createDTO.getPartnerIdx());
 
             WellApikeyInEntity existingApiKey = partnerEntity.getApiKey();
+
             if (existingApiKey != null) {
                 existingApiKey.setPartnerIdx(null);
                 apikeyInRepository.save(existingApiKey);
@@ -154,6 +156,7 @@ public class WellApiKeyService {
 
                 partnerEntity.setInApiFlag(true);
                 partnerEntity.setApiKey(apikeyInEntity);
+                System.out.println("저장될값" + apikeyInEntity.getApiKeyIn());
                 partnerRepository.save(partnerEntity);
 
                 System.out.println("API 키 생성 및 저장 완료");
@@ -173,7 +176,7 @@ public class WellApiKeyService {
     //apikey 수정
 //apikey 체크항목만료
     @Transactional(rollbackOn = Exception.class)
-    public void expireApikey(String apiKeyInIdx, WellApikeyExpireDTO expireDTO) {
+    public void expireApikey(WellApikeyExpireDTO expireDTO) {
         try {
             // 입력받은 API Key로 해당 API 키를 조회
             WellApikeyInEntity apikeyInEntity = apikeyInRepository.findByApiKeyInIdx(expireDTO.getApiKeyInIdx());
@@ -210,4 +213,27 @@ public class WellApiKeyService {
 
 
     //apikey 삭제
+    @Transactional(rollbackOn = Exception.class)
+    public void deleteApiKey(String apiKeyInIdx) {
+        try{
+        WellApikeyInEntity apikeyInEntity = apikeyInRepository.findByApiKeyInIdx(apiKeyInIdx);
+
+        if (apikeyInEntity == null) {
+            System.out.println("해당 API 키를 찾을 수 없습니다. apiKeyInIdx: " + apiKeyInIdx);
+            return;
+        }
+
+        WellPartnerEntity partnerEntity = partnerRepository.findByPartnerIdx(apikeyInEntity.getPartnerIdx());
+        partnerEntity.removeApikeyInIdx();
+
+            apikeyInRepository.deleteByApiKeyInIdx(apiKeyInIdx);
+            System.out.println("delete 완료.");
+        } catch (Exception e) {
+            System.out.println("API 키 삭제 중 오류 발생: " + e.getMessage());
+            // 롤백을 위해 예외 발생
+            throw new RuntimeException("API 키 삭제 중 오류 발생", e);
+        }
+    }
+
+
 }

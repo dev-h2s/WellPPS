@@ -7,7 +7,7 @@ import org.springframework.validation.annotation.Validated;
 
 
 @Data
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Validated
 public class WellApikeyExpireDTO {
     private String apiKeyInIdx;

@@ -20,8 +20,8 @@ public class WellApikeyInEntity {
     private String apiKeyInIdx;
 
     // 거래처와의 일대다 관계 (하나의 API 키는 여러 개의 거래처를 가질 수 있음)
-    @OneToMany(mappedBy = "apiKey")
-    private List<WellPartnerEntity> partners = new ArrayList<>();
+    @OneToOne(mappedBy = "apiKey")
+    private WellPartnerEntity partners;
 
     @Column(name = "api_key_in") //내부APIKEY
     private String apiKeyIn;

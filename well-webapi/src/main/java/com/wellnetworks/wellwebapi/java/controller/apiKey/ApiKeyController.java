@@ -86,14 +86,25 @@ public class ApiKeyController {
 
     //만료 처리
     @PatchMapping("/expire/{apiKeyInIdx}")
-    public ResponseEntity<String> expireApiKey(@Valid WellApikeyExpireDTO expireDTO
-                                                , @PathVariable String apiKeyInIdx) {
+    public ResponseEntity<String> expireApiKey(@Valid WellApikeyExpireDTO expireDTO) {
         try {
-            apiKeyService.expireApikey(apiKeyInIdx, expireDTO);
+            apiKeyService.expireApikey(expireDTO);
             return ResponseEntity.ok("API 키 만료 처리 완료");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("API 키 만료 중 오류 발생: " + e.getMessage());
+        }
+    }
+
+    //삭제
+    @DeleteMapping("/delete/{apiKeyInIdx}")
+    public ResponseEntity<String> deleteApiKey(@Valid @PathVariable String apiKeyInIdx) throws Exception {
+        try {
+        apiKeyService.deleteApiKey(apiKeyInIdx);
+            return ResponseEntity.status(HttpStatus.CREATED).body("ApiKey가 성공적으로 삭제되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("API 키 삭제 중 오류 발생: " + e.getMessage());
         }
     }
 }

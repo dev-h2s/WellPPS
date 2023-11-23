@@ -9,4 +9,6 @@ public interface WellApikeyInRepository extends JpaRepository<WellApikeyInEntity
 
     //apikey_idx 검색
     WellApikeyInEntity findByApiKeyInIdx(String apikeyInIdx);
+
+    void deleteByApiKeyInIdx(String apikeyInIdx);
 }

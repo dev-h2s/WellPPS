@@ -14,12 +14,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -261,6 +259,33 @@ public class WellApiKeyService {
         }
     }
 
+    // 검색
+    public List<WellApiKeyInfoDTO> searchApiKeyList(String issuer, String apiKeyIn, String serverUrl, String apiServerIp
+                                                    , List<String> partnerNames) {
+        Specification<WellApikeyInEntity> spec = Specification.where(ApiKeySpecification.apikeyIssuerContains(issuer))
+                .and(ApiKeySpecification.apikeyInContains(apiKeyIn))
+                .and(ApiKeySpecification.apikeyUrlContains(serverUrl))
+                .and(ApiKeySpecification.apikeyIpContains(apiServerIp))
+                .and(ApiKeySpecification.partnerNamesIn(partnerNames));
 
+        List<WellApikeyInEntity> apikeys = apikeyInRepository.findAll(spec);
+        if (apikeys == null) {
+            return Collections.emptyList();
+        }
+
+        List<WellApiKeyInfoDTO> apiKeyInfoList = new ArrayList<>();
+
+        for (WellApikeyInEntity apikey : apikeys) {
+            String partnerIdx = apikey.getPartnerIdx();
+            String partnerName = null;
+            if (apikey.getPartnerIdx() != null) {
+                partnerName = partnerRepository.findPartnerNameByPartnerIdx(partnerIdx);
+            }
+
+            WellApiKeyInfoDTO apiKeyInfo = new WellApiKeyInfoDTO(apikey, partnerName);
+            apiKeyInfoList.add(apiKeyInfo);
+        }
+        return apiKeyInfoList;
+    }
 
 }

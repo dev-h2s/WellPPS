@@ -57,4 +57,7 @@ public interface WellPartnerRepository extends JpaRepository<WellPartnerEntity, 
 
     List<WellPartnerEntity> findAll(Specification<WellPartnerEntity> spec);
 
+    @Query("SELECT  p.partnerName FROM WellPartnerEntity p WHERE p.partnerIdx = :partnerIdx")
+    String findPartnerNameByPartnerIdx(String partnerIdx);
+
 }

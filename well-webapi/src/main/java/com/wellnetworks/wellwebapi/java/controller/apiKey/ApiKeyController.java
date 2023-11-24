@@ -115,4 +115,17 @@ public class ApiKeyController {
                     .body("API 키 삭제 중 오류 발생: " + e.getMessage());
         }
     }
+
+    //검색
+    @GetMapping("search")
+    public List<WellApiKeyInfoDTO> searchApiKey(
+            @RequestParam(value = "issuer", required = false) String issuer
+            , @RequestParam(value = "apiKeyIn", required = false) String apiKeyIn
+            , @RequestParam(value = "serverUrl", required = false) String serverUrl
+            , @RequestParam(value = "apiServerIp", required = false) String apiServerIp
+            , @RequestParam(value = "partnerNames", required = false) List<String> partnerNames
+
+    ) {
+        return apiKeyService.searchApiKeyList(issuer, apiKeyIn, serverUrl, apiServerIp, partnerNames);
+    }
 }

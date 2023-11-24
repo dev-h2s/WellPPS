@@ -106,9 +106,9 @@ public class ApiKeyController {
 
     //삭제
     @DeleteMapping("delete/{apiKeyInIdx}")
-    public ResponseEntity<String> deleteApiKey(@Valid @PathVariable String apiKeyInIdx) throws Exception {
+    public ResponseEntity<String> deleteApiKey(@Valid WellApiKeyDeleteDTO deleteDTO) throws Exception {
         try {
-        apiKeyService.deleteApiKey(apiKeyInIdx);
+        apiKeyService.deleteApiKey(deleteDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body("ApiKey가 성공적으로 삭제되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

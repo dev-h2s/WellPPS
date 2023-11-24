@@ -254,5 +254,4 @@ public class WellPartnerEntity {
         this.partnerGroup = partnerGroup;
     }
     public void setInApiFlag(Boolean inApiFlag) {this.inApiFlag = inApiFlag;}
-    public void removeApikeyInIdx() {this.apiKey = null;}
 }

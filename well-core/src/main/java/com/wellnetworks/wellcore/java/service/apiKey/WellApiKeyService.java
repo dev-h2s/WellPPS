@@ -8,6 +8,8 @@ import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyInRepository;
 import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyIssueRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -25,6 +27,9 @@ public class WellApiKeyService {
     private final WellApikeyInRepository apikeyInRepository;
     private final WellPartnerRepository partnerRepository;
     private final WellApikeyIssueRepository apikeyIssueRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     //apikey 1개 조회
     public Optional<WellApiKeyInfoDTO> getApikeyByApikeyIdx(String apiKeyInIdx) {
@@ -176,22 +181,26 @@ public class WellApiKeyService {
     public void update(String apiKeyInIdx, WellApiKeyUpdateDTO updateDTO) throws Exception {
         try {
             WellApikeyInEntity apikey = apikeyInRepository.findByApiKeyInIdx(apiKeyInIdx);
-            BeanUtils.copyProperties(updateDTO, apikey);
 
+            // updateDTO의 값이 null이 아닐 때만 복사
+            if (updateDTO != null) {
+                BeanUtils.copyProperties(updateDTO, apikey);
+                apikey.updateFormDTO(updateDTO);
 
-            apikey.updateFormDTO(updateDTO);
-
-            // expire 값에 따라 처리(만료 버튼 여부)
-            if (updateDTO.isExpire()) {
-                WellApikeyExpireDTO expireDTO = new WellApikeyExpireDTO();
-                expireDTO.setApiKeyInIdx(apiKeyInIdx);
-                expireApikey(expireDTO);
+                // expire 값에 따라 처리(만료 버튼 여부)
+                if (updateDTO.isExpire()) {
+                    WellApikeyExpireDTO expireDTO = new WellApikeyExpireDTO();
+                    expireDTO.setApiKeyInIdx(apiKeyInIdx);
+                    expireApikey(expireDTO);
+                    apikeyInRepository.deleteByApiKeyInIdx(apiKeyInIdx);
+                }
             }
 
         } catch (Exception e) {
             throw new RuntimeException("api 수정 중 오류 발생", e);
         }
     }
+
 
 //apikey 체크항목만료
     @Transactional(rollbackOn = Exception.class)
@@ -209,7 +218,7 @@ public class WellApiKeyService {
                 apikeyInRepository.save(apikeyInEntity);
 
                 if (partnerEntity != null) {
-                    partnerEntity.removeApikeyInIdx();
+                    partnerEntity.setApiKey(null);
                     partnerRepository.save(partnerEntity);
                     System.out.println("거래처 연결 해제 완료");
                 } else {
@@ -229,30 +238,29 @@ public class WellApiKeyService {
         }
     }
 
-
-
-    //apikey 삭제
+    // 삭제
     @Transactional(rollbackOn = Exception.class)
-    public void deleteApiKey(String apiKeyInIdx) {
-        try{
-        WellApikeyInEntity apikeyInEntity = apikeyInRepository.findByApiKeyInIdx(apiKeyInIdx);
+    public void deleteApiKey(WellApiKeyDeleteDTO deleteDTO) {
+        try {
+            // 조회
+            WellApikeyInEntity apikeyInEntity = apikeyInRepository.findByApiKeyInIdx(deleteDTO.getApiKeyInIdx());
 
-        if (apikeyInEntity == null) {
-            System.out.println("해당 API 키를 찾을 수 없습니다. apiKeyInIdx: " + apiKeyInIdx);
-            return;
-        }
+            WellPartnerEntity partnerEntity = partnerRepository.findByPartnerIdx(apikeyInEntity.getPartnerIdx());
+            partnerEntity.setApiKey(null);
 
-        WellPartnerEntity partnerEntity = partnerRepository.findByPartnerIdx(apikeyInEntity.getPartnerIdx());
-        partnerEntity.removeApikeyInIdx();
+            entityManager.flush();
+            entityManager.clear();
 
-            apikeyInRepository.deleteByApiKeyInIdx(apiKeyInIdx);
-            System.out.println("delete 완료.");
+            // 삭제
+            apikeyInRepository.deleteByApiKeyInIdx(apikeyInEntity.getApiKeyInIdx());
+
         } catch (Exception e) {
             System.out.println("API 키 삭제 중 오류 발생: " + e.getMessage());
             // 롤백을 위해 예외 발생
             throw new RuntimeException("API 키 삭제 중 오류 발생", e);
         }
     }
+
 
 
 }

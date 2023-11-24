@@ -48,30 +48,37 @@ public class WellUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        // 먼저 사원 저장소에서 사용자 조회
-        Optional<UserDetails> userDetails = employeeUserRepository.findByEmployeeIdentification(username)
-                .map(user -> {
-                    String effectivePassword = user.getIsPasswordResetRequired() ?
-                            user.getTmpPwd() : user.getEmployeeUserPwd();
-                    return new EmployeeUserDetails(
-                            user.getEmployeeIdentification(),
-                            effectivePassword,
-                            user.getIsFirstLogin(),
-                            user.getAuthorities());
+        // 먼저 사원 저장소에서 사용자를 조회합니다.
+        WellEmployeeUserEntity employee = employeeUserRepository.findByEmployeeIdentification(username)
+                .orElse(null);
 
-                });
+        if (employee != null) {
+            String effectivePassword = employee.getIsPasswordResetRequired() ?
+                    employee.getTmpPwd() : employee.getEmployeeUserPwd();
+            // EmployeeUserDetails 객체를 생성하고, 조회된 employee 객체를 포함합니다.
+            return new EmployeeUserDetails(
+                    employee.getEmployeeIdentification(),
+                    effectivePassword,
+                    employee.getIsFirstLogin(),
+                    employee.getAuthorities(),
+                    employee
+            );
+        }
 
-        // 사원이 존재하면 반환, 없으면 파트너 저장소에서 조회
-        return userDetails.orElseGet(() -> partnerUserRepository.findByPartnerIdentification(username)
-                .map(partner -> {
-                    String effectivePassword = partner.getIsPasswordResetRequired() ?
-                            partner.getTmpPwd() : partner.getPartnerUserPwd();
-                    return new PartnerUserDetails(
-                            partner.getPartnerIdentification(),
-                            effectivePassword,
-                            partner.getIsFirstLogin(),
-                            partner.getAuthorities());
-                }).orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username)));
+        // 사원이 없으면 파트너 저장소에서 사용자를 조회합니다.
+        WellPartnerUserEntity partner = partnerUserRepository.findByPartnerIdentification(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+
+        String effectivePassword = partner.getIsPasswordResetRequired() ?
+                partner.getTmpPwd() : partner.getPartnerUserPwd();
+        // PartnerUserDetails 객체를 생성하고, 조회된 partner 객체를 포함합니다.
+        return new PartnerUserDetails(
+                partner.getPartnerIdentification(),
+                effectivePassword,
+                partner.getIsFirstLogin(),
+                partner.getAuthorities(),
+                partner
+        );
     }
 
 

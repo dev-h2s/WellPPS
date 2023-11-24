@@ -23,11 +23,13 @@ public class PartnerUserDetails implements UserDetails {
      * @param password    사용자의 비밀번호
      * @param authorities 사용자에게 부여된 권한
      */
-    public PartnerUserDetails(String username, String password,Boolean isFirstLogin , Collection<? extends GrantedAuthority> authorities) {
+    public PartnerUserDetails(String username, String password,Boolean isFirstLogin , Collection<? extends GrantedAuthority> authorities
+    , WellPartnerUserEntity partner) {
         this.username = username;
         this.password = password;
         this.authorities = authorities;
         this.isFirstLogin = isFirstLogin;
+        this.partner =partner;
 
     }
     // partner 필드를 반환하는 메서드

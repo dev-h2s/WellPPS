@@ -27,11 +27,13 @@ public class EmployeeUserDetails implements UserDetails {
      * @param password    사용자의 비밀번호
      * @param authorities 사용자에게 부여된 권한
      */
-    public EmployeeUserDetails(String username, String password,Boolean isFirstLogin , Collection<? extends GrantedAuthority> authorities) {
+    public EmployeeUserDetails(String username, String password,Boolean isFirstLogin , Collection<? extends GrantedAuthority> authorities
+    , WellEmployeeUserEntity employee) {
         this.username = username;
         this.password = password;
         this.authorities = authorities;
         this.isFirstLogin = isFirstLogin;
+        this.employee = employee;
 
     }
 

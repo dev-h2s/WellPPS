@@ -1,6 +1,6 @@
 package com.wellnetworks.wellcore.java.domain.partner;
 // 거래처 유저
-import com.wellnetworks.wellcore.java.domain.refreshtoken.PartnerRefreshToken;
+import com.wellnetworks.wellcore.java.domain.refreshtoken.PartnerRefreshTokenEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,13 +8,11 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import static jakarta.persistence.FetchType.LAZY;
@@ -90,13 +88,13 @@ public class WellPartnerUserEntity {
     private Boolean isFirstLogin ; // 첫로그인 여부
 
     @OneToOne(mappedBy = "partnerUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private PartnerRefreshToken refreshTokens;// 토큰 연결
+    private PartnerRefreshTokenEntity refreshTokens;// 토큰 연결
 
     @Builder
     public WellPartnerUserEntity(String partnerIdx, WellPartnerEntity partner, WellPartnerPermissionGroupEntity partnerManagerGroupKey, String partnerIdentification, String partnerUserPwd, String permissions, String tmpPwd, LocalDateTime tmpPwdExpiration, Integer tmpPwdCount, LocalDateTime tmpPwdDate, LocalDateTime partnerUserModifyDate, LocalDateTime partnerUserRegisterDate
                                 , Boolean isPhoneVerified, String phoneVerificationCode, Integer phoneVerificationAttempts, LocalDateTime phoneVerificationExpiration, LocalDateTime phoneVerificationSentTime, String groupKey
                                 , String groupPermissionKey, Boolean isPasswordResetRequired,
-                                 Boolean isFirstLogin, List<String> permissionsKeysStringList) {
+                                 Boolean isFirstLogin, PartnerRefreshTokenEntity partnerRefreshToken, List<String> permissionsKeysStringList, PartnerRefreshTokenEntity refreshTokens) {
         this.partnerIdx = partnerIdx;
         this.partner = partner;
         this.partnerManagerGroupKey = partnerManagerGroupKey;
@@ -119,6 +117,7 @@ public class WellPartnerUserEntity {
 //        this.permissionsKeysStringList = permissionsKeysStringList;
         this.isPasswordResetRequired = isPasswordResetRequired ;
         this.isFirstLogin = isFirstLogin;
+        this.refreshTokens = refreshTokens;
     }
 
 

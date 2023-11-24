@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wellnetworks.wellsecure.java.config.SecurityProperties;
 import com.wellnetworks.wellsecure.java.request.TokenResponse;
 import com.wellnetworks.wellsecure.java.request.UserLoginReq;
+import com.wellnetworks.wellsecure.java.service.RefreshTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -31,17 +33,21 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private final SecurityProperties securityProperties; // 보안 관련 프로퍼티 정보
     private final TokenProvider tokenProvider; // JWT 토큰을 생성하거나 검증하는 제공자
 
+    private final RefreshTokenService refreshTokenService;
+
     /**
      * 생성자. 필요한 컴포넌트들을 주입받는다.
      */
     public JwtAuthenticationFilter(
             AuthenticationManager authManager,
             SecurityProperties securityProperties,
-            TokenProvider tokenProvider
+            TokenProvider tokenProvider,
+            RefreshTokenService refreshTokenService
     ) {
         this.authManager = authManager;
         this.securityProperties = securityProperties;
         this.tokenProvider = tokenProvider;
+        this.refreshTokenService = refreshTokenService;
     }
 
     /**
@@ -79,22 +85,25 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                          FilterChain chain, Authentication authentication)
             throws IOException, ServletException {
 
-//        // 인증된 사용자의 정보를 기반으로 JWT 토큰을 생성한다.
-        String token = tokenProvider.createToken(authentication);
-//        // 응답 헤더에 토큰을 추가한다.
-        res.addHeader(securityProperties.getHeaderString(), securityProperties.getTokenPrefix() + token);
-// 여기서 JWT 토큰을 생성합니다.
+        // 인증된 사용자의 정보를 기반으로 JWT 토큰을 생성한다.
         String accessToken = tokenProvider.createToken(authentication);
         String refreshToken = tokenProvider.createRefreshToken(authentication);
 
+
+
+        // Authentication 객체에서 UserDetails 객체를 추출
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        // 리프레쉬 토큰 생성 및 DB에 저장
+        refreshTokenService.createAndPersistRefreshToken(userDetails);
+
+        // 응답 헤더에 토큰을 추가한다.
+        res.addHeader(securityProperties.getHeaderString(), securityProperties.getTokenPrefix() + accessToken);
         // 최종 응답 객체를 생성
         Map<String, Object> responseMap = new LinkedHashMap<>(); // 순서 보장
         responseMap.put("message", "로그인 성공");
-
         Map<String, String> tokenMap = new LinkedHashMap<>();
         tokenMap.put("accessToken", accessToken);
         tokenMap.put("refreshToken", refreshToken);
-
         responseMap.put("data", tokenMap);
 
         // JSON으로 변환하여 응답

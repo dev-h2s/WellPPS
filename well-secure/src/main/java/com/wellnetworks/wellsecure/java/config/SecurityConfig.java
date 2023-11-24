@@ -4,6 +4,7 @@ import com.wellnetworks.wellsecure.java.jwt.JwtAuthenticationFilter;
 import com.wellnetworks.wellsecure.java.jwt.JwtAuthorizationFilter;
 import com.wellnetworks.wellsecure.java.jwt.TokenProvider;
 import com.wellnetworks.wellsecure.java.service.AppAuthenticationManager;
+import com.wellnetworks.wellsecure.java.service.RefreshTokenService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -31,11 +32,13 @@ public class SecurityConfig {
     private final SecurityProperties securityProperties;
     private final AppAuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
+    private final RefreshTokenService refreshTokenService;
 
-    public SecurityConfig(SecurityProperties securityProperties, AppAuthenticationManager authenticationManager, TokenProvider tokenProvider) {
+    public SecurityConfig(SecurityProperties securityProperties, AppAuthenticationManager authenticationManager, TokenProvider tokenProvider, RefreshTokenService refreshTokenService) {
         this.securityProperties = securityProperties;
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
+        this.refreshTokenService = refreshTokenService;
     }
     /**
      * Spring Security의 Filter Chain 설정을 제공합니다.
@@ -46,7 +49,7 @@ public class SecurityConfig {
                 .cors().and()  // CORS 설정 활성화
                 .csrf().disable()  // CSRF 방지 기능 비활성화
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()  // 세션을 사용하지 않도록 설정
-                .addFilter(new JwtAuthenticationFilter(authenticationManager, securityProperties, tokenProvider))  // JWT 인증 필터 추가
+                .addFilter(new JwtAuthenticationFilter(authenticationManager, securityProperties, tokenProvider,refreshTokenService))  // JWT 인증 필터 추가
                 .addFilter(new JwtAuthorizationFilter(authenticationManager, securityProperties, tokenProvider))  // JWT 권한 확인 필터 추가
                 .logout()
                 .logoutUrl("/logout")  // 로그아웃 경로 설정

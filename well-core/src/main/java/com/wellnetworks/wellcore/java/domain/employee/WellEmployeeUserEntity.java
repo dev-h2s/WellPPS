@@ -2,7 +2,7 @@ package com.wellnetworks.wellcore.java.domain.employee;
 //직원 유저 테이블
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wellnetworks.wellcore.java.domain.refreshtoken.EmployeeRefreshToken;
+import com.wellnetworks.wellcore.java.domain.refreshtoken.EmployeeRefreshTokenEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -86,7 +86,8 @@ public class WellEmployeeUserEntity  {
     private Boolean isFirstLogin ; // 첫로그인 여부
 
     @OneToOne(mappedBy = "employeeUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private EmployeeRefreshToken refreshToken; // 토큰 연결
+    private EmployeeRefreshTokenEntity refreshToken; // 토큰 연결
+
     public WellEmployeeEntity getEmployeeEntity() {
         return this.employee;
     }
@@ -112,7 +113,7 @@ public class WellEmployeeUserEntity  {
                                   String phoneVerificationCode, Integer phoneVerificationAttempts, LocalDateTime phoneVerificationExpiration,
                                   LocalDateTime phoneVerificationSentTime, LocalDateTime employeeUserModifyDate, LocalDateTime employeeUserRegisterDate,
                                   String groupKey, String groupPermissionKey, Boolean isPasswordResetRequired,
-                                  Boolean isFirstLogin,List<EmployeeRefreshToken> refreshTokens ,List<String> permissionsKeysStringList) {
+                                  Boolean isFirstLogin, EmployeeRefreshTokenEntity refreshTokens , List<String> permissionsKeysStringList) {
         this.employeeIdx = employeeIdx;
         this.employee = employee;
         this.employeeManagerGroupKey = employeeManagerGroupKey;

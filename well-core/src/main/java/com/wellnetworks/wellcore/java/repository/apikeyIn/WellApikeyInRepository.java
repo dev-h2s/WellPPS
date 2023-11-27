@@ -1,6 +1,8 @@
 package com.wellnetworks.wellcore.java.repository.apikeyIn;
 
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,5 +20,5 @@ public interface WellApikeyInRepository extends JpaRepository<WellApikeyInEntity
 
     void deleteByApiKeyInIdx(String apikeyInIdx);
 
-    List<WellApikeyInEntity> findAll(Specification<WellApikeyInEntity> spec, Sort apiKeyInRegisterDate);
+    Page<WellApikeyInEntity> findAll(Specification<WellApikeyInEntity> spec, Pageable pageable);
 }

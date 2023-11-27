@@ -52,9 +52,6 @@ public interface WellPartnerRepository extends JpaRepository<WellPartnerEntity, 
     //거래처 등록
     WellPartnerEntity save(WellPartnerEntity wellPartnerEntity);
 
-    //내림차순 정렬
-    List<WellPartnerEntity> findAllByOrderByProductRegisterDateDesc();
-
     List<WellPartnerEntity> findAll(Specification<WellPartnerEntity> spec);
 
     @Query("SELECT  p.partnerName FROM WellPartnerEntity p WHERE p.partnerIdx = :partnerIdx")

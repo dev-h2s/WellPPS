@@ -126,7 +126,7 @@ public class WellPartnerService {
                 .and(PartnerSpecification.businessLicenseEquals(hasBusinessLicense))
                 .and(PartnerSpecification.contractDocumentEquals(hasContractDocument));
 
-        List<WellPartnerEntity> partners = wellPartnerRepository.findAll(spec);
+        List<WellPartnerEntity> partners = wellPartnerRepository.findAll(spec, Sort.by(Sort.Direction.DESC, "productRegisterDate"));
         if (partners == null) {
             return Collections.emptyList();
         }
@@ -154,7 +154,7 @@ public class WellPartnerService {
     //거래처 리스트 조회
 
     public List<WellPartnerInfoDTO> getAllPartners() {
-        List<WellPartnerEntity> partners = wellPartnerRepository.findAllByOrderByProductRegisterDateDesc();
+        List<WellPartnerEntity> partners = wellPartnerRepository.findAll(Sort.by(Sort.Direction.DESC, "productRegisterDate"));
         List<WellPartnerInfoDTO> partnerInfoList = new ArrayList<>();
 
         Long totalBusinessLicenseCount = 0L;

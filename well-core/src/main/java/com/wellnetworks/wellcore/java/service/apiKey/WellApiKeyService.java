@@ -207,7 +207,9 @@ public class WellApiKeyService {
             WellApikeyInEntity apikeyInEntity = apikeyInRepository.findByApiKeyInIdx(deleteDTO.getApiKeyInIdx());
 
             WellPartnerEntity partnerEntity = partnerRepository.findByPartnerIdx(apikeyInEntity.getPartnerIdx());
-            partnerEntity.setApiKey(null);
+            if (partnerEntity != null) {
+                partnerEntity.setApiKey(null);
+            }
 
             entityManager.flush();
             entityManager.clear();

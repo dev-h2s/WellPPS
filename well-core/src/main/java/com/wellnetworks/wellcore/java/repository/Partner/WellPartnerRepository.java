@@ -1,5 +1,6 @@
 package com.wellnetworks.wellcore.java.repository.Partner;
 
+import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import jakarta.annotation.Nullable;
@@ -55,4 +56,8 @@ public interface WellPartnerRepository extends JpaRepository<WellPartnerEntity, 
     List<WellPartnerEntity> findAllByOrderByProductRegisterDateDesc();
 
     List<WellPartnerEntity> findAll(Specification<WellPartnerEntity> spec);
+
+    @Query("SELECT  p.partnerName FROM WellPartnerEntity p WHERE p.partnerIdx = :partnerIdx")
+    String findPartnerNameByPartnerIdx(String partnerIdx);
+
 }

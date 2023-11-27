@@ -2,29 +2,18 @@ package com.wellnetworks.wellcore.java.domain.partner;
 // 거래처
 
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
-import com.wellnetworks.wellcore.java.domain.charge.WellChargeHistoryEntity;
-import com.wellnetworks.wellcore.java.domain.opening.WellOpeningEntity;
-import com.wellnetworks.wellcore.java.domain.product.WellProductSearchEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
-import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyInRepository;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Formula;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 
 import static jakarta.persistence.FetchType.LAZY;
@@ -48,8 +37,8 @@ public class WellPartnerEntity {
     private WellPartnerUserEntity partnerUser;
 
     // API 키와의 다대일 관계 (하나의 거래처는 API 키를 가짐)
-    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "apikey_in_idx")
+    @OneToOne(fetch = LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "apikey_in_idx", nullable = false)
     private WellApikeyInEntity apiKey;
 
     // 가상계좌 연결 1대1
@@ -260,13 +249,9 @@ public class WellPartnerEntity {
         this.partnerMemo = updateDTO.getPartnerMemo();
     }
 
-    public void setApiKey(WellApikeyInEntity apiKey) {
-        this.apiKey = apiKey;
-    }
+    public void setApiKey(WellApikeyInEntity apiKey) {this.apiKey = apiKey;}
     public void setPartnerGroup(WellPartnerGroupEntity partnerGroup) {
         this.partnerGroup = partnerGroup;
     }
-    public void setInApiFlag(Boolean inApiFlag) {
-        this.inApiFlag = inApiFlag;
-    }
+    public void setInApiFlag(Boolean inApiFlag) {this.inApiFlag = inApiFlag;}
 }

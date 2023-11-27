@@ -16,8 +16,9 @@ public class WellApiKeyInfoDTO {
     private String issuer;
     private String memo;
 
-    //1개 조회, 리스트
+    //1개 조회, 리스트, 검색
     public WellApiKeyInfoDTO(WellApikeyInEntity apikey, String partnerName) {
+
         this.apiKeyInRegisterDate = apikey.getApiKeyInRegisterDate();
         this.partnerIdx = apikey.getPartnerIdx();
         if (partnerIdx != null) {
@@ -28,7 +29,4 @@ public class WellApiKeyInfoDTO {
         this.issuer = apikey.getIssuer();
         this.memo = apikey.getMemo();
     }
-
-
-    //검색
 }

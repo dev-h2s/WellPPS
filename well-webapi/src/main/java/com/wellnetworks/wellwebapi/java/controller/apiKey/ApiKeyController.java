@@ -3,10 +3,11 @@ package com.wellnetworks.wellwebapi.java.controller.apiKey;
 import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
+import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyIssueEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
-import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyInfoDTO;
-import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApikeyInCreateDTO;
+import com.wellnetworks.wellcore.java.dto.APIKEYIN.*;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerDetailDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyInRepository;
 import com.wellnetworks.wellcore.java.service.apiKey.WellApiKeyService;
@@ -17,9 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping(("/apikey/"))
@@ -27,7 +26,6 @@ import java.util.Optional;
 public class ApiKeyController {
 
     @Autowired private WellApiKeyService apiKeyService;
-    @Autowired private WellApikeyInRepository apikeyInRepository;
 
     //1개 조회
     @GetMapping("info/{apiKeyInIdx}")
@@ -47,14 +45,87 @@ public class ApiKeyController {
         return apiKeyList;
     }
 
-    //생성
+
+
+    //상세 조회
+    @GetMapping("info/detail/{apiKeyInIdx}")
+    public Optional<WellApiKeyDetailDTO> getDetailApiKeyByApiKeyInIdx(@PathVariable String apiKeyInIdx) throws ClassNotFoundException {
+        Optional<WellApiKeyDetailDTO> apiKeyDetailDTO = apiKeyService.getDetailApiKeyByApiKeyInIdx(apiKeyInIdx);
+        if (apiKeyDetailDTO == null) {
+            throw new ClassNotFoundException(String.format("IDX[%s] not found", apiKeyInIdx));
+        }
+        return apiKeyDetailDTO;
+    }
+
+    //발급
+    @PostMapping("issue")
+    public ResponseEntity<String> apiKeyIssue(@Valid WellApikeyIssueEntity issueEntity) {
+        try {
+            String generatedApiKey = apiKeyService.issue(issueEntity);
+            return ResponseEntity.ok(generatedApiKey);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("API 키 생성 중 오류 발생: " + e.getMessage());
+        }
+    }
+
+
+    // 생성
     @PostMapping("generate")
     public ResponseEntity<String> generateApiKey(@Valid WellApikeyInCreateDTO createDTO) {
         try {
             apiKeyService.join(createDTO);
-            return ResponseEntity.ok("API 키 생성 완료");
+            return ResponseEntity.ok("API 키 생성 및 저장 완료");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("API 키 생성 중 오류 발생: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("API 키 생성 및 저장 중 오류 발생: " + e.getMessage());
         }
+    }
+
+    //수정
+    @PatchMapping("update/{apiKeyInIdx}")
+    public ResponseEntity<String> patchApiKey(@Valid WellApiKeyUpdateDTO updateDTO,
+                                              @PathVariable String apiKeyInIdx) throws Exception {
+        apiKeyService.update(apiKeyInIdx, updateDTO);
+        if (apiKeyInIdx == null) {
+            throw new ClassNotFoundException(String.format("IDX[%s] not found", apiKeyInIdx));
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body("ApiKey가 성공적으로 수정되었습니다.");
+    }
+
+
+    //만료 처리
+    @PatchMapping("expire/{apiKeyInIdx}")
+    public ResponseEntity<String> expireApiKey(@Valid WellApikeyExpireDTO expireDTO) {
+        try {
+            apiKeyService.expireApikey(expireDTO);
+            return ResponseEntity.ok("API 키 만료 처리 완료");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("API 키 만료 중 오류 발생: " + e.getMessage());
+        }
+    }
+
+    //삭제
+    @DeleteMapping("delete/{apiKeyInIdx}")
+    public ResponseEntity<String> deleteApiKey(@Valid WellApiKeyDeleteDTO deleteDTO) throws Exception {
+        try {
+        apiKeyService.deleteApiKey(deleteDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body("ApiKey가 성공적으로 삭제되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("API 키 삭제 중 오류 발생: " + e.getMessage());
+        }
+    }
+
+    //검색
+    @GetMapping("search")
+    public List<WellApiKeyInfoDTO> searchApiKey(
+            @RequestParam(value = "issuer", required = false) String issuer
+            , @RequestParam(value = "apiKeyIn", required = false) String apiKeyIn
+            , @RequestParam(value = "serverUrl", required = false) String serverUrl
+            , @RequestParam(value = "apiServerIp", required = false) String apiServerIp
+            , @RequestParam(value = "partnerNames", required = false) List<String> partnerNames
+
+    ) {
+        return apiKeyService.searchApiKeyList(issuer, apiKeyIn, serverUrl, apiServerIp, partnerNames);
     }
 }

@@ -2,6 +2,8 @@ package com.wellnetworks.wellcore.java.domain.apikeyIn;
 // 내부 apikey
 
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyUpdateDTO;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -20,8 +22,8 @@ public class WellApikeyInEntity {
     private String apiKeyInIdx;
 
     // 거래처와의 일대다 관계 (하나의 API 키는 여러 개의 거래처를 가질 수 있음)
-    @OneToMany(mappedBy = "apiKey")
-    private List<WellPartnerEntity> partners = new ArrayList<>();
+    @OneToOne(mappedBy = "apiKey")
+    private WellPartnerEntity partners;
 
     @Column(name = "api_key_in") //내부APIKEY
     private String apiKeyIn;
@@ -31,9 +33,6 @@ public class WellApikeyInEntity {
 
     @Column(name = "api_key_in_end_flag") //내부APIKEY만료여부
     private boolean apiKeyInEndFlag;
-
-    @Column(name = "p_agree_flag") //거래처제공여부
-    private boolean partnerAgreeFlag;
 
     @Column(name = "issuer") //발급자
     private String issuer;
@@ -61,14 +60,13 @@ public class WellApikeyInEntity {
 
     @Builder
     public WellApikeyInEntity(String apiKeyInIdx, String apiKeyIn, LocalDate apiKeyInRegisterDate, boolean apiKeyInEndFlag
-                              , boolean partnerAgreeFlag, String issuer, List<String> serverUrl, List<String> apiServerIp, String memo
+                              , String issuer, List<String> serverUrl, List<String> apiServerIp, String memo
                               , String partnerIdx
             , boolean home, boolean dream, boolean valueCom, boolean iz, boolean asia, boolean PDS) {
         this.apiKeyInIdx = apiKeyInIdx;
         this.apiKeyIn = apiKeyIn;
         this.apiKeyInRegisterDate = apiKeyInRegisterDate;
         this.apiKeyInEndFlag = apiKeyInEndFlag;
-        this.partnerAgreeFlag = partnerAgreeFlag;
         this.issuer = issuer;
         this.serverUrl = serverUrl;
         this.apiServerIp = apiServerIp;
@@ -83,7 +81,28 @@ public class WellApikeyInEntity {
         this.PDS = PDS;
     }
 
+    public void updateFormDTO(WellApiKeyUpdateDTO updateDTO) {
+        this.apiKeyIn = updateDTO.getApiKeyIn();
+        this.apiKeyInRegisterDate = updateDTO.getApiKeyInRegisterDate();
+        this.apiKeyInEndFlag = updateDTO.isApiKeyInEndFlag();
+        this.issuer = updateDTO.getIssuer();
+        this.serverUrl = updateDTO.getServerUrl();
+        this.apiServerIp = updateDTO.getApiServerIp();
+        this.memo = updateDTO.getMemo();
+        this.partnerIdx = updateDTO.getPartnerIdx();
+
+        this.home = updateDTO.isHome();
+        this.dream = updateDTO.isDream();
+        this.valueCom = updateDTO.isValueCom();
+        this.iz = updateDTO.isIz();
+        this.asia = updateDTO.isAsia();
+        this.PDS = updateDTO.isPDS();
+    }
+
     public void setPartnerIdx(String partnerIdx) {
         this.partnerIdx = partnerIdx;
+    }
+    public void setApiKeyInEndFlag(boolean apiKeyInEndFlag) {
+        this.apiKeyInEndFlag = apiKeyInEndFlag;
     }
 }

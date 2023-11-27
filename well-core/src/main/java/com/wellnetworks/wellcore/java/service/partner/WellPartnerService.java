@@ -53,10 +53,13 @@ public class WellPartnerService {
         return Optional.ofNullable(wellPartnerRepository.findByPartnerIdx(partnerIdx))
                 .map(entity -> {
                     List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerIdx);
+
                     WellVirtualAccountEntity virtualAccountEntity = entity.getVirtualAccount();
                     WellDipositEntity depositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : new WellDipositEntity();
+
                     String partnerUpperIdx = entity.getPartnerUpperIdx();
                     String partnerUpperName = partnerUpperIdx != null ? wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx) : null;
+
                     return new WellPartnerInfoDTO(entity, fileStorages, depositEntity, partnerUpperName);
                 });
     }

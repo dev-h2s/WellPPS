@@ -50,26 +50,41 @@ public class RefreshTokenService {
         this.securityProperties = securityProperties;
     }
 
+    // 리프레쉬 토큰 생성 밑 기존 idx있을때 수정하는 메서드
     @Transactional
     public String createAndPersistRefreshToken(UserDetails userDetails) {
-        String refreshToken = tokenProvider.createRefreshToken(new UsernamePasswordAuthenticationToken(
-                userDetails.getUsername(), null, userDetails.getAuthorities()));
+        // Authentication 객체를 생성하여 리프레쉬 토큰 생성
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(
+                        userDetails.getUsername(), null, userDetails.getAuthorities());
+        String newRefreshTokenValue = tokenProvider.createRefreshToken(authenticationToken);
 
         Date expiryDate = calculateExpiryDate(securityProperties.getRefreshTokenExpirationTime());
 
         if (userDetails instanceof EmployeeUserDetails) {
             WellEmployeeUserEntity employee = ((EmployeeUserDetails) userDetails).getEmployee();
-            EmployeeRefreshTokenEntity tokenEntity = new EmployeeRefreshTokenEntity(null, employee, refreshToken, expiryDate);
-            employeeRefreshTokenRepository.save(tokenEntity);
-        } else if (userDetails instanceof PartnerUserDetails) {
+            EmployeeRefreshTokenEntity employeeTokenEntity = employeeRefreshTokenRepository
+                    .findByEmployeeUser(employee) // 'employee' 객체를 전달
+                    .orElseGet(() -> new EmployeeRefreshTokenEntity(employee, newRefreshTokenValue, expiryDate)); // 부분 생성자 사용
+
+            // 토큰 업데이트 또는 새로 생성
+            employeeTokenEntity.updateToken(newRefreshTokenValue, expiryDate);
+            employeeRefreshTokenRepository.save(employeeTokenEntity);
+        }
+        else if (userDetails instanceof PartnerUserDetails) {
             WellPartnerUserEntity partner = ((PartnerUserDetails) userDetails).getPartner();
-            PartnerRefreshTokenEntity tokenEntity = new PartnerRefreshTokenEntity(null, partner, refreshToken, expiryDate);
-            partnerRefreshTokenRepository.save(tokenEntity);
+            PartnerRefreshTokenEntity partnerTokenEntity = partnerRefreshTokenRepository
+                    .findByPartnerUser(partner)
+                    .orElseGet(() -> new PartnerRefreshTokenEntity(partner, newRefreshTokenValue, expiryDate));
+            // 토큰 업데이트 또는 새로 생성
+            partnerTokenEntity.updateToken(newRefreshTokenValue, expiryDate);
+            partnerRefreshTokenRepository.save(partnerTokenEntity);
+
         } else {
-            throw new IllegalArgumentException("Unknown user details type");
+            throw new IllegalArgumentException("존재하지 않는 타입의 유저입니다.");
         }
 
-        return refreshToken;
+        return newRefreshTokenValue;
     }
 
     private Date calculateExpiryDate(int refreshTokenExpirationTime) {

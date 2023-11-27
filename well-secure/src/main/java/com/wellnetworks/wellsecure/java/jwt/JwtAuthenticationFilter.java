@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wellnetworks.wellsecure.java.config.SecurityProperties;
 import com.wellnetworks.wellsecure.java.request.TokenResponse;
 import com.wellnetworks.wellsecure.java.request.UserLoginReq;
+import com.wellnetworks.wellsecure.java.service.EmployeeUserDetails;
+import com.wellnetworks.wellsecure.java.service.PartnerUserDetails;
 import com.wellnetworks.wellsecure.java.service.RefreshTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -87,14 +89,23 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         // 인증된 사용자의 정보를 기반으로 JWT 토큰을 생성한다.
         String accessToken = tokenProvider.createToken(authentication);
-        String refreshToken = tokenProvider.createRefreshToken(authentication);
-
-
+//        String refreshToken = tokenProvider.createRefreshToken(authentication);
 
         // Authentication 객체에서 UserDetails 객체를 추출
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        // 리프레쉬 토큰 생성 및 DB에 저장
-        refreshTokenService.createAndPersistRefreshToken(userDetails);
+        String refreshToken;
+
+        // userDetails 인스턴스의 타입에 따라 적절한 리프레쉬 토큰 처리 로직을 호출
+        if (userDetails instanceof EmployeeUserDetails) {
+            // EmployeeUserDetails의 경우
+            refreshToken = refreshTokenService.createAndPersistRefreshToken((EmployeeUserDetails) userDetails);
+        } else if (userDetails instanceof PartnerUserDetails) {
+            // PartnerUserDetails의 경우
+            refreshToken = refreshTokenService.createAndPersistRefreshToken((PartnerUserDetails) userDetails);
+        } else {
+            // 예외 처리: 알 수 없는 사용자 유형
+            throw new AuthenticationServiceException("알수 없는 사용자입니다.");
+        }
 
         // 응답 헤더에 토큰을 추가한다.
         res.addHeader(securityProperties.getHeaderString(), securityProperties.getTokenPrefix() + accessToken);
@@ -110,8 +121,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         res.setContentType("application/json");
         res.setCharacterEncoding("UTF-8");
         res.getWriter().write(new ObjectMapper().writeValueAsString(responseMap));
-
     }
+
+
+
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {

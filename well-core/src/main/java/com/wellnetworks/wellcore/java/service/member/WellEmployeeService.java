@@ -139,7 +139,6 @@ public class WellEmployeeService {
 
 
 // employee id 생성
-
     private Long generateNextEmployeeId() {
         // 여기에서 다음 직원 ID를 조회하고 1을 더해서 반환하도록 로직을 작성
         // 이 로직은 현재 저장된 직원 중 가장 큰 ID를 조회하고 1을 더하는 방식으로 구현 가능
@@ -275,7 +274,6 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
 
 
     // 사원 검색 서비스 메소드
-
     public List<WellEmployeeInfoDTO> searchEmployeeList(String belong, String employmentState,
                                                         String employeeName,
                                                         String employeeIdentification,
@@ -309,7 +307,7 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
     }
 
 
-    //거래처 수정
+    //수정
     @Transactional(rollbackOn = Exception.class)
     public void update(String employeeIdx, WellEmployeeUpdateDTO updateDTO) throws Exception {
         try {

@@ -1,15 +1,7 @@
 package com.wellnetworks.wellwebapi.java.controller.apiKey;
 
-import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
-import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
-import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyIssueEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.*;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerDetailDTO;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
-import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyInRepository;
 import com.wellnetworks.wellcore.java.service.apiKey.WellApiKeyService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,8 +37,6 @@ public class ApiKeyController {
         return apiKeyList;
     }
 
-
-
     //상세 조회
     @GetMapping("info/detail/{apiKeyInIdx}")
     public Optional<WellApiKeyDetailDTO> getDetailApiKeyByApiKeyInIdx(@PathVariable String apiKeyInIdx) throws ClassNotFoundException {
@@ -64,7 +54,8 @@ public class ApiKeyController {
             String generatedApiKey = apiKeyService.issue(issueEntity);
             return ResponseEntity.ok(generatedApiKey);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("API 키 생성 중 오류 발생: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("API 키 생성 중 오류 발생: " + e.getMessage());
         }
     }
 
@@ -76,7 +67,8 @@ public class ApiKeyController {
             apiKeyService.join(createDTO);
             return ResponseEntity.ok("API 키 생성 및 저장 완료");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("API 키 생성 및 저장 중 오류 발생: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("API 키 생성 및 저장 중 오류 발생: " + e.getMessage());
         }
     }
 
@@ -118,14 +110,19 @@ public class ApiKeyController {
 
     //검색
     @GetMapping("search")
-    public List<WellApiKeyInfoDTO> searchApiKey(
-            @RequestParam(value = "issuer", required = false) String issuer
-            , @RequestParam(value = "apiKeyIn", required = false) String apiKeyIn
-            , @RequestParam(value = "serverUrl", required = false) String serverUrl
-            , @RequestParam(value = "apiServerIp", required = false) String apiServerIp
-            , @RequestParam(value = "partnerNames", required = false) List<String> partnerNames
-
+    public ResponseEntity<List<WellApiKeyInfoDTO>> searchApiKey(
+            @RequestParam(value = "issuer", required = false) String issuer,
+            @RequestParam(value = "apiKeyIn", required = false) String apiKeyIn,
+            @RequestParam(value = "serverUrl", required = false) String serverUrl,
+            @RequestParam(value = "apiServerIp", required = false) String apiServerIp,
+            @RequestParam(value = "partnerNames", required = false) List<String> partnerNames
     ) {
-        return apiKeyService.searchApiKeyList(issuer, apiKeyIn, serverUrl, apiServerIp, partnerNames);
+        try {
+            List<WellApiKeyInfoDTO> result = apiKeyService.searchApiKeyList(issuer, apiKeyIn, serverUrl, apiServerIp, partnerNames);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.emptyList());
+        }
     }
 }

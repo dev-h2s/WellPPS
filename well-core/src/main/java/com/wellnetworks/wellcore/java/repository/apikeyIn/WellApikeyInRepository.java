@@ -1,7 +1,7 @@
 package com.wellnetworks.wellcore.java.repository.apikeyIn;
 
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -16,5 +16,5 @@ public interface WellApikeyInRepository extends JpaRepository<WellApikeyInEntity
 
     void deleteByApiKeyInIdx(String apikeyInIdx);
 
-    List<WellApikeyInEntity> findAll(Specification<WellApikeyInEntity> spec);
+    List<WellApikeyInEntity> findAll(Specification<WellApikeyInEntity> spec, Sort apiKeyInRegisterDate);
 }

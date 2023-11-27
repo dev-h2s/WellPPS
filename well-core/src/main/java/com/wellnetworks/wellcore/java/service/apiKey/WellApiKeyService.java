@@ -146,10 +146,11 @@ public class WellApiKeyService {
                 WellPartnerEntity newPartnerEntity = partnerRepository.findByPartnerIdx(updateDTO.getPartnerIdx());
                 newPartnerEntity.setApiKey(apikey);
 
-                WellApikeyInEntity existingApikey = apikey;
-                System.out.println("@@@@@@@@@@@@@@@@@@@@@@" + apikey.getPartnerIdx());
+// 기존에 연결되어 있던 다른 API 키의 partnerIdx를 null로 설정
+                WellApikeyInEntity existingApikey = apikeyInRepository.findByPartnerIdx(newPartnerEntity.getPartnerIdx());
                 if (existingApikey != null) {
                     existingApikey.setPartnerIdx(null);
+                    apikeyInRepository.save(existingApikey);
                 }
 
                 BeanUtils.copyProperties(updateDTO, apikey);

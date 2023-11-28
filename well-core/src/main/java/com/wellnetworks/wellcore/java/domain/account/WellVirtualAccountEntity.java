@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,10 +23,8 @@ import static jakarta.persistence.FetchType.LAZY;
 public class WellVirtualAccountEntity {
 
     @Id // 가상계좌_idx(pk)
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "v_account_idx", columnDefinition = "uniqueidentifier")
-    private UUID virtualAccountIdx;
+    private String virtualAccountIdx = UUID.randomUUID().toString();
 
     @OneToMany(mappedBy = "virtualAccount", fetch = LAZY, cascade = CascadeType.ALL)  //여러 가상계좌 파일을 가질 수 있음
     private List<WellVirtualAccountFIleStorageEntity> files = new ArrayList<>();
@@ -54,8 +51,8 @@ public class WellVirtualAccountEntity {
     @Column(name = "v_bank_holder") // 가상계좌예금주
     private String virtualBankHolder;
 
-    @Column(name = "issue_flag") // 발급유무
-    private Boolean issueFlag;
+    @Column(name = "issuance") // 발급유무
+    private String issuance;
 
     @Column(name = "issue_date") // 발급날짜
     private LocalDateTime issueDate;

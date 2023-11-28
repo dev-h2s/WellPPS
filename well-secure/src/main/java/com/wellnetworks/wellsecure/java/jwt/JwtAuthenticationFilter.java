@@ -117,6 +117,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         tokenMap.put("refreshToken", refreshToken);
         responseMap.put("data", tokenMap);
 
+
+
         // JSON으로 변환하여 응답
         res.setContentType("application/json");
         res.setCharacterEncoding("UTF-8");

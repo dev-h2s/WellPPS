@@ -11,13 +11,17 @@ import com.wellnetworks.wellsecure.java.jwt.TokenProvider;
 import com.wellnetworks.wellsecure.java.request.UserLoginReq;
 import com.wellnetworks.wellsecure.java.service.EmployeeUserDetails;
 import com.wellnetworks.wellsecure.java.service.PartnerUserDetails;
+import com.wellnetworks.wellsecure.java.service.RefreshTokenService;
 import com.wellnetworks.wellsecure.java.service.WellUserDetailService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -39,6 +43,8 @@ public class UserController {
     private final TokenProvider tokenProvider;
 
    @Autowired private WellUserDetailService detailsService;
+
+   @Autowired private RefreshTokenService refreshTokenService;
 
     @Autowired
     public UserController(AuthenticationManager authenticationManager, TokenProvider tokenProvider) {
@@ -126,6 +132,20 @@ public class UserController {
 //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("비밀번호 변경 중 오류가 발생했습니다.", null));
 //        }
     }
+
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+        // 사용자의 토큰 삭제
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        refreshTokenService.deleteRefreshToken(userDetails);
+
+        // 실제 로그아웃 처리
+        detailsService.logout(request, response);
+
+        return ResponseEntity.ok("Logged out successfully");
+    }
+
 
 
 }

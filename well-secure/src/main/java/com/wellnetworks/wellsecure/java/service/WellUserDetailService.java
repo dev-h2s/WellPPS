@@ -5,14 +5,18 @@ import com.wellnetworks.wellcore.java.domain.partner.WellPartnerUserEntity;
 import com.wellnetworks.wellcore.java.dto.member.ChangePasswordRequest;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerUserRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -115,6 +119,11 @@ public class WellUserDetailService implements UserDetailsService {
         }
     }
 
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        // 현재 사용자의 인증 정보를 가져옵니다.
+        SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
+        logoutHandler.logout(request, response, SecurityContextHolder.getContext().getAuthentication());
+    }
 
 
 

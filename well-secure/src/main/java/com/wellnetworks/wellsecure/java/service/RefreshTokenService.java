@@ -12,6 +12,8 @@ import com.wellnetworks.wellsecure.java.config.SecurityProperties;
 import com.wellnetworks.wellsecure.java.jwt.TokenProvider;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 @Service
+@EnableScheduling // 스캐쥴링을 쓰기위함
 public class RefreshTokenService {
     @Autowired
     private EmployeeRefreshTokenRepository employeeRefreshTokenRepository;
@@ -58,11 +61,13 @@ public class RefreshTokenService {
                 new UsernamePasswordAuthenticationToken(
                         userDetails.getUsername(), null, userDetails.getAuthorities());
         String newRefreshTokenValue = tokenProvider.createRefreshToken(authenticationToken);
-
+        // 리프레쉬 토큰의 만료 날짜를 계산
         Date expiryDate = calculateExpiryDate(securityProperties.getRefreshTokenExpirationTime());
 
         if (userDetails instanceof EmployeeUserDetails) {
+            // EmployeeUserDetails 타입인 경우, 해당 유저의 정보를 가져옴
             WellEmployeeUserEntity employee = ((EmployeeUserDetails) userDetails).getEmployee();
+            // 해당 유저에 대한 리프레쉬 토큰 엔티티를 데이터베이스에서 찾거나 생성
             EmployeeRefreshTokenEntity employeeTokenEntity = employeeRefreshTokenRepository
                     .findByEmployeeUser(employee) // 'employee' 객체를 전달
                     .orElseGet(() -> new EmployeeRefreshTokenEntity(employee, newRefreshTokenValue, expiryDate)); // 부분 생성자 사용
@@ -87,10 +92,33 @@ public class RefreshTokenService {
         return newRefreshTokenValue;
     }
 
+
+    // 토큰 삭제 메서드
+    @Transactional
+    public void deleteRefreshToken(UserDetails userDetails) {
+        if (userDetails instanceof EmployeeUserDetails) {
+            WellEmployeeUserEntity employee = ((EmployeeUserDetails) userDetails).getEmployee();
+            employeeRefreshTokenRepository.deleteByEmployeeUser(employee);
+        } else if (userDetails instanceof PartnerUserDetails) {
+            WellPartnerUserEntity partner = ((PartnerUserDetails) userDetails).getPartner();
+            partnerRefreshTokenRepository.deleteByPartnerUser(partner);
+        }
+    }
+
+    // 매일 자정에 만료된 리프레쉬 토큰을 삭제하는 스케줄러 메서드
+    @Scheduled(cron = "0 0 0 * * ?")
+    @Transactional
+    public void purgeExpiredRefreshTokens() {
+        employeeRefreshTokenRepository.deleteAllExpiredTokens();
+        partnerRefreshTokenRepository.deleteAllExpiredTokens();
+    }
+
+
+//      리프레쉬 토큰의 만료 시간을 계산하는 메서드.
     private Date calculateExpiryDate(int refreshTokenExpirationTime) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.HOUR, refreshTokenExpirationTime);
-        return calendar.getTime();
+        Calendar calendar = Calendar.getInstance(); // 현재 시간을 기준으로 Calendar 객체를 생성
+        calendar.add(Calendar.SECOND, refreshTokenExpirationTime); // 현재 시간에 유효 시간을 더함
+        return calendar.getTime(); // 새로운 만료 시간을 가진 Date 객체를 반환
     }
 
 

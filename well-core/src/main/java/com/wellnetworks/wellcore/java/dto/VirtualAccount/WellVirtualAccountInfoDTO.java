@@ -27,7 +27,7 @@ public class WellVirtualAccountInfoDTO {
     private Long collectCount; // 회수
 
 
-    //개별, 검색
+    //개별 & 상세, 검색
     public WellVirtualAccountInfoDTO(WellVirtualAccountEntity virtualAccount, WellPartnerEntity partnerEntity, String partnerName
     ) {
         this.virtualAccountIdx = virtualAccount.getVirtualAccountIdx();

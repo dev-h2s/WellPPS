@@ -4,7 +4,9 @@ import com.wellnetworks.wellsecure.java.jwt.JwtAuthenticationFilter;
 import com.wellnetworks.wellsecure.java.jwt.JwtAuthorizationFilter;
 import com.wellnetworks.wellsecure.java.jwt.TokenProvider;
 import com.wellnetworks.wellsecure.java.service.AppAuthenticationManager;
+//import com.wellnetworks.wellsecure.java.service.CustomLogoutHandler;
 import com.wellnetworks.wellsecure.java.service.RefreshTokenService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -34,12 +36,23 @@ public class SecurityConfig {
     private final TokenProvider tokenProvider;
     private final RefreshTokenService refreshTokenService;
 
-    public SecurityConfig(SecurityProperties securityProperties, AppAuthenticationManager authenticationManager, TokenProvider tokenProvider, RefreshTokenService refreshTokenService) {
+//    @Autowired private CustomLogoutHandler customLogoutHandler;
+
+    public SecurityConfig(SecurityProperties securityProperties, AppAuthenticationManager authenticationManager,
+                          TokenProvider tokenProvider,
+//                          CustomLogoutHandler customLogoutHandler,
+                          RefreshTokenService refreshTokenService) {
         this.securityProperties = securityProperties;
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
         this.refreshTokenService = refreshTokenService;
+//        this.customLogoutHandler = customLogoutHandler;
     }
+//    @Bean
+//    public CustomLogoutHandler customLogoutHandler(RefreshTokenService refreshTokenService) {
+//        return new CustomLogoutHandler(refreshTokenService);
+//    }
+
     /**
      * Spring Security의 Filter Chain 설정을 제공합니다.
      */
@@ -52,9 +65,9 @@ public class SecurityConfig {
                 .addFilter(new JwtAuthenticationFilter(authenticationManager, securityProperties, tokenProvider,refreshTokenService))  // JWT 인증 필터 추가
                 .addFilter(new JwtAuthorizationFilter(authenticationManager, securityProperties, tokenProvider))  // JWT 권한 확인 필터 추가
                 .logout()
-                .logoutUrl("/logout")  // 로그아웃 경로 설정
+                .logoutUrl("/custom-logout")  // 로그아웃 경로 설정
                 .logoutSuccessUrl("/login")  // 로그아웃 후 리다이렉트할 경로 설정
-//                .invalidateHttpSession(true)  // 로그아웃 시 세션 무효화
+                .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID", "remember-me");  // 로그아웃 시 쿠키 삭제
 
         http.authorizeRequests()

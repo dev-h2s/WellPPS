@@ -8,9 +8,9 @@ import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUse
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,8 +18,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 /**
  * WellUserDetailService 클래스는 사용자의 세부 정보를 조회하는 서비스
@@ -32,12 +30,16 @@ public class WellUserDetailService implements UserDetailsService {
     private final WellPartnerUserRepository partnerUserRepository;
     private PasswordEncoder passwordEncoder;
 
-    // WellUserDetailService 클래스의 생성자
-    // @param employeeUserRepository 사용자 정보를 조회하는 레포지토리
-    public WellUserDetailService(WellEmployeeUserRepository employeeUserRepository, WellPartnerUserRepository partnerUserRepository, PasswordEncoder passwordEncoder) {
+     private RefreshTokenService refreshTokenService;
+
+    public WellUserDetailService(WellEmployeeUserRepository employeeUserRepository,
+                                 WellPartnerUserRepository partnerUserRepository
+                                ,PasswordEncoder passwordEncoder
+    ) {
         this.employeeUserRepository = employeeUserRepository;
         this.partnerUserRepository = partnerUserRepository;
         this.passwordEncoder = passwordEncoder;
+
     }
 
 
@@ -84,7 +86,12 @@ public class WellUserDetailService implements UserDetailsService {
                 partner
         );
     }
-
+//    @Transactional
+//    public void logoutDeleteRefreshToken(Object principal) {
+//        if (principal instanceof UserDetails) {
+//            refreshTokenService.deleteRefreshToken((UserDetails) principal);
+//        }
+//    }
 
 
 //패스워드 변경
@@ -119,13 +126,6 @@ public class WellUserDetailService implements UserDetailsService {
         }
     }
 
-    public void logout(HttpServletRequest request, HttpServletResponse response) {
-        // 현재 사용자의 인증 정보를 가져옵니다.
-        SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
-        logoutHandler.logout(request, response, SecurityContextHolder.getContext().getAuthentication());
-    }
 
+}
 
-
-
-    }

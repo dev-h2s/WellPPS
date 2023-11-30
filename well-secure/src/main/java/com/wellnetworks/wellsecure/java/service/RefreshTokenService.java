@@ -24,25 +24,17 @@ import java.util.Date;
 @Service
 @EnableScheduling // 스캐쥴링을 쓰기위함
 public class RefreshTokenService {
-    @Autowired
-    private EmployeeRefreshTokenRepository employeeRefreshTokenRepository;
+    @Autowired private EmployeeRefreshTokenRepository employeeRefreshTokenRepository;
 
-    @Autowired
-    private PartnerRefreshTokenRepository partnerRefreshTokenRepository;
+    @Autowired private PartnerRefreshTokenRepository partnerRefreshTokenRepository;
 
-    @Autowired
-    private WellEmployeeUserRepository wellEmployeeUserRepository;
 
-    @Autowired
-    private WellPartnerUserRepository wellPartnerUserRepository;
 
-    @Autowired
-    private TokenProvider tokenProvider;
-    @Autowired
-    private SecurityProperties securityProperties;
+    @Autowired private TokenProvider tokenProvider;
+    @Autowired private SecurityProperties securityProperties;
 
     // 생성자 주입
-    @Autowired
+
     public RefreshTokenService(EmployeeRefreshTokenRepository employeeRefreshTokenRepository,
                                PartnerRefreshTokenRepository partnerRefreshTokenRepository,
                                TokenProvider tokenProvider,
@@ -98,12 +90,17 @@ public class RefreshTokenService {
     public void deleteRefreshToken(UserDetails userDetails) {
         if (userDetails instanceof EmployeeUserDetails) {
             WellEmployeeUserEntity employee = ((EmployeeUserDetails) userDetails).getEmployee();
+            System.out.println("사원의 리프레쉬 토큰을 삭제합니다: " + employee.getEmployeeIdx()); // 로그 추가
             employeeRefreshTokenRepository.deleteByEmployeeUser(employee);
         } else if (userDetails instanceof PartnerUserDetails) {
             WellPartnerUserEntity partner = ((PartnerUserDetails) userDetails).getPartner();
+            System.out.println("파트너의 리프레쉬 토큰을 삭제합니다: " + partner.getPartnerIdx()); // 로그 추가
             partnerRefreshTokenRepository.deleteByPartnerUser(partner);
         }
+        // 로그를 추가하여 실제로 삭제가 일어났는지 확인합니다.
+        System.out.println("리프레쉬 토큰이 성공적으로 삭제되었습니다.");
     }
+
 
     // 매일 자정에 만료된 리프레쉬 토큰을 삭제하는 스케줄러 메서드
     @Scheduled(cron = "0 0 0 * * ?")

@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -15,8 +16,9 @@ public interface PartnerRefreshTokenRepository extends JpaRepository<PartnerRefr
     // WellPartnerUserEntity를 기준으로 PartnerRefreshTokenEntity를 찾는 메서드
     Optional<PartnerRefreshTokenEntity> findByPartnerUser(WellPartnerUserEntity partnerUser);
 
-    @Transactional
-    void deleteByPartnerUser(WellPartnerUserEntity employeeUser);
+    @Modifying
+    @Query("delete from PartnerRefreshTokenEntity p where p.partnerUser = :partnerUser")
+    void deleteByPartnerUser(@Param("partnerUser") WellPartnerUserEntity partnerUser);
 
     // 만료된 토큰을 찾아 삭제하는 메서드
     @Modifying

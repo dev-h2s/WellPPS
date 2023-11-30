@@ -34,8 +34,7 @@ import java.util.*;
 @ComponentScan(basePackages={"com.wellnetworks.wellcore","com.wellnetworks.wellsecure"})
 public class PartnerListController {
 
-    @Autowired
-    private WellPartnerService wellPartnerService;
+    @Autowired private WellPartnerService wellPartnerService;
 
 
     //거래처 idx

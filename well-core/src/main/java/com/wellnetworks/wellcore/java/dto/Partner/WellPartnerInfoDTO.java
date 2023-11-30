@@ -38,7 +38,7 @@ public class WellPartnerInfoDTO {
     private Long businessLicenseCount;
     private Long contractDocumentCount;
 
-    //거래처 1개, 리스트
+    //리스트
     public WellPartnerInfoDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, WellDipositEntity diposit
                                 , Long registeredCount, Long preRegisteredCount, Long managementCount, Long suspendedCount
             , String partnerUpperName, Long businessLicenseCount, Long contractDocumentCount
@@ -85,7 +85,7 @@ public class WellPartnerInfoDTO {
         this.contractDocumentCount = contractDocumentCount;
     }
 
-    //거래처 검색
+    //거래처 검색, 거래처 1개
     public WellPartnerInfoDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, WellDipositEntity diposit
                               , String partnerUpperName
     ) {

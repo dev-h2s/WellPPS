@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-public class WellApiKeyInfoDTO {
+public class  WellApiKeyInfoDTO {
     private LocalDate apiKeyInRegisterDate;
     private String partnerIdx;
     private String partnerName; // 거래처의 거래처명

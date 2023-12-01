@@ -1,6 +1,7 @@
 package com.wellnetworks.wellwebapi.java.controller.account;
 
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
+import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyInfoDTO;
 import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountCreateDTO;
 import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountInfoDTO;
 import com.wellnetworks.wellcore.java.repository.account.WellVirtualAccountRepository;
@@ -25,6 +26,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,5 +143,31 @@ public class VirtualAccountController {
 
     //수정
     //다중검색
+    @GetMapping("search")
+    public ResponseEntity<Map<String, Object>> searchAccount(
+            @RequestParam(value = "partnerNames", required = false) List<String> partnerNames,
+            @RequestParam(value = "startDate", required = false) LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) LocalDate endDate,
+            @RequestParam(value = "virtualBankName", required = false) String virtualBankName,
+            @RequestParam(value = "issuance", required = false) String issuance,
+            @RequestParam(value = "virtualAccount", required = false) String virtualAccount,
+            @RequestParam(value = "writer", required = false) String writer,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "issueDate"));
+        Page<WellVirtualAccountInfoDTO> result = virtualAccountService.searchAccountList(partnerNames, startDate, endDate, virtualBankName, issuance, virtualAccount, writer, pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("currentPage", result.getNumber());
+        response.put("items", result.getContent());
+        response.put("message", "");
+        response.put("status", "OK");
+        response.put("totalItems", result.getTotalElements());
+        response.put("totalPages", result.getTotalPages());
+
+        return ResponseEntity.ok(response);
+    }
+
     //삭제
 }

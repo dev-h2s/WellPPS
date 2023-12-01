@@ -12,5 +12,5 @@ import org.springframework.stereotype.Repository;
 public interface WellVirtualAccountRepository extends JpaRepository<WellVirtualAccountEntity, String> {
     Long countByIssuance(String issuance);
 
-    Page<WellVirtualAccountEntity> findAll(Specification<WellPartnerEntity> spec, Pageable pageable);
+    Page<WellVirtualAccountEntity> findAll(Specification<WellVirtualAccountEntity> spec, Pageable pageable);
 }

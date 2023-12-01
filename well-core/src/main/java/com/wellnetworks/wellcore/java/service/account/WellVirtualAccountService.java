@@ -1,18 +1,23 @@
 package com.wellnetworks.wellcore.java.service.account;
 
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
+import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyInfoDTO;
 import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountCreateDTO;
 import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountInfoDTO;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.repository.account.WellVirtualAccountRepository;
+import com.wellnetworks.wellcore.java.service.partner.PartnerSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -68,5 +73,42 @@ public class WellVirtualAccountService {
     }
     //수정
     //다중검색
+    public Page<WellVirtualAccountInfoDTO> searchAccountList(List<String> partnerNames
+            , LocalDate startDate, LocalDate endDate
+            , String virtualBankName
+            , String issuance
+            , String virtualAccount
+            , String writer
+            , Pageable pageable) {
+        Specification<WellVirtualAccountEntity> spec = Specification.where(VirtualAccountSpecification.partnerNamesIn(partnerNames))
+                .and(VirtualAccountSpecification.issueDateBetween(startDate, endDate))
+                .and(VirtualAccountSpecification.virtualBankNameContains(virtualBankName))
+                .and(VirtualAccountSpecification.issuanceEquals(issuance))
+                .and(VirtualAccountSpecification.virtualAccountContains(virtualAccount))
+                .and(VirtualAccountSpecification.writerContains(writer))
+                ;
+
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "issueDate"));
+
+        Page<WellVirtualAccountEntity> accounts = virtualAccountRepository.findAll(spec, pageable);
+
+        List<WellVirtualAccountInfoDTO> accountInfoList = new ArrayList<>();
+
+        for (WellVirtualAccountEntity account : accounts) {
+            WellPartnerEntity partnerEntity = account.getPartner();
+            String partnerName = getPartnerName(partnerEntity);
+            WellVirtualAccountInfoDTO accountInfo = new WellVirtualAccountInfoDTO(account, partnerEntity, partnerName);
+            accountInfoList.add(accountInfo);
+        }
+        return new PageImpl<>(accountInfoList, pageable, accounts.getTotalElements());
+    }
+    // 중복 코드 제거
+    private String getPartnerName(WellPartnerEntity partnerEntity) {
+        if (partnerEntity != null) {
+            return partnerEntity.getPartnerName();
+        }
+        return null;
+    }
+
     //삭제
 }

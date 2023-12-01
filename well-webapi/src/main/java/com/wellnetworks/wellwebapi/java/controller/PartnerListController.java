@@ -10,7 +10,10 @@ import com.wellnetworks.wellcore.java.service.partner.WellPartnerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -31,8 +34,7 @@ import java.util.*;
 @ComponentScan(basePackages={"com.wellnetworks.wellcore","com.wellnetworks.wellsecure"})
 public class PartnerListController {
 
-    @Autowired
-    private WellPartnerService wellPartnerService;
+    @Autowired private WellPartnerService wellPartnerService;
 
 
     //거래처 idx
@@ -57,10 +59,22 @@ public class PartnerListController {
 
     //거래처 리스트
     @GetMapping("business")
-    public List<WellPartnerInfoDTO> getPartnerList() {
-        List<WellPartnerInfoDTO> partnerList = wellPartnerService.getAllPartners();
+    public ResponseEntity<Map<String, Object>> getPartnerList(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "productRegisterDate"));
+        Page<WellPartnerInfoDTO> partnersPage = wellPartnerService.getAllPartners(pageable);
 
-        return partnerList;
+        Map<String, Object> response = new HashMap<>();
+        response.put("currentPage", partnersPage.getNumber());
+        response.put("items", partnersPage.getContent());
+        response.put("message", "");
+        response.put("status", "OK");
+        response.put("totalItems", partnersPage.getTotalElements());
+        response.put("totalPages", partnersPage.getTotalPages());
+
+        return ResponseEntity.ok(response);
     }
 
     //거래처 생성
@@ -88,9 +102,9 @@ public class PartnerListController {
         return ResponseEntity.status(HttpStatus.CREATED).body("거래처가 성공적으로 수정되었습니다.");
     }
 
-    //거래처 검색
+    // 거래처 검색
     @GetMapping("business/search")
-    public List<WellPartnerInfoDTO> searchPartner(
+    public ResponseEntity<Map<String, Object>> searchPartner(
             @RequestParam(value = "partnerName", required = false) String partnerName
             , @RequestParam(value = "ceoName", required = false) String ceoName
             , @RequestParam(value = "ceoTelephone", required = false) String ceoTelephone
@@ -108,9 +122,22 @@ public class PartnerListController {
             , @RequestParam(value = "partnerUpperIdx", required = false) String partnerUpperIdx
             , @RequestParam(value = "hasBusinessLicense", required = false) Boolean hasBusinessLicense
             , @RequestParam(value = "hasContractDocument", required = false) Boolean hasContractDocument
+            , @RequestParam(defaultValue = "0") int page
+            , @RequestParam(defaultValue = "10") int size
     ) {
-        return wellPartnerService.searchPartnerList(partnerName, ceoName, ceoTelephone, partnerCode, address, writer, partnerTelephone, startDate, endDate
-                , discountCategory, partnerType, salesManager, transactionStatus, regionAddress, partnerUpperIdx, hasBusinessLicense, hasContractDocument);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "productRegisterDate"));
+        Page<WellPartnerInfoDTO> partnersPage = wellPartnerService.searchPartnerList(partnerName, ceoName, ceoTelephone, partnerCode, address, writer, partnerTelephone, startDate, endDate
+                , discountCategory, partnerType, salesManager, transactionStatus, regionAddress, partnerUpperIdx, hasBusinessLicense, hasContractDocument, pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("currentPage", partnersPage.getNumber());
+        response.put("items", partnersPage.getContent());
+        response.put("message", "");
+        response.put("status", "OK");
+        response.put("totalItems", partnersPage.getTotalElements());
+        response.put("totalPages", partnersPage.getTotalPages());
+
+        return ResponseEntity.ok(response);
     }
 
 

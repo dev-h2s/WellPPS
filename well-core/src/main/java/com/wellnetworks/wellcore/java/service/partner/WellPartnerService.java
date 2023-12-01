@@ -102,13 +102,12 @@ public class WellPartnerService {
                 });
     }
 
-
-
-    //거래처 검색
-    public List<WellPartnerInfoDTO> searchPartnerList(String partnerName, String ceoName, String ceoTelephone, String partnerCode, String address, String writer, String partnerTelephone
+    // 거래처 검색
+    public Page<WellPartnerInfoDTO> searchPartnerList(String partnerName, String ceoName, String ceoTelephone, String partnerCode, String address, String writer, String partnerTelephone
             , LocalDate startDate, LocalDate endDate
             , String discountCategory, String partnerType, String salesManager, String transactionStatus, String regionAddress
-            , String partnerUpperIdx, Boolean hasBusinessLicense, Boolean hasContractDocument) {
+            , String partnerUpperIdx, Boolean hasBusinessLicense, Boolean hasContractDocument, Pageable pageable) {
+
         Specification<WellPartnerEntity> spec = Specification.where(PartnerSpecification.partnerNameContains(partnerName))
                 .and(PartnerSpecification.partnerCeoNameContains(ceoName))
                 .and(PartnerSpecification.partnerCeoTelephoneContains(ceoTelephone))
@@ -126,10 +125,9 @@ public class WellPartnerService {
                 .and(PartnerSpecification.businessLicenseEquals(hasBusinessLicense))
                 .and(PartnerSpecification.contractDocumentEquals(hasContractDocument));
 
-        List<WellPartnerEntity> partners = wellPartnerRepository.findAll(spec, Sort.by(Sort.Direction.DESC, "productRegisterDate"));
-        if (partners == null) {
-            return Collections.emptyList();
-        }
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "productRegisterDate"));
+
+        Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(spec, pageable);
 
         List<WellPartnerInfoDTO> partnerInfoList = new ArrayList<>();
 
@@ -148,13 +146,15 @@ public class WellPartnerService {
             partnerInfoList.add(partnerInfo);
         }
 
-        return partnerInfoList;
+        return new PageImpl<>(partnerInfoList, pageable, partners.getTotalElements());
     }
 
     //거래처 리스트 조회
 
-    public List<WellPartnerInfoDTO> getAllPartners() {
-        List<WellPartnerEntity> partners = wellPartnerRepository.findAll(Sort.by(Sort.Direction.DESC, "productRegisterDate"));
+    public Page<WellPartnerInfoDTO> getAllPartners(Pageable pageable) {
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "productRegisterDate"));
+
+        Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(pageable);
         List<WellPartnerInfoDTO> partnerInfoList = new ArrayList<>();
 
         Long totalBusinessLicenseCount = 0L;
@@ -196,7 +196,7 @@ public class WellPartnerService {
             totalContractDocumentCount += contractDocumentCount;
         }
 
-        Long totalPartnerCount = (long) partners.size();
+        Long totalPartnerCount = partners.getTotalElements();
         Long NonBusinessLicenseCount = totalPartnerCount - totalBusinessLicenseCount;
         Long NonContractDocumentCount = totalPartnerCount - totalContractDocumentCount;
 
@@ -205,7 +205,7 @@ public class WellPartnerService {
             partnerInfo.setContractDocumentCount(NonContractDocumentCount);
         }
 
-        return partnerInfoList;
+        return new PageImpl<>(partnerInfoList, pageable, totalPartnerCount);
     }
 
 

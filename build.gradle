@@ -27,6 +27,7 @@ subprojects {
 	}
 
 	dependencies {
+		implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
 		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 		implementation 'org.springframework.boot:spring-boot-starter-validation'
 		implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -57,6 +58,7 @@ project (':well-core') {
 	jar { enabled = true }
 
 	dependencies {
+		implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
 		implementation 'org.springframework.boot:spring-boot-starter'
 		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 //		implementation 'org.springframework.security:spring-security-core:5.7.5'
@@ -101,6 +103,7 @@ project (':well-webapi') {
 	dependencies {
 		implementation project (':well-core')
 		implementation project (':well-secure')
+		implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
 		implementation 'org.springframework.boot:spring-boot-starter-security'
 		implementation 'org.springframework.session:spring-session-core'
 		testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'

@@ -2,10 +2,15 @@ package com.wellnetworks.wellwebapi.java.controller.apiKey;
 
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyIssueEntity;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.*;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.service.apiKey.WellApiKeyService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,10 +36,22 @@ public class ApiKeyController {
 
     //리스트 조회
     @GetMapping("info")
-    public List<WellApiKeyInfoDTO> getAllApikeys() {
-        List<WellApiKeyInfoDTO> apiKeyList = apiKeyService.getAllApikeys();
+    public ResponseEntity<Map<String, Object>> getAllApikeys(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-        return apiKeyList;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "apiKeyInRegisterDate"));
+        Page<WellApiKeyInfoDTO> apikeysPage = apiKeyService.getAllApikeys(pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("currentPage", apikeysPage.getNumber());
+        response.put("items", apikeysPage.getContent());
+        response.put("message", "");
+        response.put("status", "OK");
+        response.put("totalItems", apikeysPage.getTotalElements());
+        response.put("totalPages", apikeysPage.getTotalPages());
+
+        return ResponseEntity.ok(response);
     }
 
     //상세 조회
@@ -110,19 +127,28 @@ public class ApiKeyController {
 
     //검색
     @GetMapping("search")
-    public ResponseEntity<List<WellApiKeyInfoDTO>> searchApiKey(
+    public ResponseEntity<Map<String, Object>> searchApiKey(
             @RequestParam(value = "issuer", required = false) String issuer,
             @RequestParam(value = "apiKeyIn", required = false) String apiKeyIn,
             @RequestParam(value = "serverUrl", required = false) String serverUrl,
             @RequestParam(value = "apiServerIp", required = false) String apiServerIp,
             @RequestParam(value = "partnerNames", required = false) List<String> partnerNames
+            , @RequestParam(defaultValue = "0") int page
+            , @RequestParam(defaultValue = "10") int size
     ) {
-        try {
-            List<WellApiKeyInfoDTO> result = apiKeyService.searchApiKeyList(issuer, apiKeyIn, serverUrl, apiServerIp, partnerNames);
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Collections.emptyList());
-        }
+
+            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "apiKeyInRegisterDate"));
+            Page<WellApiKeyInfoDTO> result = apiKeyService.searchApiKeyList(issuer, apiKeyIn, serverUrl, apiServerIp, partnerNames, pageable);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("currentPage", result.getNumber());
+            response.put("items", result.getContent());
+            response.put("message", "");
+            response.put("status", "OK");
+            response.put("totalItems", result.getTotalElements());
+            response.put("totalPages", result.getTotalPages());
+
+            return ResponseEntity.ok(response);
+
     }
 }

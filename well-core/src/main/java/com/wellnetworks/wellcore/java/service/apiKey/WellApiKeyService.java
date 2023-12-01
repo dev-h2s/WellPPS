@@ -12,7 +12,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -38,17 +38,19 @@ public class WellApiKeyService {
     }
 
     // API 키 리스트 조회
-    public List<WellApiKeyInfoDTO> getAllApikeys() {
-        List<WellApikeyInEntity> apikeys = apikeyInRepository.findAll(Sort.by(Sort.Direction.DESC, "apiKeyInRegisterDate"));
+    public Page<WellApiKeyInfoDTO> getAllApikeys(Pageable pageable) {
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "apiKeyInRegisterDate"));
+
+        Page<WellApikeyInEntity> apikeysPage = apikeyInRepository.findAll(pageable);
         List<WellApiKeyInfoDTO> apiKeyInfoList = new ArrayList<>();
 
-        for (WellApikeyInEntity apiKeyEntity : apikeys) {
+        for (WellApikeyInEntity apiKeyEntity : apikeysPage.getContent()) {
             String partnerName = getPartnerName(apiKeyEntity.getPartnerIdx());
             WellApiKeyInfoDTO apiKeyInfo = new WellApiKeyInfoDTO(apiKeyEntity, partnerName);
             apiKeyInfoList.add(apiKeyInfo);
         }
 
-        return apiKeyInfoList;
+        return new PageImpl<>(apiKeyInfoList, pageable, apikeysPage.getTotalElements());
     }
 
     // API 키 상세 조회
@@ -146,10 +148,11 @@ public class WellApiKeyService {
                 WellPartnerEntity newPartnerEntity = partnerRepository.findByPartnerIdx(updateDTO.getPartnerIdx());
                 newPartnerEntity.setApiKey(apikey);
 
-                WellApikeyInEntity existingApikey = apikey;
-                System.out.println("@@@@@@@@@@@@@@@@@@@@@@" + apikey.getPartnerIdx());
+// 기존에 연결되어 있던 다른 API 키의 partnerIdx를 null로 설정
+                WellApikeyInEntity existingApikey = apikeyInRepository.findByPartnerIdx(newPartnerEntity.getPartnerIdx());
                 if (existingApikey != null) {
                     existingApikey.setPartnerIdx(null);
+                    apikeyInRepository.save(existingApikey);
                 }
 
                 BeanUtils.copyProperties(updateDTO, apikey);
@@ -206,7 +209,9 @@ public class WellApiKeyService {
             WellApikeyInEntity apikeyInEntity = apikeyInRepository.findByApiKeyInIdx(deleteDTO.getApiKeyInIdx());
 
             WellPartnerEntity partnerEntity = partnerRepository.findByPartnerIdx(apikeyInEntity.getPartnerIdx());
-            partnerEntity.setApiKey(null);
+            if (partnerEntity != null) {
+                partnerEntity.setApiKey(null);
+            }
 
             entityManager.flush();
             entityManager.clear();
@@ -219,18 +224,17 @@ public class WellApiKeyService {
     }
 
     // API 키 검색
-    public List<WellApiKeyInfoDTO> searchApiKeyList(String issuer, String apiKeyIn, String serverUrl, String apiServerIp
-            , List<String> partnerNames) {
+    public Page<WellApiKeyInfoDTO> searchApiKeyList(String issuer, String apiKeyIn, String serverUrl, String apiServerIp
+            , List<String> partnerNames, Pageable pageable) {
         Specification<WellApikeyInEntity> spec = Specification.where(ApiKeySpecification.apikeyIssuerContains(issuer))
                 .and(ApiKeySpecification.apikeyInContains(apiKeyIn))
                 .and(ApiKeySpecification.apikeyUrlContains(serverUrl))
                 .and(ApiKeySpecification.apikeyIpContains(apiServerIp))
                 .and(ApiKeySpecification.partnerNamesIn(partnerNames));
 
-        List<WellApikeyInEntity> apikeys = apikeyInRepository.findAll(spec, Sort.by(Sort.Direction.DESC, "apiKeyInRegisterDate"));
-        if (apikeys == null) {
-            return Collections.emptyList();
-        }
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "apiKeyInRegisterDate"));
+
+        Page<WellApikeyInEntity> apikeys = apikeyInRepository.findAll(spec, pageable);
 
         List<WellApiKeyInfoDTO> apiKeyInfoList = new ArrayList<>();
 
@@ -239,7 +243,7 @@ public class WellApiKeyService {
             WellApiKeyInfoDTO apiKeyInfo = new WellApiKeyInfoDTO(apikey, partnerName);
             apiKeyInfoList.add(apiKeyInfo);
         }
-        return apiKeyInfoList;
+        return new PageImpl<>(apiKeyInfoList, pageable, apikeys.getTotalElements());
     }
 
     // 중복 코드 제거

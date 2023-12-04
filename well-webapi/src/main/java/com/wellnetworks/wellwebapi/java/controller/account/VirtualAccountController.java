@@ -140,13 +140,23 @@ public class VirtualAccountController {
                 .body(file);
     }
 
-    //발급
+    //가상계좌 발급(거래처)
     @PatchMapping("/issue/{partnerIdx}")
-    public ResponseEntity<WellVirtualAccountIssueDTO> issueVirtualAccount(
+    public ResponseEntity<String> issueVirtualAccount(
             @PathVariable String partnerIdx,
             @RequestParam String virtualBankName) {
         WellVirtualAccountIssueDTO issuedAccountDTO = virtualAccountService.issueVirtualAccount(partnerIdx, virtualBankName);
-        return ResponseEntity.ok(issuedAccountDTO);
+        return ResponseEntity.ok("가상계좌 발급 완료");
+    }
+
+    //가상계좌 변경(거래처)
+    @PatchMapping("/changeAccount/{partnerIdx}")
+    public ResponseEntity<String> changeVirtualAccount(
+            @PathVariable String partnerIdx,
+            @RequestParam String virtualBankName) {
+
+        WellVirtualAccountIssueDTO updatedAccountDTO = virtualAccountService.changeVirtualAccount(partnerIdx, virtualBankName);
+        return ResponseEntity.ok("가상계좌 변경 완료");
     }
 
 

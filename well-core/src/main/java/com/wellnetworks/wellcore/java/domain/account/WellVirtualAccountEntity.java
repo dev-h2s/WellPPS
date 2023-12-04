@@ -53,6 +53,8 @@ public class WellVirtualAccountEntity {
     @Column(name = "issue_date") // 발급날짜
     private LocalDateTime issueDate;
 
+    private String memo;
+
     public static WellVirtualAccountEntity createFromExcelData(Map<String, String> excelData) {
         WellVirtualAccountEntity entity = new WellVirtualAccountEntity();
         entity.setVirtualBankName(excelData.get("은행명"));
@@ -66,4 +68,5 @@ public class WellVirtualAccountEntity {
     public void setIssueDate(LocalDateTime issueDate) {this.issueDate = issueDate;}
     public void setIssuance(String issuance) {this.issuance = issuance;}
     public void setPartner(WellPartnerEntity partner) {this.partner = partner;}
+    public void setMemo(String memo) {this.memo = memo;}
 }

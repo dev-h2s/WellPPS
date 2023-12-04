@@ -68,7 +68,7 @@ public class WellVirtualAccountService {
         return entity;
     }
 
-    //발급
+    //가상계좌 발급(거래처)
     @Transactional
     public WellVirtualAccountIssueDTO issueVirtualAccount(String partnerIdx, String virtualBankName) {
         Optional<WellVirtualAccountEntity> existingAccount = virtualAccountRepository.findByPartnerPartnerIdx(partnerIdx);
@@ -82,7 +82,6 @@ public class WellVirtualAccountService {
             throw new RuntimeException("찾으시는 은행의 가상계좌가 존재하지 않습니다. " + virtualBankName);
         }
 
-        // 무작위로 계좌를 선택합니다.
         Random rand = new Random();
         WellVirtualAccountEntity selectedAccount = availableAccounts.get(rand.nextInt(availableAccounts.size()));
 
@@ -95,6 +94,41 @@ public class WellVirtualAccountService {
         selectedAccount.setIssuance("발급");
 
         WellVirtualAccountEntity savedAccount = virtualAccountRepository.save(selectedAccount);
+        return new WellVirtualAccountIssueDTO(savedAccount, partnerEntity);
+    }
+
+    //가상계좌 변경(거래처)
+    @Transactional
+    public WellVirtualAccountIssueDTO changeVirtualAccount(String partnerIdx, String virtualBankName) {
+        // 기존 가상 계좌 찾기
+        Optional<WellVirtualAccountEntity> currentAccountOpt = virtualAccountRepository.findByPartnerPartnerIdx(partnerIdx);
+        if (currentAccountOpt.isPresent()) {
+            // 기존 연결 해제 및 상태 변경
+            WellVirtualAccountEntity currentAccount = currentAccountOpt.get();
+            currentAccount.setPartner(null);
+            currentAccount.setIssuance("회수");
+            currentAccount.setMemo("거래처 가상계좌 변경");
+            virtualAccountRepository.save(currentAccount);
+        }
+
+        // 새로운 가상 계좌 선택 및 연결
+        List<WellVirtualAccountEntity> availableAccounts = virtualAccountRepository.findAvailableAccountsByVirtualBankNameAndIssuance(virtualBankName, "미발급");
+        if (availableAccounts.isEmpty()) {
+            throw new RuntimeException("찾으시는 은행의 가상계좌가 존재하지 않습니다. " + virtualBankName);
+        }
+        Random rand = new Random();
+        WellVirtualAccountEntity newAccount = availableAccounts.get(rand.nextInt(availableAccounts.size()));
+
+        // 거래처 엔티티 조회 및 설정
+        WellPartnerEntity partnerEntity = partnerRepository.findById(partnerIdx)
+                .orElseThrow(() -> new RuntimeException("거래처가 존재하지 않습니다."));
+
+        newAccount.setPartner(partnerEntity);
+        newAccount.setIssueDate(LocalDateTime.now());
+        newAccount.setIssuance("발급");
+
+        // 새로운 가상 계좌 저장
+        WellVirtualAccountEntity savedAccount = virtualAccountRepository.save(newAccount);
         return new WellVirtualAccountIssueDTO(savedAccount, partnerEntity);
     }
 

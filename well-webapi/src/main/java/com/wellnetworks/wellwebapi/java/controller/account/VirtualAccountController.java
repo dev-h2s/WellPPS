@@ -1,7 +1,7 @@
 package com.wellnetworks.wellwebapi.java.controller.account;
 
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
-import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyInfoDTO;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountCreateDTO;
 import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountInfoDTO;
 import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountIssueDTO;
@@ -141,13 +141,17 @@ public class VirtualAccountController {
     }
 
     //발급
-    @PostMapping("issue/{virtualAccountId}")
+    @PatchMapping("/issue/{partnerIdx}")
     public ResponseEntity<WellVirtualAccountIssueDTO> issueVirtualAccount(
-            @PathVariable String virtualAccountId,
-            @RequestParam String partnerIdx) {
-        WellVirtualAccountIssueDTO result = virtualAccountService.issueVirtualAccount(virtualAccountId, partnerIdx);
-        return ResponseEntity.ok(result);
+            @PathVariable String partnerIdx,
+            @RequestParam String virtualBankName) {
+        WellVirtualAccountIssueDTO issuedAccountDTO = virtualAccountService.issueVirtualAccount(partnerIdx, virtualBankName);
+        return ResponseEntity.ok(issuedAccountDTO);
     }
+
+
+
+
 
     //수정
     //다중검색

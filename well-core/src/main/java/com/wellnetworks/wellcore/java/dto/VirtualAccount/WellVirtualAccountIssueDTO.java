@@ -6,37 +6,16 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class WellVirtualAccountIssueDTO {
-    private String virtualAccountIdx;
-    private LocalDate registerDate;
-    private String virtualBankName;
-    private String virtualAccount;
-    private String issuance;
     private String partnerIdx;
-//    private String partnerName;
-    private LocalDateTime issueDate;
-    private String writer;
+    private String virtualBankName; // 선택한 은행 이름
 
     public WellVirtualAccountIssueDTO(WellVirtualAccountEntity virtualAccount, WellPartnerEntity partnerEntity
     ) {
-        this.virtualAccountIdx = virtualAccount.getVirtualAccountIdx();
-        this.registerDate = virtualAccount.getRegisterDate();
+        this.partnerIdx = partnerEntity.getPartnerIdx();
         this.virtualBankName = virtualAccount.getVirtualBankName();
-        this.virtualAccount = virtualAccount.getVirtualAccount();
-        this.issuance = virtualAccount.getIssuance();
-        if (partnerEntity != null) {
-            this.partnerIdx = String.valueOf(partnerEntity.getPartnerIdx());
-//            this.partnerName = partnerName;
-        } else {
-            this.partnerIdx = "";
-//            this.partnerName = "";
-        }
-        this.issueDate = virtualAccount.getIssueDate();
-        this.writer = virtualAccount.getWriter();
     }
 }

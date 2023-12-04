@@ -192,4 +192,9 @@ public class VirtualAccountController {
     }
 
     //삭제
+    @DeleteMapping("delete/{virtualAccountIdx}")
+    public ResponseEntity<String> deleteVirtualAccount(@PathVariable String virtualAccountIdx) {
+        virtualAccountService.deleteAccount(virtualAccountIdx);
+        return ResponseEntity.ok("가상계좌가 성공적으로 삭제되었습니다.");
+    }
 }

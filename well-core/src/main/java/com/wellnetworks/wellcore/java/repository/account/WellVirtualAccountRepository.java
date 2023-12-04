@@ -19,5 +19,4 @@ public interface WellVirtualAccountRepository extends JpaRepository<WellVirtualA
     Page<WellVirtualAccountEntity> findAll(Specification<WellVirtualAccountEntity> spec, Pageable pageable);
 
     Optional<WellVirtualAccountEntity> findByPartnerPartnerIdx(String partnerIdx);
-
 }

@@ -177,4 +177,9 @@ public class WellVirtualAccountService {
 
 
     //삭제
+    @Transactional(rollbackOn = Exception.class)
+    public void deleteAccount(String virtualAccountIdx) {
+        Optional<WellVirtualAccountEntity> virtualAccount = virtualAccountRepository.findById(virtualAccountIdx);
+        virtualAccount.ifPresent(virtualAccountRepository::delete);
+    }
 }

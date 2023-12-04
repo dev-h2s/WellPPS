@@ -4,6 +4,7 @@ import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyInfoDTO;
 import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountCreateDTO;
 import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountInfoDTO;
+import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountIssueDTO;
 import com.wellnetworks.wellcore.java.repository.account.WellVirtualAccountRepository;
 import com.wellnetworks.wellcore.java.service.account.ExcelUtil;
 import com.wellnetworks.wellcore.java.service.account.WellVirtualAccountService;
@@ -139,7 +140,14 @@ public class VirtualAccountController {
                 .body(file);
     }
 
-
+    //발급
+    @PostMapping("issue/{virtualAccountId}")
+    public ResponseEntity<WellVirtualAccountIssueDTO> issueVirtualAccount(
+            @PathVariable String virtualAccountId,
+            @RequestParam String partnerIdx) {
+        WellVirtualAccountIssueDTO result = virtualAccountService.issueVirtualAccount(virtualAccountId, partnerIdx);
+        return ResponseEntity.ok(result);
+    }
 
     //수정
     //다중검색

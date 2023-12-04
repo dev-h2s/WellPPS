@@ -1,23 +1,21 @@
 package com.wellnetworks.wellcore.java.service.account;
 
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
-import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
-import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyInfoDTO;
 import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountCreateDTO;
 import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountInfoDTO;
+import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountIssueDTO;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.repository.account.WellVirtualAccountRepository;
-import com.wellnetworks.wellcore.java.service.partner.PartnerSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -61,8 +59,6 @@ public class WellVirtualAccountService {
         return new PageImpl<>(virtualAccountInfoDTOList);
     }
 
-
-    //상세 조회
     // 생성
     public WellVirtualAccountEntity convertToEntity(WellVirtualAccountCreateDTO dto) {
         WellVirtualAccountEntity entity = new WellVirtualAccountEntity();
@@ -71,7 +67,42 @@ public class WellVirtualAccountService {
         // 필요한 추가 로직
         return entity;
     }
+
+    //발급
+    @Transactional
+    public WellVirtualAccountIssueDTO issueVirtualAccount(String virtualAccountId, String partnerIdx) {
+        Optional<WellVirtualAccountEntity> optionalAccount = virtualAccountRepository.findById(virtualAccountId);
+
+        if (optionalAccount.isPresent()) {
+            WellVirtualAccountEntity virtualAccount = optionalAccount.get();
+
+            // 거래처 엔티티 조회
+            Optional<WellPartnerEntity> optionalPartner = partnerRepository.findById(partnerIdx);
+
+            // optionalPartner가 값이 있으면 가져오고, 없으면 null 처리
+            WellPartnerEntity partnerEntity = optionalPartner.orElse(null);
+
+            // 발급 날짜 및 상태 업데이트
+            virtualAccount.setIssueDate(LocalDateTime.now());
+            virtualAccount.setIssuance("발급");
+
+            // 거래처 엔티티 설정
+            virtualAccount.setPartner(partnerEntity); // 수정됨
+
+            virtualAccountRepository.save(virtualAccount);
+
+            //발급 완료 시 문자 전송
+
+            return new WellVirtualAccountIssueDTO(virtualAccount, partnerEntity);
+        } else {
+            throw new RuntimeException("가상계좌를 찾을 수 없습니다.");
+        }
+    }
+
+
+
     //수정
+
     //다중검색
     public Page<WellVirtualAccountInfoDTO> searchAccountList(List<String> partnerNames
             , LocalDate startDate, LocalDate endDate
@@ -109,6 +140,7 @@ public class WellVirtualAccountService {
         }
         return null;
     }
+
 
     //삭제
 }

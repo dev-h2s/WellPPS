@@ -25,7 +25,7 @@ public class WellVirtualAccountEntity {
     private String virtualAccountIdx = UUID.randomUUID().toString();
 
     @OneToOne(fetch = LAZY) //거래처_idx 거래처랑 1대1
-    @JoinColumn(name = "p_idx", referencedColumnName = "p_idx", insertable = false, updatable = false)
+    @JoinColumn(name = "p_idx", referencedColumnName = "p_idx")
     private WellPartnerEntity partner;
 
     @OneToOne(mappedBy = "virtualAccount", fetch = LAZY, cascade = CascadeType.ALL) // 예치금이랑 1대1(양방향)
@@ -63,4 +63,7 @@ public class WellVirtualAccountEntity {
 
     public void setVirtualBankName(String virtualBankName) {this.virtualBankName = virtualBankName;}
     public void setVirtualAccount(String virtualAccount) {this.virtualAccount = virtualAccount;}
+    public void setIssueDate(LocalDateTime issueDate) {this.issueDate = issueDate;}
+    public void setIssuance(String issuance) {this.issuance = issuance;}
+    public void setPartner(WellPartnerEntity partner) {this.partner = partner;}
 }

@@ -18,6 +18,7 @@ import com.wellnetworks.wellcore.java.service.File.WellFileStorageService;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -50,57 +51,65 @@ public class WellPartnerService {
 
     // 거래처 1개 조회
     public Optional<WellPartnerInfoDTO> getPartnerByPartnerIdx(String partnerIdx) {
-        return Optional.ofNullable(wellPartnerRepository.findByPartnerIdx(partnerIdx))
-                .map(entity -> {
-                    List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerIdx);
+        try {
+            WellPartnerEntity entity = wellPartnerRepository.findByPartnerIdx(partnerIdx);
+            if (entity == null) {
+                throw new EntityNotFoundException("해당 파트너를 찾을 수 없습니다. 파트너 ID: " + partnerIdx);
+            }
 
-                    WellVirtualAccountEntity virtualAccountEntity = entity.getVirtualAccount();
-                    WellDipositEntity depositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : new WellDipositEntity();
+            List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerIdx);
+            WellVirtualAccountEntity virtualAccountEntity = entity.getVirtualAccount();
+            WellDipositEntity depositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : new WellDipositEntity();
 
-                    String partnerUpperIdx = entity.getPartnerUpperIdx();
-                    String partnerUpperName = partnerUpperIdx != null ? wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx) : null;
+            String partnerUpperIdx = entity.getPartnerUpperIdx();
+            String partnerUpperName = partnerUpperIdx != null ? wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx) : null;
 
-                    return new WellPartnerInfoDTO(entity, fileStorages, depositEntity, partnerUpperName);
-                });
+            return Optional.of(new WellPartnerInfoDTO(entity, fileStorages, depositEntity, partnerUpperName));
+        } catch (Exception e) {
+            throw new RuntimeException("파트너 정보 조회 중 오류 발생: " + e.getMessage(), e);
+        }
     }
+
 
     // 거래처 상세 조회
     public Optional<WellPartnerDetailDTO> getDetailPartnerByPartnerIdx(String partnerIdx) {
-        return Optional.ofNullable(wellPartnerRepository.findByPartnerIdx(partnerIdx))
-                .map(entity -> {
-                    List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerIdx);
+        try {
+            WellPartnerEntity entity = wellPartnerRepository.findByPartnerIdx(partnerIdx);
+            if (entity == null) {
+                throw new EntityNotFoundException("해당 파트너를 찾을 수 없습니다. 파트너 ID: " + partnerIdx);
+            }
 
-                    WellVirtualAccountEntity virtualAccountEntity = entity.getVirtualAccount();
-                    WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : new WellDipositEntity();
+            List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerIdx);
+            WellVirtualAccountEntity virtualAccountEntity = entity.getVirtualAccount();
+            WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : new WellDipositEntity();
+            String partnerUpperIdx = entity.getPartnerUpperIdx();
+            String partnerUpperName = partnerUpperIdx != null ? wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx) : null;
 
-                    String partnerUpperIdx = entity.getPartnerUpperIdx();
-                    String partnerUpperName = partnerUpperIdx != null ? wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx) : null;
+            List<WellPartnerEntity> subPartnerEntities = wellPartnerRepository.findSubPartnersByPartnerUpperIdx(partnerIdx);
+            if (subPartnerEntities.isEmpty()) {
+                subPartnerEntities = wellPartnerRepository.findSubPartnersByPartnerUpperIdx(partnerUpperIdx);
+            }
 
-                    List<WellPartnerEntity> subPartnerEntities = wellPartnerRepository.findSubPartnersByPartnerUpperIdx(partnerIdx);
-                    if (subPartnerEntities.isEmpty()) {
-                        subPartnerEntities = wellPartnerRepository.findSubPartnersByPartnerUpperIdx(partnerUpperIdx);
-                    }
+            Long groupId = entity.getPartnerGroup().getPartnerGroupId();
+            WellPartnerGroupEntity partnerGroupEntity = wellPartnerGroupRepository.findByPartnerGroupId(groupId);
+            String PartnerGroupName = groupId != null ? entity.getPartnerGroup().getPartnerGroupName() : null;
 
-                    Long groupId = entity.getPartnerGroup().getPartnerGroupId();
+            WellApikeyInEntity apikeyInEntity = entity.getApiKey();
+            if (apikeyInEntity != null) {
+                apikeyInEntity = wellApikeyInRepository.findByApiKeyInIdx(apikeyInEntity.getApiKeyInIdx());
+            }
 
-                    WellPartnerGroupEntity partnerGroupEntity = wellPartnerGroupRepository.findByPartnerGroupId(groupId);
-                    String PartnerGroupName = groupId != null ? entity.getPartnerGroup().getPartnerGroupName() : null;
+            WellPartnerDetailDTO dto = new WellPartnerDetailDTO(entity, fileStorages, dipositEntity, partnerUpperName, partnerGroupEntity, apikeyInEntity, subPartnerEntities, PartnerGroupName);
+            dto.setSubPartnerNames(subPartnerEntities.stream().map(WellPartnerEntity::getPartnerName).collect(Collectors.toList()));
 
-                    WellApikeyInEntity apikeyInEntity = entity.getApiKey();
-                    if (apikeyInEntity == null) {
-                        return null;
-                    }
-
-                    apikeyInEntity = wellApikeyInRepository.findByApiKeyInIdx(apikeyInEntity.getApiKeyInIdx());
-
-                    WellPartnerDetailDTO dto = new WellPartnerDetailDTO(entity, fileStorages, dipositEntity, partnerUpperName, partnerGroupEntity, apikeyInEntity, subPartnerEntities, PartnerGroupName);
-
-                    // 하위 거래처들의 이름을 설정
-                    dto.setSubPartnerNames(subPartnerEntities.stream().map(WellPartnerEntity::getPartnerName).collect(Collectors.toList()));
-
-                    return dto;
-                });
+            return Optional.of(dto);
+        } catch (EntityNotFoundException e) {
+            return Optional.empty();
+        } catch (Exception e) {
+            throw new RuntimeException("거래처 상세 정보 조회 중 오류 발생: " + e.getMessage(), e);
+        }
     }
+
 
     // 거래처 검색
     public Page<WellPartnerInfoDTO> searchPartnerList(String partnerName, String ceoName, String ceoTelephone, String partnerCode, String address, String writer, String partnerTelephone
@@ -108,6 +117,7 @@ public class WellPartnerService {
             , String discountCategory, String partnerType, String salesManager, String transactionStatus, String regionAddress
             , String partnerUpperIdx, Boolean hasBusinessLicense, Boolean hasContractDocument, Pageable pageable) {
 
+        try {
         Specification<WellPartnerEntity> spec = Specification.where(PartnerSpecification.partnerNameContains(partnerName))
                 .and(PartnerSpecification.partnerCeoNameContains(ceoName))
                 .and(PartnerSpecification.partnerCeoTelephoneContains(ceoTelephone))
@@ -146,12 +156,17 @@ public class WellPartnerService {
             partnerInfoList.add(partnerInfo);
         }
 
-        return new PageImpl<>(partnerInfoList, pageable, partners.getTotalElements());
+            return new PageImpl<>(partnerInfoList, pageable, partners.getTotalElements());
+        } catch (Exception e) {
+            // 여기에 예외 처리 로직 추가
+            throw new RuntimeException("거래처 검색 중 오류 발생: " + e.getMessage(), e);
+        }
     }
 
     //거래처 리스트 조회
 
     public Page<WellPartnerInfoDTO> getAllPartners(Pageable pageable) {
+        try {
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "productRegisterDate"));
 
         Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(pageable);
@@ -204,8 +219,11 @@ public class WellPartnerService {
             partnerInfo.setBusinessLicenseCount(NonBusinessLicenseCount);
             partnerInfo.setContractDocumentCount(NonContractDocumentCount);
         }
-
-        return new PageImpl<>(partnerInfoList, pageable, totalPartnerCount);
+            return new PageImpl<>(partnerInfoList, pageable, totalPartnerCount);
+        } catch (Exception e) {
+            // 여기에 예외 처리 로직 추가
+            throw new RuntimeException("거래처 리스트 조회 중 오류 발생: " + e.getMessage(), e);
+        }
     }
 
 
@@ -393,13 +411,18 @@ public class WellPartnerService {
 
     //거래처 삭제 (관련 엔티티 백업 후 삭제)
     @Transactional(rollbackOn = Exception.class)
-    public Optional<WellPartnerInfoDTO> deletePartnerIdx(String partnerIdx) {
-
-        // 거래처를 조회
+    public WellPartnerInfoDTO deletePartnerIdx(String partnerIdx) {
         WellPartnerEntity partnerEntity = wellPartnerRepository.findByPartnerIdx(partnerIdx);
-
         if (partnerEntity == null) {
-            throw new RuntimeException("해당 파트너를 찾을 수 없습니다.");
+            throw new EntityNotFoundException("해당하는 거래처를 찾을 수 없습니다.");
+        }
+
+        // 수정이 필요한 부분 시작
+        WellApikeyInEntity apiKeyInEntity = partnerEntity.getApiKey();
+        if (apiKeyInEntity != null) {
+            // apiKey가 null이 아닌 경우에만 추가 동작을 수행
+            String apiKeyInIdx = String.valueOf(apiKeyInEntity.getApiKeyInIdx());
+            // 삭제 등의 동작 수행
         }
         try {
             String partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
@@ -418,7 +441,7 @@ public class WellPartnerService {
             WellPartnerEntityBackup partnerBackup = new WellPartnerEntityBackup();
             partnerBackup.setPartnerIdx(partnerIdx);
             partnerBackup.setPartnerGroupId(partnerEntity.getPartnerGroup().getPartnerGroupId());
-            partnerBackup.setApiKeyInIdx(partnerEntity.getApiKey().getApiKeyInIdx());
+            partnerBackup.setApiKeyInIdx(null);
             partnerBackup.setPartnerCode(null);
             partnerBackup.setPartnerName(partnerEntity.getPartnerName());
             partnerBackup.setTransactionStatus(partnerEntity.getTransactionStatus());
@@ -466,7 +489,7 @@ public class WellPartnerService {
             // 거래처 삭제
             wellPartnerRepository.delete(partnerEntity);
 
-            return Optional.of(new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity, partnerUpperName));
+            return new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity, partnerUpperName);
         } catch (Exception e) {
             // 롤백을 위해 예외 발생
             throw new RuntimeException("거래처 삭제 중 오류 발생", e);

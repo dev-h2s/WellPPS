@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-public class WellVirtualAccountUpdateDTO {
+public class WellVirtualAccountUpdateCollectDTO {
     private String virtualAccountIdx;
-    private String partnerIdx; // 새로 연결할 거래처의 ID
+    private String issuance;
 }

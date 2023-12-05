@@ -78,7 +78,11 @@ public class WellPartnerDetailDTO {
         this.salesManager = entity.getSalesManager();
 
         this.inApiFlag = entity.getInApiFlag();
-        this.apiKeyInIdx = apikey.getApiKeyInIdx();
+        if (apikey != null) {
+            this.apiKeyInIdx = apikey.getApiKeyInIdx();
+        } else {
+            this.apiKeyInIdx = null; // API 키가 없는 경우 null 처리
+        }
 
         this.preApprovalNumber = entity.getPreApprovalNumber();
         this.subscriptionDate = LocalDate.from(entity.getSubscriptionDate());

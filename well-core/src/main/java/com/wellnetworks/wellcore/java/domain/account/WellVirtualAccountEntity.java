@@ -1,7 +1,6 @@
 package com.wellnetworks.wellcore.java.domain.account;
 // 가상계좌
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
-import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountCreateDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -25,7 +24,7 @@ public class WellVirtualAccountEntity {
     private String virtualAccountIdx = UUID.randomUUID().toString();
 
     @OneToOne(fetch = LAZY) //거래처_idx 거래처랑 1대1
-    @JoinColumn(name = "p_idx", referencedColumnName = "p_idx", insertable = false, updatable = false)
+    @JoinColumn(name = "p_idx", referencedColumnName = "p_idx")
     private WellPartnerEntity partner;
 
     @OneToOne(mappedBy = "virtualAccount", fetch = LAZY, cascade = CascadeType.ALL) // 예치금이랑 1대1(양방향)
@@ -53,6 +52,8 @@ public class WellVirtualAccountEntity {
     @Column(name = "issue_date") // 발급날짜
     private LocalDateTime issueDate;
 
+    private String memo;
+
     public static WellVirtualAccountEntity createFromExcelData(Map<String, String> excelData) {
         WellVirtualAccountEntity entity = new WellVirtualAccountEntity();
         entity.setVirtualBankName(excelData.get("은행명"));
@@ -63,4 +64,8 @@ public class WellVirtualAccountEntity {
 
     public void setVirtualBankName(String virtualBankName) {this.virtualBankName = virtualBankName;}
     public void setVirtualAccount(String virtualAccount) {this.virtualAccount = virtualAccount;}
+    public void setIssueDate(LocalDateTime issueDate) {this.issueDate = issueDate;}
+    public void setIssuance(String issuance) {this.issuance = issuance;}
+    public void setPartner(WellPartnerEntity partner) {this.partner = partner;}
+    public void setMemo(String memo) {this.memo = memo;}
 }

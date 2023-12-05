@@ -203,10 +203,14 @@ public class WellVirtualAccountService {
 
         List<WellVirtualAccountInfoDTO> accountInfoList = new ArrayList<>();
 
+        Long issuedCount = virtualAccountRepository.countByIssuance("발급");
+        Long notIssuedCount = virtualAccountRepository.countByIssuance("미발급");
+        Long collectCount = virtualAccountRepository.countByIssuance("회수");
+
         for (WellVirtualAccountEntity account : accounts) {
             WellPartnerEntity partnerEntity = account.getPartner();
             String partnerName = getPartnerName(partnerEntity);
-            WellVirtualAccountInfoDTO accountInfo = new WellVirtualAccountInfoDTO(account, partnerEntity, partnerName);
+            WellVirtualAccountInfoDTO accountInfo = new WellVirtualAccountInfoDTO(account, partnerEntity, partnerName, issuedCount, notIssuedCount, collectCount);
             accountInfoList.add(accountInfo);
         }
         return new PageImpl<>(accountInfoList, pageable, accounts.getTotalElements());

@@ -1,6 +1,9 @@
 package com.wellnetworks.wellcore.java.repository.member.employee;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -20,6 +23,8 @@ public interface WellEmployeeUserRepository extends JpaRepository<WellEmployeeUs
     boolean existsByEmployeeIdentification(String employeeIdentification);
 
     WellEmployeeUserEntity findByEmployeeIdx(String employeeIdx);
+
+    Page<WellEmployeeUserEntity> findAll(Specification<WellEmployeeUserEntity> spec, Pageable pageable);
 
 }
 

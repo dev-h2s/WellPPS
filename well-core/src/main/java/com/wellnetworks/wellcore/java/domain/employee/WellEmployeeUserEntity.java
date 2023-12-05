@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -74,6 +75,8 @@ public class WellEmployeeUserEntity  {
     private LocalDateTime employeeUserModifyDate;
 
     @Column(name = "m_u_regdt") //유저정보 생성일자
+    @CreatedDate
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     private LocalDateTime employeeUserRegisterDate;
 
     @Column(name = "Group_key") //그룹식별자
@@ -85,7 +88,7 @@ public class WellEmployeeUserEntity  {
     @Column
     private Boolean isFirstLogin ; // 첫로그인 여부
 
-    @OneToOne(mappedBy = "employeeUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "employeeUser", cascade = CascadeType.ALL, fetch = LAZY)
     private EmployeeRefreshTokenEntity refreshToken; // 토큰 연결
 
     public WellEmployeeEntity getEmployeeEntity() {
@@ -172,6 +175,10 @@ public class WellEmployeeUserEntity  {
 
     public void setEmployeeGroup(WellEmployeeManagerGroupEntity employeeManagerGroupKey){
         this.employeeManagerGroupKey = employeeManagerGroupKey;
+    }
+
+    public void setEmployeeUserModifyDate(LocalDateTime employeeUserModifyDate) {
+        this.employeeUserModifyDate = employeeUserModifyDate;
     }
 
 

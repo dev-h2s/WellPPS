@@ -1,21 +1,20 @@
 package com.wellnetworks.wellwebapi.java.controller;
 
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
 import com.wellnetworks.wellcore.java.dto.member.*;
 import com.wellnetworks.wellcore.java.service.member.WellEmployeeService;
-import com.wellnetworks.wellsecure.java.request.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RequestMapping("/admin/hr/")
 @RestController
@@ -44,22 +43,23 @@ public class EmployeeController {
 
     //사원 리스트 조회
     @GetMapping("employee")
-    public List<WellEmployeeInfoDTO> getEmployeeList(
-            @RequestParam(required = false) String employeeIdx,
-            @RequestParam(required = false) Integer employeeId,
-            @RequestParam(required = false) String belong,
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String discountCategory,
-            @RequestParam(required = false) String department,
-            @RequestParam(required = false) String position,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date employeeRegisterDate,
-            @RequestParam(required = false) String telPrivate,
-            @RequestParam(required = false) String eMail,
-            @RequestParam(required = false) String employmentState
+    public ResponseEntity<Map<String, Object>> getEmployeeList(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
-        List<WellEmployeeInfoDTO> employeeList = wellEmployeeService.getAllemployees();
 
-        return employeeList;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "employeeUserRegisterDate"));
+        Page<WellEmployeeInfoDTO> employeePage = wellEmployeeService.getAllemployees(pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("currentPage", employeePage.getNumber());
+        response.put("items", employeePage.getContent());
+        response.put("message", "");
+        response.put("status", "OK");
+        response.put("totalItems", employeePage.getTotalElements());
+        response.put("totalPages", employeePage.getTotalPages());
+
+        return ResponseEntity.ok(response);
     }
 
     //사원 생성
@@ -93,27 +93,35 @@ public class EmployeeController {
 
 
 
-    // 검색
+    // 사원 검색
     @GetMapping("employee/search")
-    public List<WellEmployeeInfoDTO> searchEmployeeList(
+    public ResponseEntity<Map<String, Object>> searchEmployeeList(
+            @RequestParam(required = false) String employeeIdx,
+            @RequestParam(required = false) Integer employeeId,
             @RequestParam(value = "belong", required = false) String belong,
             @RequestParam(value = "employmentState", required = false) String employmentState,
             @RequestParam(value = "employeeName", required = false) String employeeName,
             @RequestParam(value = "employeeIdentification", required = false) String employeeIdentification,
             @RequestParam(value = "position", required = false) String position,
             @RequestParam(value = "telPrivate", required = false) String telPrivate,
-            @RequestParam(value = "department", required = false) String department
+            @RequestParam(value = "department", required = false) String department,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "employeeUserRegisterDate"));
+        Page<WellEmployeeInfoDTO> employeePage = wellEmployeeService.searchEmployeeList(belong,employmentState,employeeName,employeeIdentification,position,telPrivate,department,pageable);
         // 서비스 레이어의 검색 메서드 호출
-        return wellEmployeeService.searchEmployeeList(
-                belong,
-                employmentState,
-                employeeName,
-                employeeIdentification,
-                position,
-                telPrivate,
-                department
-    );
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("currentPage", employeePage.getNumber());
+        response.put("items", employeePage.getContent());
+        response.put("message", "");
+        response.put("status", "OK");
+        response.put("totalItems", employeePage.getTotalElements());
+        response.put("totalPages", employeePage.getTotalPages());
+
+        return ResponseEntity.ok(response);
+
     }
 
 

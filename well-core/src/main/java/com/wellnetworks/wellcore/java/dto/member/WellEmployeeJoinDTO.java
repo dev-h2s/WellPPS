@@ -6,6 +6,7 @@ import jakarta.persistence.Column;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +25,8 @@ public class WellEmployeeJoinDTO {
     private String position; // 직책
     private String employmentState; // 재직 상태
     private String jobType; // 고용형태
-    private LocalDateTime entryDatetime; // 입사일
-    private LocalDateTime employmentQuitDatetime; //퇴사일
+    private LocalDate entryDate; // 입사일
+    private LocalDate retireDate; //퇴사일
     private String employmentQuitType; // 퇴사사유
     private Float remainingLeaveDays; //잔여연차
     private String residentRegistrationNumber; // 주민번호
@@ -58,7 +59,7 @@ public class WellEmployeeJoinDTO {
     @QueryProjection
 
     public WellEmployeeJoinDTO(String employeeIdx, Long employeeId, String employeeIdentification, String employeeName, String belong, String department, String position,
-                               String employmentState, String jobType, LocalDateTime entryDatetime, LocalDateTime employmentQuitDatetime, String employmentQuitType,
+                               String employmentState, String jobType, LocalDate entryDate, LocalDate retireDate, String employmentQuitType,
                                Float remainingLeaveDays, String residentRegistrationNumber, String telPrivate, Boolean isPhoneVerified, String phoneVerificationCode,
                                Integer phoneVerificationAttempts, LocalDateTime phoneVerificationExpiration, LocalDateTime phoneVerificationSentTime, String telWork,
                                String email, String bankName, String bankAccount, String bankHolder, String homeAddress1, String homeAddress2, Boolean externalAccessCert,
@@ -72,8 +73,8 @@ public class WellEmployeeJoinDTO {
         this.position = position;
         this.employmentState = employmentState;
         this.jobType = jobType;
-        this.entryDatetime = entryDatetime;
-        this.employmentQuitDatetime = employmentQuitDatetime;
+        this.entryDate = entryDate;
+        this.retireDate = retireDate;
         this.employmentQuitType = employmentQuitType;
         this.remainingLeaveDays = remainingLeaveDays;
         this.residentRegistrationNumber = residentRegistrationNumber;

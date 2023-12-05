@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,8 +23,8 @@ public class WellEmployeeUpdateDTO {
     private String position; // 직책
     private String employmentState; // 재직상태
     private String jobType; // 고용형태
-    private LocalDateTime entryDatetime; // 입사일자
-    private LocalDateTime employmentQuitDatetime; // 퇴사일자
+    private LocalDate entryDate; // 입사일자
+    private LocalDate retireDate; // 퇴사일자
     private String employmentQuitType; // 퇴사사유
     private Float remainingLeaveDays; // 잔여연차
     private String residentRegistrationNumber;//주민등록번호
@@ -39,5 +40,8 @@ public class WellEmployeeUpdateDTO {
     private String memo; // 메모
     private List<MultipartFile> files; //첨부파일
     private String employeeManagerGroupKey; //매니저 그룹키
+
+
+
 
 }

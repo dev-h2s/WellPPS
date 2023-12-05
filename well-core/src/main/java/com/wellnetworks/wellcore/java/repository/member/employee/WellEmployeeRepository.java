@@ -1,7 +1,10 @@
 package com.wellnetworks.wellcore.java.repository.member.employee;
 
+import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeEntity;
+import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.domain.Pageable;
@@ -19,8 +22,6 @@ extends JpaRepository<WellEmployeeEntity, String>, JpaSpecificationExecutor <Wel
     @Query("SELECT MAX(e.employeeId) FROM WellEmployeeEntity e")
     Long findMaxEmployeeId();
 
-    // 페이지네이션을 적용하여 모든 맴버 엔티티 검색
-    Page<WellEmployeeEntity> findAll(Pageable pageable);
 
 //    // 사원 name으로 조회
 //    Optional<WellEmployeeEntity> findByEmployeeName(String name);
@@ -29,5 +30,8 @@ extends JpaRepository<WellEmployeeEntity, String>, JpaSpecificationExecutor <Wel
     // 사원 idx로 삭제 ?? user에서 해야할 듯
     Optional<Integer> deleteByemployeeIdx(String idx);
 
+    Page<WellEmployeeEntity> findAll(Specification<WellEmployeeEntity> spec, Pageable pageable);
 
+
+//    Page<WellEmployeeEntity> findAll(Specification<WellEmployeeUserEntity> spec, Pageable pageable);
 }

@@ -114,7 +114,7 @@ public class RefreshTokenService {
 //      리프레쉬 토큰의 만료 시간을 계산하는 메서드.
     private Date calculateExpiryDate(int refreshTokenExpirationTime) {
         Calendar calendar = Calendar.getInstance(); // 현재 시간을 기준으로 Calendar 객체를 생성
-        calendar.add(Calendar.SECOND, refreshTokenExpirationTime); // 현재 시간에 유효 시간을 더함
+        calendar.add(Calendar.HOUR, refreshTokenExpirationTime); // 현재 시간에 유효 시간을 더함
         return calendar.getTime(); // 새로운 만료 시간을 가진 Date 객체를 반환
     }
 

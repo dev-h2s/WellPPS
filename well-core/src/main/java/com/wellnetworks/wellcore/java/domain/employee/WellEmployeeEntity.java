@@ -7,7 +7,10 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,10 +92,10 @@ public class WellEmployeeEntity {
     private Boolean externalAccessCert;
 
     @Column(name = "entry_dt", nullable = false) //입사 일자
-    private LocalDateTime entryDatetime;
+    private LocalDate entryDate;
 
     @Column(name = "retire_dt") //퇴사 일자
-    private LocalDateTime employmentQuitDatetime;
+    private LocalDate retireDate;
 
     @Column(name = "retire_type") //퇴사 사유
     private String employmentQuitType;
@@ -109,17 +112,19 @@ public class WellEmployeeEntity {
     @Column(name = "memo") //사원 메모
     private String memo;
 
-    @Column(name = "em_moddt") //마지막 수정 날짜
-    private LocalDateTime employeeModifyDate;
-
-    @Column(name = "em_regdt") //생성 날짜와 시간
-    private LocalDateTime employeeRegisterDate;
+//    @Column(name = "em_moddt") //마지막 수정 날짜
+//    private LocalDateTime employeeModifyDate;
+//
+//    @Column(name = "em_regdt") //생성 날짜와 시간
+//    @CreatedDate
+//    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+//    private LocalDateTime employeeRegisterDate;
     @Builder
     public WellEmployeeEntity(String employeeIdx, WellEmployeeUserEntity employeeUser, List<WellEmployeeFileStorageEntity> files,
                               Long employeeId, String belong, String employeeName, String email, String telPrivate, String telWork,
-                              String registrationNumber, String position, String level, String homeAddress1, String homeAddress2,
+                              String registrationNumber, String position, String homeAddress1, String homeAddress2,
                               String bankName, String bankAccount, String bankHolder, String employmentState, String jobType,
-                              Boolean externalAccessCert, LocalDateTime entryDatetime, LocalDateTime employmentQuitDatetime,
+                              Boolean externalAccessCert, LocalDate entryDate, LocalDate retireDate,
                               String employmentQuitType, Float remainingLeaveDays, String residentRegistrationNumber, Boolean dbAccessPower,
                               String memo, LocalDateTime employeeModifyDate, LocalDateTime employeeRegisterDate) {
         this.employeeIdx = employeeIdx;
@@ -142,15 +147,15 @@ public class WellEmployeeEntity {
         this.employmentState = employmentState;
         this.jobType = jobType;
         this.externalAccessCert = externalAccessCert;
-        this.entryDatetime = entryDatetime;
-        this.employmentQuitDatetime = employmentQuitDatetime;
+        this.entryDate = entryDate;
+        this.retireDate = retireDate;
         this.employmentQuitType = employmentQuitType;
         this.remainingLeaveDays = remainingLeaveDays;
         this.residentRegistrationNumber = residentRegistrationNumber;
         this.dbAccessPower = dbAccessPower;
         this.memo = memo;
-        this.employeeModifyDate = employeeModifyDate;
-        this.employeeRegisterDate = employeeRegisterDate;
+//        this.employeeModifyDate = employeeModifyDate;
+//        this.employeeRegisterDate = employeeRegisterDate;
     }
     public void updateFromDTO(WellEmployeeUpdateDTO updateDTO) {
         this.employeeName = updateDTO.getEmployeeName(); //이름
@@ -159,8 +164,8 @@ public class WellEmployeeEntity {
         this.position = updateDTO.getPosition(); // 직책
         this.employmentState = updateDTO.getEmploymentState(); // 재직상태
         this.jobType = updateDTO.getJobType(); // 고용형태
-        this.entryDatetime = updateDTO.getEntryDatetime(); // 입사일자
-        this.employmentQuitDatetime = updateDTO.getEmploymentQuitDatetime(); // 퇴사일자
+        this.entryDate = updateDTO.getEntryDate(); // 입사일자
+        this.retireDate = updateDTO.getRetireDate(); // 퇴사일자
         this.employmentQuitType = updateDTO.getEmploymentQuitType(); // 퇴사사유
         this.remainingLeaveDays = updateDTO.getRemainingLeaveDays(); // 잔여연차
         this.residentRegistrationNumber = updateDTO.getResidentRegistrationNumber();//주민등록번호

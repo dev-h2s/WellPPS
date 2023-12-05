@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -101,29 +102,32 @@ public class WellEmployeeService {
 
 
     //사원 리스트 조회
-    public List<WellEmployeeInfoDTO> getAllemployees() {
-        List<WellEmployeeEntity> employees = wellEmployeeRepository.findAll();
-        List<WellEmployeeInfoDTO> employeeInfoList = new ArrayList<>();
+    public Page<WellEmployeeInfoDTO> getAllemployees(Pageable pageable) {
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "employeeUserRegisterDate"));
+        Page<WellEmployeeUserEntity> employeeUsers = wellEmployeeUserRepository.findAll(pageable);
 
-        for (WellEmployeeEntity employeeEntity : employees) {
-            List<WellEmployeeFileStorageEntity> fileStorages = employeeFileRepository.findByEmployeeIdx(employeeEntity.getEmployeeIdx());
+        // 검색 조건에 맞는 데이터 조회
+        List<WellEmployeeInfoDTO> employeeList = new ArrayList<>();
 
-            // WellEmployeeEntity에서 WellEmployeeUserEntity 가져오기
-            WellEmployeeUserEntity employeeUser = employeeEntity.getEmployeeUser();
-            // 부서 정보를 저장할 변수를 초기화
-            WellEmployeeManagerGroupEntity department = null;
+        // 검색된 WellEmployeeUserEntity 리스트를 WellEmployeeInfoDTO 리스트로 변환
+//        List<WellEmployeeInfoDTO> employeeInfoDTOList = employeeUsers.stream()
+//                .map(user -> {
+//                    WellEmployeeEntity employeeEntity = user.getEmployeeEntity();
+//                    WellEmployeeManagerGroupEntity managerGroupEntity = user.getManagerGroupEntity();
+//                    return new WellEmployeeInfoDTO(employeeEntity, managerGroupEntity);
+//                })
+//                .collect(Collectors.toList());
 
-            // employeeUser가 null이 아닌 경우,
-            // employeeUser와 연결된 WellEmployeeManagerGroupEntity (즉, 부서 정보)를 가져온다.
-            if (employeeUser != null) {
-                department = employeeUser.getEmployeeManagerGroupKey();
-            }
+        for(WellEmployeeUserEntity employeeUser : employeeUsers){
+            WellEmployeeEntity employeeEntity = employeeUser.getEmployeeEntity(); // 가정
+            WellEmployeeManagerGroupEntity managerGroupEntity = employeeUser.getManagerGroupEntity(); // 가정
 
-            WellEmployeeInfoDTO employeeInfo = new WellEmployeeInfoDTO(employeeEntity, department);
-            employeeInfoList.add(employeeInfo);
+            WellEmployeeInfoDTO employeeInfo = new WellEmployeeInfoDTO(employeeEntity, managerGroupEntity, employeeUser);
+            employeeList.add(employeeInfo);
         }
 
-        return employeeInfoList;
+        // PageImpl 객체 생성 및 반환
+        return new PageImpl<>(employeeList, pageable, employeeUsers.getTotalElements());
     }
 
     public class UserAndEmployee {
@@ -212,6 +216,7 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
             .employeeManagerGroupKey(group) // 연관 관계 설정
             .isFirstLogin(true)
             .isPasswordResetRequired(true)
+            .employeeUserRegisterDate(LocalDateTime.now())
             .build();
 
     wellEmployeeUserRepository.save(userEntity);
@@ -226,8 +231,8 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
             .position(joinDTO.getPosition())
             .employmentState(joinDTO.getEmploymentState())
             .jobType(joinDTO.getJobType())
-            .entryDatetime(joinDTO.getEntryDatetime())
-            .employmentQuitDatetime(currentDateTime)
+            .entryDate(joinDTO.getEntryDate())
+            .retireDate(joinDTO.getRetireDate())
             .employmentQuitType(joinDTO.getEmploymentQuitType())
             .remainingLeaveDays(joinDTO.getRemainingLeaveDays())
             .residentRegistrationNumber(joinDTO.getResidentRegistrationNumber())
@@ -241,7 +246,7 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
             .homeAddress2(joinDTO.getHomeAddress2())
             .externalAccessCert(joinDTO.getExternalAccessCert())
             .memo(joinDTO.getMemo())
-            .employeeRegisterDate(LocalDateTime.now())
+//            .employeeRegisterDate(LocalDateTime.now())
             .build();
     wellEmployeeRepository.save(employeeEntity);
 
@@ -273,13 +278,14 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
 
 
 
-    // 사원 검색 서비스 메소드
-    public List<WellEmployeeInfoDTO> searchEmployeeList(String belong, String employmentState,
+    // 사원 검색
+    public Page<WellEmployeeInfoDTO> searchEmployeeList(String belong, String employmentState,
                                                         String employeeName,
                                                         String employeeIdentification,
                                                         String position,
                                                         String telPrivate,
-                                                        String department
+                                                        String department,
+                                                        Pageable pageable
 
     ) {
         // 복합 검색 조건에 대한 Specification 생성
@@ -292,18 +298,32 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
                         .and(EmployeeSpecification.telPrivateContains(telPrivate))
                         .and(EmployeeSpecification.departmentContains(department));
 
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "employeeUserRegisterDate"));
+
+        Page<WellEmployeeUserEntity> employeeUsers = wellEmployeeUserRepository.findAll(spec, pageable);
+
         // 검색 조건에 맞는 데이터 조회
-        List<WellEmployeeUserEntity> employeeUsers = wellEmployeeUserRepository.findAll(spec);
+        List<WellEmployeeInfoDTO> employeeList = new ArrayList<>();
 
         // 검색된 WellEmployeeUserEntity 리스트를 WellEmployeeInfoDTO 리스트로 변환
-        List<WellEmployeeInfoDTO> employeeInfoDTOList = employeeUsers.stream()
-                .map(user -> {
-                    WellEmployeeEntity employeeEntity = user.getEmployeeEntity();
-                    WellEmployeeManagerGroupEntity managerGroupEntity = user.getManagerGroupEntity();
-                    return new WellEmployeeInfoDTO(employeeEntity, managerGroupEntity);
-                })
-                .collect(Collectors.toList());
-        return employeeInfoDTOList;
+//        List<WellEmployeeInfoDTO> employeeInfoDTOList = employeeUsers.stream()
+//                .map(user -> {
+//                    WellEmployeeEntity employeeEntity = user.getEmployeeEntity();
+//                    WellEmployeeManagerGroupEntity managerGroupEntity = user.getManagerGroupEntity();
+//                    return new WellEmployeeInfoDTO(employeeEntity, managerGroupEntity);
+//                })
+//                .collect(Collectors.toList());
+
+        for(WellEmployeeUserEntity employeeUser : employeeUsers){
+            WellEmployeeEntity employeeEntity = employeeUser.getEmployeeEntity(); // 가정
+            WellEmployeeManagerGroupEntity managerGroupEntity = employeeUser.getManagerGroupEntity(); // 가정
+
+            WellEmployeeInfoDTO employeeInfo = new WellEmployeeInfoDTO(employeeEntity, managerGroupEntity, employeeUser);
+            employeeList.add(employeeInfo);
+        }
+
+        // PageImpl 객체 생성 및 반환
+        return new PageImpl<>(employeeList, pageable, employeeUsers.getTotalElements());
     }
 
 
@@ -325,7 +345,7 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
             }
 
             employeeUser.setEmployeeGroup(employeeGroup);
-
+            employeeUser.setEmployeeUserModifyDate(LocalDateTime.now());
             employeeFileService.updateFiles(updateDTO, employeeIdx);
 
             // 엔티티의 업데이트 메서드 호출

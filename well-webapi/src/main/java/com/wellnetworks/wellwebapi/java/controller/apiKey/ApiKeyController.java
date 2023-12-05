@@ -37,7 +37,7 @@ public class ApiKeyController {
     //리스트 조회
     @GetMapping("info")
     public ResponseEntity<Map<String, Object>> getAllApikeys(
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "0 ") int page,
             @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "apiKeyInRegisterDate"));

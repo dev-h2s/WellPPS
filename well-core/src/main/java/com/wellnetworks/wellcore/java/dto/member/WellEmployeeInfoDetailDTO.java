@@ -7,6 +7,7 @@ import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +24,8 @@ public class WellEmployeeInfoDetailDTO {
     private String position;
     private String employmentState;
     private String jobType;
-    private LocalDateTime entryDatetime;
-    private LocalDateTime employmentQuitDatetime;
+    private LocalDate entryDate;
+    private LocalDate retireDate;
     private String employmentQuitType;
     private Float remainingLeaveDays;
     private String residentRegistrationNumber;
@@ -78,8 +79,8 @@ public class WellEmployeeInfoDetailDTO {
 //        this.certificationtel = entity.getCertificationtel();
 //        this.certificationEmail = entity.getCertificationEmail();
         this.externalAccessCert = entity.getExternalAccessCert();
-        this.entryDatetime = entity.getEntryDatetime();
-        this.employmentQuitDatetime = entity.getEmploymentQuitDatetime();
+        this.entryDate = entity.getEntryDate();
+        this.retireDate = entity.getRetireDate();
         this.employmentQuitType = entity.getEmploymentQuitType();
         this.remainingLeaveDays = entity.getRemainingLeaveDays();
         this.residentRegistrationNumber = entity.getResidentRegistrationNumber();

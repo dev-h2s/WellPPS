@@ -2,10 +2,7 @@ package com.wellnetworks.wellcore.java.service.account;
 
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
-import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountCreateDTO;
-import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountInfoDTO;
-import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountIssueDTO;
-import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountUpdateDTO;
+import com.wellnetworks.wellcore.java.dto.VirtualAccount.*;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.repository.account.WellVirtualAccountRepository;
 import jakarta.transaction.Transactional;
@@ -34,6 +31,16 @@ public class WellVirtualAccountService {
                     WellPartnerEntity partnerEntity = virtualAccountEntity.getPartner();
                     String partnerName = partnerEntity != null ? partnerRepository.findPartnerNameByPartnerIdx(partnerEntity.getPartnerIdx()) : null;
                     return new WellVirtualAccountInfoDTO(virtualAccountEntity, partnerEntity, partnerName);
+                });
+    }
+
+    // 상세 조회
+    public Optional<WellVirtualAccountDetailDTO> getDetailVirtualAccountById(String virtualAccountIdx) {
+        return virtualAccountRepository.findById(virtualAccountIdx)
+                .map(virtualAccountEntity -> {
+                    WellPartnerEntity partnerEntity = virtualAccountEntity.getPartner();
+                    String partnerName = partnerEntity != null ? partnerRepository.findPartnerNameByPartnerIdx(partnerEntity.getPartnerIdx()) : null;
+                    return new WellVirtualAccountDetailDTO(virtualAccountEntity, partnerEntity, partnerName);
                 });
     }
 
@@ -156,6 +163,23 @@ public class WellVirtualAccountService {
 
 
     //수정(미발급, 회수)
+    @Transactional(rollbackOn = Exception.class)
+    public void updateCollectVirtualAccount(String virtualAccountIdx, String issuance) {
+        try {
+            WellVirtualAccountEntity virtualAccount = virtualAccountRepository.findById(virtualAccountIdx)
+                    .orElseThrow(() -> new RuntimeException("가상계좌를 찾을 수 없습니다."));
+
+            virtualAccount.setPartner(null);
+            virtualAccount.setIssueDate(LocalDateTime.now());
+            virtualAccount.setIssuance(issuance);
+            virtualAccount.setMemo(LocalDate.now() + " : 수정 완료");
+
+            virtualAccountRepository.save(virtualAccount);
+        } catch (Exception e) {
+            // 롤백을 위해 예외 발생
+            throw new RuntimeException("가상계좌 수정 중 오류 발생", e);
+        }
+    }
 
     //다중검색
     public Page<WellVirtualAccountInfoDTO> searchAccountList(List<String> partnerNames

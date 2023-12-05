@@ -3,10 +3,7 @@ package com.wellnetworks.wellwebapi.java.controller.account;
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
-import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountCreateDTO;
-import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountInfoDTO;
-import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountIssueDTO;
-import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountUpdateDTO;
+import com.wellnetworks.wellcore.java.dto.VirtualAccount.*;
 import com.wellnetworks.wellcore.java.repository.account.WellVirtualAccountRepository;
 import com.wellnetworks.wellcore.java.service.account.ExcelUtil;
 import com.wellnetworks.wellcore.java.service.account.WellVirtualAccountService;
@@ -47,10 +44,18 @@ public class VirtualAccountController {
     @Autowired private WellVirtualAccountService virtualAccountService;
     @Autowired private WellVirtualAccountRepository virtualAccountRepository;
 
-    //개별 조회 & 상세 조회
+    //개별 조회
     @GetMapping("info/{virtualAccountIdx}")
     public ResponseEntity<WellVirtualAccountInfoDTO> getVirtualAccountById(@PathVariable String virtualAccountIdx) {
         return virtualAccountService.getVirtualAccountById(virtualAccountIdx)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    //상세 조회
+    @GetMapping("info/detail/{virtualAccountIdx}")
+    public ResponseEntity<WellVirtualAccountDetailDTO> getDetailVirtualAccountById(@PathVariable String virtualAccountIdx) {
+        return virtualAccountService.getDetailVirtualAccountById(virtualAccountIdx)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -175,6 +180,12 @@ public class VirtualAccountController {
 
 
     //수정(미발급, 회수)
+    @PatchMapping("/update/issue/{virtualAccountIdx}")
+    public ResponseEntity<String> updateCollectVirtualAccount(@PathVariable String virtualAccountIdx,
+                                                       @RequestParam String issuance) {
+        virtualAccountService.updateCollectVirtualAccount(virtualAccountIdx, issuance);
+        return ResponseEntity.status(HttpStatus.CREATED).body("가상계좌가 성공적으로 수정되었습니다.");
+    }
 
     //다중검색
     @GetMapping("search")

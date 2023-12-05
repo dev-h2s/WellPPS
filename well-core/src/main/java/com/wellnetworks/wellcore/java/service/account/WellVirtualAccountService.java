@@ -5,6 +5,7 @@ import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountCreateDTO;
 import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountInfoDTO;
 import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountIssueDTO;
+import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountUpdateDTO;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.repository.account.WellVirtualAccountRepository;
 import jakarta.transaction.Transactional;
@@ -132,10 +133,29 @@ public class WellVirtualAccountService {
         return new WellVirtualAccountIssueDTO(savedAccount, partnerEntity);
     }
 
+    //수정(발급)
+    @Transactional(rollbackOn = Exception.class)
+    public void updateVirtualAccount(String virtualAccountIdx, String partnerIdx) {
+        try {
+            WellVirtualAccountEntity virtualAccount = virtualAccountRepository.findById(virtualAccountIdx)
+                    .orElseThrow(() -> new RuntimeException("가상계좌를 찾을 수 없습니다."));
+
+            WellPartnerEntity partner = partnerRepository.findById(partnerIdx)
+                    .orElseThrow(() -> new RuntimeException("거래처를 찾을 수 없습니다."));
+
+            virtualAccount.setPartner(partner);
+            virtualAccount.setIssueDate(LocalDateTime.now());
+            virtualAccount.setIssuance("발급");
+
+            virtualAccountRepository.save(virtualAccount);
+        } catch (Exception e) {
+            // 롤백을 위해 예외 발생
+            throw new RuntimeException("가상계좌 수정 중 오류 발생", e);
+        }
+    }
 
 
-
-    //수정
+    //수정(미발급, 회수)
 
     //다중검색
     public Page<WellVirtualAccountInfoDTO> searchAccountList(List<String> partnerNames

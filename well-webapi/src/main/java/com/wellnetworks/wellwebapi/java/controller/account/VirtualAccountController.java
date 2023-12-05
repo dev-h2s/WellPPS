@@ -2,12 +2,15 @@ package com.wellnetworks.wellwebapi.java.controller.account;
 
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
 import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountCreateDTO;
 import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountInfoDTO;
 import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountIssueDTO;
+import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountUpdateDTO;
 import com.wellnetworks.wellcore.java.repository.account.WellVirtualAccountRepository;
 import com.wellnetworks.wellcore.java.service.account.ExcelUtil;
 import com.wellnetworks.wellcore.java.service.account.WellVirtualAccountService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.FileSystemResource;
@@ -159,11 +162,20 @@ public class VirtualAccountController {
         return ResponseEntity.ok("가상계좌 변경 완료");
     }
 
+    //수정(발급)
+    @PatchMapping("/update/notIssue/{virtualAccountIdx}")
+    public ResponseEntity<String> updateVirtualAccount(@PathVariable String virtualAccountIdx,
+                                                       @RequestParam String partnerIdx) {
+        if (partnerIdx == null) {
+            throw new IllegalArgumentException("거래처를 찾을 수 없습니다.");
+        }
+        virtualAccountService.updateVirtualAccount(virtualAccountIdx, partnerIdx);
+        return ResponseEntity.status(HttpStatus.CREATED).body("가상계좌가 성공적으로 수정되었습니다.");
+    }
 
 
+    //수정(미발급, 회수)
 
-
-    //수정
     //다중검색
     @GetMapping("search")
     public ResponseEntity<Map<String, Object>> searchAccount(

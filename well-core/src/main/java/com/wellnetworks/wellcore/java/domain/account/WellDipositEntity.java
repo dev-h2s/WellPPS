@@ -2,10 +2,8 @@ package com.wellnetworks.wellcore.java.domain.account;
 //예치금
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -13,9 +11,8 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@EntityListeners(AuditingEntityListener.class)
 public class WellDipositEntity {
 
         @Id //    예치금_idx

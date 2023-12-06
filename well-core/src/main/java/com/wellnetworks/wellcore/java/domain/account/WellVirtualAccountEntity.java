@@ -1,5 +1,6 @@
 package com.wellnetworks.wellcore.java.domain.account;
 // 가상계좌
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import jakarta.persistence.*;
 import lombok.*;

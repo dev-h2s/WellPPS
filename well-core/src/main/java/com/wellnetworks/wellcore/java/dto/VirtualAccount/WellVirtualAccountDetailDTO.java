@@ -1,5 +1,6 @@
 package com.wellnetworks.wellcore.java.dto.VirtualAccount;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import lombok.AccessLevel;
@@ -19,6 +20,7 @@ public class WellVirtualAccountDetailDTO {
     private String issuance;
     private String partnerIdx;
     private String partnerName;
+    @JsonFormat(pattern = "yyyy.MM.dd.HH:mm:ss")
     private LocalDateTime issueDate;
     private String writer;
     private String memo;

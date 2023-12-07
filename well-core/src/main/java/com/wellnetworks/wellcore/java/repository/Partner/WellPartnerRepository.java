@@ -49,6 +49,35 @@ public interface WellPartnerRepository extends JpaRepository<WellPartnerEntity, 
     //거래처 거래유무 개수
     Long countByTransactionStatus(String transactionStatus);
 
+    // 등록된 거래처 개수
+    @Query("SELECT COUNT(p) FROM WellPartnerEntity p WHERE p.transactionStatus = '등록'")
+    Long registeredCount();
+
+    // 가등록된 거래처 개수
+    @Query("SELECT COUNT(p) FROM WellPartnerEntity p WHERE p.transactionStatus = '가등록'")
+    Long preRegisteredCount();
+
+    // 관리대상 거래처 개수
+    @Query("SELECT COUNT(p) FROM WellPartnerEntity p WHERE p.transactionStatus = '관리대상'")
+    Long managementCount();
+
+    // 거래중지된 거래처 개수
+    @Query("SELECT COUNT(p) FROM WellPartnerEntity p WHERE p.transactionStatus = '거래중지'")
+    Long suspendedCount();
+
+    // 거래처의 사업자등록증이 없는 개수
+    @Query("SELECT COUNT(p) FROM WellPartnerEntity p WHERE p.partnerIdx NOT IN (SELECT DISTINCT fs.partnerIdx FROM WellPartnerFIleStorageEntity fs WHERE fs.file.fileKind = '사업자등록증')")
+    Long countBusinessLicenseMissing();
+
+
+    // 거래처의 계약서가 없는 개수
+    @Query("SELECT COUNT(p) FROM WellPartnerEntity p WHERE p.partnerIdx NOT IN (SELECT DISTINCT fs.partnerIdx FROM WellPartnerFIleStorageEntity fs WHERE fs.file.fileKind = '계약서')")
+    Long countContractDocumentMissing();
+
+
+
+
+
     //거래처 등록
     WellPartnerEntity save(WellPartnerEntity wellPartnerEntity);
 

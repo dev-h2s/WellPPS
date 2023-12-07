@@ -99,6 +99,10 @@ public class VirtualAccountController {
             response.put("totalItems", partnersPage.getTotalElements());
             response.put("totalPages", partnersPage.getTotalPages());
 
+            response.put("issuedCount", virtualAccountRepository.issuedCount());
+            response.put("notIssuedCount", virtualAccountRepository.notIssuedCount());
+            response.put("collectCount", virtualAccountRepository.collectCount());
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
@@ -299,6 +303,10 @@ public class VirtualAccountController {
             response.put("status", "OK");
             response.put("totalItems", result.getTotalElements());
             response.put("totalPages", result.getTotalPages());
+
+            response.put("issuedCount", virtualAccountRepository.issuedCount());
+            response.put("notIssuedCount", virtualAccountRepository.notIssuedCount());
+            response.put("collectCount", virtualAccountRepository.collectCount());
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {

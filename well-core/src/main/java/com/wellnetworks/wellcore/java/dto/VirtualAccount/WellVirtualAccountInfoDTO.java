@@ -24,34 +24,11 @@ public class WellVirtualAccountInfoDTO {
     private LocalDateTime issueDate;
     private String writer;
 
-    private Long issuedCount; // 발급
-    private Long notIssuedCount; // 미발급
-    private Long collectCount; // 회수
-
-
     //개별
-    public WellVirtualAccountInfoDTO(WellVirtualAccountEntity virtualAccount, WellPartnerEntity partnerEntity, String partnerName
-    ) {
-        this.virtualAccountIdx = virtualAccount.getVirtualAccountIdx();
-        this.registerDate = virtualAccount.getRegisterDate();
-        this.virtualBankName = virtualAccount.getVirtualBankName();
-        this.virtualAccount = virtualAccount.getVirtualAccount();
-        this.issuance = virtualAccount.getIssuance();
-        if (partnerEntity != null) {
-            this.partnerIdx = String.valueOf(partnerEntity.getPartnerIdx());
-            this.partnerName = partnerName;
-        } else {
-            this.partnerIdx = "";
-            this.partnerName = "";
-        }
-        this.issueDate = virtualAccount.getIssueDate();
-        this.writer = virtualAccount.getWriter();
-    }
-
-
     //리스트, 검색
     public WellVirtualAccountInfoDTO(WellVirtualAccountEntity virtualAccount, WellPartnerEntity partnerEntity, String partnerName
-    , Long issuedCount, Long notIssuedCount, Long collectCount) {
+    ) {
+
         this.virtualAccountIdx = virtualAccount.getVirtualAccountIdx();
         this.registerDate = virtualAccount.getRegisterDate();
         this.virtualBankName = virtualAccount.getVirtualBankName();
@@ -66,9 +43,7 @@ public class WellVirtualAccountInfoDTO {
         }
         this.issueDate = virtualAccount.getIssueDate();
         this.writer = virtualAccount.getWriter();
-
-        this.issuedCount = issuedCount;
-        this.notIssuedCount = notIssuedCount;
-        this.collectCount = collectCount;
     }
+
+
 }

@@ -6,7 +6,6 @@ import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 @Data

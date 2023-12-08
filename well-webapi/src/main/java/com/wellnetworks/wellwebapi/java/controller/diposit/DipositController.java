@@ -1,10 +1,11 @@
 package com.wellnetworks.wellwebapi.java.controller.diposit;
 
+import com.wellnetworks.wellcore.java.dto.Diposit.WellDipositCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Diposit.WellDipositInfoDTO;
 import com.wellnetworks.wellcore.java.dto.Diposit.WellDipositListDTO;
-import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountInfoDTO;
 import com.wellnetworks.wellcore.java.repository.account.WellDipositRepository;
 import com.wellnetworks.wellcore.java.service.diposit.WellDipositService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Page;
@@ -43,7 +44,7 @@ public class DipositController {
     }
 
     //리스트 조회
-    @GetMapping("/info")
+    @GetMapping("info")
     public ResponseEntity<?> getPartnerList(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
@@ -59,10 +60,9 @@ public class DipositController {
             response.put("status", "OK");
             response.put("totalItems", dipositPage.getTotalElements());
             response.put("totalPages", dipositPage.getTotalPages());
-            Long dipositSum = dipositRepository.calculateDipositSum();
-            Long chargeSum = dipositRepository.calculateChargeSum();
-            response.put("dipositSum", dipositSum);
-            response.put("chargeSum", chargeSum);
+
+            response.put("dipositSum", dipositRepository.calculateDipositSum());
+            response.put("chargeSum", dipositRepository.calculateChargeSum());
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -74,5 +74,15 @@ public class DipositController {
     }
 
     //생성
+    @PostMapping("generate")
+    public ResponseEntity<String> generateDiposit(@Valid WellDipositCreateDTO createDTO) {
+        try {
+            dipositService.adjustDiposit(createDTO);
+            return ResponseEntity.ok("예치금 생성 및 저장 완료");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("예치금 생성 및 저장 중 오류 발생: " + e.getMessage());
+        }
+    }
     //검색
 }

@@ -7,7 +7,6 @@ import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -19,7 +18,7 @@ public class WellDipositEntity {
 
         @Id //    예치금_idx
         @Column(name = "dipo_idx", columnDefinition = "uniqueidentifier")
-        private String dipositIdx = UUID.randomUUID().toString();
+        private String dipositIdx;
 
         @OneToOne(fetch = LAZY)//가상계좌_idx
         @JoinColumn(name = "v_account_idx")
@@ -50,4 +49,22 @@ public class WellDipositEntity {
 
         @Column(name = "writer") //작성자
         private String writer;
+
+        @Builder
+        public WellDipositEntity(String dipositIdx, WellVirtualAccountEntity virtualAccount, WellPartnerEntity partner,
+                                 LocalDateTime registerDate, boolean dipositAdjustment, String dipositStatus,
+                                 Integer dipositAmount, Integer dipositBalance, String memo, String writer) {
+                this.dipositIdx = dipositIdx;
+                this.virtualAccount = virtualAccount;
+                this.partner = partner;
+                this.registerDate = registerDate;
+                this.dipositAdjustment = dipositAdjustment;
+                this.dipositStatus = dipositStatus;
+                this.dipositAmount = dipositAmount;
+                this.dipositBalance = dipositBalance;
+                this.memo = memo;
+                this.writer = writer;
+        }
+
+        public void setDipositBalance(Integer dipositBalance) {this.dipositBalance = dipositBalance;}
 }

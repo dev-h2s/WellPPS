@@ -12,8 +12,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,10 +59,44 @@ public class WellDipositService {
         return new PageImpl<>(dipositListDTOList);
     }
 
-
-
-
     //다중 검색
+    public Page<WellDipositListDTO> searchDipositList(List<String> partnerNames
+            , LocalDate startDate, LocalDate endDate
+            , Boolean dipositAdjustment
+            , String dipositStatus
+            , String memo
+            , String writer
+            , Pageable pageable) {
+        Specification<WellDipositEntity> spec = Specification.where(dipositSpecification.partnerNamesIn(partnerNames))
+                .and(dipositSpecification.issueDateBetween(startDate, endDate))
+                .and(dipositSpecification.dipositAdjustmentEquals(dipositAdjustment))
+                .and(dipositSpecification.dipositStatusEquals(dipositStatus))
+                .and(dipositSpecification.memoContains(memo))
+                .and(dipositSpecification.writerEquals(writer))
+                ;
+
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "registerDate"));
+
+        Page<WellDipositEntity> diposits = dipositRepository.findAll(spec, pageable);
+
+        List<WellDipositListDTO> dipositInfoList = new ArrayList<>();
+
+        for (WellDipositEntity diposit : diposits) {
+            WellPartnerEntity partnerEntity = diposit.getPartner();
+            String partnerName = getPartnerName(partnerEntity);
+            WellDipositListDTO dipositInfo = new WellDipositListDTO(diposit, partnerEntity, partnerName);
+            dipositInfoList.add(dipositInfo);
+        }
+        return new PageImpl<>(dipositInfoList, pageable, diposits.getTotalElements());
+    }
+    // 중복 코드 제거
+    private String getPartnerName(WellPartnerEntity partnerEntity) {
+        if (partnerEntity != null) {
+            return partnerEntity.getPartnerName();
+        }
+        return null;
+    }
+
     //입력
     @Transactional
     public WellDipositEntity adjustDiposit(WellDipositCreateDTO createDTO) {

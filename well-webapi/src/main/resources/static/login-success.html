@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Success</title>
+</head>
+<body>
+<h1>환영합니다! <span id="username"></span>님</h1>
+<button id="go-to-my-page">마이 페이지</button>
+<button id="logout">로그아웃</button>
+
+<script>
+    // URL에서 사용자 이름 추출
+    const params = new URLSearchParams(window.location.search);
+    const username = params.get('username');
+    const accessToken = params.get('accessToken');
+    const refreshToken = params.get('refreshToken');
+
+    // 사용자 이름과 토큰을 화면과 콘솔에 표시
+    document.getElementById('username').textContent = username;
+    console.log('AccessToken:', accessToken);
+    console.log('RefreshToken:', refreshToken);
+
+    // 마이 페이지로 이동
+    document.getElementById('go-to-my-page').addEventListener('click', function() {
+        const accessToken = params.get('accessToken');
+        const refreshToken = params.get('refreshToken');
+
+        // 이동할 URL에 토큰 정보를 포함시킵니다.
+        window.location.href = 'my-page.html?username=' + encodeURIComponent(username) + '&accessToken=' + encodeURIComponent(accessToken) + '&refreshToken=' + encodeURIComponent(refreshToken);
+    });
+
+    // 로그아웃 처리
+    document.getElementById('logout').addEventListener('click', function() {
+        fetch('/logout', {
+            method: 'POST',
+            credentials: 'include' // 현재 사용자 세션의 쿠키를 포함시키기 위해 필요합니다.
+        })
+            .then(response => {
+                if (!response.ok) {
+                    // 서버에서 응답한 오류 메시지를 로그로 출력
+                    return response.text().then(text => {
+                        throw new Error(text || 'Logout failed')
+                    });
+                }
+                // 성공적으로 로그아웃 처리 후 로그인 페이지로 리다이렉트
+                window.location.href = 'loginTest.html';
+            })
+            .catch(error => {
+                console.error('Logout error:', error);
+                // 클라이언트 측에 오류를 표시하기 위해 사용자에게 알림을 보낼 수 있습니다.
+                alert('Logout error: ' + error.message);
+            });
+    });
+</script>
+</body>
+</html>

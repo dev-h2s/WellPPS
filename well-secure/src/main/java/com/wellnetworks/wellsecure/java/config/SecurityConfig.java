@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
@@ -58,17 +59,23 @@ public class SecurityConfig {
      */
     @Bean // 이 메서드가 반환하는 객체를 Spring IoC 컨테이너에 빈으로 등록합니다.
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
+        LogoutConfigurer<HttpSecurity> httpSecurityLogoutConfigurer = http
                 .cors().and()  // CORS 설정 활성화
                 .csrf().disable()  // CSRF 방지 기능 비활성화
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()  // 세션을 사용하지 않도록 설정
-                .addFilter(new JwtAuthenticationFilter(authenticationManager, securityProperties, tokenProvider,refreshTokenService))  // JWT 인증 필터 추가
+                .addFilter(new JwtAuthenticationFilter(authenticationManager, securityProperties, tokenProvider, refreshTokenService))  // JWT 인증 필터 추가
                 .addFilter(new JwtAuthorizationFilter(authenticationManager, securityProperties, tokenProvider))  // JWT 권한 확인 필터 추가
                 .logout()
-                .logoutUrl("/custom-logout")  // 로그아웃 경로 설정
-                .logoutSuccessUrl("/login")  // 로그아웃 후 리다이렉트할 경로 설정
+                .logoutUrl("/logout")  // 로그아웃 경로 설정
+                .logoutSuccessUrl("/loginTest.html")  // 로그아웃 후 리다이렉트할 경로 설정
                 .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID", "remember-me");  // 로그아웃 시 쿠키 삭제
+//                .logoutSuccessHandler((request, response, authentication) -> {
+//                    // 로그아웃 시 쿠키 삭제
+//                    CookieUtil.clearCookie(request, response, "access_token");
+//                    CookieUtil.clearCookie(request, response, "refresh_token");
+//                }) -->
+                .deleteCookies("JSESSIONID", "access_token", "refresh_token");// 로그아웃 시 삭제할 쿠키 설정
+
 
         http.authorizeRequests()
                 .requestMatchers("/init/**").permitAll()// "/init/**" 경로는 누구나 접근 가능

@@ -63,7 +63,7 @@ public class TokenProvider {
 
         // 현재 시간으로부터 accessToken 만료 시간을 설정
         this.accessTokenValidity = new Date(System.currentTimeMillis() +
-                (long) securityProperties.getAccessTokenExpirationTime() * 3600 * 1000);
+                (long) securityProperties.getAccessTokenExpirationTime() * 2 * 1000);
 
 
         // JWT 토큰 생성 및 반환
@@ -82,7 +82,7 @@ public class TokenProvider {
     public String createRefreshToken(Authentication authentication) {
         // 현재 시간으로부터 refreshToken 만료 시간을 설정
         this.refreshTokenValidity = new Date(System.currentTimeMillis() +
-                (long) securityProperties.getRefreshTokenExpirationTime() * 3600 * 1000);
+                (long) securityProperties.getRefreshTokenExpirationTime() * 5 * 1000);
 
         // refreshToken 생성 코드...
         // refreshToken은 사용자의 권한이나 다른 정보 없이, 오직 사용자 이름만 포함하는 것이 일반적
@@ -120,5 +120,26 @@ public class TokenProvider {
             throw new BadCredentialsException("Invalid token", e);
         }
     }
+    // 리프레시 토큰의 유효성을 검사하는 메서드
+    public boolean validateRefreshToken(String refreshToken) {
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(refreshToken);
+            return true;
+        } catch (Exception e) {
+            log.error("Refresh token validation error: {}", e.getMessage(), e);
+            return false;
+        }
+    }
+
+    // 토큰에서 사용자 이름을 추출하는 메서드
+    public String getUsernameFromToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+
 
 }

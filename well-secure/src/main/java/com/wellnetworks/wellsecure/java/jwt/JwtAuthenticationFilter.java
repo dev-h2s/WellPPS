@@ -130,6 +130,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+
+
         // 인증 실패 시 응답에 포함될 데이터를 담을 맵을 생성
         Map<String, Object> responseData = new HashMap<>();
         // 현재 시간을 ISO 8601 형식으로 설정합니다.
@@ -147,7 +149,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             errorMessage = "존재하지 않는 아이디 입니다."; // 사용자를 찾을 수 없을 때의 오류 메시지
         } else if (failed instanceof BadCredentialsException) {
             errorMessage = "비밀번호가 일치하지 않습니다."; // 비밀번호가 틀렸을 때의 오류 메시지
-        } else {
+        }
+        else {
             errorMessage = "인증에 실패했습니다."; // 그 외 다른 인증 오류에 대한 일반적인 메시지
         }
         responseData.put("message", errorMessage);

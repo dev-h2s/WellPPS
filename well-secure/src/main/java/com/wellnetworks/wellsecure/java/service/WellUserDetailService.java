@@ -50,7 +50,7 @@ public class WellUserDetailService implements UserDetailsService {
      * @return UserDetails 사용자의 세부 정보를 포함하는 객체
      * @throws UsernameNotFoundException 사용자 이름을 찾을 수 없을 때 발생하는 예외
      */
-    //사원 로그인
+    //사용자의 상세 정보를 가져오는 메서드
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 

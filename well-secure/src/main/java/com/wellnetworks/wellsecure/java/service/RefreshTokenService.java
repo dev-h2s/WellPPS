@@ -15,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
@@ -28,7 +30,7 @@ public class RefreshTokenService {
 
     @Autowired private PartnerRefreshTokenRepository partnerRefreshTokenRepository;
 
-
+    @Autowired private UserDetailsService userDetailsService;
 
     @Autowired private TokenProvider tokenProvider;
     @Autowired private SecurityProperties securityProperties;
@@ -85,6 +87,39 @@ public class RefreshTokenService {
     }
 
 
+
+
+    // 리프레쉬 토큰을 사용하여 새로운 액세스 토큰을 생성하는 메서드
+    @Transactional
+    public String refreshAccessToken(String refreshToken) {
+        // refreshToken을 검증하고 해당하는 사용자 이름을 얻는 로직 (가정)
+        String username = getUsernameFromRefreshToken(refreshToken);
+
+        // 사용자 상세 정보 로드
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+        // 새로운 액세스 토큰 생성
+        Authentication newAuthentication = new UsernamePasswordAuthenticationToken(
+                userDetails.getUsername(), null, userDetails.getAuthorities());
+
+        return tokenProvider.createToken(newAuthentication);
+    }
+
+    private String getUsernameFromRefreshToken(String refreshToken) {
+        // 리프레시 토큰이 null이거나 유효하지 않은 경우 예외를 발생시킵니다.
+        if (refreshToken == null || !tokenProvider.validateRefreshToken(refreshToken)) {
+            throw new IllegalArgumentException("유효하지 않거나 null인 리프레시 토큰입니다.");
+        }
+        // TokenProvider를 사용하여 리프레시 토큰에서 사용자 이름을 추출합니다.
+        String username = tokenProvider.getUsernameFromToken(refreshToken);
+        if (username == null || username.isEmpty()) {
+            throw new IllegalArgumentException("리프레시 토큰에서 사용자 이름을 찾을 수 없습니다.");
+        }
+        return username;
+    }
+
+
+
     // 토큰 삭제 메서드
     @Transactional
     public void deleteRefreshToken(UserDetails userDetails) {
@@ -114,7 +149,7 @@ public class RefreshTokenService {
 //      리프레쉬 토큰의 만료 시간을 계산하는 메서드.
     private Date calculateExpiryDate(int refreshTokenExpirationTime) {
         Calendar calendar = Calendar.getInstance(); // 현재 시간을 기준으로 Calendar 객체를 생성
-        calendar.add(Calendar.HOUR, refreshTokenExpirationTime); // 현재 시간에 유효 시간을 더함
+        calendar.add(Calendar.MINUTE, refreshTokenExpirationTime); // 현재 시간에 유효 시간을 더함
         return calendar.getTime(); // 새로운 만료 시간을 가진 Date 객체를 반환
     }
 

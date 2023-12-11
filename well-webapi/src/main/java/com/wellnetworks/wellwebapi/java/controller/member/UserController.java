@@ -29,7 +29,6 @@ public class UserController {
 
    @Autowired private WellLogOutService logOuService;
 
-//   @Autowired private RefreshTokenService refreshTokenService;
 
 
     @Autowired
@@ -136,6 +135,8 @@ public class UserController {
         if (authentication != null && authentication.getName() != null) {
             logOuService.logoutAndRemoveRefreshToken(authentication.getName());
             SecurityContextHolder.clearContext();
+            // 로그 추가: 로그아웃 요청이 들어왔음을 확인하기 위한 로그
+            System.out.println("로그아웃 요청이 수신되었습니다.");
         }
         return ResponseEntity.ok().body("로그아웃 되었습니다.");
     }

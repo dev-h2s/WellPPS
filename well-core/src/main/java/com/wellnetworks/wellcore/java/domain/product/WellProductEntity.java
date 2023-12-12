@@ -1,18 +1,22 @@
 package com.wellnetworks.wellcore.java.domain.product;
 //요금제
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wellnetworks.wellcore.java.domain.opening.WellCommissionOpeningPolicyEntity;
 import com.wellnetworks.wellcore.java.domain.operator.WellOperatorEntity;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jakarta.persistence.FetchType.*;
+
 @Entity
 @Getter
-@Table(name = "product_tb")
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@EntityListeners(AuditingEntityListener.class)
 public class WellProductEntity {
 
     @Id
@@ -20,59 +24,56 @@ public class WellProductEntity {
     private String productIdx;
 
     //요금제 조회 테이블 연결 1대 다 양방향
-    @JsonIgnore //순환참조 문제 방지
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product")
     private List<WellProductSearchEntity> productSearch = new ArrayList<>();
 
     //개통정책 테이블 연결 1대 다
-    @JsonIgnore //순환참조 문제 방지
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product")
     private List<WellCommissionOpeningPolicyEntity> OpeningPolicy = new ArrayList<>();
 
-    @ManyToOne
-    @JsonIgnore //순환참조 문제 방지
-    @JoinColumn(name = "o_idx", insertable = false, updatable = false) // 통신사 정보와 연결되는 FK 양방향
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "o_idx") // 통신사 정보와 연결되는 FK 양방향
     private WellOperatorEntity operator;
 
-    @Column(name = "pr_name")  // 요금제의 이름
-    private String productName;
+    @Column(name = "visible_flag") // 출력여부
+    private boolean visibleFlag = false;
 
-    @Column(name = "pr_code_in") // 우리가 거래처에게 제공하는 코드(내부api)
-    private String productCodeIn;
+    @Column(name = "o_history_search_flag") //개통내역검색여부
+    private boolean openingHistorySearchFlag = false;
 
-    @Column(name = "pr_code_ex")  // 우리가 통신사에서 제공받은 코드(외부api)
-    private String productCodeEx;
+    @Column(name = "network") //통신망
+    private String network;
 
-    @Column(name = "pr_type")  // 후불,정액,일반 (탑업 제외)
+    @Column(name = "base_fee") //기본요금
+    private Integer baseFee;
+
+    @Column(name = "pr_type") //요금제구분
     private String productType;
 
-    @Column(name = "pr_price") // 요금제에 따른 금액
-    private Integer productPrice;
+    @Column(name = "pr_name") //요금제명
+    private String productName;
 
-    @Column(name = "pr_info_data")  // 사용가능한 데이터 정보
-    private String productInfoData;
+    @Column(name = "mvno_pr_name") //MVNO 요금제명
+    private String mvnoProductName;
 
-    @Column(name = "pr_info_voice") // 사용 가능한 통화 시간 표시
-    private String productInfoVoice;
+    @Column(name = "data") //데이터
+    private String data;
 
-    @Column(name = "pr_info_sms")  // 사용 가능한 문자 개수 표시
-    private String productInfoSms;
+    @Column(name = "voice") //음성
+    private String voice;
 
-    @Column(name = "pr_info_etc")  // 기타 통화 가능시간(영상/전국대표번호) ??
-    private String productInfoEtc;
+    @Column(name = "etc") //기타
+    private String etc;
 
-    @Column(name = "telecom_type")  // sk,lg,kt 여부
-    private String telecomType;
+    @Column(name = "sms") //문자
+    private String sms;
 
-    @Column(name = "monthly")  // 월 단위 요금제 사용 기간
-    private Integer monthly;
+    @Column(name = "internal_code") //요금제코드(내부코드)
+    private String internalCode;
 
-    @Column(name = "memo")  // 요금제에 대한 특이사항 메모
+    @Column(name = "external_code") //요금제코드(외부코드)
+    private String externalCode;
+
+    @Column(name = "memo") // 메모
     private String memo;
-
-    @Column(name = "regdt")  // 요금제 생성 일자
-    private LocalDateTime register_date;
-
-    @Column(name = "moddt")  // 요금제 정보에 대한 수정 일자
-    private LocalDateTime modify_date;
 }

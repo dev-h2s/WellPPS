@@ -45,6 +45,6 @@ public class SecurityProperties {
     private final String tokenPrefix = "Bearer ";
     private final String headerString = "Authorization";
 
-    // 각 필드에 대한 getter setter 메서드를 대신 사용.
+
 
 }

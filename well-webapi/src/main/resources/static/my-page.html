@@ -19,18 +19,20 @@
 
     // 사용자 이름을 화면에 표시
     document.getElementById('username').textContent = username;
-    console.log('AccessToken:', accessToken);
-    console.log('RefreshToken:', refreshToken);
+    // console.log('AccessToken:', accessToken);
+    // console.log('RefreshToken:', refreshToken);
 
     // 로그인 성공으로 이동
     // 'my-page.html'에서 'login-success.html'로 이동할 때 URL에 토큰 정보 포함
     document.getElementById('go-to-login-success').addEventListener('click', function() {
         // URL에서 accessToken과 refreshToken을 추출합니다.
-        const accessToken = params.get('accessToken');
-        const refreshToken = params.get('refreshToken');
+        // const accessToken = params.get('accessToken');
+        // const refreshToken = params.get('refreshToken');
 
         // 이동할 URL에 토큰 정보를 포함시킵니다.
-        window.location.href = 'login-success.html?username=' + encodeURIComponent(username) + '&accessToken=' + encodeURIComponent(accessToken) + '&refreshToken=' + encodeURIComponent(refreshToken);
+        window.location.href = 'login-success.html?username=' + encodeURIComponent(username)
+            // + '&accessToken=' + encodeURIComponent(accessToken) + '&refreshToken=' + encodeURIComponent(refreshToken)
+        ;
     });
 
     // 로그아웃 처리

@@ -1,11 +1,14 @@
 package com.wellnetworks.wellwebapi.java.controller.member;
 import com.wellnetworks.wellcore.java.dto.member.ChangePasswordRequest;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
+import com.wellnetworks.wellsecure.java.config.CookieUtil;
 import com.wellnetworks.wellsecure.java.request.ApiResponse;
 
 import com.wellnetworks.wellsecure.java.jwt.TokenProvider;
 import com.wellnetworks.wellsecure.java.service.WellLogOutService;
 import com.wellnetworks.wellsecure.java.service.WellUserDetailService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
@@ -14,6 +17,7 @@ import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -130,11 +134,15 @@ public class UserController {
 
     // 로그아웃
     @PostMapping("/logout")
-    public ResponseEntity<?> logout() {
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getName() != null) {
-            logOuService.logoutAndRemoveRefreshToken(authentication.getName());
-            SecurityContextHolder.clearContext();
+        if (authentication != null) {
+            // RefreshToken을 삭제하고 쿠키에서 액세스 토큰을 제거
+            logOuService.logoutAndRemoveRefreshToken(authentication.getName(), request, response);
+
+            // Spring Security 컨텍스트에서 인증 정보를 지움
+            new SecurityContextLogoutHandler().logout(request, response, authentication);
+
             // 로그 추가: 로그아웃 요청이 들어왔음을 확인하기 위한 로그
             System.out.println("로그아웃 요청이 수신되었습니다.");
         }

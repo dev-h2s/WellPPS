@@ -6,14 +6,12 @@ import com.wellnetworks.wellsecure.java.jwt.TokenProvider;
 import com.wellnetworks.wellsecure.java.service.AppAuthenticationManager;
 //import com.wellnetworks.wellsecure.java.service.CustomLogoutHandler;
 import com.wellnetworks.wellsecure.java.service.RefreshTokenService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
@@ -37,6 +35,7 @@ public class SecurityConfig {
     private final TokenProvider tokenProvider;
     private final RefreshTokenService refreshTokenService;
 
+
 //    @Autowired private CustomLogoutHandler customLogoutHandler;
 
     public SecurityConfig(SecurityProperties securityProperties, AppAuthenticationManager authenticationManager,
@@ -59,7 +58,7 @@ public class SecurityConfig {
      */
     @Bean // 이 메서드가 반환하는 객체를 Spring IoC 컨테이너에 빈으로 등록합니다.
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        LogoutConfigurer<HttpSecurity> httpSecurityLogoutConfigurer = http
+         http
                 .cors().and()  // CORS 설정 활성화
                 .csrf().disable()  // CSRF 방지 기능 비활성화
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()  // 세션을 사용하지 않도록 설정

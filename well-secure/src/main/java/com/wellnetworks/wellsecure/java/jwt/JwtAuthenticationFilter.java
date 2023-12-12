@@ -2,8 +2,8 @@ package com.wellnetworks.wellsecure.java.jwt;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wellnetworks.wellsecure.java.config.CookieUtil;
 import com.wellnetworks.wellsecure.java.config.SecurityProperties;
-import com.wellnetworks.wellsecure.java.request.TokenResponse;
 import com.wellnetworks.wellsecure.java.request.UserLoginReq;
 import com.wellnetworks.wellsecure.java.service.EmployeeUserDetails;
 import com.wellnetworks.wellsecure.java.service.PartnerUserDetails;
@@ -37,6 +37,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private final RefreshTokenService refreshTokenService;
 
+
+
     /**
      * 생성자. 필요한 컴포넌트들을 주입받는다.
      */
@@ -44,8 +46,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             AuthenticationManager authManager,
             SecurityProperties securityProperties,
             TokenProvider tokenProvider,
-            RefreshTokenService refreshTokenService
-    ) {
+            RefreshTokenService refreshTokenService) {
         this.authManager = authManager;
         this.securityProperties = securityProperties;
         this.tokenProvider = tokenProvider;
@@ -94,7 +95,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // Authentication 객체에서 UserDetails 객체를 추출
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String refreshToken;
-
+        int maxAge = 604800; // 7일(초)
+        // 쿠키에 accessToken 설정
+        CookieUtil.setAccessTokenCookie(res, accessToken, maxAge);
         // userDetails 인스턴스의 타입에 따라 적절한 리프레쉬 토큰 처리 로직을 호출
         if (userDetails instanceof EmployeeUserDetails) {
             // EmployeeUserDetails의 경우

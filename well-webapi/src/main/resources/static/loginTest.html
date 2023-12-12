@@ -8,6 +8,7 @@
 <body>
 <h1>Login</h1>
 <form id="login-form">
+  <h1>환영합니다! <span id="username2"></span>님</h1>
   <label for="username">Username:</label>
   <input type="text" id="username" required><br><br>
   <label for="password">Password:</label>
@@ -20,8 +21,12 @@
     e.preventDefault();
     var username = document.getElementById('username').value;
     var password = document.getElementById('password').value;
+    // const accessToken = params.get('accessToken');
+    // const refreshToken = params.get('refreshToken');
 
-    fetch('http://localhost:1111/login', {
+    // 사용자 이름과 토큰을 화면과 콘솔에 표시
+    document.getElementById('username2').textContent = username;
+    fetch('/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -42,11 +47,12 @@
             .then(data => {
               // 여기서 data는 응답 본문의 JSON 객체입니다.
               // Postman의 구조에 따라 data 객체 내에서 accessToken과 refreshToken을 추출합니다.
-              const accessToken = data.data.accessToken;
-              const refreshToken = data.data.refreshToken;
-              document.cookie = "token=" + accessToken + ";path=/;max-age=3600;secure";
+              // const accessToken = data.data.accessToken;
+              // const refreshToken = data.data.refreshToken;
+              // document.cookie = "token=" + accessToken + ";path=/;max-age=3600;secure";
               // 로그인 성공 페이지로 리다이렉트하고, 사용자 이름과 토큰을 URL 매개변수로 전달
-              window.location.href = `login-success.html?username=${encodeURIComponent(username)}&accessToken=${encodeURIComponent(accessToken)}&refreshToken=${encodeURIComponent(refreshToken)}`;
+              window.location.href = `login-success.html?username=${encodeURIComponent(username)}
+              `;
             })
             .catch(error => {
               console.error('Login error:', error);

@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface WellOuterApiRepository extends JpaRepository<WellOperatorEntity, String>{
+    WellOperatorEntity findByOperatorIdx(String operatorIdx);
 }

@@ -11,21 +11,21 @@ public class WellOuterApiListDTO {
     //통신사명
     private String operatorName;
     //직접연동
-    private boolean isExternalApiFlag;
+    private Boolean isExternalApiFlag = false;
     //수동충전
-    private boolean isVisibleFlag;
+    private Boolean isVisibleFlag = false;
     //PDS연동
-    private boolean isPdsFlag;
+    private Boolean isPdsFlag = false;
     //개통가능여부
-    private boolean isRunFlag;
+    private Boolean isRunFlag = false;
 
     //외부api 리스트
     public WellOuterApiListDTO(WellOperatorEntity operatorEntity
     ) {
         this.operatorName = operatorEntity.getOperatorName();
-        this.isExternalApiFlag = operatorEntity.isExternalApiFlag();
-        this.isVisibleFlag = operatorEntity.isVisibleFlag();
-        this.isPdsFlag = operatorEntity.isPdsFlag();
-        this.isRunFlag = operatorEntity.isRunFlag();
+        this.isExternalApiFlag = operatorEntity.getIsExternalApiFlag();
+        this.isVisibleFlag = operatorEntity.getIsVisibleFlag();
+        this.isPdsFlag = operatorEntity.getIsPdsFlag();
+        this.isRunFlag = operatorEntity.getIsRunFlag();
     }
 }

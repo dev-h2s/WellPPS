@@ -32,7 +32,7 @@ public class WellOperatorEntity {
     private String operatorCode;
 
     @Column(name = "o_search_flag") // 출력여부
-    private Boolean isOpeningSearchFlag = false;
+    private Boolean isOpeningSearchFlag;
 
     @Column(name = "external_api_flag") // 직접연동
     private Boolean isExternalApiFlag;

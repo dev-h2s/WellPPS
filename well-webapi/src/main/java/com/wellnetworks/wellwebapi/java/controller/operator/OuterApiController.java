@@ -1,6 +1,5 @@
 package com.wellnetworks.wellwebapi.java.controller.operator;
 
-import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyUpdateDTO;
 import com.wellnetworks.wellcore.java.dto.Operator.WellOuterApiListDTO;
 import com.wellnetworks.wellcore.java.dto.Operator.WellOuterApiUpdateDTO;
 import com.wellnetworks.wellcore.java.service.operator.WellOuterApiService;
@@ -52,12 +51,12 @@ public class OuterApiController {
     }
     //수정
     @PatchMapping("update/{operatorIdx}")
-    public ResponseEntity<WellOuterApiUpdateDTO> patchOuterApi(@Valid WellOuterApiUpdateDTO updateDTO,
+    public ResponseEntity<String> patchOuterApi(@Valid WellOuterApiUpdateDTO updateDTO,
                                               @PathVariable String operatorIdx) throws Exception {
         outerApiService.updateOperatorFlags(operatorIdx, updateDTO);
         if (operatorIdx == null) {
-            throw new ClassNotFoundException(String.format("IDX[%s] not found", operatorIdx));
+            throw new ClassNotFoundException(String.format("외부API IDX를 찾을 수 없습니다. : ", operatorIdx));
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(updateDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body("외부API가 성공적으로 수정되었습니다.");
     }
 }

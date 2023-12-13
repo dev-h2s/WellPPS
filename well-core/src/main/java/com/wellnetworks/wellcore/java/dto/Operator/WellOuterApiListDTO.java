@@ -11,13 +11,13 @@ public class WellOuterApiListDTO {
     //통신사명
     private String operatorName;
     //직접연동
-    private Boolean isExternalApiFlag = false;
+    private Boolean isExternalApiFlag;
     //수동충전
-    private Boolean isVisibleFlag = false;
+    private Boolean isVisibleFlag;
     //PDS연동
-    private Boolean isPdsFlag = false;
+    private Boolean isPdsFlag;
     //개통가능여부
-    private Boolean isRunFlag = false;
+    private Boolean isRunFlag;
 
     //외부api 리스트
     public WellOuterApiListDTO(WellOperatorEntity operatorEntity

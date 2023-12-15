@@ -36,10 +36,10 @@ public class WellProductEntity {
     private WellOperatorEntity operator;
 
     @Column(name = "visible_flag") // 출력여부
-    private boolean visibleFlag = false;
+    private Boolean visibleFlag;
 
     @Column(name = "o_history_search_flag") //개통내역검색여부
-    private boolean openingHistorySearchFlag = false;
+    private Boolean openingHistorySearchFlag;
 
     @Column(name = "network") //통신망
     private String network;

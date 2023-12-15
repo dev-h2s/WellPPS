@@ -1,9 +1,13 @@
 package com.wellnetworks.wellcore.java.service.operator;
 
 import com.wellnetworks.wellcore.java.domain.operator.WellOperatorEntity;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.domain.product.WellProductEntity;
+import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyDetailDTO;
+import com.wellnetworks.wellcore.java.dto.Operator.WellOperatorDetailDTO;
 import com.wellnetworks.wellcore.java.dto.Operator.WellOperatorListDTO;
 import com.wellnetworks.wellcore.java.dto.Product.WellProductListDTO;
+import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountDetailDTO;
 import com.wellnetworks.wellcore.java.repository.operator.WellOperatorRepository;
 import com.wellnetworks.wellcore.java.repository.product.WellProductRepository;
 import com.wellnetworks.wellcore.java.service.diposit.WellDipositService;
@@ -14,10 +18,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,5 +67,15 @@ public class WellOPeratorService {
         }
 
         return new PageImpl<>(result, pageable, operators.getTotalElements());
+    }
+
+    //통신사 상세 조회
+    public Optional<WellOperatorDetailDTO> getDetailOperator(String operatorIdx) {
+        return operatorRepository.findById(operatorIdx)
+                .map(operator -> new WellOperatorDetailDTO(
+                        operator.getOperatorName(),
+                        operator.getOperatorCode(),
+                        operator.getIsOpeningSearchFlag()
+                ));
     }
 }

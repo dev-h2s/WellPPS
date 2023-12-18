@@ -53,8 +53,9 @@ public class WellOuterApiService {
     public WellOuterApiUpdateDTO updateOperatorFlags(String operatorIdx, WellOuterApiUpdateDTO updateDTO) {
         try {
             WellOperatorEntity operatorEntity = outerApiRepository.findByOperatorIdx(operatorIdx);
-            BeanUtils.copyProperties(updateDTO, operatorEntity);
-
+            if (operatorEntity == null) {
+                throw new EntityNotFoundException("통신사를 찾을 수 없습니다.");
+            }
             // 나머지 4개의 수정 가능한 필드만 업데이트
             operatorEntity.setExternalApiFlag(updateDTO.getIsExternalApiFlag());
             operatorEntity.setVisibleFlag(updateDTO.getIsVisibleFlag());

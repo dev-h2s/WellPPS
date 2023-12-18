@@ -114,4 +114,9 @@ public class WellOPeratorService {
     }
 
     //삭제
+    public void deleteOperator(String operatorIdx) {
+        WellOperatorEntity operator = operatorRepository.findById(operatorIdx)
+                .orElseThrow(() -> new EntityNotFoundException("통신사가 존재하지 않습니다."));
+        operatorRepository.delete(operator);
+    }
 }

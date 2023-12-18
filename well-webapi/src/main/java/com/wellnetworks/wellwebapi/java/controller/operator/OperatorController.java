@@ -1,6 +1,5 @@
 package com.wellnetworks.wellwebapi.java.controller.operator;
 
-import com.wellnetworks.wellcore.java.domain.operator.WellOperatorEntity;
 import com.wellnetworks.wellcore.java.dto.Operator.WellOperatorCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Operator.WellOperatorDetailDTO;
 import com.wellnetworks.wellcore.java.dto.Operator.WellOperatorListDTO;
@@ -96,6 +95,7 @@ public class OperatorController {
         }
         return ResponseEntity.ok("사용가능한 코드명입니다.");
     }
+
     //수정
     @PatchMapping("update/{operatorIdx}")
     public ResponseEntity<?> updateOperator(@PathVariable String operatorIdx,
@@ -109,5 +109,17 @@ public class OperatorController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생: " + e.getMessage());
         }
     }
+
     //삭제
+    @DeleteMapping("delete/{operatorIdx}")
+    public ResponseEntity<?> deleteOperator(@PathVariable String operatorIdx) {
+        try {
+            wellOPeratorService.deleteOperator(operatorIdx);
+            return ResponseEntity.ok("통신사가 삭제되었습니다.");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생: " + e.getMessage());
+        }
+    }
 }

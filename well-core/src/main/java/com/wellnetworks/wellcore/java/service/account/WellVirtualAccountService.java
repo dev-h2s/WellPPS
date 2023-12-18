@@ -51,16 +51,12 @@ public class WellVirtualAccountService {
         Page<WellVirtualAccountEntity> accounts = virtualAccountRepository.findAll(pageable);
         List<WellVirtualAccountInfoDTO> virtualAccountInfoDTOList = new ArrayList<>();
 
-        Long issuedCount = virtualAccountRepository.countByIssuance("발급");
-        Long notIssuedCount = virtualAccountRepository.countByIssuance("미발급");
-        Long collectCount = virtualAccountRepository.countByIssuance("회수");
-
         for (WellVirtualAccountEntity virtualAccount : accounts) {
             WellPartnerEntity partnerEntity = virtualAccount.getPartner();
             String partnerName = partnerEntity != null ? partnerRepository.findPartnerNameByPartnerIdx(partnerEntity.getPartnerIdx()) : null;
 
             WellVirtualAccountInfoDTO accountInfoDTO = new WellVirtualAccountInfoDTO(
-                    virtualAccount, partnerEntity, partnerName, issuedCount, notIssuedCount, collectCount
+                    virtualAccount, partnerEntity, partnerName
             );
             virtualAccountInfoDTOList.add(accountInfoDTO);
         }
@@ -203,14 +199,10 @@ public class WellVirtualAccountService {
 
         List<WellVirtualAccountInfoDTO> accountInfoList = new ArrayList<>();
 
-        Long issuedCount = virtualAccountRepository.countByIssuance("발급");
-        Long notIssuedCount = virtualAccountRepository.countByIssuance("미발급");
-        Long collectCount = virtualAccountRepository.countByIssuance("회수");
-
         for (WellVirtualAccountEntity account : accounts) {
             WellPartnerEntity partnerEntity = account.getPartner();
             String partnerName = getPartnerName(partnerEntity);
-            WellVirtualAccountInfoDTO accountInfo = new WellVirtualAccountInfoDTO(account, partnerEntity, partnerName, issuedCount, notIssuedCount, collectCount);
+            WellVirtualAccountInfoDTO accountInfo = new WellVirtualAccountInfoDTO(account, partnerEntity, partnerName);
             accountInfoList.add(accountInfo);
         }
         return new PageImpl<>(accountInfoList, pageable, accounts.getTotalElements());

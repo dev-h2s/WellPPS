@@ -2,41 +2,70 @@ package com.wellnetworks.wellcore.java.domain.operator;
 //통신사
 import com.wellnetworks.wellcore.java.domain.product.WellProductEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
-@Table(name = "operator_tb")
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@AllArgsConstructor
 public class WellOperatorEntity {
 
     @Id
-    @Column(name = "o_idx", columnDefinition = "uniqueidentifier", unique = true, nullable = false) // 생성 고유 값
+    @Column(name = "o_idx", columnDefinition = "uniqueidentifier") // 생성 고유 값
     private String operatorIdx;
 
     //요금제 테이블 연결 1대 다 양방향
-    @OneToMany(mappedBy = "operator", cascade = CascadeType.ALL)
-    private List<WellProductEntity> product = new ArrayList<>();
+    @OneToMany(mappedBy = "operator", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WellProductEntity> products = new ArrayList<>();
 
     @Column(name = "o_name") // 통신사 명
     private String operatorName;
 
-    @Column(name = "o_code") // 통신사 명에따른 코드
+    @Column(name = "o_code") // 통신사 코드
     private String operatorCode;
 
-    @Column(name = "external_api_flag", unique = true) // 통신사에서 제공하는 외부 api 접근 허용 유무로 인한 연동 가능 여부(체크)
-    private Boolean externalApiFlag;
+    @Column(name = "o_search_flag") // 출력여부
+    private Boolean isOpeningSearchFlag;
 
-    @Column(name = "run_flag", nullable = false) // 현재 정책 운영중인 통신사 여부(체크)
-    private Boolean runFlag;
+    @Column(name = "external_api_flag") // 직접연동
+    private Boolean isExternalApiFlag;
 
-    @Column(name = "visible_flag", nullable = false) // 개통내역 입력 시 요금제 값 출력 여부(체크)
-    private Boolean visibleFlag;
+    @Column(name = "visible_flag") // 수동 충전
+    private Boolean isVisibleFlag;
 
-    @Column(name = "opening_search_flag") // 개통 내역 상세검색 필터 값 출력 여부(체크)
-    private Boolean openingSearchFlag;
+    @Column(name = "pds_flag") // pds 연동
+    private Boolean isPdsFlag;
 
+    @Column(name = "run_flag") //개통가능여부
+    private Boolean isRunFlag;
 
+    public void setOperatorName(String operatorName) {this.operatorName = operatorName;}
+
+    public void setIsOpeningSearchFlag(boolean isOpeningSearchFlag) {this.isOpeningSearchFlag = isOpeningSearchFlag;}
+
+    public void setExternalApiFlag(boolean externalApiFlag) {this.isExternalApiFlag = externalApiFlag;}
+
+    public void setVisibleFlag(boolean visibleFlag) {this.isVisibleFlag = visibleFlag;}
+
+    public void setPdsFlag(boolean pdsFlag) {this.isPdsFlag = pdsFlag;}
+
+    public void setRunFlag(boolean runFlag) {this.isRunFlag = runFlag;}
+
+    @Builder
+    public WellOperatorEntity(String operatorName, String operatorCode, Boolean isOpeningSearchFlag
+                              ,Boolean isExternalApiFlag, Boolean isVisibleFlag, Boolean isPdsFlag, Boolean isRunFlag
+                              ) {
+        this.operatorIdx = UUID.randomUUID().toString(); // 빌더를 통해 객체를 생성할 때 UUID를 할당합니다.
+        this.operatorName = operatorName;
+        this.operatorCode = operatorCode;
+        this.isOpeningSearchFlag = isOpeningSearchFlag;
+        this.isExternalApiFlag = isExternalApiFlag;
+        this.isVisibleFlag = isVisibleFlag;
+        this.isPdsFlag = isPdsFlag;
+        this.isRunFlag = isRunFlag;
+    }
 }

@@ -1,40 +1,30 @@
 package com.wellnetworks.wellcore.java.dto.Diposit;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountCreateDTO;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Data;
-
-import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class WellDipositCreateDTO {
-    @JsonProperty("dipo_idx")
     private String dipositIdx;
-    @JsonProperty("v_account_idx")
-    private WellVirtualAccountCreateDTO virtualAccountIdx;
-    @JsonProperty("dipo_balance")
-    private Integer dipositBalance;
-    @JsonProperty("depo_adjustment")
-    private String depositAdjustment;
-    @JsonProperty("inc_dec_details")
-    private String incDecDetails;
-    @JsonProperty("charge_amount")
-    private Integer chargeAmount;
-    @JsonProperty("depo_amount")
-    private Integer depositAmount;
-    @JsonProperty("deduction_amount")
-    private Integer deductionAmount;
-    @JsonProperty("depo_status")
-    private String depositStatus;
-    @JsonProperty("depositor")
-    private String depositor;
-    @JsonProperty("reg_dt")
-    private LocalDateTime registerDate;
-    @JsonProperty("memo")
+    //거래처idx
+    @NotBlank(message = "거래처명은 필수 입력 항목입니다.")
+    private String partnerIdx;
+    //거래처명
+    private String partnerName;
+    //예치금 조정
+    private boolean dipositAdjustment = true;
+    //조정사유
+    @NotBlank(message = "조정사유는 필수 입력 항목입니다.")
+    private String dipositStatus;
+    //입금액
+    @NotNull
+    private Integer dipositAmount;
+    //문자전송여부
+    private boolean messageFlag = false;
+    //메모
     private String memo;
-    @JsonProperty("contents")
-    private String contents;
-    @JsonProperty("writer")
-    private String writer;
-
 }

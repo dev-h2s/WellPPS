@@ -12,6 +12,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -30,15 +31,24 @@ public class WellApiKeyService {
 
     // API 키 1개 조회
     public Optional<WellApiKeyInfoDTO> getApikeyByApikeyIdx(String apiKeyInIdx) {
-        return Optional.ofNullable(apikeyInRepository.findByApiKeyInIdx(apiKeyInIdx))
-                .map(entity -> {
-                    String partnerName = getPartnerName(entity.getPartnerIdx());
-                    return new WellApiKeyInfoDTO(entity, partnerName);
-                });
+        try {
+            WellApikeyInEntity apiKeyEntity = apikeyInRepository.findByApiKeyInIdx(apiKeyInIdx);
+
+            if (apiKeyEntity != null) {
+                String partnerName = getPartnerName(apiKeyEntity.getPartnerIdx());
+                return Optional.of(new WellApiKeyInfoDTO(apiKeyEntity, partnerName));
+            } else {
+                return Optional.empty();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("API 키 조회 중 오류 발생", e);
+        }
     }
+
 
     // API 키 리스트 조회
     public Page<WellApiKeyInfoDTO> getAllApikeys(Pageable pageable) {
+        try {
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "apiKeyInRegisterDate"));
 
         Page<WellApikeyInEntity> apikeysPage = apikeyInRepository.findAll(pageable);
@@ -50,17 +60,25 @@ public class WellApiKeyService {
             apiKeyInfoList.add(apiKeyInfo);
         }
 
-        return new PageImpl<>(apiKeyInfoList, pageable, apikeysPage.getTotalElements());
+            return new PageImpl<>(apiKeyInfoList, pageable, apikeysPage.getTotalElements());
+        } catch (Exception e) {
+            throw new RuntimeException("API 키 리스트 조회 중 오류 발생", e);
+        }
     }
 
     // API 키 상세 조회
     public Optional<WellApiKeyDetailDTO> getDetailApiKeyByApiKeyInIdx(String apiKeyInIdx) {
-        return Optional.ofNullable(apikeyInRepository.findByApiKeyInIdx(apiKeyInIdx))
-                .map(entity -> {
-                    String partnerName = getPartnerName(entity.getPartnerIdx());
-                    return new WellApiKeyDetailDTO(entity, partnerName);
-                });
+        try {
+            return Optional.ofNullable(apikeyInRepository.findByApiKeyInIdx(apiKeyInIdx))
+                    .map(entity -> {
+                        String partnerName = getPartnerName(entity.getPartnerIdx());
+                        return new WellApiKeyDetailDTO(entity, partnerName);
+                    });
+        } catch (Exception e) {
+            throw new RuntimeException("API 키 상세 조회 중 오류 발생", e);
+        }
     }
+
 
     // API 키 발급
     private String lastGeneratedApiKey;
@@ -224,26 +242,34 @@ public class WellApiKeyService {
     }
 
     // API 키 검색
-    public Page<WellApiKeyInfoDTO> searchApiKeyList(String issuer, String apiKeyIn, String serverUrl, String apiServerIp
-            , List<String> partnerNames, Pageable pageable) {
-        Specification<WellApikeyInEntity> spec = Specification.where(ApiKeySpecification.apikeyIssuerContains(issuer))
-                .and(ApiKeySpecification.apikeyInContains(apiKeyIn))
-                .and(ApiKeySpecification.apikeyUrlContains(serverUrl))
-                .and(ApiKeySpecification.apikeyIpContains(apiServerIp))
-                .and(ApiKeySpecification.partnerNamesIn(partnerNames));
+    public Page<WellApiKeyInfoDTO> searchApiKeyList(String issuer, String apiKeyIn, String serverUrl, String apiServerIp,
+                                                    List<String> partnerNames, Pageable pageable) {
+        try {
+            Specification<WellApikeyInEntity> spec = Specification.where(ApiKeySpecification.apikeyIssuerContains(issuer))
+                    .and(ApiKeySpecification.apikeyInContains(apiKeyIn))
+                    .and(ApiKeySpecification.apikeyUrlContains(serverUrl))
+                    .and(ApiKeySpecification.apikeyIpContains(apiServerIp))
+                    .and(ApiKeySpecification.partnerNamesIn(partnerNames));
 
-        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "apiKeyInRegisterDate"));
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "apiKeyInRegisterDate"));
 
-        Page<WellApikeyInEntity> apikeys = apikeyInRepository.findAll(spec, pageable);
+            Page<WellApikeyInEntity> apikeys = apikeyInRepository.findAll(spec, pageable);
 
-        List<WellApiKeyInfoDTO> apiKeyInfoList = new ArrayList<>();
+            List<WellApiKeyInfoDTO> apiKeyInfoList = new ArrayList<>();
 
-        for (WellApikeyInEntity apikey : apikeys) {
-            String partnerName = getPartnerName(apikey.getPartnerIdx());
-            WellApiKeyInfoDTO apiKeyInfo = new WellApiKeyInfoDTO(apikey, partnerName);
-            apiKeyInfoList.add(apiKeyInfo);
+            for (WellApikeyInEntity apikey : apikeys) {
+                String partnerName = getPartnerName(apikey.getPartnerIdx());
+                WellApiKeyInfoDTO apiKeyInfo = new WellApiKeyInfoDTO(apikey, partnerName);
+                apiKeyInfoList.add(apiKeyInfo);
+            }
+            return new PageImpl<>(apiKeyInfoList, pageable, apikeys.getTotalElements());
+        } catch (DataAccessException e) {
+            // 데이터베이스 조회 예외 처리
+            throw new RuntimeException("API 키 검색 중 오류 발생", e);
+        } catch (Exception e) {
+            // 기타 예외 처리
+            throw new RuntimeException("API 키 검색 중 오류 발생", e);
         }
-        return new PageImpl<>(apiKeyInfoList, pageable, apikeys.getTotalElements());
     }
 
     // 중복 코드 제거

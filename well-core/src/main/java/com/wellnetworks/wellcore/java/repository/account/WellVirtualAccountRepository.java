@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,4 +20,13 @@ public interface WellVirtualAccountRepository extends JpaRepository<WellVirtualA
     Page<WellVirtualAccountEntity> findAll(Specification<WellVirtualAccountEntity> spec, Pageable pageable);
 
     Optional<WellVirtualAccountEntity> findByPartnerPartnerIdx(String partnerIdx);
+
+    @Query("SELECT COUNT(p) FROM WellVirtualAccountEntity p WHERE p.issuance = '발급'")
+    Long issuedCount(); // 발급
+
+    @Query("SELECT COUNT(p) FROM WellVirtualAccountEntity p WHERE p.issuance = '미발급'")
+    Long notIssuedCount(); // 미발급
+
+    @Query("SELECT COUNT(p) FROM WellVirtualAccountEntity p WHERE p.issuance = '회수'")
+    Long collectCount(); // 회수
 }

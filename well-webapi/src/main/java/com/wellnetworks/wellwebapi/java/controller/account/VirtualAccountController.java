@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -98,6 +99,10 @@ public class VirtualAccountController {
             response.put("totalItems", partnersPage.getTotalElements());
             response.put("totalPages", partnersPage.getTotalPages());
 
+            response.put("issuedCount", virtualAccountRepository.issuedCount());
+            response.put("notIssuedCount", virtualAccountRepository.notIssuedCount());
+            response.put("collectCount", virtualAccountRepository.collectCount());
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
@@ -141,13 +146,23 @@ public class VirtualAccountController {
             response.put("message", "엑셀 파일 내 사용자 입력 성공");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            response.put("message", "엑셀 파일 처리 중 오류 발생");
+            response.put("message", "엑셀 파일 처리 중 오류 발생: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
     private WellVirtualAccountCreateDTO mapToAccount(Map<String, Object> userMap) {
         String bankName = (String) userMap.get("1");
         String accountNumber = (String) userMap.get("2");
+
+        validateBankName(bankName);
+        validateAccountNumber(accountNumber);
 
         WellVirtualAccountCreateDTO dto = new WellVirtualAccountCreateDTO();
         dto.setVirtualBankName(bankName);
@@ -155,6 +170,21 @@ public class VirtualAccountController {
 
         return dto;
     }
+    private void validateBankName(String bankName) {
+        if (bankName == null || bankName.trim().isEmpty()) {
+            throw new IllegalArgumentException("은행명은 필수 입력 항목입니다.");
+        }
+        if (bankName.length() > 10) {
+            throw new IllegalArgumentException("은행명은 10자 이하여야 합니다.");
+        }
+    }
+
+    private void validateAccountNumber(String accountNumber) {
+        if (accountNumber == null || accountNumber.trim().isEmpty()) {
+            throw new IllegalArgumentException("계좌번호는 필수 입력 항목입니다.");
+        }
+    }
+
 
     // 엑셀 다운로드
     @GetMapping("/download/excel")
@@ -198,7 +228,7 @@ public class VirtualAccountController {
             @PathVariable String partnerIdx,
             @RequestParam String virtualBankName) {
         try {
-            WellVirtualAccountIssueDTO updatedAccountDTO = virtualAccountService.changeVirtualAccount(partnerIdx, virtualBankName);
+            virtualAccountService.changeVirtualAccount(partnerIdx, virtualBankName);
             return ResponseEntity.ok("가상계좌 변경 완료");
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
@@ -273,6 +303,10 @@ public class VirtualAccountController {
             response.put("status", "OK");
             response.put("totalItems", result.getTotalElements());
             response.put("totalPages", result.getTotalPages());
+
+            response.put("issuedCount", virtualAccountRepository.issuedCount());
+            response.put("notIssuedCount", virtualAccountRepository.notIssuedCount());
+            response.put("collectCount", virtualAccountRepository.collectCount());
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {

@@ -1,17 +1,29 @@
 package com.wellnetworks.wellcore.java.repository.account;
 
 import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface WellDipositRepository extends JpaRepository<WellDipositEntity, String> {
-    //예치금_idx 검색
-    WellDipositEntity findByDipositIdx(String dipositIdx);
 
-    //예치금 등록
-    WellDipositEntity save(WellDipositEntity wellDipositEntity);
+    Page<WellDipositEntity> findAll(Specification<WellDipositEntity> spec, Pageable pageable);
 
-    //예치금_idx삭제(체크항목 삭제)
-    WellDipositEntity deleteByDipositIdx(String dipositIdx);
+    @Query("SELECT SUM(CASE WHEN d.dipositStatus = '가상계좌입금액' THEN d.dipositAmount ELSE 0 END) FROM WellDipositEntity d")
+    Long calculateDipositSum();
+
+    @Query("SELECT SUM(CASE WHEN d.dipositStatus = '수수료지급액' THEN d.dipositAmount ELSE 0 END) FROM WellDipositEntity d")
+    Long calculateChargeSum();
+
+    @Query("SELECT COALESCE(SUM(d.dipositAmount), 0) FROM WellDipositEntity d WHERE d.partner = :partner")
+    int calculateDipositSumByPartner(@Param("partner") WellPartnerEntity partner);
+
 }

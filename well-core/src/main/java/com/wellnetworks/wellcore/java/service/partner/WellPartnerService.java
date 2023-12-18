@@ -172,13 +172,6 @@ public class WellPartnerService {
         Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(pageable);
         List<WellPartnerInfoDTO> partnerInfoList = new ArrayList<>();
 
-        Long totalBusinessLicenseCount = 0L;
-        Long totalContractDocumentCount = 0L;
-
-        Long registeredCount = wellPartnerRepository.countByTransactionStatus("등록");
-        Long preRegisteredCount = wellPartnerRepository.countByTransactionStatus("가등록");
-        Long managementCount = wellPartnerRepository.countByTransactionStatus("관리대상");
-        Long suspendedCount = wellPartnerRepository.countByTransactionStatus("거래중지");
 
         for (WellPartnerEntity partnerEntity : partners) {
             List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerEntity.getPartnerIdx());
@@ -186,13 +179,6 @@ public class WellPartnerService {
             WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
             WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
 
-            Long businessLicenseCount = fileStorages.stream()
-                    .filter(fileStorage -> "사업자등록증".equals(fileStorage.getFile().getFileKind()))
-                    .count();
-
-            Long contractDocumentCount = fileStorages.stream()
-                    .filter(fileStorage -> "계약서".equals(fileStorage.getFile().getFileKind()))
-                    .count();
 
             String partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
             String partnerUpperName = null;
@@ -202,23 +188,14 @@ public class WellPartnerService {
 
 
             WellPartnerInfoDTO partnerInfo = new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity
-                    , registeredCount, preRegisteredCount, managementCount, suspendedCount
-                    , partnerUpperName, businessLicenseCount, contractDocumentCount
+                    , partnerUpperName
             );
             partnerInfoList.add(partnerInfo);
 
-            totalBusinessLicenseCount += businessLicenseCount;
-            totalContractDocumentCount += contractDocumentCount;
         }
 
         Long totalPartnerCount = partners.getTotalElements();
-        Long NonBusinessLicenseCount = totalPartnerCount - totalBusinessLicenseCount;
-        Long NonContractDocumentCount = totalPartnerCount - totalContractDocumentCount;
 
-        for (WellPartnerInfoDTO partnerInfo : partnerInfoList) {
-            partnerInfo.setBusinessLicenseCount(NonBusinessLicenseCount);
-            partnerInfo.setContractDocumentCount(NonContractDocumentCount);
-        }
             return new PageImpl<>(partnerInfoList, pageable, totalPartnerCount);
         } catch (Exception e) {
             // 여기에 예외 처리 로직 추가

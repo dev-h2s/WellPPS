@@ -36,7 +36,7 @@ import java.util.*;
 public class PartnerListController {
 
     @Autowired private WellPartnerService wellPartnerService;
-
+    @Autowired private WellPartnerRepository partnerRepository;
 
     //거래처 idx
     @GetMapping("business/{partnerIdx}")
@@ -95,6 +95,13 @@ public class PartnerListController {
             response.put("status", "OK");
             response.put("totalItems", partnersPage.getTotalElements());
             response.put("totalPages", partnersPage.getTotalPages());
+
+            response.put("registeredCount", partnerRepository.registeredCount());
+            response.put("preRegisteredCount", partnerRepository.preRegisteredCount());
+            response.put("managementCount", partnerRepository.managementCount());
+            response.put("suspendedCount", partnerRepository.suspendedCount());
+            response.put("businessLicenseCount", partnerRepository.countBusinessLicenseMissing());
+            response.put("contractDocumentCount", partnerRepository.countContractDocumentMissing());
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -174,6 +181,13 @@ public class PartnerListController {
             response.put("status", "OK");
             response.put("totalItems", partnersPage.getTotalElements());
             response.put("totalPages", partnersPage.getTotalPages());
+
+            response.put("registeredCount", partnerRepository.registeredCount());
+            response.put("preRegisteredCount", partnerRepository.preRegisteredCount());
+            response.put("managementCount", partnerRepository.managementCount());
+            response.put("suspendedCount", partnerRepository.suspendedCount());
+            response.put("businessLicenseCount", partnerRepository.countBusinessLicenseMissing());
+            response.put("contractDocumentCount", partnerRepository.countContractDocumentMissing());
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {

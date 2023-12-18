@@ -79,7 +79,7 @@ public class WellOPeratorService {
     public WellOperatorEntity createOperator(WellOperatorCreateDTO createDTO) {
         // 중복 체크
         if (operatorRepository.findByOperatorCode(createDTO.getOperatorCode()).isPresent()) {
-            throw new IllegalArgumentException("통신사 코드가 이미 존재합니다.");
+            throw new IllegalArgumentException("이미사용중인 코드명입니다.");
         }
 
         WellOperatorEntity newOperator = WellOperatorEntity.builder()

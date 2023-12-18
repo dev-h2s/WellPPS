@@ -89,9 +89,9 @@ public class OperatorController {
     public ResponseEntity<?> checkOperatorCode(@RequestParam String operatorCode) {
         boolean exists = wellOPeratorService.isOperatorCodeExists(operatorCode);
         if (exists == true) {
-            return ResponseEntity.ok("통신사 코드가 이미 존재합니다.");
+            return ResponseEntity.ok("이미사용중인 코드명입니다.");
         }
-        return ResponseEntity.ok("사용 가능한 코드입니다.");
+        return ResponseEntity.ok("사용가능한 코드명입니다.");
     }
     //수정
     //삭제

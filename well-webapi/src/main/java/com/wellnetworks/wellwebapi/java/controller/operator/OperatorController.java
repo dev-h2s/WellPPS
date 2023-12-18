@@ -1,8 +1,10 @@
 package com.wellnetworks.wellwebapi.java.controller.operator;
 
+import com.wellnetworks.wellcore.java.dto.Operator.WellOperatorCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Operator.WellOperatorDetailDTO;
 import com.wellnetworks.wellcore.java.dto.Operator.WellOperatorListDTO;
 import com.wellnetworks.wellcore.java.service.operator.WellOPeratorService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Page;
@@ -51,7 +53,7 @@ public class OperatorController {
     }
 
     //상세 조회
-    @GetMapping("/info/detail/{operatorIdx}")
+    @GetMapping("info/detail/{operatorIdx}")
     public ResponseEntity<?> getOperatorDetail(@PathVariable String operatorIdx) {
         try {
             Optional<WellOperatorDetailDTO> operatorDetailOpt = wellOPeratorService.getDetailOperator(operatorIdx);
@@ -66,4 +68,31 @@ public class OperatorController {
         }
     }
 
+    //생성
+    @PostMapping("create")
+    public ResponseEntity<?> createOperator(@Valid WellOperatorCreateDTO createDTO) {
+        try {
+            // 중복 체크
+            if (wellOPeratorService.isOperatorCodeExists(createDTO.getOperatorCode())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("통신사 코드가 이미 존재합니다.");
+            }
+
+            wellOPeratorService.createOperator(createDTO);
+            return ResponseEntity.ok(" 통신사 생성 및 저장 완료");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생: " + e.getMessage());
+        }
+    }
+
+    //중복체크
+    @GetMapping("checkCode")
+    public ResponseEntity<?> checkOperatorCode(@RequestParam String operatorCode) {
+        boolean exists = wellOPeratorService.isOperatorCodeExists(operatorCode);
+        if (exists == true) {
+            return ResponseEntity.ok("통신사 코드가 이미 존재합니다.");
+        }
+        return ResponseEntity.ok("사용 가능한 코드입니다.");
+    }
+    //수정
+    //삭제
 }

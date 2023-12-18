@@ -2,19 +2,16 @@ package com.wellnetworks.wellcore.java.domain.operator;
 //통신사
 import com.wellnetworks.wellcore.java.domain.product.WellProductEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-@EntityListeners(AuditingEntityListener.class)
+@AllArgsConstructor
 public class WellOperatorEntity {
 
     @Id
@@ -53,4 +50,18 @@ public class WellOperatorEntity {
     public void setPdsFlag(boolean pdsFlag) {this.isPdsFlag = pdsFlag;}
 
     public void setRunFlag(boolean runFlag) {this.isRunFlag = runFlag;}
+
+    @Builder
+    public WellOperatorEntity(String operatorName, String operatorCode, Boolean isOpeningSearchFlag
+                              ,Boolean isExternalApiFlag, Boolean isVisibleFlag, Boolean isPdsFlag, Boolean isRunFlag
+                              ) {
+        this.operatorIdx = UUID.randomUUID().toString(); // 빌더를 통해 객체를 생성할 때 UUID를 할당합니다.
+        this.operatorName = operatorName;
+        this.operatorCode = operatorCode;
+        this.isOpeningSearchFlag = isOpeningSearchFlag;
+        this.isExternalApiFlag = isExternalApiFlag;
+        this.isVisibleFlag = isVisibleFlag;
+        this.isPdsFlag = isPdsFlag;
+        this.isRunFlag = isRunFlag;
+    }
 }

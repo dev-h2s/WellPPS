@@ -1,13 +1,11 @@
 package com.wellnetworks.wellcore.java.service.operator;
 
 import com.wellnetworks.wellcore.java.domain.operator.WellOperatorEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.domain.product.WellProductEntity;
-import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyDetailDTO;
+import com.wellnetworks.wellcore.java.dto.Operator.WellOperatorCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Operator.WellOperatorDetailDTO;
 import com.wellnetworks.wellcore.java.dto.Operator.WellOperatorListDTO;
 import com.wellnetworks.wellcore.java.dto.Product.WellProductListDTO;
-import com.wellnetworks.wellcore.java.dto.VirtualAccount.WellVirtualAccountDetailDTO;
 import com.wellnetworks.wellcore.java.repository.operator.WellOperatorRepository;
 import com.wellnetworks.wellcore.java.repository.product.WellProductRepository;
 import com.wellnetworks.wellcore.java.service.diposit.WellDipositService;
@@ -18,8 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -78,4 +74,31 @@ public class WellOPeratorService {
                         operator.getIsOpeningSearchFlag()
                 ));
     }
+
+    //생성
+    public WellOperatorEntity createOperator(WellOperatorCreateDTO createDTO) {
+        // 중복 체크
+        if (operatorRepository.findByOperatorCode(createDTO.getOperatorCode()).isPresent()) {
+            throw new IllegalArgumentException("통신사 코드가 이미 존재합니다.");
+        }
+
+        WellOperatorEntity newOperator = WellOperatorEntity.builder()
+                .operatorName(createDTO.getOperatorName())
+                .operatorCode(createDTO.getOperatorCode().toUpperCase()) // 대문자로 저장
+                .isOpeningSearchFlag(createDTO.getIsOpeningSearchFlag())
+                .isExternalApiFlag(false)
+                .isVisibleFlag(false)
+                .isPdsFlag(false)
+                .isRunFlag(false)
+                .build();
+
+        return operatorRepository.save(newOperator);
+    }
+
+    //중복체크
+    public boolean isOperatorCodeExists(String operatorCode) {
+        return operatorRepository.findByOperatorCode(operatorCode).isPresent();
+    }
+    //수정
+    //삭제
 }

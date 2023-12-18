@@ -43,6 +43,10 @@ public class WellOperatorEntity {
     @Column(name = "run_flag") //개통가능여부
     private Boolean isRunFlag;
 
+    public void setOperatorName(String operatorName) {this.operatorName = operatorName;}
+
+    public void setIsOpeningSearchFlag(boolean isOpeningSearchFlag) {this.isOpeningSearchFlag = isOpeningSearchFlag;}
+
     public void setExternalApiFlag(boolean externalApiFlag) {this.isExternalApiFlag = externalApiFlag;}
 
     public void setVisibleFlag(boolean visibleFlag) {this.isVisibleFlag = visibleFlag;}

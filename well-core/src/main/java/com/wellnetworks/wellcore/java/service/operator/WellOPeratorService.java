@@ -5,10 +5,12 @@ import com.wellnetworks.wellcore.java.domain.product.WellProductEntity;
 import com.wellnetworks.wellcore.java.dto.Operator.WellOperatorCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Operator.WellOperatorDetailDTO;
 import com.wellnetworks.wellcore.java.dto.Operator.WellOperatorListDTO;
+import com.wellnetworks.wellcore.java.dto.Operator.WellOperatorUpdateDTO;
 import com.wellnetworks.wellcore.java.dto.Product.WellProductListDTO;
 import com.wellnetworks.wellcore.java.repository.operator.WellOperatorRepository;
 import com.wellnetworks.wellcore.java.repository.product.WellProductRepository;
 import com.wellnetworks.wellcore.java.service.diposit.WellDipositService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,6 +101,17 @@ public class WellOPeratorService {
     public boolean isOperatorCodeExists(String operatorCode) {
         return operatorRepository.findByOperatorCode(operatorCode).isPresent();
     }
+
     //수정
+    public WellOperatorEntity updateOperator(String operatorIdx, WellOperatorUpdateDTO updateDTO) {
+        WellOperatorEntity operator = operatorRepository.findById(operatorIdx)
+                .orElseThrow(() -> new EntityNotFoundException("통신사가 존재하지 않습니다."));
+
+        operator.setOperatorName(updateDTO.getOperatorName());
+        operator.setIsOpeningSearchFlag(updateDTO.getIsOpeningSearchFlag());
+
+        return operatorRepository.save(operator);
+    }
+
     //삭제
 }

@@ -76,7 +76,6 @@ public class WellEmployeeService {
             // 그 파일 정보만을 추출하여 List에 담는다
             List<WellEmployeeFileStorageEntity> fileStorages = employeeFileRepository.findByEmployeeIdx(employeeIdx);
 
-
             // WellEmployeeEntity에서 WellEmployeeUserEntity 가져오기
             WellEmployeeUserEntity employeeUser = employeeEntity.getEmployeeUser();
             // 부서 정보를 저장할 변수를 초기화

@@ -1,8 +1,13 @@
 package com.wellnetworks.wellcore.java.service.product;
 
+import com.wellnetworks.wellcore.java.domain.operator.WellOperatorEntity;
+import com.wellnetworks.wellcore.java.domain.product.WellProductEntity;
+import com.wellnetworks.wellcore.java.dto.Product.WellProductCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Product.WellProductDetailDTO;
+import com.wellnetworks.wellcore.java.repository.operator.WellOperatorRepository;
 import com.wellnetworks.wellcore.java.repository.product.WellProductRepository;
 import com.wellnetworks.wellcore.java.service.diposit.WellDipositService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +20,7 @@ import java.util.Optional;
 public class WellProductService {
     private static final Logger log = LoggerFactory.getLogger(WellDipositService.class);
     private final WellProductRepository productRepository;
+    private final WellOperatorRepository operatorRepository;
 
     //요금제 상세 조회
     public Optional<WellProductDetailDTO> getDetailProduct(String productIdx) {
@@ -39,5 +45,31 @@ public class WellProductService {
                             product.getMemo()
                     );
                 });
+    }
+
+    //입력
+    public WellProductEntity createProduct(WellProductCreateDTO createDTO) {
+        WellOperatorEntity operator = operatorRepository.findByOperatorName(createDTO.getOperatorName())
+                .orElseThrow(() -> new EntityNotFoundException("통신사를 찾을 수 없습니다."));
+
+        WellProductEntity product = WellProductEntity.builder()
+                .visibleFlag(createDTO.getVisibleFlag())
+                .openingHistorySearchFlag(createDTO.getOpeningHistorySearchFlag())
+                .operator(operator)
+                .network(createDTO.getNetwork())
+                .baseFee(createDTO.getBaseFee())
+                .productType(createDTO.getProductType())
+                .productName(createDTO.getProductName())
+                .data(createDTO.getData())
+                .voice(createDTO.getVoice())
+                .sms(createDTO.getSms())
+                .etc(createDTO.getEtc())
+                .internalCode(createDTO.getInternalCode())
+                .externalCode(createDTO.getExternalCode())
+                .mvnoProductName(createDTO.getMvnoProductName())
+                .memo(createDTO.getMemo())
+                .build();
+
+        return productRepository.save(product);
     }
 }

@@ -80,27 +80,16 @@ public class WellPartnerService {
             }
 
             List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerIdx);
-            WellVirtualAccountEntity virtualAccountEntity = entity.getVirtualAccount();
-            WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : new WellDipositEntity();
-            String partnerUpperIdx = entity.getPartnerUpperIdx();
-            String partnerUpperName = partnerUpperIdx != null ? wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx) : null;
+            WellDipositEntity depositEntity = entity.getVirtualAccount() != null ? entity.getVirtualAccount().getDeposit() : null;
+            String partnerUpperName = entity.getPartnerUpperIdx() != null ? wellPartnerRepository.findPartnerNameByPartnerIdxSafely(entity.getPartnerUpperIdx()) : null;
 
             List<WellPartnerEntity> subPartnerEntities = wellPartnerRepository.findSubPartnersByPartnerUpperIdx(partnerIdx);
-            if (subPartnerEntities.isEmpty()) {
-                subPartnerEntities = wellPartnerRepository.findSubPartnersByPartnerUpperIdx(partnerUpperIdx);
-            }
-
-            Long groupId = entity.getPartnerGroup().getPartnerGroupId();
-            WellPartnerGroupEntity partnerGroupEntity = wellPartnerGroupRepository.findByPartnerGroupId(groupId);
-            String PartnerGroupName = groupId != null ? entity.getPartnerGroup().getPartnerGroupName() : null;
+            Long groupId = entity.getPartnerGroup() != null ? entity.getPartnerGroup().getPartnerGroupId() : null;
+            String partnerGroupName = groupId != null ? entity.getPartnerGroup().getPartnerGroupName() : null;
 
             WellApikeyInEntity apikeyInEntity = entity.getApiKey();
-            if (apikeyInEntity != null) {
-                apikeyInEntity = wellApikeyInRepository.findByApiKeyInIdx(apikeyInEntity.getApiKeyInIdx());
-            }
 
-            WellPartnerDetailDTO dto = new WellPartnerDetailDTO(entity, fileStorages, dipositEntity, partnerUpperName, partnerGroupEntity, apikeyInEntity, subPartnerEntities, PartnerGroupName);
-            dto.setSubPartnerNames(subPartnerEntities.stream().map(WellPartnerEntity::getPartnerName).collect(Collectors.toList()));
+            WellPartnerDetailDTO dto = new WellPartnerDetailDTO(entity, fileStorages, depositEntity, partnerUpperName, entity.getPartnerGroup(), apikeyInEntity, subPartnerEntities, partnerGroupName);
 
             return Optional.of(dto);
         } catch (EntityNotFoundException e) {
@@ -109,6 +98,7 @@ public class WellPartnerService {
             throw new RuntimeException("거래처 상세 정보 조회 중 오류 발생: " + e.getMessage(), e);
         }
     }
+
 
 
     // 거래처 검색

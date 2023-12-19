@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface WellOperatorRepository extends JpaRepository<WellOperatorEntity, String> {
     Optional<WellOperatorEntity> findByOperatorCode(String operatorCode);
+
+    Optional<WellOperatorEntity> findByOperatorName(String operatorName);
 }

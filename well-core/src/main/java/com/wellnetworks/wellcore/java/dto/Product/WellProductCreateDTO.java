@@ -13,7 +13,6 @@ public class WellProductCreateDTO {
     @NotNull(message = "출력 여부는 필수 항목입니다.")
     private Boolean visibleFlag;
 
-    @NotNull(message = "개통 내역 검색 여부는 필수 항목입니다.")
     private Boolean openingHistorySearchFlag;
 
     @NotBlank(message = "통신사명은 필수 항목입니다.")
@@ -46,7 +45,6 @@ public class WellProductCreateDTO {
     @NotBlank(message = "내부 코드는 필수 항목입니다.")
     private String internalCode;
 
-    @NotBlank(message = "외부 코드는 필수 항목입니다.")
     private String externalCode;
 
     private String mvnoProductName;

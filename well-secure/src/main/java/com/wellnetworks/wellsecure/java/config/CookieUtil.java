@@ -13,7 +13,7 @@ public class CookieUtil {
         Cookie cookie = new Cookie("access_token", token);
         cookie.setPath("/");
         cookie.setHttpOnly(true); // HttpOnly 설정
-        cookie.setMaxAge(maxAge);
+        cookie.setMaxAge(maxAge);   
         response.addCookie(cookie);
     }
 //    public static void deleteAccessTokenCookie(HttpServletResponse response) {

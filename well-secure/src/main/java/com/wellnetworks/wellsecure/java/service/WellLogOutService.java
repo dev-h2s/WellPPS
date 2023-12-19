@@ -33,6 +33,6 @@ public class WellLogOutService {
         refreshTokenService.deleteRefreshToken(userDetails);
 
         // 쿠키에서 액세스 토큰을 삭제
-        CookieUtil.deleteCookie(request, response, "access_token");
+//        CookieUtil.deleteCookie(request, response, "access_token");
     }
 }

@@ -14,6 +14,7 @@ public interface EmployeeRefreshTokenRepository extends JpaRepository<EmployeeRe
     // WellEmployeeUserEntity를 기준으로 EmployeeRefreshTokenEntity를 찾는 메서드
     Optional<EmployeeRefreshTokenEntity> findByEmployeeUser(WellEmployeeUserEntity employeeUser);
 
+    //로그아웃시 삭제하는 메서드
     @Modifying
     @Query("delete from EmployeeRefreshTokenEntity e where e.employeeUser = :employeeUser")
     void deleteByEmployeeUser(@Param("employeeUser") WellEmployeeUserEntity employeeUser);

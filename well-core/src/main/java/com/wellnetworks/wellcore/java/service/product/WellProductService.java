@@ -72,4 +72,12 @@ public class WellProductService {
 
         return productRepository.save(product);
     }
+
+    //수정
+    //삭제
+    public void deleteProduct(String productIdx) {
+        WellProductEntity product = productRepository.findById(productIdx)
+                .orElseThrow(() -> new EntityNotFoundException("요금제가 존재하지 않습니다."));
+        productRepository.delete(product);
+    }
 }

@@ -4,6 +4,7 @@ import com.wellnetworks.wellcore.java.domain.product.WellProductEntity;
 import com.wellnetworks.wellcore.java.dto.Product.WellProductCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Product.WellProductDetailDTO;
 import com.wellnetworks.wellcore.java.service.product.WellProductService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
@@ -46,5 +47,19 @@ public class ProductController {
 
         productService.createProduct(createDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body("요금제가 성공적으로 생성되었습니다.");
+    }
+
+    //수정
+    //삭제
+    @DeleteMapping("delete/{productIdx}")
+    public ResponseEntity<?> deleteProduct(@PathVariable String productIdx) {
+        try {
+            productService.deleteProduct(productIdx);
+            return ResponseEntity.ok("요금제가 삭제되었습니다.");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생: " + e.getMessage());
+        }
     }
 }

@@ -2,8 +2,10 @@ package com.wellnetworks.wellcore.java.service.product;
 
 import com.wellnetworks.wellcore.java.domain.operator.WellOperatorEntity;
 import com.wellnetworks.wellcore.java.domain.product.WellProductEntity;
+import com.wellnetworks.wellcore.java.dto.Operator.WellOperatorUpdateDTO;
 import com.wellnetworks.wellcore.java.dto.Product.WellProductCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Product.WellProductDetailDTO;
+import com.wellnetworks.wellcore.java.dto.Product.WellProductUpdateDTO;
 import com.wellnetworks.wellcore.java.repository.operator.WellOperatorRepository;
 import com.wellnetworks.wellcore.java.repository.product.WellProductRepository;
 import com.wellnetworks.wellcore.java.service.diposit.WellDipositService;
@@ -74,6 +76,15 @@ public class WellProductService {
     }
 
     //수정
+    public WellProductEntity updateProduct(String productIdx, WellProductUpdateDTO updateDTO) {
+        WellProductEntity product = productRepository.findById(productIdx)
+                .orElseThrow(() -> new EntityNotFoundException("요금제가 존재하지 않습니다."));
+
+        product.updateFromDTO(updateDTO);
+
+        return productRepository.save(product);
+    }
+
     //삭제
     public void deleteProduct(String productIdx) {
         WellProductEntity product = productRepository.findById(productIdx)

@@ -1,8 +1,9 @@
 package com.wellnetworks.wellwebapi.java.controller.product;
 
-import com.wellnetworks.wellcore.java.domain.product.WellProductEntity;
+import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
 import com.wellnetworks.wellcore.java.dto.Product.WellProductCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Product.WellProductDetailDTO;
+import com.wellnetworks.wellcore.java.dto.Product.WellProductUpdateDTO;
 import com.wellnetworks.wellcore.java.service.product.WellProductService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -50,6 +51,22 @@ public class ProductController {
     }
 
     //수정
+    @PatchMapping("update/{productIdx}")
+    public ResponseEntity<String> patchProduct(@Valid WellProductUpdateDTO updateDTO,
+                                               @PathVariable String productIdx) {
+        try {
+            if (productIdx == null) {
+                throw new ClassNotFoundException(String.format("요금제IDX가 일치하지 않습니다. : ", productIdx));
+            }
+            productService.updateProduct(productIdx, updateDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body("요금제를 성공적으로 수정되었습니다.");
+        } catch (ClassNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("요금제를 찾을 수 없습니다. IDX: %s", productIdx));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("요금제 수정 중 오류가 발생하였습니다.");
+        }
+    }
+
     //삭제
     @DeleteMapping("delete/{productIdx}")
     public ResponseEntity<?> deleteProduct(@PathVariable String productIdx) {

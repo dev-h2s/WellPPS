@@ -2,11 +2,13 @@ package com.wellnetworks.wellcore.java.domain.product;
 //요금제
 import com.wellnetworks.wellcore.java.domain.opening.WellCommissionOpeningPolicyEntity;
 import com.wellnetworks.wellcore.java.domain.operator.WellOperatorEntity;
+import com.wellnetworks.wellcore.java.dto.Product.WellProductUpdateDTO;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
@@ -19,6 +21,7 @@ import static jakarta.persistence.FetchType.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @EntityListeners(AuditingEntityListener.class)
+@DynamicUpdate
 public class WellProductEntity {
 
     @Id
@@ -101,5 +104,38 @@ public class WellProductEntity {
         this.internalCode = internalCode;
         this.externalCode = externalCode;
         this.memo = memo;
+    }
+
+    public void updateFromDTO(WellProductUpdateDTO dto) {
+        if (dto.getVisibleFlag() != null) {
+            this.visibleFlag = dto.getVisibleFlag();
+        }
+        if (dto.getOpeningHistorySearchFlag() != null) {
+            this.openingHistorySearchFlag = dto.getOpeningHistorySearchFlag();
+        }
+        if (dto.getProductName() != null) {
+            this.productName = dto.getProductName();
+        }
+        if (dto.getMvnoProductName() != null) {
+            this.mvnoProductName = dto.getMvnoProductName();
+        }
+        if (dto.getData() != null) {
+            this.data = dto.getData();
+        }
+        if (dto.getVoice() != null) {
+            this.voice = dto.getVoice();
+        }
+        if (dto.getSms() != null) {
+            this.sms = dto.getSms();
+        }
+        if (dto.getEtc() != null) {
+            this.etc = dto.getEtc();
+        }
+        if (dto.getExternalCode() != null) {
+            this.externalCode = dto.getExternalCode();
+        }
+        if (dto.getMemo() != null) {
+            this.memo = dto.getMemo();
+        }
     }
 }

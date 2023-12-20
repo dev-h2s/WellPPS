@@ -2,7 +2,6 @@ package com.wellnetworks.wellcore.java.service.product;
 
 import com.wellnetworks.wellcore.java.domain.operator.WellOperatorEntity;
 import com.wellnetworks.wellcore.java.domain.product.WellProductEntity;
-import com.wellnetworks.wellcore.java.dto.Operator.WellOperatorUpdateDTO;
 import com.wellnetworks.wellcore.java.dto.Product.WellProductCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Product.WellProductDetailDTO;
 import com.wellnetworks.wellcore.java.dto.Product.WellProductUpdateDTO;
@@ -13,6 +12,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -77,18 +77,34 @@ public class WellProductService {
 
     //수정
     public WellProductEntity updateProduct(String productIdx, WellProductUpdateDTO updateDTO) {
-        WellProductEntity product = productRepository.findById(productIdx)
-                .orElseThrow(() -> new EntityNotFoundException("요금제가 존재하지 않습니다."));
+        try {
+            WellProductEntity product = productRepository.findById(productIdx)
+                    .orElseThrow(() -> new EntityNotFoundException("요금제가 존재하지 않습니다."));
 
-        product.updateFromDTO(updateDTO);
+            product.updateFromDTO(updateDTO);
 
-        return productRepository.save(product);
+            return productRepository.save(product);
+        } catch (DataAccessException e) {
+            log.error("데이터베이스 접근 중 오류 발생", e);
+            throw e;
+        } catch (Exception e) {
+            log.error("요금제 업데이트 중 오류 발생", e);
+            throw e;
+        }
     }
 
     //삭제
     public void deleteProduct(String productIdx) {
-        WellProductEntity product = productRepository.findById(productIdx)
-                .orElseThrow(() -> new EntityNotFoundException("요금제가 존재하지 않습니다."));
-        productRepository.delete(product);
+        try {
+            WellProductEntity product = productRepository.findById(productIdx)
+                    .orElseThrow(() -> new EntityNotFoundException("요금제가 존재하지 않습니다."));
+            productRepository.delete(product);
+        } catch (DataAccessException e) {
+            log.error("데이터베이스 접근 중 오류 발생", e);
+            throw e;
+        } catch (Exception e) {
+            log.error("요금제 삭제 중 오류 발생", e);
+            throw e;
+        }
     }
 }

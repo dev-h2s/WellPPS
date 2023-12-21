@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class WellPartnerDetailDTO {
-    private String partnerIdx;
     private String partnerCode;
     private String partnerName;
     private String partnerType;
@@ -65,7 +64,6 @@ public class WellPartnerDetailDTO {
     public WellPartnerDetailDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, WellDipositEntity diposit
             , String partnerUpperName, WellPartnerGroupEntity group, WellApikeyInEntity apikey, List<WellPartnerEntity> subPartners
             , String PartnerGroupName) {
-        this.partnerIdx = entity.getPartnerIdx();
         this.partnerCode = entity.getPartnerCode();
         this.partnerName = entity.getPartnerName();
         this.partnerType = entity.getPartnerType();
@@ -105,9 +103,8 @@ public class WellPartnerDetailDTO {
             }
         }
 
-        if (diposit != null) {
-            this.dipositBalance = diposit.getDipositBalance();
-        }
+        this.dipositBalance = diposit != null ? diposit.getDipositBalance() : 0;
+
         this.ceoName = entity.getCeoName();
         this.ceoTelephone = entity.getCeoTelephone();
         this.partnerTelephone = entity.getPartnerTelephone();

@@ -59,7 +59,7 @@ public class ProductController {
                 throw new ClassNotFoundException(String.format("요금제IDX가 일치하지 않습니다. : ", productIdx));
             }
             productService.updateProduct(productIdx, updateDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body("요금제를 성공적으로 수정되었습니다.");
+            return ResponseEntity.status(HttpStatus.CREATED).body("요금제가 성공적으로 수정되었습니다.");
         } catch (ClassNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("요금제를 찾을 수 없습니다. IDX: %s", productIdx));
         } catch (Exception e) {
@@ -72,7 +72,7 @@ public class ProductController {
     public ResponseEntity<?> deleteProduct(@PathVariable String productIdx) {
         try {
             productService.deleteProduct(productIdx);
-            return ResponseEntity.ok("요금제가 삭제되었습니다.");
+            return ResponseEntity.ok("요금제가 성공적으로 삭제되었습니다.");
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {

@@ -1,21 +1,20 @@
 package com.wellnetworks.wellcore.java.dto.Partner;
 
-import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
-import com.wellnetworks.wellcore.java.dto.FIle.WellFileDetailDTO;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+        import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
+        import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
+        import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+        import com.wellnetworks.wellcore.java.dto.FIle.WellFileDetailDTO;
+        import lombok.AccessLevel;
+        import lombok.Data;
+        import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+        import java.time.LocalDate;
+        import java.util.ArrayList;
+        import java.util.List;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-public class WellPartnerInfoDTO {
+public class WellPartnerSearchDTO {
     private String partnerIdx;
     private List<WellFileDetailDTO> fileDetails = new ArrayList<>();
     private LocalDate subscriptionDate;
@@ -33,9 +32,9 @@ public class WellPartnerInfoDTO {
     private String partnerUpperName;
 
     //리스트
-    public WellPartnerInfoDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, WellDipositEntity diposit
+    public WellPartnerSearchDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, Integer dipositBalance
             , String partnerUpperName
-                                ) {
+    ) {
         this.partnerIdx = entity.getPartnerIdx();
         for (WellPartnerFIleStorageEntity fileStorage : fileStorages) {
             if (fileStorage != null && fileStorage.getFile() != null) {
@@ -54,7 +53,7 @@ public class WellPartnerInfoDTO {
         this.partnerType = entity.getPartnerType();
         this.discountCategory = entity.getDiscountCategory();
 
-        this.dipositBalance = diposit != null ? diposit.getDipositBalance() : 0;
+        this.dipositBalance = dipositBalance;
 
         this.salesManager = entity.getSalesManager();
         this.ceoName = entity.getCeoName();

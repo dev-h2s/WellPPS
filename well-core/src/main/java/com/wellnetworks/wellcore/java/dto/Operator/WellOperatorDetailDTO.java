@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
 public class WellOperatorDetailDTO {
+
     private String operatorName; //통신사명
 
     private String operatorCode; // 통신사 코드

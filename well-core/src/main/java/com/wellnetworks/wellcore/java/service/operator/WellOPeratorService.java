@@ -46,6 +46,7 @@ public class WellOPeratorService {
                 List<WellProductEntity> products = productRepository.findByOperator(operator);
                 List<WellProductListDTO> productDTOs = products.stream()
                         .map(product -> new WellProductListDTO(
+                                product.getProductIdx(),
                                 product.getProductName(),
                                 product.getNetwork(),
                                 product.getProductType(),
@@ -59,6 +60,7 @@ public class WellOPeratorService {
                         .collect(Collectors.toList());
 
                 WellOperatorListDTO dto = new WellOperatorListDTO();
+                dto.setOperatorIdx(operator.getOperatorIdx());
                 dto.setOperatorName(operator.getOperatorName());
                 dto.setProducts(productDTOs);
 

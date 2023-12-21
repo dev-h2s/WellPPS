@@ -2,6 +2,8 @@ package com.wellnetworks.wellcore.java.dto.Partner;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.querydsl.core.annotations.QueryProjection;
+import com.wellnetworks.wellcore.java.dto.FIle.WellFileDetailDTO;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -37,6 +39,7 @@ public class WellPartnerCreateDTO {
 
     @NotNull(message = "api연동여부는 필수 입력 항목입니다.")
     private boolean inApiFlag;
+    @Nullable
     private String apiKeyInIdx;
 
     private String preApprovalNumber;
@@ -70,7 +73,7 @@ public class WellPartnerCreateDTO {
     private String locationDetailAddress;
     private String partnerMemo;
 
-    private List<String> fileKinds = new ArrayList<>();
+    private List<WellFileDetailDTO> fileDetails = new ArrayList<>();
 
     private List<MultipartFile> businessLicenseFiles;
     private List<MultipartFile> contractDocumentFiles;
@@ -103,7 +106,7 @@ public class WellPartnerCreateDTO {
                                 , LocalDateTime subscriptionDate, String transactionStatus, String partnerUpperIdx, String ceoName, String ceoTelephone
                                 , String partnerTelephone, String emailAddress, String commissionDepositAccount, String commissionBankName, String commissionBankHolder
                                 , String registrationNumber, String registrationAddress, String registrationDetailAddress, String locationAddress, String locationDetailAddress
-                                , String partnerMemo, List<String> fileKinds
+                                , String partnerMemo, List<WellFileDetailDTO> fileDetails
                                 , String partnerManagerGroupKey, String partnerIdentification, String partnerUserPwd, String permissions
                                 , String tmpPwd, LocalDateTime tmpPwdExpiration, Integer tmpPwdCount, LocalDateTime tmpPwdDate, Boolean isPhoneVerified
                                 , String phoneVerificationCode, Integer phoneVerificationAttempts, LocalDateTime phoneVerificationExpiration, LocalDateTime phoneVerificationSentTime, LocalDateTime partnerUserRegisterDate
@@ -138,7 +141,7 @@ public class WellPartnerCreateDTO {
         this.locationAddress = locationAddress;
         this.locationDetailAddress = locationDetailAddress;
         this.partnerMemo = partnerMemo;
-        this.fileKinds = fileKinds;
+        this.fileDetails = fileDetails;
 
         //거래처유저
         this.partnerManagerGroupKey = partnerManagerGroupKey;

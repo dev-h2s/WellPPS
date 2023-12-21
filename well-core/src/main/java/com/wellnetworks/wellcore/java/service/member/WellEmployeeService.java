@@ -178,10 +178,35 @@ public class WellEmployeeService {
     // 사원 생성
 @Transactional
 public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
+//    System.out.println("Employee Identification: " + joinDTO.getEmployeeIdentification());
+//    System.out.println("employeeName:"+joinDTO.getEmployeeName());
+//    System.out.println("belong:"+joinDTO.getBelong());
+//    System.out.println("Department: " + joinDTO.getDepartment());
+//    System.out.println("position:"+joinDTO.getEmployeeName());
+//    System.out.println("employmentState:"+joinDTO.getEmploymentState());
+//    System.out.println("jobType:"+joinDTO.getJobType());
+//    System.out.println("entryDate:"+joinDTO.getEntryDate());
+//    System.out.println("retireDate:"+joinDTO.getRetireDate());
+//    System.out.println("employmentQuitType:"+joinDTO.getEmploymentQuitType());
+//    System.out.println("remainingLeaveDays:"+joinDTO.getRemainingLeaveDays());
+//    System.out.println("residentRegistrationNumber:"+joinDTO.getResidentRegistrationNumber());
+//    System.out.println("telPrivate:"+joinDTO.getTelPrivate());
+//    System.out.println("phoneVerificationCode:"+joinDTO.getPhoneVerificationCode());
+//    System.out.println("isPhoneVerified:"+joinDTO.getIsPhoneVerified());
+//    System.out.println("phoneVerificationAttempts:"+joinDTO.getPhoneVerificationAttempts());
+//    System.out.println("telWork:"+joinDTO.getTelWork());
+//    System.out.println("email:"+joinDTO.getEmail());
+//    System.out.println("bankAccount:"+joinDTO.getBankAccount());
+//    System.out.println("bankHolder:"+joinDTO.getBankHolder());
+//    System.out.println("homeAddress1:"+joinDTO.getHomeAddress1());
+//    System.out.println("homeAddress2:"+joinDTO.getHomeAddress2());
+//    System.out.println("externalAccessCert:"+joinDTO.getExternalAccessCert());
+//    System.out.println("memo:"+joinDTO.getMemo());
+
     // 중복 아이디 검사
     boolean exists = wellEmployeeUserRepository.existsByEmployeeIdentification(joinDTO.getEmployeeIdentification());
     if (exists) {
-        throw new IllegalArgumentException("사용 불가능한 아이디 입니다");
+        throw new IllegalArgumentException("중복된 아이디 입니다");
     }
     String[] passwords = PasswordUtil.generateRandomPassword();
     String tempPasswordPlainText = passwords[0]; // 사용자에게 전달할 임시 비밀번호 평문
@@ -192,7 +217,7 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
 
     // department 값을 기준으로 WellEmployeeGroupEntity 객체 조회
     Optional<WellEmployeeManagerGroupEntity> groupOptional = wellEmployeeGroupRepository.findByDepartment(department);
-
+//    WellEmployeeManagerGroupEntity group = groupOptional.orElseThrow(IllegalArgumentException::new);
     // 그룹(부서) 정보가 없으면 예외 처리
     WellEmployeeManagerGroupEntity group = groupOptional.orElseThrow(()
             -> new IllegalArgumentException("없는 부서 입니다: " + department));
@@ -203,6 +228,7 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
     LocalDateTime currentDateTime = LocalDateTime.now();
     String newEmployeeIdx = UUID.randomUUID().toString();
     // WellEmployeeUserEntity 객체 생성 및 설정
+    try{
     WellEmployeeUserEntity userEntity = WellEmployeeUserEntity.builder()
             .employeeIdx(newEmployeeIdx) //생성되는 idx
             .employeeIdentification(joinDTO.getEmployeeIdentification()) // 로그인 id
@@ -248,8 +274,13 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
 //            .employeeRegisterDate(LocalDateTime.now())
             .build();
     wellEmployeeRepository.save(employeeEntity);
-
     employeeFileService.saveFiles(joinDTO, employeeEntity.getEmployeeIdx());
+        System.out.println("사원 생성완료");
+    } catch (Exception e) {
+        // 롤백을 위해 예외 발생
+        throw new RuntimeException("사원 생성 중 오류 발생", e);
+    }
+    System.out.println("사원 생성완료");
     // 임시 비밀번호 반환
     return tempPasswordPlainText; // 호출하는 곳에서 임시 비밀번호를 받아 화면에 출력할 수 있음
     }

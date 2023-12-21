@@ -1,6 +1,9 @@
 package com.wellnetworks.wellwebapi.java.controller;
 
+import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeManagerGroupEntity;
 import com.wellnetworks.wellcore.java.dto.member.*;
+import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeGroupRepository;
+import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
 import com.wellnetworks.wellcore.java.service.member.WellEmployeeService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -24,11 +27,19 @@ public class EmployeeController {
 
     @Autowired
     private WellEmployeeService wellEmployeeService;
+    private WellEmployeeUserRepository wellEmployeeUserRepository;
+
+    private WellEmployeeGroupRepository wellEmployeeGroupRepository;
 
 
     @Autowired
-    public EmployeeController(WellEmployeeService wellEmployeeService) {
+    public EmployeeController(WellEmployeeService wellEmployeeService,
+                              WellEmployeeGroupRepository wellEmployeeGroupRepository,
+                              WellEmployeeUserRepository wellEmployeeUserRepository
+                              ) {
         this.wellEmployeeService = wellEmployeeService;
+        this.wellEmployeeGroupRepository = wellEmployeeGroupRepository;
+        this.wellEmployeeUserRepository = wellEmployeeUserRepository;
     }
     // 사원 상세 조회
     @GetMapping("employee/{employeeIdx}")
@@ -80,17 +91,20 @@ public class EmployeeController {
     }
 
     //사원 생성
+    // 웹으로 할때 @RequestBody  추가
     @PostMapping(value = "employee/signUp")
-    public ResponseEntity<String> createEmployeeUser(WellEmployeeJoinDTO createDTO) throws Exception {
+    public ResponseEntity<String> createEmployeeUser(@RequestBody WellEmployeeJoinDTO createDTO) throws Exception {
         try {
             String tempPassword = wellEmployeeService.employeeJoin(createDTO);
             // 콘솔에 임시 비밀번호 출력
             System.out.println("생성된 임시 비밀번호: " + tempPassword);
             return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 완료되었습니다. 임시 비밀번호: " + tempPassword);
         } catch (Exception e) {
-            // 예외 처리
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원가입 중 오류가 발생하였습니다.");
+            e.printStackTrace(); // 서버 로그에 예외 정보를 기록합니다.
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+
+
     }
 
 

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Registration</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { width: 300px; margin: auto; padding-top: 50px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; }
+        .form-group input { width: 100%; padding: 8px; }
+        button { width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <form id="employeeForm">
+        <div class="form-group">
+            <label for="employeeIdentification">Identification:</label>
+            <input type="text" id="employeeIdentification" name="employeeIdentification" required>
+        </div>
+        <div class="form-group">
+            <label for="employeeName">Department:</label>
+            <input type="text" id="employeeName" name="employeeName" required>
+        </div>
+
+        <div class="form-group">
+            <label for="belong">belong:</label>
+            <input type="text" id="belong" name="belong" required>
+        </div>
+
+        <div class="form-group">
+            <label for="department">department:</label>
+            <input type="text" id="department" name="department" required>
+        </div>
+
+        <div class="form-group">
+            <label for="position">position:</label>
+            <input type="text" id="position" name="position" required>
+        </div>
+
+        <div class="form-group">
+            <label for="employmentState">employmentState:</label>
+            <input type="text" id="employmentState" name="employmentState" required>
+        </div>
+
+        <div class="form-group">
+            <label for="jobType">jobType:</label>
+            <input type="text" id="jobType" name="jobType" required>
+        </div>
+
+        <div class="form-group">
+            <label for="entryDate">entryDate:</label>
+            <input type="text" id="entryDate" name="entryDate" required>
+        </div>
+
+        <div class="form-group">
+            <label for="retireDate">retireDate:</label>
+            <input type="text" id="retireDate" name="retireDate" required>
+        </div>
+
+        <div class="form-group">
+            <label for="employmentQuitType">employmentQuitType:</label>
+            <input type="text" id="employmentQuitType" name="employmentQuitType" required>
+        </div>
+
+        <div class="form-group">
+            <label for="remainingLeaveDays">remainingLeaveDays:</label>
+            <input type="text" id="remainingLeaveDays" name="remainingLeaveDays" required>
+        </div>
+
+        <div class="form-group">
+            <label for="residentRegistrationNumber">residentRegistrationNumber:</label>
+            <input type="text" id="residentRegistrationNumber" name="residentRegistrationNumber" required>
+        </div>
+
+        <div class="form-group">
+            <label for="telPrivate">telPrivate:</label>
+            <input type="text" id="telPrivate" name="telPrivate" required>
+        </div>
+
+        <div class="form-group">
+            <label for="phoneVerificationCode">phoneVerificationCode:</label>
+            <input type="text" id="phoneVerificationCode" name="phoneVerificationCode" required>
+        </div>
+
+        <div class="form-group">
+            <label for="isPhoneVerified">isPhoneVerified:</label>
+            <input type="text" id="isPhoneVerified" name="isPhoneVerified" required>
+        </div>
+
+        <div class="form-group">
+            <label for="phoneVerificationAttempts">phoneVerificationAttempts:</label>
+            <input type="text" id="phoneVerificationAttempts" name="phoneVerificationAttempts" required>
+        </div>
+
+        <div class="form-group">
+            <label for="telWork">telWork:</label>
+            <input type="text" id="telWork" name="telWork" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">email:</label>
+            <input type="text" id="email" name="email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="bankName">bankName:</label>
+            <input type="text" id="bankName" name="bankName" required>
+        </div>
+
+        <div class="form-group">
+            <label for="bankAccount">bankAccount:</label>
+            <input type="text" id="bankAccount" name="bankAccount" required>
+        </div>
+
+        <div class="form-group">
+            <label for="bankHolder">bankHolder:</label>
+            <input type="text" id="bankHolder" name="bankHolder" required>
+        </div>
+
+        <div class="form-group">
+            <label for="homeAddress1">homeAddress1:</label>
+            <input type="text" id="homeAddress1" name="homeAddress1" required>
+        </div>
+
+        <div class="form-group">
+            <label for="homeAddress2">homeAddress2:</label>
+            <input type="text" id="homeAddress2" name="homeAddress2" required>
+        </div>
+
+        <div class="form-group">
+            <label for="externalAccessCert">externalAccessCert:</label>
+            <input type="text" id="externalAccessCert" name="externalAccessCert" required>
+        </div>
+
+        <div class="form-group">
+            <label for="memo">memo:</label>
+            <input type="text" id="memo" name="memo" required>
+        </div>
+
+
+        <button type="submit">Register Employee</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('employeeForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        var employeeIdentification = document.getElementById('employeeIdentification').value;
+        var employeeName = document.getElementById('employeeName').value;
+        var belong = document.getElementById('belong').value;
+        var department = document.getElementById('department').value;
+        var position = document.getElementById('position').value;
+        var employmentState = document.getElementById('employmentState').value;
+        var jobType = document.getElementById('jobType').value;
+        var entryDate = document.getElementById('entryDate').value;
+        var retireDate = document.getElementById('retireDate').value;
+        var employmentQuitType = document.getElementById('employmentQuitType').value;
+        var remainingLeaveDays = document.getElementById('remainingLeaveDays').value;
+        var residentRegistrationNumber = document.getElementById('residentRegistrationNumber').value;
+        var telPrivate = document.getElementById('telPrivate').value;
+        var phoneVerificationCode = document.getElementById('phoneVerificationCode').value;
+        var isPhoneVerified = document.getElementById('isPhoneVerified').value;
+        var phoneVerificationAttempts = document.getElementById('telPrivate').value;
+        var telWork = document.getElementById('telWork').value;
+        var email = document.getElementById('email').value;
+        var bankName = document.getElementById('bankName').value;
+        var bankAccount = document.getElementById('bankAccount').value;
+        var bankHolder = document.getElementById('bankHolder').value;
+        var homeAddress1 = document.getElementById('homeAddress1').value;
+        var homeAddress2 = document.getElementById('homeAddress2').value;
+        var externalAccessCert = document.getElementById('externalAccessCert').value;
+        var memo = document.getElementById('memo').value;
+
+
+
+
+        fetch('/admin/hr/employee/signUp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({"employeeIdentification": employeeIdentification, "employeeName": employeeName
+                , "belong": belong, "department": department, "position": position, "employmentState": employmentState
+                , "jobType": jobType, "entryDate": entryDate, "retireDate": retireDate, "employmentQuitType": employmentQuitType
+                , "remainingLeaveDays": remainingLeaveDays, "residentRegistrationNumber": residentRegistrationNumber, "telPrivate": telPrivate,
+                "phoneVerificationCode": phoneVerificationCode, "isPhoneVerified": isPhoneVerified, "phoneVerificationAttempts": phoneVerificationAttempts,
+                "telWork": telWork, "email": email, "bankName": bankName, "bankAccount": bankAccount, "homeAddress1": homeAddress1, "homeAddress2": homeAddress2
+                , "externalAccessCert": externalAccessCert, "memo": memo})
+        })
+            .then(response => {
+                if (response.status === 201) {
+                    alert('회원가입에 성공했습니다!');
+                    window.location.href = 'success.html'; // 성공 페이지로 이동
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+</script>
+</body>
+</html>

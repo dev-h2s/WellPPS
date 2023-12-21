@@ -2,6 +2,7 @@ package com.wellnetworks.wellcore.java.dto.member;
 
 
 import com.querydsl.core.annotations.QueryProjection;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-
 public class WellEmployeeJoinDTO {
     private String employeeIdx; // user-idx
     private Long employeeId;

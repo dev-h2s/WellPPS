@@ -59,7 +59,7 @@ public class SecurityConfig {
     @Bean // 이 메서드가 반환하는 객체를 Spring IoC 컨테이너에 빈으로 등록합니다.
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
          http
-                .cors().configurationSource(corsConfigurationSource())  // CORS 설정 활성화
+                .cors()  // CORS 설정 활성화
                  .and()
                 .csrf().disable()  // CSRF 방지 기능 비활성화
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()  // 세션을 사용하지 않도록 설정
@@ -109,7 +109,6 @@ public class SecurityConfig {
                 ,"http://localhost:3000"
                 ,"http://welldev.iptime.org:8080"
         )); // 클라이언트 도메인 추가
-//        config.setAllowedOrigins(List.of("*", "*/*")); // 모든 도메인에서의 접근 허용
         config.setAllowedMethods(List.of("POST", "PUT", "DELETE", "GET", "OPTIONS", "HEAD")); // 허용할 HTTP 메서드 설정
         config.setAllowedHeaders(List.of("*"));  // 허용할 헤더 설정
         // PNA 관련 설정을 위해 여기에 추가

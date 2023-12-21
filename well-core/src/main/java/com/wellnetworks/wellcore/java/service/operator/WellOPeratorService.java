@@ -14,6 +14,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -35,88 +36,138 @@ public class WellOPeratorService {
 
     // 통신사 & 요금제 리스트
     public Page<WellOperatorListDTO> getAllOperatorsAndProducts(Pageable pageable) {
+        try {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
-        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+            Page<WellOperatorEntity> operators = operatorRepository.findAll(pageable);
+            List<WellOperatorListDTO> result = new ArrayList<>();
 
-        Page<WellOperatorEntity> operators = operatorRepository.findAll(pageable);
-        List<WellOperatorListDTO> result = new ArrayList<>();
+            for (WellOperatorEntity operator : operators.getContent()) {
+                List<WellProductEntity> products = productRepository.findByOperator(operator);
+                List<WellProductListDTO> productDTOs = products.stream()
+                        .map(product -> new WellProductListDTO(
+                                product.getProductName(),
+                                product.getNetwork(),
+                                product.getProductType(),
+                                product.getBaseFee(),
+                                product.getData(),
+                                product.getVoice(),
+                                product.getSms(),
+                                product.getEtc(),
+                                product.getVisibleFlag()
+                        ))
+                        .collect(Collectors.toList());
 
-        for (WellOperatorEntity operator : operators.getContent()) {
-            List<WellProductEntity> products = productRepository.findByOperator(operator);
-            List<WellProductListDTO> productDTOs = products.stream()
-                    .map(product -> new WellProductListDTO(
-                            product.getProductName(),
-                            product.getNetwork(),
-                            product.getProductType(),
-                            product.getBaseFee(),
-                            product.getData(),
-                            product.getVoice(),
-                            product.getSms(),
-                            product.getEtc(),
-                            product.getVisibleFlag()
-                    ))
-                    .collect(Collectors.toList());
+                WellOperatorListDTO dto = new WellOperatorListDTO();
+                dto.setOperatorName(operator.getOperatorName());
+                dto.setProducts(productDTOs);
 
-            WellOperatorListDTO dto = new WellOperatorListDTO();
-            dto.setOperatorName(operator.getOperatorName());
-            dto.setProducts(productDTOs);
+                result.add(dto);
+            }
 
-            result.add(dto);
+            return new PageImpl<>(result, pageable, operators.getTotalElements());
+        } catch (DataAccessException e) {
+            log.error("데이터베이스 접근 중 오류 발생", e);
+            throw e;
+        } catch (Exception e) {
+            log.error("통신사 및 요금제 조회 중 오류 발생", e);
+            throw e;
         }
-
-        return new PageImpl<>(result, pageable, operators.getTotalElements());
     }
 
     //통신사 상세 조회
     public Optional<WellOperatorDetailDTO> getDetailOperator(String operatorIdx) {
-        return operatorRepository.findById(operatorIdx)
-                .map(operator -> new WellOperatorDetailDTO(
-                        operator.getOperatorName(),
-                        operator.getOperatorCode(),
-                        operator.getIsOpeningSearchFlag()
-                ));
+        try {
+            return operatorRepository.findById(operatorIdx)
+                    .map(operator -> new WellOperatorDetailDTO(
+                            operator.getOperatorName(),
+                            operator.getOperatorCode(),
+                            operator.getIsOpeningSearchFlag()
+                    ));
+        } catch (DataAccessException e) {
+            log.error("데이터베이스 접근 중 오류 발생", e);
+            throw e;
+        } catch (Exception e) {
+            log.error("통신사 상세 조회 중 오류 발생", e);
+            throw e;
+        }
     }
 
     //생성
     public WellOperatorEntity createOperator(WellOperatorCreateDTO createDTO) {
-        // 중복 체크
-        if (operatorRepository.findByOperatorCode(createDTO.getOperatorCode()).isPresent()) {
-            throw new IllegalArgumentException("이미사용중인 코드명입니다.");
+        try {
+            // 중복 체크
+            if (operatorRepository.findByOperatorCode(createDTO.getOperatorCode()).isPresent()) {
+                throw new IllegalArgumentException("이미 사용 중인 코드명입니다.");
+            }
+
+            WellOperatorEntity newOperator = WellOperatorEntity.builder()
+                    .operatorName(createDTO.getOperatorName())
+                    .operatorCode(createDTO.getOperatorCode().toUpperCase()) // 대문자로 저장
+                    .isOpeningSearchFlag(createDTO.getIsOpeningSearchFlag())
+                    .isExternalApiFlag(false)
+                    .isVisibleFlag(false)
+                    .isPdsFlag(false)
+                    .isRunFlag(false)
+                    .build();
+
+            return operatorRepository.save(newOperator);
+        } catch (DataAccessException e) {
+            log.error("데이터베이스 접근 중 오류 발생", e);
+            throw e;
+        } catch (IllegalArgumentException e) {
+            log.error("중복된 코드명 오류 발생", e);
+            throw e;
+        } catch (Exception e) {
+            log.error("통신사 생성 중 오류 발생", e);
+            throw e;
         }
-
-        WellOperatorEntity newOperator = WellOperatorEntity.builder()
-                .operatorName(createDTO.getOperatorName())
-                .operatorCode(createDTO.getOperatorCode().toUpperCase()) // 대문자로 저장
-                .isOpeningSearchFlag(createDTO.getIsOpeningSearchFlag())
-                .isExternalApiFlag(false)
-                .isVisibleFlag(false)
-                .isPdsFlag(false)
-                .isRunFlag(false)
-                .build();
-
-        return operatorRepository.save(newOperator);
     }
 
     //중복체크
     public boolean isOperatorCodeExists(String operatorCode) {
-        return operatorRepository.findByOperatorCode(operatorCode).isPresent();
+        try {
+            return operatorRepository.findByOperatorCode(operatorCode).isPresent();
+        } catch (DataAccessException e) {
+            log.error("데이터베이스 접근 중 오류 발생", e);
+            throw e;
+        } catch (Exception e) {
+            log.error("중복 체크 중 오류 발생", e);
+            throw e;
+        }
     }
 
     //수정
     public WellOperatorEntity updateOperator(String operatorIdx, WellOperatorUpdateDTO updateDTO) {
-        WellOperatorEntity operator = operatorRepository.findById(operatorIdx)
-                .orElseThrow(() -> new EntityNotFoundException("통신사가 존재하지 않습니다."));
+        try {
+            WellOperatorEntity operator = operatorRepository.findById(operatorIdx)
+                    .orElseThrow(() -> new EntityNotFoundException("통신사가 존재하지 않습니다."));
 
-        operator.setOperatorName(updateDTO.getOperatorName());
-        operator.setIsOpeningSearchFlag(updateDTO.getIsOpeningSearchFlag());
+            operator.setOperatorName(updateDTO.getOperatorName());
+            operator.setIsOpeningSearchFlag(updateDTO.getIsOpeningSearchFlag());
 
-        return operatorRepository.save(operator);
+            return operatorRepository.save(operator);
+        } catch (DataAccessException e) {
+            log.error("데이터베이스 접근 중 오류 발생", e);
+            throw e;
+        } catch (Exception e) {
+            log.error("통신사 수정 중 오류 발생", e);
+            throw e;
+        }
     }
 
     //삭제
     public void deleteOperator(String operatorIdx) {
-        WellOperatorEntity operator = operatorRepository.findById(operatorIdx)
-                .orElseThrow(() -> new EntityNotFoundException("통신사가 존재하지 않습니다."));
-        operatorRepository.delete(operator);
+        try {
+            WellOperatorEntity operator = operatorRepository.findById(operatorIdx)
+                    .orElseThrow(() -> new EntityNotFoundException("통신사가 존재하지 않습니다."));
+            operatorRepository.delete(operator);
+    } catch (DataAccessException e) {
+        log.error("데이터베이스 접근 중 오류 발생", e);
+        throw e;
+    } catch (Exception e) {
+        log.error("통신사 삭제 중 오류 발생", e);
+        throw e;
+    }
     }
 }

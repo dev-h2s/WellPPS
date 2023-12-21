@@ -2,14 +2,18 @@ package com.wellnetworks.wellcore.java.domain.product;
 //요금제
 import com.wellnetworks.wellcore.java.domain.opening.WellCommissionOpeningPolicyEntity;
 import com.wellnetworks.wellcore.java.domain.operator.WellOperatorEntity;
+import com.wellnetworks.wellcore.java.dto.Product.WellProductUpdateDTO;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static jakarta.persistence.FetchType.*;
 
@@ -17,11 +21,12 @@ import static jakarta.persistence.FetchType.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @EntityListeners(AuditingEntityListener.class)
+@DynamicUpdate
 public class WellProductEntity {
 
     @Id
     @Column(name = "pr_idx", columnDefinition = "uniqueidentifier") // 생성 고유 값
-    private String productIdx;
+    private String productIdx = UUID.randomUUID().toString();
 
     //요금제 조회 테이블 연결 1대 다 양방향
     @OneToMany(mappedBy = "product")
@@ -76,4 +81,61 @@ public class WellProductEntity {
 
     @Column(name = "memo") // 메모
     private String memo;
+
+    @Builder
+    public WellProductEntity(String productIdx, WellOperatorEntity operator, Boolean visibleFlag,
+                             Boolean openingHistorySearchFlag, String network, Integer baseFee,
+                             String productType, String productName, String mvnoProductName,
+                             String data, String voice, String etc, String sms,
+                             String internalCode, String externalCode, String memo) {
+        this.productIdx = productIdx != null ? productIdx : UUID.randomUUID().toString();
+        this.operator = operator;
+        this.visibleFlag = visibleFlag;
+        this.openingHistorySearchFlag = openingHistorySearchFlag;
+        this.network = network;
+        this.baseFee = baseFee;
+        this.productType = productType;
+        this.productName = productName;
+        this.mvnoProductName = mvnoProductName;
+        this.data = data;
+        this.voice = voice;
+        this.etc = etc;
+        this.sms = sms;
+        this.internalCode = internalCode;
+        this.externalCode = externalCode;
+        this.memo = memo;
+    }
+
+    public void updateFromDTO(WellProductUpdateDTO dto) {
+        if (dto.getVisibleFlag() != null) {
+            this.visibleFlag = dto.getVisibleFlag();
+        }
+        if (dto.getOpeningHistorySearchFlag() != null) {
+            this.openingHistorySearchFlag = dto.getOpeningHistorySearchFlag();
+        }
+        if (dto.getProductName() != null) {
+            this.productName = dto.getProductName();
+        }
+        if (dto.getMvnoProductName() != null) {
+            this.mvnoProductName = dto.getMvnoProductName();
+        }
+        if (dto.getData() != null) {
+            this.data = dto.getData();
+        }
+        if (dto.getVoice() != null) {
+            this.voice = dto.getVoice();
+        }
+        if (dto.getSms() != null) {
+            this.sms = dto.getSms();
+        }
+        if (dto.getEtc() != null) {
+            this.etc = dto.getEtc();
+        }
+        if (dto.getExternalCode() != null) {
+            this.externalCode = dto.getExternalCode();
+        }
+        if (dto.getMemo() != null) {
+            this.memo = dto.getMemo();
+        }
+    }
 }

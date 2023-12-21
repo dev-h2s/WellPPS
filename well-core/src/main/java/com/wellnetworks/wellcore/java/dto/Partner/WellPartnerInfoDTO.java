@@ -1,8 +1,10 @@
 package com.wellnetworks.wellcore.java.dto.Partner;
 
 import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
+import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+import com.wellnetworks.wellcore.java.dto.FIle.WellFileDetailDTO;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class WellPartnerInfoDTO {
     private String partnerIdx;
-    private List<String> fileKinds = new ArrayList<>();
+    private List<WellFileDetailDTO> fileDetails = new ArrayList<>();
     private LocalDate subscriptionDate;
     private String partnerCode;
     private String partnerName;
@@ -36,12 +38,12 @@ public class WellPartnerInfoDTO {
                                 ) {
         this.partnerIdx = entity.getPartnerIdx();
         for (WellPartnerFIleStorageEntity fileStorage : fileStorages) {
-            if (fileStorage != null) {
-                String fileKind = fileStorage.getFile().getFileKind(); // 파일 저장소 엔티티의 종류 가져오기
-                // fileKind와 원하는 종류를 비교하여 일치하는 경우에만 리스트에 추가
-                if (fileKind.equals(fileKind)) {
-                    fileKinds.add(fileStorage.getFile().getFileKind()); // 첨부파일 엔티티를 리스트에 추가
-                }
+            if (fileStorage != null && fileStorage.getFile() != null) {
+                WellFileDetailDTO fileDetail = new WellFileDetailDTO();
+                fileDetail.setFileId(fileStorage.getFile().getId());
+                fileDetail.setOriginFileName(fileStorage.getFile().getOriginFileName());
+                fileDetail.setFileKind(fileStorage.getFile().getFileKind());
+                this.fileDetails.add(fileDetail);
             }
         }
         if (entity.getSubscriptionDate() != null){

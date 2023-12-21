@@ -2,9 +2,11 @@ package com.wellnetworks.wellcore.java.dto.Partner;
 
 import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
+import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
+import com.wellnetworks.wellcore.java.dto.FIle.WellFileDetailDTO;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -41,10 +43,9 @@ public class WellPartnerDetailDTO {
     private String partnerUpperIdx;
     private String partnerUpperName;
 
-    private List<String> subPartners = new ArrayList<>();
-    private List<String> subPartnerNames = new ArrayList<>();
+    private List<WellSubPartnerDetailDTO> subPartners = new ArrayList<>();
 
-    private int dipositBalance;
+    private Integer dipositBalance;
     private String ceoName;
     private String ceoTelephone;
     private String partnerTelephone;
@@ -59,7 +60,7 @@ public class WellPartnerDetailDTO {
     private String locationDetailAddress;
     private String partnerMemo;
 
-    private List<String> fileKinds = new ArrayList<>();
+    private List<WellFileDetailDTO> fileDetails = new ArrayList<>();
 
     public WellPartnerDetailDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, WellDipositEntity diposit
             , String partnerUpperName, WellPartnerGroupEntity group, WellApikeyInEntity apikey, List<WellPartnerEntity> subPartners
@@ -94,11 +95,15 @@ public class WellPartnerDetailDTO {
         else {
             this.partnerUpperName = null;
         }
-        this.subPartners = subPartners.stream().map(WellPartnerEntity::getPartnerIdx).collect(Collectors.toList());
-        for (WellPartnerEntity subPartner : subPartners) {
-            subPartnerNames.add(subPartner.getPartnerName());
-        }
 
+        for (WellPartnerEntity subPartner : subPartners) {
+            if (subPartner != null && subPartner.getPartnerIdx() != null) {
+                WellSubPartnerDetailDTO fileDetail = new WellSubPartnerDetailDTO();
+                fileDetail.setSubPartnerIdx(subPartner.getPartnerIdx());
+                fileDetail.setSubPartnerName(subPartner.getPartnerName());
+                this.subPartners.add(fileDetail);
+            }
+        }
 
         if (diposit != null) {
             this.dipositBalance = diposit.getDipositBalance();
@@ -117,12 +122,12 @@ public class WellPartnerDetailDTO {
         this.locationDetailAddress = entity.getLocationDetailAddress();
         this.partnerMemo = entity.getPartnerMemo();
         for (WellPartnerFIleStorageEntity fileStorage : fileStorages) {
-            if (fileStorage != null) {
-                String fileKind = fileStorage.getFile().getFileKind(); // 파일 저장소 엔티티의 종류 가져오기
-                // fileKind와 원하는 종류를 비교하여 일치하는 경우에만 리스트에 추가
-                if (fileKind.equals(fileKind)) {
-                    fileKinds.add(fileStorage.getFile().getFileKind()); // 첨부파일 엔티티를 리스트에 추가
-                }
+            if (fileStorage != null && fileStorage.getFile() != null) {
+                WellFileDetailDTO fileDetail = new WellFileDetailDTO();
+                fileDetail.setFileId(fileStorage.getFile().getId());
+                fileDetail.setOriginFileName(fileStorage.getFile().getOriginFileName());
+                fileDetail.setFileKind(fileStorage.getFile().getFileKind());
+                this.fileDetails.add(fileDetail);
             }
         }
     }

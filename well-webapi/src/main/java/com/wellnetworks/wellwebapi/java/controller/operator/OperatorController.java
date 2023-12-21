@@ -4,6 +4,8 @@ import com.wellnetworks.wellcore.java.dto.Operator.WellOperatorCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Operator.WellOperatorDetailDTO;
 import com.wellnetworks.wellcore.java.dto.Operator.WellOperatorListDTO;
 import com.wellnetworks.wellcore.java.dto.Operator.WellOperatorUpdateDTO;
+import com.wellnetworks.wellcore.java.repository.operator.WellOperatorRepository;
+import com.wellnetworks.wellcore.java.repository.product.WellProductRepository;
 import com.wellnetworks.wellcore.java.service.operator.WellOPeratorService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -26,6 +28,8 @@ import java.util.Optional;
 public class OperatorController {
 
     @Autowired private WellOPeratorService wellOPeratorService;
+    @Autowired private WellOperatorRepository operatorRepository;
+    @Autowired private WellProductRepository productRepository;
 
     //리스트 조회
     @GetMapping("info")
@@ -44,6 +48,10 @@ public class OperatorController {
             response.put("status", "OK");
             response.put("totalItems", listDTOS.getTotalElements());
             response.put("totalPages", listDTOS.getTotalPages());
+
+            response.put("operatorAllCount", operatorRepository.operatorAllCount());
+            response.put("isRunFlagCount", operatorRepository.isRunFlagCount());
+            response.put("productAllCount", productRepository.productAllCount());
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {

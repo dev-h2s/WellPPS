@@ -91,6 +91,7 @@ public class EmployeeController {
     }
 
     //사원 생성
+    // 웹으로 할때 @RequestBody  추가
     @PostMapping(value = "employee/signUp")
     public ResponseEntity<String> createEmployeeUser(@RequestBody WellEmployeeJoinDTO createDTO) throws Exception {
         try {

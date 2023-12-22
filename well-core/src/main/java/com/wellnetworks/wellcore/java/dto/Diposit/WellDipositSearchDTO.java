@@ -6,11 +6,12 @@ import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-public class WellDipositListDTO {
+public class WellDipositSearchDTO {
     private String dipositIdx;
     @JsonFormat(pattern = "yyyy.MM.dd.HH:mm:ss")
     private LocalDateTime registerDate;
@@ -24,8 +25,8 @@ public class WellDipositListDTO {
     private String writer;
 
     //리스트 & 검색
-    public WellDipositListDTO(WellDipositEntity dipositEntity, WellPartnerEntity partnerEntity, String partnerName
-                            ) {
+    public WellDipositSearchDTO(WellDipositEntity dipositEntity, WellPartnerEntity partnerEntity, String partnerName
+    ) {
         this.dipositIdx = dipositEntity.getDipositIdx();
         this.registerDate = dipositEntity.getRegisterDate();
         if (partnerEntity != null) {

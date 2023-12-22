@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class WellOuterApiListDTO {
+    private String operatorIdx;
     //통신사명
     private String operatorName;
     //직접연동
@@ -22,6 +23,7 @@ public class WellOuterApiListDTO {
     //외부api 리스트
     public WellOuterApiListDTO(WellOperatorEntity operatorEntity
     ) {
+        this.operatorIdx = operatorEntity.getOperatorIdx();
         this.operatorName = operatorEntity.getOperatorName();
         this.isExternalApiFlag = operatorEntity.getIsExternalApiFlag();
         this.isVisibleFlag = operatorEntity.getIsVisibleFlag();

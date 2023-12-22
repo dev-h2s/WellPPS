@@ -24,16 +24,6 @@ public class WellVirtualAccountService {
     private final WellVirtualAccountRepository virtualAccountRepository;
     private final WellPartnerRepository partnerRepository;
 
-    // 개별 조회
-    public Optional<WellVirtualAccountInfoDTO> getVirtualAccountById(String virtualAccountIdx) {
-        return virtualAccountRepository.findById(virtualAccountIdx)
-                .map(virtualAccountEntity -> {
-                    WellPartnerEntity partnerEntity = virtualAccountEntity.getPartner();
-                    String partnerName = partnerEntity != null ? partnerRepository.findPartnerNameByPartnerIdx(partnerEntity.getPartnerIdx()) : null;
-                    return new WellVirtualAccountInfoDTO(virtualAccountEntity, partnerEntity, partnerName);
-                });
-    }
-
     // 상세 조회
     public Optional<WellVirtualAccountDetailDTO> getDetailVirtualAccountById(String virtualAccountIdx) {
         return virtualAccountRepository.findById(virtualAccountIdx)
@@ -178,7 +168,7 @@ public class WellVirtualAccountService {
     }
 
     //다중검색
-    public Page<WellVirtualAccountInfoDTO> searchAccountList(List<String> partnerNames
+    public Page<WellVirtualSearchDTO> searchAccountList(List<String> partnerNames
             , LocalDate startDate, LocalDate endDate
             , String virtualBankName
             , String issuance
@@ -197,12 +187,12 @@ public class WellVirtualAccountService {
 
         Page<WellVirtualAccountEntity> accounts = virtualAccountRepository.findAll(spec, pageable);
 
-        List<WellVirtualAccountInfoDTO> accountInfoList = new ArrayList<>();
+        List<WellVirtualSearchDTO> accountInfoList = new ArrayList<>();
 
         for (WellVirtualAccountEntity account : accounts) {
             WellPartnerEntity partnerEntity = account.getPartner();
             String partnerName = getPartnerName(partnerEntity);
-            WellVirtualAccountInfoDTO accountInfo = new WellVirtualAccountInfoDTO(account, partnerEntity, partnerName);
+            WellVirtualSearchDTO accountInfo = new WellVirtualSearchDTO(account, partnerEntity, partnerName);
             accountInfoList.add(accountInfo);
         }
         return new PageImpl<>(accountInfoList, pageable, accounts.getTotalElements());

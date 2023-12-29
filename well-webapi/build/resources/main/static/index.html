@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>거래처 정보 입력</title>
+</head>
+<body>
+<h1>거래처 정보 입력</h1>
+<form action="/admin/hr/business/create" method="post" enctype="multipart/form-data">
+    <label for="partnerName">거래처 이름:</label>
+    <input type="text" id="partnerName" name="partnerName" required><br>
+
+    <label for="partnerType">거래처 유형:</label>
+    <input type="text" id="partnerType" name="partnerType" required><br>
+
+    <label for="specialPolicyCharge">특별 정책 요금 적용:</label>
+    <input type="checkbox" id="specialPolicyCharge" name="specialPolicyCharge"><br>
+
+    <label for="specialPolicyOpening">특별 정책 개장 적용:</label>
+    <input type="checkbox" id="specialPolicyOpening" name="specialPolicyOpening"><br>
+
+    <label for="partnerGroupId">거래처 그룹 ID:</label>
+    <input type="text" id="partnerGroupId" name="partnerGroupId" required><br>
+
+    <label for="inApiFlag">api 연동 여부:</label>
+    <input type="checkbox" id="inApiFlag" name="inApiFlag" required><br>
+
+    <label for="apiKeyInIdx">API Key:</label>
+    <input type="text" id="apiKeyInIdx" name="apiKeyInIdx" required><br>
+
+    <label for="discountCategory">할인 카테고리:</label>
+    <input type="text" id="discountCategory" name="discountCategory" required><br>
+
+    <label for="salesManager">영업 담당자:</label>
+    <input type="text" id="salesManager" name="salesManager" required><br>
+
+    <label for="preApprovalNumber">사전 승인 번호:</label>
+    <input type="text" id="preApprovalNumber" name="preApprovalNumber"><br>
+
+    <label for="subscriptionDate">가입일:</label>
+    <input type="datetime-local" id="subscriptionDate" name="subscriptionDate"><br>
+
+    <label for="transactionStatus">거래 상태:</label>
+    <input type="text" id="transactionStatus" name="transactionStatus" required><br>
+
+    <label for="partnerUpperIdx">거래처 상위 ID:</label>
+    <input type="text" id="partnerUpperIdx" name="partnerUpperIdx"><br>
+
+    <label for="ceoName">CEO 이름:</label>
+    <input type="text" id="ceoName" name="ceoName" required><br>
+
+    <label for="ceoTelephone">CEO 휴대폰 번호:</label>
+    <input type="text" id="ceoTelephone" name="ceoTelephone" pattern="^\d{3}-\d{3,4}-\d{4}$" required><br>
+
+    <label for="partnerTelephone">거래처 전화번호:</label>
+    <input type="text" id="partnerTelephone" name="partnerTelephone" pattern="^\d{3}-\d{3,4}-\d{4}$" required><br>
+
+    <label for="emailAddress">이메일 주소:</label>
+    <input type="email" id="emailAddress" name="emailAddress" required><br>
+
+    <label for="commissionDepositAccount">수수료 입금 계좌:</label>
+    <input type="text" id="commissionDepositAccount" name="commissionDepositAccount"><br>
+
+    <label for="commissionBankName">수수료 입금 계좌 은행명:</label>
+    <input type="text" id="commissionBankName" name="commissionBankName"><br>
+
+    <label for="commissionBankHolder">수수료 입금 계좌 예금주:</label>
+    <input type="text" id="commissionBankHolder" name="commissionBankHolder"><br>
+
+    <label for="registrationNumber">등록번호:</label>
+    <input type="text" id="registrationNumber" name="registrationNumber" required><br>
+
+    <label for="registrationAddress">등록 주소:</label>
+    <input type="text" id="registrationAddress" name="registrationAddress" required><br>
+
+    <label for="registrationDetailAddress">등록 상세 주소:</label>
+    <input type="text" id="registrationDetailAddress" name="registrationDetailAddress" required><br>
+
+    <label for="locationAddress">소재지 주소:</label>
+    <input type="text" id="locationAddress" name="locationAddress" required><br>
+
+    <label for="locationDetailAddress">소재지 상세 주소:</label>
+    <input type="text" id="locationDetailAddress" name="locationDetailAddress" required><br>
+
+    <label for="partnerMemo">거래처 메모:</label>
+    <textarea id="partnerMemo" name="partnerMemo"></textarea><br>
+
+    <label for="department">거래처 유저 부서:</label>
+    <input type="text" id="department" name="department" required><br>
+
+
+    <!-- 5개의 파일 업로드 인풋, 각각 다른 name을 가지도록 설정 -->
+    <label for="businessLicense" data-file-kind="사업자등록증">사업자등록증</label>
+    <input type="file" id="businessLicense" name="businessLicenseFiles" required>
+    <br>
+
+    <label for="contractDocument" data-file-kind="계약서">계약서</label>
+    <input type="file" id="contractDocument" name="contractDocumentFiles" required>
+    <br>
+
+    <label for="idCard" data-file-kind="대표자신분증">대표자신분증</label>
+    <input type="file" id="idCard" name="idCardFiles" required>
+    <br>
+
+    <label for="storePhoto" data-file-kind="매장사진">매장사진</label>
+    <input type="file" id="storePhoto" name="storePhotoFiles">
+    <br>
+
+    <label for="businessCard" data-file-kind="대표자명함">대표자명함</label>
+    <input type="file" id="businessCard" name="businessCardFiles">
+    <br>
+
+    <input type="submit" value="저장">
+</form>
+</body>
+</html>

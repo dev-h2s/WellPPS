@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Employee Registration</title>
+</head>
+<body>
+<div class="container">
+    <form action="/admin/hr/employee/signUp" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+            <label for="employeeIdentification">Identification:</label>
+            <input type="text" id="employeeIdentification" name="employeeIdentification" >
+        </div>
+        <div class="form-group">
+            <label for="employeeName">employeeName:</label>
+            <input type="text" id="employeeName" name="employeeName" >
+        </div>
+
+        <div class="form-group">
+            <label for="belong">belong:</label>
+            <input type="text" id="belong" name="belong" >
+        </div>
+
+        <div class="form-group">
+            <label for="department">department:</label>
+            <input type="text" id="department" name="department" >
+        </div>
+
+<!--        <div class="form-group">-->
+<!--            <label for="position">position:</label>-->
+<!--            <input type="text" id="position" name="position" required>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label for="employmentState">employmentState:</label>-->
+<!--            <input type="text" id="employmentState" name="employmentState" required>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label for="jobType">jobType:</label>-->
+<!--            <input type="text" id="jobType" name="jobType" required>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label for="entryDate">entryDate:</label>-->
+<!--            <input type="text" id="entryDate" name="entryDate" required>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label for="retireDate">retireDate:</label>-->
+<!--            <input type="text" id="retireDate" name="retireDate" required>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label for="employmentQuitType">employmentQuitType:</label>-->
+<!--            <input type="text" id="employmentQuitType" name="employmentQuitType" required>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label for="remainingLeaveDays">remainingLeaveDays:</label>-->
+<!--            <input type="text" id="remainingLeaveDays" name="remainingLeaveDays" required>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label for="residentRegistrationNumber">residentRegistrationNumber:</label>-->
+<!--            <input type="text" id="residentRegistrationNumber" name="residentRegistrationNumber" required>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label for="telPrivate">telPrivate:</label>-->
+<!--            <input type="text" id="telPrivate" name="telPrivate" required>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label for="phoneVerificationCode">phoneVerificationCode:</label>-->
+<!--            <input type="text" id="phoneVerificationCode" name="phoneVerificationCode" required>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label for="isPhoneVerified">isPhoneVerified:</label>-->
+<!--            <input type="text" id="isPhoneVerified" name="isPhoneVerified" required>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label for="phoneVerificationAttempts">phoneVerificationAttempts:</label>-->
+<!--            <input type="text" id="phoneVerificationAttempts" name="phoneVerificationAttempts" required>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label for="telWork">telWork:</label>-->
+<!--            <input type="text" id="telWork" name="telWork" required>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label for="email">email:</label>-->
+<!--            <input type="text" id="email" name="email" required>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label for="bankName">bankName:</label>-->
+<!--            <input type="text" id="bankName" name="bankName" required>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label for="bankAccount">bankAccount:</label>-->
+<!--            <input type="text" id="bankAccount" name="bankAccount" required>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label for="bankHolder">bankHolder:</label>-->
+<!--            <input type="text" id="bankHolder" name="bankHolder" required>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label for="homeAddress1">homeAddress1:</label>-->
+<!--            <input type="text" id="homeAddress1" name="homeAddress1" required>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label for="homeAddress2">homeAddress2:</label>-->
+<!--            <input type="text" id="homeAddress2" name="homeAddress2" required>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label for="externalAccessCert">externalAccessCert:</label>-->
+<!--            <input type="text" id="externalAccessCert" name="externalAccessCert" required>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label for="memo">memo:</label>-->
+<!--            <input type="text" id="memo" name="memo" required>-->
+<!--        </div>-->
+
+        <div class="form-group">
+            <label for="uploadFile1">첨부파일 1:</label>
+            <input type="file" id="uploadFile1" name="uploadFile1" >
+        </div>
+        <div class="form-group">
+            <label for="uploadFile2">첨부파일 2:</label>
+            <input type="file" id="uploadFile2" name="uploadFile2">
+        </div>
+        <div class="form-group">
+            <label for="uploadFile3">첨부파일 3:</label>
+            <input type="file" id="uploadFile3" name="uploadFile3">
+        </div>
+        <div class="form-group">
+            <label for="uploadFile4">첨부파일 4:</label>
+            <input type="file" id="uploadFile4" name="uploadFile4">
+        </div>
+        <div class="form-group">
+            <label for="uploadFile5">첨부파일 5:</label>
+            <input type="file" id="uploadFile5" name="uploadFile5">
+        </div>
+
+        <button type="submit">Register Employee</button>
+    </form>
+</div>
+
+<script>
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "groups": [
+    {
+      "name": "jwt-security",
+      "type": "com.wellnetworks.wellsecure.java.config.SecurityProperties",
+      "sourceType": "com.wellnetworks.wellsecure.java.config.SecurityProperties"
+    }
+  ],
+  "properties": [],
+  "hints": []
+}

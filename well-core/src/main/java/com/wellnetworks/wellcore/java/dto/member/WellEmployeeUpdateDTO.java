@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -38,10 +39,15 @@ public class WellEmployeeUpdateDTO {
     private String homeAddress2; // 자택 주소2
     private Boolean externalAccessCert; // 외부접속 여부
     private String memo; // 메모
-    private List<MultipartFile> files; //첨부파일
+//    private List<MultipartFile> files; //첨부파일
     private String employeeManagerGroupKey; //매니저 그룹키
 
+    private List<String> fileKinds = new ArrayList<>(); //첨부파일
 
-
+    private List<MultipartFile> uploadFile1;
+    private List<MultipartFile> uploadFile2;
+    private List<MultipartFile> uploadFile3;
+    private List<MultipartFile> uploadFile4;
+    private List<MultipartFile> uploadFile5;
 
 }

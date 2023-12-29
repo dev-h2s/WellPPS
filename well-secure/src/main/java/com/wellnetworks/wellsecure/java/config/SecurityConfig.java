@@ -104,16 +104,18 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();// CORS 설정 객체 생성
         config.setAllowCredentials(true); //인증 정보(예: 쿠키, HTTP 인증 및 클라이언트 SSL 인증서)를 포함한 요청을 받을 수 있게 한다
         // 이 설정이 활성화되어 있을 때는 `Access-Control-Allow-Origin` 헤더에서 "*"를 사용할 수 없다.
-//        config.setAllowedOriginPatterns(List.of("*")); // 모든 오리진 허용
         config.setAllowedOrigins(List.of("http://welldev.iptime.org:8888"
                 ,"http://localhost:3000"
                 ,"http://welldev.iptime.org:8080"
+                ,"http://112.146.206.134:8888"
+                ,"http://112.146.206.134:8080"
         )); // 클라이언트 도메인 추가
         config.setAllowedMethods(List.of("POST", "PUT", "DELETE", "GET", "OPTIONS", "HEAD")); // 허용할 HTTP 메서드 설정
         config.setAllowedHeaders(List.of("*"));  // 허용할 헤더 설정
         // PNA 관련 설정을 위해 여기에 추가
-        config.addAllowedHeader("Access-Control-Allow-Private-Network");
-        config.setExposedHeaders(List.of(
+//        config.addAllowedHeader("Access-Control-Allow-Private-Network"); // 요청해더
+        config.setExposedHeaders(List.of(  //응답헤더
+                "Access-Control-Allow-Private-Network",
                 "Access-Control-Allow-Origin",
                 "Access-Control-Allow-Credentials",
                 "Authorization",

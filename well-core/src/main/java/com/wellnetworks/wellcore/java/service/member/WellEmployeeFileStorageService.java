@@ -38,12 +38,20 @@ public class WellEmployeeFileStorageService {
         Map<String, Object> result = new HashMap<>(); // 파일 저장 결과를 저장할 Map 객체 초기화
         List<Long> fileIds = new ArrayList<>(); // 업로드된 파일의 고유 식별자(ID)를 저장할 리스트 초기화
 
-        List<MultipartFile> files = joinDTO.getFiles();  // WellEmployeeJoinDTO에서 업로드된 파일 목록 가져오기
-
+        List<MultipartFile>  uploadFile1 = joinDTO.getUploadFile1() ;  // WellEmployeeJoinDTO에서 업로드된 파일 목록 가져오기
+        List<MultipartFile>  uploadFile2 = joinDTO.getUploadFile2();
+        List<MultipartFile>  uploadFile3 = joinDTO.getUploadFile3();
+        List<MultipartFile>  uploadFile4 = joinDTO.getUploadFile4();
+        List<MultipartFile>  uploadFile5 = joinDTO.getUploadFile5();
 
         // 각 파일 업로드 필드를 처리하는 processFiles 메서드 호출
         // "첨부파일"은 파일 종류 또는 카테고리를 나타내며, employeeIdx는 사원을 식별하는 인덱스를 전달
-        processFiles(files, "첨부파일", employeeIdx, fileIds, result);
+        processFiles(uploadFile1, "첨부파일1", employeeIdx, fileIds, result);
+        processFiles(uploadFile2, "첨부파일2", employeeIdx, fileIds, result);
+        processFiles(uploadFile3, "첨부파일3", employeeIdx, fileIds, result);
+        processFiles(uploadFile4, "첨부파일4", employeeIdx, fileIds, result);
+        processFiles(uploadFile5, "첨부파일5", employeeIdx, fileIds, result);
+
 
         // 파일 저장 결과 Map 반환
         return result;
@@ -115,12 +123,19 @@ public class WellEmployeeFileStorageService {
         Map<String, Object> result = new HashMap<>(); // 파일 저장 결과를 저장할 Map 객체 초기화
         List<Long> fileIds = new ArrayList<>(); // 업로드된 파일의 고유 식별자(ID)를 저장할 리스트 초기화
 
-        List<MultipartFile> files = updateDTO.getFiles();  // WellEmployeeJoinDTO에서 업로드된 파일 목록 가져오기
-
+        List<MultipartFile>  uploadFile1 = updateDTO.getUploadFile1() ;  // WellEmployeeJoinDTO에서 업로드된 파일 목록 가져오기
+        List<MultipartFile>  uploadFile2 = updateDTO.getUploadFile2();
+        List<MultipartFile>  uploadFile3 = updateDTO.getUploadFile3();
+        List<MultipartFile>  uploadFile4 = updateDTO.getUploadFile4();
+        List<MultipartFile>  uploadFile5 = updateDTO.getUploadFile5();
 
         // 각 파일 업로드 필드를 처리하는 processFiles 메서드 호출
         // "첨부파일"은 파일 종류 또는 카테고리를 나타내며, employeeIdx는 사원을 식별하는 인덱스를 전달
-        processFiles(files, "첨부파일", employeeIdx, fileIds, result);
+        processFiles(uploadFile1, "첨부파일1", employeeIdx, fileIds, result);
+        processFiles(uploadFile2, "첨부파일2", employeeIdx, fileIds, result);
+        processFiles(uploadFile3, "첨부파일3", employeeIdx, fileIds, result);
+        processFiles(uploadFile4, "첨부파일4", employeeIdx, fileIds, result);
+        processFiles(uploadFile5, "첨부파일5", employeeIdx, fileIds, result);
 
         // 파일 저장 결과 Map 반환
         return result;

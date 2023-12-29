@@ -92,8 +92,10 @@ public class EmployeeController {
 
     //사원 생성
     // 웹으로 할때 @RequestBody  추가
+    //@ModelAttribute  key-value 쌍 데이터(폼 데이터)를 Java 객체로 바인딩
     @PostMapping(value = "employee/signUp")
-    public ResponseEntity<String> createEmployeeUser(@RequestBody WellEmployeeJoinDTO createDTO) throws Exception {
+    public ResponseEntity<String> createEmployeeUser(@ModelAttribute @Valid WellEmployeeJoinDTO createDTO) throws Exception {
+//        System.out.println("ㅗㅗㅗㅗ");
         try {
             String tempPassword = wellEmployeeService.employeeJoin(createDTO);
             // 콘솔에 임시 비밀번호 출력
@@ -103,8 +105,6 @@ public class EmployeeController {
             e.printStackTrace(); // 서버 로그에 예외 정보를 기록합니다.
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-
-
     }
 
 

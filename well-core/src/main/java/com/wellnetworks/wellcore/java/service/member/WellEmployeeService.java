@@ -178,10 +178,10 @@ public class WellEmployeeService {
     // 사원 생성
 @Transactional
 public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
-//    System.out.println("Employee Identification: " + joinDTO.getEmployeeIdentification());
-//    System.out.println("employeeName:"+joinDTO.getEmployeeName());
-//    System.out.println("belong:"+joinDTO.getBelong());
-//    System.out.println("Department: " + joinDTO.getDepartment());
+    System.out.println("Employee Identification: " + joinDTO.getEmployeeIdentification());
+    System.out.println("employeeName:"+joinDTO.getEmployeeName());
+    System.out.println("belong:"+joinDTO.getBelong());
+    System.out.println("Department: " + joinDTO.getDepartment());
 //    System.out.println("position:"+joinDTO.getEmployeeName());
 //    System.out.println("employmentState:"+joinDTO.getEmploymentState());
 //    System.out.println("jobType:"+joinDTO.getJobType());

@@ -4,7 +4,9 @@ package com.wellnetworks.wellcore.java.dto.member;
 import com.querydsl.core.annotations.QueryProjection;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -49,15 +51,23 @@ public class WellEmployeeJoinDTO {
     private String tmpPwd; // user-임시패스워드
     private LocalDateTime employeeRegisterDate;
 
+
+
     private List<String> fileKinds = new ArrayList<>();
-    private List<MultipartFile> files;
+
+    private List<MultipartFile> uploadFile1;
+    private List<MultipartFile> uploadFile2;
+    private List<MultipartFile> uploadFile3;
+    private List<MultipartFile> uploadFile4;
+    private List<MultipartFile> uploadFile5;
+
+//    private List<MultipartFile> files;
 
 
 
 
 
     @QueryProjection
-
     public WellEmployeeJoinDTO(String employeeIdx, Long employeeId, String employeeIdentification, String employeeName, String belong, String department, String position,
                                String employmentState, String jobType, LocalDate entryDate, LocalDate retireDate, String employmentQuitType,
                                Float remainingLeaveDays, String residentRegistrationNumber, String telPrivate, Boolean isPhoneVerified, String phoneVerificationCode,

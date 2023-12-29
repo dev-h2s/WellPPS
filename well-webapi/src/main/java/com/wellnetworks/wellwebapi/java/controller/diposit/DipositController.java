@@ -3,6 +3,7 @@ package com.wellnetworks.wellwebapi.java.controller.diposit;
 import com.wellnetworks.wellcore.java.dto.Diposit.WellDipositCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Diposit.WellDipositInfoDTO;
 import com.wellnetworks.wellcore.java.dto.Diposit.WellDipositListDTO;
+import com.wellnetworks.wellcore.java.dto.Diposit.WellDipositSearchDTO;
 import com.wellnetworks.wellcore.java.repository.account.WellDipositRepository;
 import com.wellnetworks.wellcore.java.service.diposit.WellDipositService;
 import jakarta.validation.Valid;
@@ -101,7 +102,7 @@ public class DipositController {
 
         try {
             Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "registerDate"));
-            Page<WellDipositListDTO> result = dipositService.searchDipositList(partnerNames, startDate, endDate, dipositAdjustment, dipositStatus, memo, writer, pageable);
+            Page<WellDipositSearchDTO> result = dipositService.searchDipositList(partnerNames, startDate, endDate, dipositAdjustment, dipositStatus, memo, writer, pageable);
 
             Map<String, Object> response = new HashMap<>();
             response.put("currentPage", result.getNumber());

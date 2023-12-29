@@ -1,10 +1,7 @@
 package com.wellnetworks.wellwebapi.java.controller;
 // 거래처 리스트 컨트롤러
 
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerDetailDTO;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
+import com.wellnetworks.wellcore.java.dto.Partner.*;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.service.partner.WellPartnerService;
 import jakarta.persistence.EntityNotFoundException;
@@ -37,23 +34,6 @@ public class PartnerListController {
 
     @Autowired private WellPartnerService wellPartnerService;
     @Autowired private WellPartnerRepository partnerRepository;
-
-    //거래처 idx
-    @GetMapping("business/{partnerIdx}")
-    public ResponseEntity<?> getPartner(@PathVariable String partnerIdx) {
-        try {
-            Optional<WellPartnerInfoDTO> partnerInfoDTO = wellPartnerService.getPartnerByPartnerIdx(partnerIdx);
-
-            if (partnerInfoDTO.isPresent()) {
-                return ResponseEntity.ok(partnerInfoDTO.get());
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("거래처 IDX[%s]를 찾을 수 없습니다.", partnerIdx));
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생: " + e.getMessage());
-        }
-    }
-
 
     //상세 거래처 idx
     @GetMapping("business/detail/{partnerIdx}")
@@ -117,15 +97,12 @@ public class PartnerListController {
     //거래처 생성
     @PostMapping(value = "business/create")
     public ResponseEntity<String> createPartner(@Valid WellPartnerCreateDTO createDTO) throws Exception {
-        try {
+
             String tempPassword = wellPartnerService.join(createDTO);
 
             // 콘솔에 임시 비밀번호 출력
             return ResponseEntity.status(HttpStatus.CREATED).body("거래처가 성공적으로 생성되었습니다. 생성된 아이디"+" 임시 비밀번호: " + tempPassword);
-        } catch (Exception e) {
-            // 예외 처리
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원가입 중 오류가 발생하였습니다.");
-        }
+
     }
 
     //거래처 수정
@@ -171,7 +148,7 @@ public class PartnerListController {
     ) {
         try {
             Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "productRegisterDate"));
-            Page<WellPartnerInfoDTO> partnersPage = wellPartnerService.searchPartnerList(partnerName, ceoName, ceoTelephone, partnerCode, address, writer, partnerTelephone, startDate, endDate
+            Page<WellPartnerSearchDTO> partnersPage = wellPartnerService.searchPartnerList(partnerName, ceoName, ceoTelephone, partnerCode, address, writer, partnerTelephone, startDate, endDate
                     , discountCategory, partnerType, salesManager, transactionStatus, regionAddress, partnerUpperIdx, hasBusinessLicense, hasContractDocument, pageable);
 
             Map<String, Object> response = new HashMap<>();

@@ -6,6 +6,7 @@ import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.dto.Diposit.WellDipositCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Diposit.WellDipositInfoDTO;
 import com.wellnetworks.wellcore.java.dto.Diposit.WellDipositListDTO;
+import com.wellnetworks.wellcore.java.dto.Diposit.WellDipositSearchDTO;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.repository.account.WellDipositRepository;
 import jakarta.transaction.Transactional;
@@ -73,7 +74,7 @@ public class WellDipositService {
     }
 
     //다중 검색
-    public Page<WellDipositListDTO> searchDipositList(List<String> partnerNames
+    public Page<WellDipositSearchDTO> searchDipositList(List<String> partnerNames
             , LocalDate startDate, LocalDate endDate
             , Boolean dipositAdjustment
             , String dipositStatus
@@ -92,12 +93,12 @@ public class WellDipositService {
 
         Page<WellDipositEntity> diposits = dipositRepository.findAll(spec, pageable);
 
-        List<WellDipositListDTO> dipositInfoList = new ArrayList<>();
+        List<WellDipositSearchDTO> dipositInfoList = new ArrayList<>();
 
         for (WellDipositEntity diposit : diposits) {
             WellPartnerEntity partnerEntity = diposit.getPartner();
             String partnerName = getPartnerName(partnerEntity);
-            WellDipositListDTO dipositInfo = new WellDipositListDTO(diposit, partnerEntity, partnerName);
+            WellDipositSearchDTO dipositInfo = new WellDipositSearchDTO(diposit, partnerEntity, partnerName);
             dipositInfoList.add(dipositInfo);
         }
         return new PageImpl<>(dipositInfoList, pageable, diposits.getTotalElements());

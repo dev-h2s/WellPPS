@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class WellProductListDTO {
 
+    private String productIdx;
+
     private String productName; //요금제명
 
     private String network; //통신망

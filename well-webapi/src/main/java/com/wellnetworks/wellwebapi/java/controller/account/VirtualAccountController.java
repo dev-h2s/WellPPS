@@ -46,24 +46,6 @@ public class VirtualAccountController {
     @Autowired private WellVirtualAccountService virtualAccountService;
     @Autowired private WellVirtualAccountRepository virtualAccountRepository;
 
-    //개별 조회
-    @GetMapping("/info/{virtualAccountIdx}")
-    public ResponseEntity<?> getVirtualAccountById(@PathVariable String virtualAccountIdx) {
-        try {
-            Optional<WellVirtualAccountInfoDTO> accountInfoOpt = virtualAccountService.getVirtualAccountById(virtualAccountIdx);
-
-            if (accountInfoOpt.isPresent()) {
-                return ResponseEntity.ok(accountInfoOpt.get());
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("가상계좌를 찾을 수 없습니다.");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생: " + e.getMessage());
-        }
-    }
-
-
-
     //상세 조회
     @GetMapping("/info/detail/{virtualAccountIdx}")
     public ResponseEntity<?> getDetailVirtualAccountById(@PathVariable String virtualAccountIdx) {
@@ -294,7 +276,7 @@ public class VirtualAccountController {
 
         try {
             Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "issueDate"));
-            Page<WellVirtualAccountInfoDTO> result = virtualAccountService.searchAccountList(partnerNames, startDate, endDate, virtualBankName, issuance, virtualAccount, writer, pageable);
+            Page<WellVirtualSearchDTO> result = virtualAccountService.searchAccountList(partnerNames, startDate, endDate, virtualBankName, issuance, virtualAccount, writer, pageable);
 
             Map<String, Object> response = new HashMap<>();
             response.put("currentPage", result.getNumber());

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-public class WellVirtualAccountInfoDTO {
+public class WellVirtualSearchDTO {
     private String virtualAccountIdx;
     private LocalDate registerDate;
     private String virtualBankName;
@@ -25,7 +25,7 @@ public class WellVirtualAccountInfoDTO {
     private String writer;
 
     //리스트, 검색
-    public WellVirtualAccountInfoDTO(WellVirtualAccountEntity virtualAccount, WellPartnerEntity partnerEntity, String partnerName
+    public WellVirtualSearchDTO(WellVirtualAccountEntity virtualAccount, WellPartnerEntity partnerEntity, String partnerName
     ) {
 
         this.virtualAccountIdx = virtualAccount.getVirtualAccountIdx();

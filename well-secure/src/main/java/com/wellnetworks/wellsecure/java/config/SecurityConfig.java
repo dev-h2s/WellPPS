@@ -59,8 +59,8 @@ public class SecurityConfig {
     @Bean // 이 메서드가 반환하는 객체를 Spring IoC 컨테이너에 빈으로 등록합니다.
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
          http
-                .cors()  // CORS 설정 활성화
-                 .and()
+//                .cors()  // CORS 설정 활성화
+//                 .and()
                 .csrf().disable()  // CSRF 방지 기능 비활성화
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()  // 세션을 사용하지 않도록 설정
                 .addFilter(new JwtAuthenticationFilter(authenticationManager, securityProperties, tokenProvider, refreshTokenService))  // JWT 인증 필터 추가
@@ -98,34 +98,34 @@ public class SecurityConfig {
 //
 //     * @return CORS 설정 정보를 담고 있는 CorsConfigurationSource 객체
 //     */
-    @Bean // 이 메서드가 반환하는 객체를 Spring IoC 컨테이너에 빈으로 등록
-    public CorsConfigurationSource corsConfigurationSource() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();// CORS 설정을 위한 객체 생성
-        CorsConfiguration config = new CorsConfiguration();// CORS 설정 객체 생성
-        config.setAllowCredentials(true); //인증 정보(예: 쿠키, HTTP 인증 및 클라이언트 SSL 인증서)를 포함한 요청을 받을 수 있게 한다
-        // 이 설정이 활성화되어 있을 때는 `Access-Control-Allow-Origin` 헤더에서 "*"를 사용할 수 없다.
-        config.setAllowedOrigins(List.of("http://welldev.iptime.org:8888"
-                ,"http://localhost:3000"
-                ,"http://welldev.iptime.org:8080"
-                ,"http://112.146.206.134:8888"
-                ,"http://112.146.206.134:8080"
-        )); // 클라이언트 도메인 추가
-        config.setAllowedMethods(List.of("POST", "PUT", "DELETE", "GET", "OPTIONS", "HEAD")); // 허용할 HTTP 메서드 설정
-        config.setAllowedHeaders(List.of("*"));  // 허용할 헤더 설정
-        // PNA 관련 설정을 위해 여기에 추가
-//        config.addAllowedHeader("Access-Control-Allow-Private-Network"); // 요청해더
-        config.setExposedHeaders(List.of(  //응답헤더
-                "Access-Control-Allow-Private-Network",
-                "Access-Control-Allow-Origin",
-                "Access-Control-Allow-Credentials",
-                "Authorization",
-                "Content-Disposition"
-                )); // 클라이언트에게 노출할 헤더 설정
-
-        config.setMaxAge(3600L);  // pre-flight 응답의 캐시 시간 설정
-
-        source.registerCorsConfiguration("/**", config);  // 모든 경로에 대한 CORS 설정 적용
-        return source;  // CORS 설정 객체 반환
-    }
+//    @Bean // 이 메서드가 반환하는 객체를 Spring IoC 컨테이너에 빈으로 등록
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();// CORS 설정을 위한 객체 생성
+//        CorsConfiguration config = new CorsConfiguration();// CORS 설정 객체 생성
+//        config.setAllowCredentials(true); //인증 정보(예: 쿠키, HTTP 인증 및 클라이언트 SSL 인증서)를 포함한 요청을 받을 수 있게 한다
+//        // 이 설정이 활성화되어 있을 때는 `Access-Control-Allow-Origin` 헤더에서 "*"를 사용할 수 없다.
+//        config.setAllowedOrigins(List.of("http://welldev.iptime.org:8888"
+//                ,"http://localhost:3000"
+//                ,"http://welldev.iptime.org:8080"
+//                ,"http://112.146.206.134:8888"
+//                ,"http://112.146.206.134:8080"
+//        )); // 클라이언트 도메인 추가
+//        config.setAllowedMethods(List.of("POST", "PUT", "DELETE", "GET", "OPTIONS", "HEAD")); // 허용할 HTTP 메서드 설정
+//        config.setAllowedHeaders(List.of("*"));  // 허용할 헤더 설정
+//        // PNA 관련 설정을 위해 여기에 추가
+////        config.addAllowedHeader("Access-Control-Allow-Private-Network"); // 요청해더
+//        config.setExposedHeaders(List.of(  //응답헤더
+//                "Access-Control-Allow-Private-Network",
+//                "Access-Control-Allow-Origin",
+//                "Access-Control-Allow-Credentials",
+//                "Authorization",
+//                "Content-Disposition"
+//                )); // 클라이언트에게 노출할 헤더 설정
+//
+//        config.setMaxAge(3600L);  // pre-flight 응답의 캐시 시간 설정
+//
+//        source.registerCorsConfiguration("/**", config);  // 모든 경로에 대한 CORS 설정 적용
+//        return source;  // CORS 설정 객체 반환
+//    }
 
 }

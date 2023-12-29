@@ -281,6 +281,8 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
         throw new RuntimeException("사원 생성 중 오류 발생", e);
     }
     System.out.println("사원 생성완료");
+    System.out.println("사원 생성완료");
+
     // 임시 비밀번호 반환
     return tempPasswordPlainText; // 호출하는 곳에서 임시 비밀번호를 받아 화면에 출력할 수 있음
     }

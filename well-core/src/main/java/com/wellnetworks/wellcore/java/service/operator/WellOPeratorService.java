@@ -95,25 +95,37 @@ public class WellOPeratorService {
         }
     }
 
-    //생성
-    public WellOperatorEntity createOperator(WellOperatorCreateDTO createDTO) {
+    // 생성
+    public List<WellOperatorEntity> createOperator(WellOperatorCreateDTO createDTO) {
         try {
             // 중복 체크
             if (operatorRepository.findByOperatorCode(createDTO.getOperatorCode()).isPresent()) {
                 throw new IllegalArgumentException("이미 사용 중인 코드명입니다.");
             }
 
-            WellOperatorEntity newOperator = WellOperatorEntity.builder()
-                    .operatorName(createDTO.getOperatorName())
-                    .operatorCode(createDTO.getOperatorCode().toUpperCase()) // 대문자로 저장
-                    .isOpeningSearchFlag(createDTO.getIsOpeningSearchFlag())
-                    .isExternalApiFlag(false)
-                    .isVisibleFlag(false)
-                    .isPdsFlag(false)
-                    .isRunFlag(false)
-                    .build();
+            List<Object[]> existingVersions = operatorRepository.findDistinctVersions();
+            List<WellOperatorEntity> createdOperators = new ArrayList<>();
 
-            return operatorRepository.save(newOperator);
+            for (Object[] versionInfo : existingVersions) {
+                Float versionId = (Float) versionInfo[0];
+                String versionName = (String) versionInfo[1];
+
+                WellOperatorEntity newOperator = WellOperatorEntity.builder()
+                        .operatorName(createDTO.getOperatorName())
+                        .operatorCode(createDTO.getOperatorCode().toUpperCase())
+                        .isOpeningSearchFlag(createDTO.getIsOpeningSearchFlag())
+                        .isExternalApiFlag(false)
+                        .isVisibleFlag(false)
+                        .isPdsFlag(false)
+                        .isRunFlag(false)
+                        .versionId(versionId)
+                        .versionName(versionName)
+                        .build();
+
+                createdOperators.add(operatorRepository.save(newOperator));
+            }
+
+            return createdOperators;
         } catch (DataAccessException e) {
             log.error("데이터베이스 접근 중 오류 발생", e);
             throw e;
@@ -125,6 +137,7 @@ public class WellOPeratorService {
             throw e;
         }
     }
+
 
     //중복체크
     public boolean isOperatorCodeExists(String operatorCode) {

@@ -28,6 +28,12 @@ public class WellOperatorEntity {
     @Column(name = "o_code") // 통신사 코드
     private String operatorCode;
 
+    @Column(name = "version_id") // 버전id
+    private Float versionId;
+
+    @Column(name = "version_name")//버전 이름
+    private String versionName;
+
     @Column(name = "o_search_flag") // 출력여부
     private Boolean isOpeningSearchFlag;
 
@@ -58,6 +64,7 @@ public class WellOperatorEntity {
     @Builder
     public WellOperatorEntity(String operatorName, String operatorCode, Boolean isOpeningSearchFlag
                               ,Boolean isExternalApiFlag, Boolean isVisibleFlag, Boolean isPdsFlag, Boolean isRunFlag
+                              ,Float versionId, String versionName
                               ) {
         this.operatorIdx = UUID.randomUUID().toString(); // 빌더를 통해 객체를 생성할 때 UUID를 할당합니다.
         this.operatorName = operatorName;
@@ -67,5 +74,7 @@ public class WellOperatorEntity {
         this.isVisibleFlag = isVisibleFlag;
         this.isPdsFlag = isPdsFlag;
         this.isRunFlag = isRunFlag;
+        this.versionId = versionId;
+        this.versionName = versionName;
     }
 }

@@ -49,10 +49,10 @@ public class WellPartnerCreateDTO {
     private String partnerUpperIdx;
     @NotBlank(message = "ceo이름은 필수 입력 항목입니다.")
     private String ceoName;
-    @Pattern(regexp = "^\\d{3}-\\d{3,4}-\\d{4}$", message = "올바른 휴대폰 번호를 입력하세요.")
+    @Pattern(regexp = "^\\d{2,3}-\\d{3,4}-\\d{4}$", message = "올바른 휴대폰 번호를 입력하세요.")
     @NotBlank(message = "휴대폰 번호는 필수 입력 항목입니다.")
     private String ceoTelephone;
-    @Pattern(regexp = "^\\d{3}-\\d{3,4}-\\d{4}$", message = "올바른 휴대폰 번호를 입력하세요.")
+    @Pattern(regexp = "^\\d{2,3}-\\d{3,4}-\\d{4}$", message = "올바른 휴대폰 번호를 입력하세요.")
     @NotBlank(message = "휴대폰 번호는 필수 입력 항목입니다.")
     private String partnerTelephone;
     @Email(message = "올바른 이메일 주소를 입력하세요.")

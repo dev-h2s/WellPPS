@@ -11,7 +11,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
@@ -68,5 +70,20 @@ public class WellPartnerInfoDTO {
         else {
             this.partnerUpperName = null;
         }
+        List<String> requiredFileKinds = Arrays.asList("사업자등록증", "계약서", "대표자신분증", "매장사진", "대표자명함");
+
+        // 파일 종류별로 첫 번째 항목을 찾고, 없으면 빈 정보를 추가
+        for (String fileKind : requiredFileKinds) {
+            WellFileDetailDTO fileDetail = fileStorages.stream()
+                    .filter(fileStorage -> fileStorage != null && fileStorage.getFile() != null && fileStorage.getFile().getFileKind().equals(fileKind))
+                    .map(fileStorage -> new WellFileDetailDTO(fileStorage.getFile().getId(), fileStorage.getFile().getOriginFileName(), fileStorage.getFile().getFileKind()))
+                    .findFirst()
+                    .orElse(new WellFileDetailDTO(null, null, fileKind));
+
+            this.fileDetails.add(fileDetail);
+        }
+
+        // 중복 제거
+        this.fileDetails = this.fileDetails.stream().distinct().collect(Collectors.toList());
     }
 }

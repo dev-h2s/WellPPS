@@ -14,7 +14,9 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 public class WellEmployeeInfoDetailDTO {
@@ -97,28 +99,7 @@ public class WellEmployeeInfoDetailDTO {
         this.residentRegistrationNumber = entity.getResidentRegistrationNumber();
 //        this.dbAccessPower = entity.getDbAccessPower();
         this.memo = entity.getMemo();
-//        this.employeeModifyDate = entity.getEmployeeModifyDate();
-//        this.employeeRegisterDate = entity.getEmployeeRegisterDate();
 
-//        for (WellEmployeeFileStorageEntity fileStorage : fileStorages) {
-//            if (fileStorage != null) {
-//                String fileKind = fileStorage.getFile().getFileKind(); // 파일 저장소 엔티티의 종류 가져오기
-//                // fileKind와 원하는 종류를 비교하여 일치하는 경우에만 리스트에 추가
-//                if (fileKind.equals(fileKind)) {
-//                    fileKinds.add(fileStorage.getFile().getFileKind()); // 첨부파일 엔티티를 리스트에 추가
-//                }
-//            }
-//        }
-//
-//        for (WellEmployeeFileStorageEntity fileStorage : fileStorages) {
-//            if (fileStorage != null) {
-//                Long fileId = fileStorage.getFile().getId(); // 파일 저장소 엔티티의 종류 가져오기
-//                // fileKind와 원하는 종류를 비교하여 일치하는 경우에만 리스트에 추가
-//                if (fileId.equals(fileId)) {
-//                    fileIds.add(fileStorage.getFile().getId()); // 첨부파일 엔티티를 리스트에 추가
-//                }
-//            }
-//        }
         for (WellEmployeeFileStorageEntity fileStorage : fileStorages) {
             if (fileStorage != null && fileStorage.getFile() != null) {
                 WellFileDetailDTO fileDetail = new WellFileDetailDTO();
@@ -129,6 +110,22 @@ public class WellEmployeeInfoDetailDTO {
             }
         }
 
+        List<String> requiredFileKinds = Arrays.asList("첨부파일1", "첨부파일2", "첨부파일3", "첨부파일4", "첨부파일5");
+
+        // 파일 종류별로 첫 번째 항목을 찾고, 없으면 빈 정보를 추가
+        for (String fileKind : requiredFileKinds) {
+            WellFileDetailDTO fileDetail = fileStorages.stream()
+                    .filter(fileStorage -> fileStorage != null && fileStorage.getFile() != null && fileStorage.getFile().getFileKind().equals(fileKind))
+                    .map(fileStorage -> new WellFileDetailDTO(fileStorage.getFile().getId(), fileStorage.getFile().getOriginFileName(), fileStorage.getFile().getFileKind()))
+                    .findFirst()
+                    .orElse(new WellFileDetailDTO(null, null, fileKind));
+
+            this.fileDetails.add(fileDetail);
+        }
+
+        // 중복 제거
+        this.fileDetails = this.fileDetails.stream().distinct().collect(Collectors.toList());
     }
+
 }
 

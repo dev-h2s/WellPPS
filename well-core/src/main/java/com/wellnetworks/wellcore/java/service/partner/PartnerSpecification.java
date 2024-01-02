@@ -96,16 +96,20 @@ public class PartnerSpecification {
             }
         };
     }
-    //날짜
-    public static Specification<WellPartnerEntity> productRegisterDateBetween(LocalDate startDate, LocalDate endDate) {
+    //날짜(subscriptionDate로 판단)
+    public static Specification<WellPartnerEntity> productRegisterDateBetween(@Nullable LocalDate startDate, @Nullable LocalDate endDate) {
         return (root, query, criteriaBuilder) -> {
-            if (startDate == null || endDate == null) {
-                return criteriaBuilder.conjunction();
-            } else {
+            Predicate predicate = criteriaBuilder.conjunction();
+
+            if (startDate != null) {
                 LocalDateTime startDateTime = startDate.atStartOfDay();
-                LocalDateTime endDateTime = endDate.plusDays(1).atStartOfDay();
-                return criteriaBuilder.between(root.get("productRegisterDate"), startDateTime, endDateTime);
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.greaterThanOrEqualTo(root.get("subscriptionDate"), startDateTime));
             }
+            if (endDate != null) {
+                LocalDateTime endDateTime = endDate.plusDays(1).atStartOfDay();
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.lessThan(root.get("subscriptionDate"), endDateTime));
+            }
+            return predicate;
         };
     }
 

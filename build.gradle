@@ -18,7 +18,7 @@ subprojects {
 	apply plugin: 'io.spring.dependency-management'
 
 	group = "org.wellnetworks"
-	version = "1.41-SNAPSHOT"
+	version = "1.42-SNAPSHOT"
 	compileJava.options.encoding = 'UTF-8'
 	sourceCompatibility = '17'
 

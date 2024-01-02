@@ -56,39 +56,39 @@ public class SecurityConfig {
     /**
      * Spring Security의 Filter Chain 설정을 제공합니다.
      */
-    @Bean // 이 메서드가 반환하는 객체를 Spring IoC 컨테이너에 빈으로 등록합니다.
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-         http
-//                .cors()  // CORS 설정 활성화
-//                 .and()
-                .csrf().disable()  // CSRF 방지 기능 비활성화
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()  // 세션을 사용하지 않도록 설정
-                .addFilter(new JwtAuthenticationFilter(authenticationManager, securityProperties, tokenProvider, refreshTokenService))  // JWT 인증 필터 추가
-                .addFilter(new JwtAuthorizationFilter(authenticationManager, securityProperties, tokenProvider))  // JWT 권한 확인 필터 추가
-                .logout()
-                .logoutUrl("/logout")  // 로그아웃 경로 설정
-                 .logoutSuccessUrl("/loginTest.html")  // 로그아웃 후 리다이렉트할 경로 설정
-                .invalidateHttpSession(true)
-
-                .deleteCookies("JSESSIONID", "access_token", "refresh_token");// 로그아웃 시 삭제할 쿠키 설정
-
-
-        http.authorizeRequests()
-                .requestMatchers("/init/**").permitAll()// "/init/**" 경로는 누구나 접근 가능
-                .requestMatchers("/api/**").permitAll()
-                .requestMatchers("/", "/**", "/init/**").permitAll()
-                .requestMatchers("/admin/hr/business/**").permitAll()
-                .requestMatchers("/admin/hr/employee/**").permitAll()
-                .requestMatchers("/admin/hr/user/**").permitAll()
-                .requestMatchers("/file/**").permitAll()
-                .requestMatchers("/login").permitAll()
-                .requestMatchers("/logout").permitAll()
-                .requestMatchers("/signup").permitAll()
-//                .requestMatchers("/**").permitAll() // 나머지 모든 요청은 누구나 접근 가능
-                .anyRequest().authenticated();// 그 외 나머지 요청은 인증된 사용자만 접근 가능
-
-        return http.build();
-    }
+//    @Bean // 이 메서드가 반환하는 객체를 Spring IoC 컨테이너에 빈으로 등록합니다.
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//         http
+////                .cors()  // CORS 설정 활성화
+////                 .and()
+//                .csrf().disable()  // CSRF 방지 기능 비활성화
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()  // 세션을 사용하지 않도록 설정
+//                .addFilter(new JwtAuthenticationFilter(authenticationManager, securityProperties, tokenProvider, refreshTokenService))  // JWT 인증 필터 추가
+//                .addFilter(new JwtAuthorizationFilter(authenticationManager, securityProperties, tokenProvider))  // JWT 권한 확인 필터 추가
+//                .logout()
+//                .logoutUrl("/logout")  // 로그아웃 경로 설정
+//                 .logoutSuccessUrl("/loginTest.html")  // 로그아웃 후 리다이렉트할 경로 설정
+//                .invalidateHttpSession(true)
+//
+//                .deleteCookies("JSESSIONID", "access_token", "refresh_token");// 로그아웃 시 삭제할 쿠키 설정
+//
+//
+//        http.authorizeRequests()
+//                .requestMatchers("/init/**").permitAll()// "/init/**" 경로는 누구나 접근 가능
+//                .requestMatchers("/api/**").permitAll()
+//                .requestMatchers("/", "/**", "/init/**").permitAll()
+//                .requestMatchers("/admin/hr/business/**").permitAll()
+//                .requestMatchers("/admin/hr/employee/**").permitAll()
+//                .requestMatchers("/admin/hr/user/**").permitAll()
+//                .requestMatchers("/file/**").permitAll()
+//                .requestMatchers("/login").permitAll()
+//                .requestMatchers("/logout").permitAll()
+//                .requestMatchers("/signup").permitAll()
+////                .requestMatchers("/**").permitAll() // 나머지 모든 요청은 누구나 접근 가능
+//                .anyRequest().authenticated();// 그 외 나머지 요청은 인증된 사용자만 접근 가능
+//
+//        return http.build();
+//    }
 
 //    /**
 //     * CORS 설정을 위한 CorsConfigurationSource 빈을 생성

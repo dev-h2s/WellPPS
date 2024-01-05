@@ -109,6 +109,7 @@ public class SecurityConfig {
                 ,"http://welldev.iptime.org:8080"
                 ,"http://112.146.206.134:8888"
                 ,"http://112.146.206.134:8080"
+                ,"http://112.146.206.134"
         )); // 클라이언트 도메인 추가
         config.setAllowedMethods(List.of("POST", "PUT", "DELETE", "GET", "OPTIONS", "HEAD")); // 허용할 HTTP 메서드 설정
         config.setAllowedHeaders(List.of("*"));  // 허용할 헤더 설정

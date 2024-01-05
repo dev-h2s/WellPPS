@@ -1,3 +1,2 @@
 Manifest-Version: 1.0
 Main-Class: com.wellnetworks.wellwebapi.java.WebapiMain
-Class-Path: libs/well-webapi-1.46-SNAPSHOT

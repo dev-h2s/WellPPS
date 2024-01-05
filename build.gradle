@@ -102,7 +102,7 @@ project (':well-webapi') {
 
 	dependencies {
 		implementation project (':well-core')
-//		implementation project (':well-secure')
+		implementation project (':well-secure')
 		implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
 		implementation 'org.springframework.boot:spring-boot-starter-security'
 		implementation 'org.springframework.session:spring-session-core'

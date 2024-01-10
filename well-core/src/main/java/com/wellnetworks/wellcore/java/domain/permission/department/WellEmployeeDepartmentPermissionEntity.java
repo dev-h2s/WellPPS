@@ -7,7 +7,6 @@ import lombok.Getter;
 
 @Entity
 @Getter
-@Table(name = "employee_department_permission_tb")
 public class WellEmployeeDepartmentPermissionEntity {
 
     //    중간테이블의 pk

@@ -173,9 +173,7 @@ public class EmployeeController {
             if (employeeIdx == null) {
                 throw new ClassNotFoundException(String.format("IDX[%s] not found", employeeIdx));
             }
-
             wellEmployeeService.update(employeeIdx, updateDTO);
-
             return ResponseEntity.status(HttpStatus.CREATED).body("사원 정보가 성공적으로 수정되었습니다.");
         } catch (ClassNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("사원을 찾을 수 없습니다. IDX: %s", employeeIdx));

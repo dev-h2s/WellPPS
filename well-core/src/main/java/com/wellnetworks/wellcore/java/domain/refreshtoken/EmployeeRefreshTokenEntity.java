@@ -11,7 +11,6 @@ import java.util.Date;
 @NoArgsConstructor // 기본 생성자 생성
 @AllArgsConstructor // 모든 필드를 포함한 생성자 생성
 @Builder // 빌더 패턴 구현
-@Table(name = "employee_refresh_tokens")
 public class EmployeeRefreshTokenEntity {
 
     @Id

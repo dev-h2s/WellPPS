@@ -10,7 +10,6 @@ import java.util.Map;
 
 @Entity
 @Getter
-@Table(name = "department_dropdown_content_tb")
 public class WellDepartmentDropDownContentEntity {
 
 

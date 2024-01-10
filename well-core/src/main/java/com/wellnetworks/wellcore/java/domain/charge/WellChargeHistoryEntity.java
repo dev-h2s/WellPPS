@@ -11,7 +11,6 @@ import static jakarta.persistence.FetchType.LAZY;
 // 충전 시도 내역
 @Entity
 @Getter
-@Table(name = "charge_history_tb")
 public class WellChargeHistoryEntity {
 
     @Id

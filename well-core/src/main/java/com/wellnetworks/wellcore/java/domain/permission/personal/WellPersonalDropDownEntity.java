@@ -10,7 +10,6 @@ import java.util.Map;
 
 @Entity
 @Getter
-@Table(name = "personal_dropdown_tb")
 public class WellPersonalDropDownEntity {
     // 개인 권한의 dropdown의 각 권한 여부를 지정하기 위한 pk
     @Id

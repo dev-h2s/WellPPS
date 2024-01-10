@@ -10,7 +10,6 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Table(name = "product_search_tb")
 public class WellProductSearchEntity {
 
     @Id

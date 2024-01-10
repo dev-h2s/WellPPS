@@ -9,7 +9,6 @@ import java.util.Map;
 
 @Entity
 @Getter
-@Table(name = "personal_dropdown_content_tb")
 public class WellPersonalDropContentEntity {
 
     //    개인 drop down들의 content를 지정하기 위한 pk

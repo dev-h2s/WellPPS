@@ -6,6 +6,7 @@ import com.wellnetworks.wellsecure.java.jwt.TokenProvider;
 import com.wellnetworks.wellsecure.java.service.AppAuthenticationManager;
 //import com.wellnetworks.wellsecure.java.service.CustomLogoutHandler;
 import com.wellnetworks.wellsecure.java.service.RefreshTokenService;
+import com.wellnetworks.wellsecure.java.service.WellLogOutService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -34,19 +35,19 @@ public class SecurityConfig {
     private final AppAuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
     private final RefreshTokenService refreshTokenService;
+    private final WellLogOutService logOutService;
 
-
-//    @Autowired private CustomLogoutHandler customLogoutHandler;
 
     public SecurityConfig(SecurityProperties securityProperties, AppAuthenticationManager authenticationManager,
                           TokenProvider tokenProvider,
 //                          CustomLogoutHandler customLogoutHandler,
-                          RefreshTokenService refreshTokenService) {
+                          RefreshTokenService refreshTokenService, WellLogOutService logOutService) {
         this.securityProperties = securityProperties;
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
         this.refreshTokenService = refreshTokenService;
 //        this.customLogoutHandler = customLogoutHandler;
+        this.logOutService = logOutService;
     }
 //    @Bean
 //    public CustomLogoutHandler customLogoutHandler(RefreshTokenService refreshTokenService) {
@@ -67,9 +68,9 @@ public class SecurityConfig {
                 .addFilter(new JwtAuthorizationFilter(authenticationManager, securityProperties, tokenProvider))  // JWT 권한 확인 필터 추가
                 .logout()
                 .logoutUrl("/logout")  // 로그아웃 경로 설정
-                 .logoutSuccessUrl("/loginTest.html")  // 로그아웃 후 리다이렉트할 경로 설정
+                .addLogoutHandler(logOutService)
+                .logoutSuccessUrl("/loginTest.html")  // 로그아웃 후 리다이렉트할 경로 설정
                 .invalidateHttpSession(true)
-
                 .deleteCookies("JSESSIONID", "access_token", "refresh_token");// 로그아웃 시 삭제할 쿠키 설정
 
 
@@ -84,6 +85,8 @@ public class SecurityConfig {
                 .requestMatchers("/login").permitAll()
                 .requestMatchers("/logout").permitAll()
                 .requestMatchers("/signup").permitAll()
+                .requestMatchers("/user/logoutCustom").permitAll()
+
 //                .requestMatchers("/**").permitAll() // 나머지 모든 요청은 누구나 접근 가능
                 .anyRequest().authenticated();// 그 외 나머지 요청은 인증된 사용자만 접근 가능
 

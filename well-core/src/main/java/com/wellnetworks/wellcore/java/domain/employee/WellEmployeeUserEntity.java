@@ -19,7 +19,6 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Table(name = "employee_user_tb")
 public class WellEmployeeUserEntity  {
 
     @Id

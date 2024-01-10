@@ -10,7 +10,6 @@ import java.util.Map;
 
 @Entity
 @Getter
-@Table(name = "department_menu_permission_tb")
 public class WellDepartmentMenuPermissionEntity {
 
 //    부서 권한의 dropdown content의 각 권한 여부를 지정하기 위한 pk

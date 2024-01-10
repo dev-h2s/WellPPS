@@ -23,7 +23,6 @@ import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "employee_tb")
 public class WellEmployeeEntity {
 
 

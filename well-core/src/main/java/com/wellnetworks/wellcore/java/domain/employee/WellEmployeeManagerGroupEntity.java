@@ -14,7 +14,6 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "employee_manager_group_tb")
 public class WellEmployeeManagerGroupEntity{
 
     @Id

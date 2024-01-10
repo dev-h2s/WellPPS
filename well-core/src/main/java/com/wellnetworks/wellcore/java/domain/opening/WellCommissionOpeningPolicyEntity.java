@@ -10,7 +10,6 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Table(name = "opening_policy_tb")
 public class WellCommissionOpeningPolicyEntity {
 
     @Id

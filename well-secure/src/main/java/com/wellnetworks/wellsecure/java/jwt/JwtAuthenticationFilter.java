@@ -66,14 +66,21 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             // 요청 본문에서 사용자 로그인 정보를 가져온다.
             UserLoginReq creds = mapper.readValue(req.getInputStream(), UserLoginReq.class);
 
+            // 로그: 인증 시도 전
+            System.out.println("attemptAuthentication 호출 - 인증 시도 시작");
+
             // 추출된 사용자 이름과 비밀번호를 가지고 인증을 시도한다.
-            return authManager.authenticate(
+            Authentication auth = authManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             creds.getUsername(),
                             creds.getPassword(),
                             new ArrayList<>()
                     )
             );
+
+            // 로그: 인증 시도 후
+            System.out.println("attemptAuthentication 호출 - 인증 시도 완료");
+            return auth;
         } catch (IOException e) {
             throw new AuthenticationServiceException(e.getMessage());
         }
@@ -121,7 +128,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         responseMap.put("data", tokenMap);
 
 
-
+        // 로그: 인증 성공
+        System.out.println("successfulAuthentication 호출 - 인증 성공");
         // JSON으로 변환하여 응답
         res.setContentType("application/json");
         res.setCharacterEncoding("UTF-8");

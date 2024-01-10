@@ -10,7 +10,6 @@ import java.util.Map;
 
 @Entity
 @Getter
-@Table(name = "personal_menu_permission_tb")
 public class WellPersonalMenuPermissionEntity {
 
     //    개인 권한의 dropdown content의 각 권한 여부를 지정하기위한 pk

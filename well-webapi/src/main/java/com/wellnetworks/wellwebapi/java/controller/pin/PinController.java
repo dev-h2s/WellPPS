@@ -1,7 +1,9 @@
 package com.wellnetworks.wellwebapi.java.controller.pin;
 
+import com.wellnetworks.wellcore.java.dto.Operator.WellOperatorUpdateDTO;
 import com.wellnetworks.wellcore.java.dto.PIN.WellPinCreateDTO;
 import com.wellnetworks.wellcore.java.dto.PIN.WellPinListDTO;
+import com.wellnetworks.wellcore.java.dto.PIN.WellPinUpdateDTO;
 import com.wellnetworks.wellcore.java.service.pin.WellPinService;
 import com.wellnetworks.wellwebapi.java.controller.ResponseUtil;
 import jakarta.persistence.EntityNotFoundException;
@@ -47,9 +49,19 @@ public class PinController {
     }
 
     //수정
+    @PatchMapping("update/{pinIdx}")
+    public ResponseEntity<?> updatePin(@Valid WellPinUpdateDTO updateDTO) {
+        try {
+            pinService.updatePin(updateDTO);
+            return ResponseEntity.ok("pin이 수정되었습니다.");
+        } catch (Exception e) {
+            return ResponseUtil.createErrorResponse(e);
+        }
+    }
+
     //삭제
     @DeleteMapping("delete/{pinIdx}")
-    public ResponseEntity<?> deletePin(@PathVariable String pinIdx) {
+    public ResponseEntity<?> deletePin(@PathVariable Long pinIdx) {
         try {
             pinService.deletePin(pinIdx);
             return ResponseEntity.ok("pin이 삭제되었습니다.");

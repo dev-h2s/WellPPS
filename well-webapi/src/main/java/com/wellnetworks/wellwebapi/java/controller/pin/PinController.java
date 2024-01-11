@@ -7,7 +7,6 @@ import com.wellnetworks.wellcore.java.service.pin.WellPinService;
 import com.wellnetworks.wellwebapi.java.controller.ResponseUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(("/pin"))
-@ComponentScan(basePackages = {"com.wellnetworks.wellcore"})
 @RequiredArgsConstructor
 public class PinController {
 

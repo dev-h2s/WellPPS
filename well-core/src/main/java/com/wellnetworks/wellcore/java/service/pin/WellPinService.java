@@ -17,8 +17,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,7 +27,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@ComponentScan(basePackages = {"com.wellnetworks.wellcore", "com.wellnetworks.wellwebapi.java.controller"})
 public class WellPinService {
 
     private static final Logger log = LoggerFactory.getLogger(WellPinService.class);
@@ -78,6 +78,10 @@ public class WellPinService {
     @Transactional
     public WellPinEntity updatePin(WellPinUpdateDTO updateDTO) {
         WellPinEntity pinEntity = em.find(WellPinEntity.class, updateDTO.getPinIdx());
+
+        if (pinRepository.findByPinNum(updateDTO.getPinNum()).isPresent()) {
+            throw new IllegalArgumentException("이미 사용 중인 PIN 입니다.");
+        }
 
         if (updateDTO.getStore() != null) pinEntity.setStore(updateDTO.getStore());
         if (updateDTO.getRelease() != null) pinEntity.setRelease(updateDTO.getRelease());

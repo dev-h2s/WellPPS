@@ -1,19 +1,19 @@
 package com.wellnetworks.wellwebapi.java.controller.pin;
 
+import com.wellnetworks.wellcore.java.dto.PIN.WellPinCreateDTO;
 import com.wellnetworks.wellcore.java.dto.PIN.WellPinListDTO;
 import com.wellnetworks.wellcore.java.service.pin.WellPinService;
 import com.wellnetworks.wellwebapi.java.controller.ResponseUtil;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(("/pin/"))
@@ -31,6 +31,18 @@ public class PinController {
             return ResponseUtil.createOkResponse(pinPage.getContent(), "조회 성공", pinPage);
         } catch (Exception e) {
             return ResponseUtil.createErrorResponse(e);
+        }
+    }
+
+    //생성
+    @PostMapping("generate")
+    public ResponseEntity<String> generatePin(@Valid WellPinCreateDTO createDTO) {
+        try {
+            pinService.createPin(createDTO);
+            return ResponseEntity.ok("PIN 생성 및 저장 완료");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("PIN 생성 및 저장 중 오류 발생: " + e.getMessage());
         }
     }
 }

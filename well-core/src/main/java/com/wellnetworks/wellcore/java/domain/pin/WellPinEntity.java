@@ -1,13 +1,8 @@
 package com.wellnetworks.wellcore.java.domain.pin;
 
 import com.wellnetworks.wellcore.java.domain.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
@@ -16,11 +11,13 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
+@Builder
 public class WellPinEntity extends BaseEntity { // ctrl + alt + l
 
-    @Id //    PIN_idx
-    @Column(name = "pin_idx", columnDefinition = "uniqueidentifier")
-    private String pinIdx;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "pin_idx")
+    private Long pinIdx;
 
     @Column(name = "o_name") //통신사 (코드)
     private String operatorName;

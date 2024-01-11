@@ -1,10 +1,7 @@
 package com.wellnetworks.wellcore.java.dto.PIN;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.wellnetworks.wellcore.java.domain.operator.WellOperatorEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.domain.pin.WellPinEntity;
-import com.wellnetworks.wellcore.java.domain.product.WellProductEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;

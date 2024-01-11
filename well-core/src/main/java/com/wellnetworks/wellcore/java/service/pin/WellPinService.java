@@ -4,6 +4,7 @@ import com.wellnetworks.wellcore.java.domain.operator.WellOperatorEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.domain.pin.WellPinEntity;
 import com.wellnetworks.wellcore.java.domain.product.WellProductEntity;
+import com.wellnetworks.wellcore.java.dto.PIN.WellPinCreateDTO;
 import com.wellnetworks.wellcore.java.dto.PIN.WellPinListDTO;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.repository.operator.WellOperatorRepository;
@@ -16,7 +17,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,5 +58,14 @@ public class WellPinService {
             log.error("PIN 리스트를 가져오는 도중 오류가 발생했습니다: {}", e.getMessage());
             throw new RuntimeException("PIN 리스트 조회 실패", e);
         }
+    }
+
+    //생성
+    public WellPinEntity createPin(WellPinCreateDTO createDTO) {
+        if (pinRepository.findByPinNum(createDTO.getPinNum()).isPresent()) {
+            throw new IllegalArgumentException("이미 사용 중인 PIN 입니다.");
+        }
+
+        return pinRepository.save(createDTO.toEntity());
     }
 }

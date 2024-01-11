@@ -1,5 +1,6 @@
 package com.wellnetworks.wellcore.java.dto.PIN;
 
+import com.wellnetworks.wellcore.java.domain.pin.WellPinEntity;
 import lombok.*;
 
 @Getter
@@ -15,4 +16,18 @@ public class WellPinCreateDTO {
     private Boolean isUseFlag; //사용유무
     private String user; //사용자
     private Boolean isSaleFlag; //판매전용여부
+
+    public WellPinEntity toEntity() {
+        return WellPinEntity.builder()
+                .operatorName(this.operatorName)
+                .productName(this.productName)
+                .pinNum(this.pinNum)
+                .managementNum(this.managementNum)
+                .store(this.store)
+                .release(this.release)
+                .isUseFlag(this.isUseFlag)
+                .userName(this.user)
+                .isSaleFlag(this.isSaleFlag)
+                .build();
+    }
 }

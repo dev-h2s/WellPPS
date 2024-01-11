@@ -27,8 +27,7 @@ extends JpaRepository<WellEmployeeEntity, String>, JpaSpecificationExecutor <Wel
 //    Optional<WellEmployeeEntity> findByEmployeeName(String name);
 
 
-    // 사원 idx로 삭제 ?? user에서 해야할 듯
-    Optional<Integer> deleteByemployeeIdx(String idx);
+
 
     Page<WellEmployeeEntity> findAll(Specification<WellEmployeeEntity> spec, Pageable pageable);
 

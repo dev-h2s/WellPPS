@@ -46,5 +46,4 @@ public class SecurityProperties {
     private final String headerString = "Authorization";
 
 
-
 }

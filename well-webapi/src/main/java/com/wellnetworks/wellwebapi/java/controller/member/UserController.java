@@ -1,10 +1,16 @@
 package com.wellnetworks.wellwebapi.java.controller.member;
+
+import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
 import com.wellnetworks.wellcore.java.dto.member.ChangePasswordRequest;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
 import com.wellnetworks.wellsecure.java.config.CookieUtil;
 import com.wellnetworks.wellsecure.java.request.ApiResponse;
 
 import com.wellnetworks.wellsecure.java.jwt.TokenProvider;
+import com.wellnetworks.wellsecure.java.request.TokenResponse;
+import com.wellnetworks.wellsecure.java.request.UserLoginReq;
+import com.wellnetworks.wellsecure.java.service.EmployeeUserDetails;
+import com.wellnetworks.wellsecure.java.service.PartnerUserDetails;
 import com.wellnetworks.wellsecure.java.service.WellLogOutService;
 import com.wellnetworks.wellsecure.java.service.WellUserDetailService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,31 +21,38 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/user/")
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 @RestController
-@ComponentScan(basePackages={"com.wellnetworks.wellcore","com.wellnetworks.wellsecure"})
+@ComponentScan(basePackages = {"com.wellnetworks.wellcore", "com.wellnetworks.wellsecure"})
 public class UserController {
 
-    @Autowired private WellEmployeeUserRepository employeeUserRepository;
+    @Autowired
+    private WellEmployeeUserRepository employeeUserRepository;
 
     private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
 
-   @Autowired private WellUserDetailService detailService;
+    @Autowired
+    private WellUserDetailService detailService;
 
-   @Autowired private WellLogOutService logOutService;
-
+    @Autowired
+    private WellLogOutService logOutService;
 
 
     @Autowired
     public UserController(AuthenticationManager authenticationManager, TokenProvider tokenProvider,
                           WellUserDetailService detailService
-                          , WellLogOutService logOutService
+            , WellLogOutService logOutService
 
     ) {
         this.authenticationManager = authenticationManager;
@@ -50,7 +63,7 @@ public class UserController {
     }
 // 기존 로그인 로직
 //    //로그인
-//    @PostMapping(value = "/init/login")
+//    @PostMapping(value = "init/login")
 //    public ResponseEntity<ApiResponse> login(@RequestBody UserLoginReq loginReq) {
 //
 //        WellEmployeeUserEntity userEntity = null;
@@ -109,8 +122,9 @@ public class UserController {
 //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("인증 중 오류가 발생하였습니다.", null));
 //        }
 //    }
-    // 패스워드 변경
 
+
+    // 패스워드 변경
     @PostMapping(value = "/updatePwd")
     public ResponseEntity<ApiResponse> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
         // 비밀번호 변경 시도
@@ -124,35 +138,29 @@ public class UserController {
         } catch (UsernameNotFoundException e) {
             // 사용자를 찾을 수 없는 경우 404 응답
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
-        }
-//        catch (Exception e) {
+        } catch (Exception e) {
 //            // 다른 오류가 발생한 경우 500 응답
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("비밀번호 변경 중 오류가 발생했습니다.", null));
-//        }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("비밀번호 변경 중 오류가 발생했습니다.", null));
+        }
     }
 
-//
-////    // 로그아웃
-////    @PostMapping("/logoutCustom")
-////    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication != null) {
-//            // RefreshToken을 삭제하고 쿠키에서 액세스 토큰을 제거
-//            logOutService.logoutAndRemoveRefreshToken(authentication.getName(), request, response);
-//
-//            // Spring Security 컨텍스트에서 인증 정보를 지움
-//            new SecurityContextLogoutHandler().logout(request, response, authentication);
-//
-//            // 로그 추가: 로그아웃 요청이 들어왔음을 확인하기 위한 로그
-//            System.out.println("로그아웃 요청이 수신되었습니다.");
-//            return ResponseEntity.ok().body("로그아웃 되었습니다.");
-//        }
-//
-//        else {
-//            // 인증되지 않은 사용자에 대한 처리
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증되지 않은 사용자입니다.");
-//        }
-//    }
+    // 로그아웃
+    @PostMapping("/logoutCustom")
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("인증 객체: " + authentication);
+        if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken)) {
+            // 사용자 이름을 얻고, 리프레쉬 토큰 삭제 메서드를 호출
+            String username = authentication.getName();
+            logOutService.logoutAndRemoveRefreshToken(username, request, response);
+
+            System.out.println("로그아웃 요청이 수신되었습니다. 리프레쉬 토큰이 삭제되었습니다.");
+            return ResponseEntity.ok().body("로그아웃 되었습니다. 클라이언트 측에서 JWT를 삭제해 주세요.");
+        } else {
+            // 인증되지 않은 사용자에 대한 처리
+            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.UNAUTHORIZED);
+
+        }
+
     }
-
-
+}

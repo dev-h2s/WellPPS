@@ -91,6 +91,8 @@ project (':well-secure') {
 		runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 		testImplementation 'org.springframework.security:spring-security-test'
 		compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
+//		implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.4.10'
+		implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 //		implementation 'com.example:library-name:version'
 //		implementation ("org.springframework.security:spring-security-config:5.6.0") // anMatchers 사용으로추가
 	}

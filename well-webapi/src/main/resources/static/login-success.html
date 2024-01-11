@@ -35,7 +35,7 @@
 
     // 로그아웃 처리
     document.getElementById('logout').addEventListener('click', function() {
-        fetch('/logout', {
+        fetch('/logoutCustom', {
             method: 'POST',
             credentials: 'include' // 현재 사용자 세션의 쿠키를 포함시키기 위해 필요합니다.
         })

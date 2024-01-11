@@ -1,31 +1,29 @@
 package com.wellnetworks.wellwebapi.java.controller.pin;
 
-import com.wellnetworks.wellcore.java.dto.Operator.WellOperatorUpdateDTO;
 import com.wellnetworks.wellcore.java.dto.PIN.WellPinCreateDTO;
 import com.wellnetworks.wellcore.java.dto.PIN.WellPinListDTO;
 import com.wellnetworks.wellcore.java.dto.PIN.WellPinUpdateDTO;
 import com.wellnetworks.wellcore.java.service.pin.WellPinService;
 import com.wellnetworks.wellwebapi.java.controller.ResponseUtil;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(("/pin/"))
-@ComponentScan(basePackages={"com.wellnetworks.wellcore"})
+@RequestMapping(("/pin"))
+@ComponentScan(basePackages = {"com.wellnetworks.wellcore"})
+@RequiredArgsConstructor
 public class PinController {
-    @Autowired private WellPinService pinService;
 
-    //리스트 조회
-    @GetMapping("info")
+    private final WellPinService pinService;
+
+    @GetMapping
     public ResponseEntity<?> getPinList(@RequestParam(defaultValue = "0") int page,
                                         @RequestParam(defaultValue = "10") int size) {
         try {
@@ -37,8 +35,7 @@ public class PinController {
         }
     }
 
-    //생성
-    @PostMapping("generate")
+    @PostMapping
     public ResponseEntity<?> generatePin(@Valid WellPinCreateDTO createDTO) {
         try {
             pinService.createPin(createDTO);
@@ -48,8 +45,7 @@ public class PinController {
         }
     }
 
-    //수정
-    @PatchMapping("update/{pinIdx}")
+    @PutMapping("/{pinIdx}")
     public ResponseEntity<?> updatePin(@Valid WellPinUpdateDTO updateDTO) {
         try {
             pinService.updatePin(updateDTO);
@@ -59,8 +55,7 @@ public class PinController {
         }
     }
 
-    //삭제
-    @DeleteMapping("delete/{pinIdx}")
+    @DeleteMapping("/{pinIdx}")
     public ResponseEntity<?> deletePin(@PathVariable Long pinIdx) {
         try {
             pinService.deletePin(pinIdx);

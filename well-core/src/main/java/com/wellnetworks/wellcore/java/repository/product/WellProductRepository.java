@@ -7,10 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface WellProductRepository extends JpaRepository<WellProductEntity, String> {
     List<WellProductEntity> findByOperator(WellOperatorEntity operator);
+
+    Optional<WellProductEntity> findByProductName(String productName);
 
     //전체요금제
     @Query("SELECT COUNT(p) FROM WellProductEntity p")

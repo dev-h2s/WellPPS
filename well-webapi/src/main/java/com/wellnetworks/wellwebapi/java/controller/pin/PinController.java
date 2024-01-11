@@ -4,6 +4,7 @@ import com.wellnetworks.wellcore.java.dto.PIN.WellPinCreateDTO;
 import com.wellnetworks.wellcore.java.dto.PIN.WellPinListDTO;
 import com.wellnetworks.wellcore.java.service.pin.WellPinService;
 import com.wellnetworks.wellwebapi.java.controller.ResponseUtil;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
@@ -36,13 +37,24 @@ public class PinController {
 
     //생성
     @PostMapping("generate")
-    public ResponseEntity<String> generatePin(@Valid WellPinCreateDTO createDTO) {
+    public ResponseEntity<?> generatePin(@Valid WellPinCreateDTO createDTO) {
         try {
             pinService.createPin(createDTO);
             return ResponseEntity.ok("PIN 생성 및 저장 완료");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("PIN 생성 및 저장 중 오류 발생: " + e.getMessage());
+            return ResponseUtil.createErrorResponse(e);
+        }
+    }
+
+    //수정
+    //삭제
+    @DeleteMapping("delete/{pinIdx}")
+    public ResponseEntity<?> deletePin(@PathVariable String pinIdx) {
+        try {
+            pinService.deletePin(pinIdx);
+            return ResponseEntity.ok("pin이 삭제되었습니다.");
+        } catch (Exception e) {
+            return ResponseUtil.createErrorResponse(e);
         }
     }
 }

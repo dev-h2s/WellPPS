@@ -10,6 +10,7 @@ import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.repository.operator.WellOperatorRepository;
 import com.wellnetworks.wellcore.java.repository.pin.WellPinRepository;
 import com.wellnetworks.wellcore.java.repository.product.WellProductRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +66,15 @@ public class WellPinService {
         if (pinRepository.findByPinNum(createDTO.getPinNum()).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 PIN 입니다.");
         }
-
         return pinRepository.save(createDTO.toEntity());
+    }
+
+    //수정
+
+    //삭제
+    public void deletePin(String pinIdx) {
+        WellPinEntity pinEntity = pinRepository.findById(pinIdx)
+                .orElseThrow(() -> new EntityNotFoundException("pin이 존재하지 않습니다."));
+        pinRepository.delete(pinEntity);
     }
 }

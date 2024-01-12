@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(("/pin"))
@@ -58,6 +59,17 @@ public class PinController {
         try {
             pinService.deletePin(pinIdx);
             return ResponseEntity.ok("pin이 삭제되었습니다.");
+        } catch (Exception e) {
+            return ResponseUtil.createErrorResponse(e);
+        }
+    }
+
+    // 엑셀 파일 업로드
+    @PostMapping("/excel")
+    public ResponseEntity<?> importPins(@RequestParam("file") MultipartFile file) {
+        try {
+            pinService.importPinsFromExcel(file);
+            return ResponseEntity.ok("핀 데이터가 성공적으로 업로드되었습니다.");
         } catch (Exception e) {
             return ResponseUtil.createErrorResponse(e);
         }

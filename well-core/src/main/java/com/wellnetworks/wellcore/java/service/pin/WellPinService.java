@@ -5,24 +5,30 @@ import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.domain.pin.WellPinEntity;
 import com.wellnetworks.wellcore.java.domain.product.WellProductEntity;
 import com.wellnetworks.wellcore.java.dto.PIN.WellPinCreateDTO;
+import com.wellnetworks.wellcore.java.dto.PIN.WellPinExcelCreateDTO;
 import com.wellnetworks.wellcore.java.dto.PIN.WellPinListDTO;
 import com.wellnetworks.wellcore.java.dto.PIN.WellPinUpdateDTO;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.repository.operator.WellOperatorRepository;
 import com.wellnetworks.wellcore.java.repository.pin.WellPinRepository;
 import com.wellnetworks.wellcore.java.repository.product.WellProductRepository;
+import com.wellnetworks.wellcore.java.service.account.ExcelUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,6 +40,7 @@ public class WellPinService {
     private final WellPartnerRepository partnerRepository;
     private final WellProductRepository productRepository;
     private final WellOperatorRepository operatorRepository;
+    private final ExcelUtil excelUtil;
 
     private final EntityManager em;
 
@@ -101,5 +108,55 @@ public class WellPinService {
         WellPinEntity pinEntity = pinRepository.findById(pinIdx)
                 .orElseThrow(() -> new EntityNotFoundException("pin이 존재하지 않습니다."));
         pinRepository.delete(pinEntity);
+    }
+
+    // 핀 엑셀 저장
+    @Transactional
+    public void importPinsFromExcel(MultipartFile file) throws IOException, InvalidFormatException {
+        List<Map<String, Object>> excelData = excelUtil.getListData(file, 1, 6); // 엑셀 파일의 컬럼 수에 맞게 조정
+
+        for (Map<String, Object> row : excelData) {
+            WellPinExcelCreateDTO dto = mapRowToDto(row);
+
+            // 중복 PIN 체크
+            String pinNum = dto.getPinNum();
+            if (pinRepository.findByPinNum(pinNum).isPresent()) {
+                throw new IllegalArgumentException("중복된 PIN 값입니다: " + pinNum);
+            }
+
+            log.info("PIN 번호가 중복되지 않았습니다.");
+
+            WellPinEntity pin = convertDtoToEntity(dto);
+            pinRepository.save(pin);
+        }
+    }
+
+    // Map을 DTO로 변환
+    private WellPinExcelCreateDTO mapRowToDto(Map<String, Object> row) {
+        WellPinExcelCreateDTO dto = new WellPinExcelCreateDTO();
+        dto.setStore((String) row.get("1"));
+        dto.setOperatorName((String) row.get("2"));
+        dto.setProductName((String) row.get("3"));
+        dto.setPinNum((String) row.get("4"));
+        dto.setManagementNum((String) row.get("5"));
+        String isSaleFlagString = (String) row.get("6");
+        Boolean isSaleFlag = "1".equals(isSaleFlagString); // "1"이면 true, 그 외에는 false
+        dto.setIsSaleFlag(isSaleFlag);
+
+        return dto;
+    }
+
+    //엑셀 값들 등록
+    private WellPinEntity convertDtoToEntity(WellPinExcelCreateDTO dto) {
+         WellPinEntity pinEntity = new WellPinEntity();
+
+        pinEntity.setStore(dto.getStore());
+        pinEntity.setOperatorName(dto.getOperatorName());
+        pinEntity.setProductName(dto.getProductName());
+        pinEntity.setPinNum(dto.getPinNum());
+        pinEntity.setManagementNum(dto.getManagementNum());
+        pinEntity.setIsSaleFlag(dto.getIsSaleFlag());
+
+        return pinEntity;
     }
 }

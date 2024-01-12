@@ -6,7 +6,7 @@ import com.wellnetworks.wellsecure.java.jwt.TokenProvider;
 import com.wellnetworks.wellsecure.java.service.AppAuthenticationManager;
 //import com.wellnetworks.wellsecure.java.service.CustomLogoutHandler;
 import com.wellnetworks.wellsecure.java.service.RefreshTokenService;
-import com.wellnetworks.wellsecure.java.service.WellLogOutService;
+//import com.wellnetworks.wellsecure.java.service.WellLogOutService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -30,24 +30,25 @@ import java.util.List;
 @EnableWebSecurity  // 웹 보안을 활성화
 @EnableMethodSecurity  // 메소드 레벨의 보안을 활성화
 @ComponentScan("com.wellnetworks.wellsecure")
+
 public class SecurityConfig {
     private final SecurityProperties securityProperties;
     private final AppAuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
     private final RefreshTokenService refreshTokenService;
-    private final WellLogOutService logOutService;
+//    private final WellLogOutService logOutService;
 
 
     public SecurityConfig(SecurityProperties securityProperties, AppAuthenticationManager authenticationManager,
                           TokenProvider tokenProvider,
 //                          CustomLogoutHandler customLogoutHandler,
-                          RefreshTokenService refreshTokenService, WellLogOutService logOutService) {
+                          RefreshTokenService refreshTokenService) {
         this.securityProperties = securityProperties;
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
         this.refreshTokenService = refreshTokenService;
 //        this.customLogoutHandler = customLogoutHandler;
-        this.logOutService = logOutService;
+//        this.logOutService = logOutService;
     }
 //    @Bean
 //    public CustomLogoutHandler customLogoutHandler(RefreshTokenService refreshTokenService) {
@@ -67,9 +68,9 @@ public class SecurityConfig {
                 .addFilter(new JwtAuthenticationFilter(authenticationManager, securityProperties, tokenProvider, refreshTokenService))  // JWT 인증 필터 추가
                 .addFilter(new JwtAuthorizationFilter(authenticationManager, securityProperties, tokenProvider))  // JWT 권한 확인 필터 추가
                 .logout()
-                .logoutUrl("init/logout")  // 로그아웃 경로 설정
-//                .addLogoutHandler(logOutService)
-                .logoutSuccessUrl("/loginTest.html")  // 로그아웃 후 리다이렉트할 경로 설정
+//                .logoutUrl("init/logout")  // 로그아웃 경로 설정
+////                .addLogoutHandler(logOutService)
+//                .logoutSuccessUrl("/loginTest.html")  // 로그아웃 후 리다이렉트할 경로 설정
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID", "access_token", "refresh_token");// 로그아웃 시 삭제할 쿠키 설정
 
@@ -114,7 +115,7 @@ public class SecurityConfig {
                 , "http://112.146.206.134:8080"
                 , "http://112.146.206.134"
         )); // 클라이언트 도메인 추가
-        config.setAllowedMethods(List.of("POST", "PUT", "DELETE", "GET", "OPTIONS", "HEAD")); // 허용할 HTTP 메서드 설정
+        config.setAllowedMethods(List.of("PATCH","POST", "PUT", "DELETE", "GET", "OPTIONS", "HEAD")); // 허용할 HTTP 메서드 설정
         config.setAllowedHeaders(List.of("*"));  // 허용할 헤더 설정
         // PNA 관련 설정을 위해 여기에 추가
 //        config.addAllowedHeader("Access-Control-Allow-Private-Network"); // 요청해더

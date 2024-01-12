@@ -65,7 +65,7 @@ public class TokenProvider {
 
         // 현재 시간으로부터 accessToken 만료 시간을 설정
         this.accessTokenValidity = new Date(System.currentTimeMillis() +
-                (long) securityProperties.getAccessTokenExpirationTime() * 2 * 1000);
+                (long) securityProperties.getAccessTokenExpirationTime() * 60 * 60 * 1000);
 
 
         // JWT 토큰 생성 및 반환
@@ -83,7 +83,7 @@ public class TokenProvider {
     public String createRefreshToken(Authentication authentication) {
         // 현재 시간으로부터 refreshToken 만료 시간을 설정
         this.refreshTokenValidity = new Date(System.currentTimeMillis() +
-                (long) securityProperties.getRefreshTokenExpirationTime() * 5 * 1000);
+                (long) securityProperties.getRefreshTokenExpirationTime() * 24 * 60 * 60 * 1000);
 
         // refreshToken 생성 코드...
         // refreshToken은 사용자의 권한이나 다른 정보 없이, 오직 사용자 이름만 포함하는 것이 일반적
@@ -119,6 +119,17 @@ public class TokenProvider {
             log.error("Authentication error: {}", e.getMessage(), e);
             // 스프링 시큐리티의 인증 실패 예외를 던짐
             throw new BadCredentialsException("Invalid token", e);
+        }
+    }
+
+    // 엑세스 토큰의 유효성을 검사하는 메서드
+    public boolean validateToken(String accessToken) {
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken);
+            return true; // 토큰이 유효하면 true 반환
+        } catch (Exception e) {
+            log.error("Token validation error: {}", e.getMessage(), e);
+            return false; // 토큰이 유효하지 않으면 false 반환
         }
     }
 

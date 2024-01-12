@@ -8,6 +8,7 @@ buildscript {
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
 		classpath "io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE"
+
 	}
 }
 
@@ -46,6 +47,8 @@ subprojects {
 		implementation('ch.qos.logback:logback-classic')
 //파일 처리
 		implementation 'commons-io:commons-io:2.6'
+		implementation 'org.springframework.data:spring-data-redis:3.0.1'
+		implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	}
 
 	test {
@@ -69,7 +72,6 @@ project (':well-core') {
 		implementation('org.slf4j:jcl-over-slf4j')
 		implementation('ch.qos.logback:logback-classic')
 		compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
-
 	}
 
 }
@@ -92,7 +94,6 @@ project (':well-secure') {
 		testImplementation 'org.springframework.security:spring-security-test'
 		compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
 //		implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.4.10'
-		implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 //		implementation 'com.example:library-name:version'
 //		implementation ("org.springframework.security:spring-security-config:5.6.0") // anMatchers 사용으로추가
 	}
@@ -110,6 +111,8 @@ project (':well-webapi') {
 		implementation 'org.springframework.session:spring-session-core'
 		testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 		testImplementation 'org.springframework.security:spring-security-test'
+
+
 		// 배포 시 빌드 중복 제거
 		tasks.withType(Jar) {
 			duplicatesStrategy = DuplicatesStrategy.EXCLUDE

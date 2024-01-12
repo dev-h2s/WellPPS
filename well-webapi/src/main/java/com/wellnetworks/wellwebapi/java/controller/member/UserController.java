@@ -11,10 +11,11 @@ import com.wellnetworks.wellsecure.java.request.TokenResponse;
 import com.wellnetworks.wellsecure.java.request.UserLoginReq;
 import com.wellnetworks.wellsecure.java.service.EmployeeUserDetails;
 import com.wellnetworks.wellsecure.java.service.PartnerUserDetails;
-import com.wellnetworks.wellsecure.java.service.WellLogOutService;
+import com.wellnetworks.wellsecure.java.service.RefreshTokenService;
 import com.wellnetworks.wellsecure.java.service.WellUserDetailService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
@@ -34,94 +35,77 @@ import java.util.concurrent.TimeUnit;
 
 @RestController
 @ComponentScan(basePackages = {"com.wellnetworks.wellcore", "com.wellnetworks.wellsecure"})
+@RequiredArgsConstructor
+
 public class UserController {
 
-    @Autowired
-    private WellEmployeeUserRepository employeeUserRepository;
-
+    private final RefreshTokenService refreshTokenService;
+    private final WellEmployeeUserRepository employeeUserRepository;
     private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
-
-    @Autowired
-    private WellUserDetailService detailService;
-
-    @Autowired
-    private WellLogOutService logOutService;
+    private final WellUserDetailService detailService;
 
 
-    @Autowired
-    public UserController(AuthenticationManager authenticationManager, TokenProvider tokenProvider,
-                          WellUserDetailService detailService
-            , WellLogOutService logOutService
 
-    ) {
-        this.authenticationManager = authenticationManager;
-        this.tokenProvider = tokenProvider;
-        this.detailService = detailService;
-        this.logOutService = logOutService;
-//        this.refreshTokenService = refreshTokenService;
-    }
-// 기존 로그인 로직
+
+
+    // 기존 로그인 로직
 //    //로그인
-//    @PostMapping(value = "init/login")
-//    public ResponseEntity<ApiResponse> login(@RequestBody UserLoginReq loginReq) {
-//
-//        WellEmployeeUserEntity userEntity = null;
-//        try {
-//            // 사용자의 인증 정보를 검증
-//            Authentication authentication = authenticationManager.authenticate(
-//                    new UsernamePasswordAuthenticationToken(loginReq.getUsername(), loginReq.getPassword())
-//            );
-//            // 인증에 성공하면 JWT 토큰을 생성
-//            String accessToken = tokenProvider.createToken(authentication);
-//            String refreshToken = tokenProvider.createRefreshToken(authentication);
-//
-//            // UserDetails 객체를 조회하여 첫 로그인 여부를 확인
-//            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-//            boolean isFirstLogin = false;
-//
-//
-//            // 첫 로그인 여부 확인
-//            if (userDetails instanceof EmployeeUserDetails) {
-//                isFirstLogin = ((EmployeeUserDetails) userDetails).isFirstLogin();
-//            } else if (userDetails instanceof PartnerUserDetails) {
-//                isFirstLogin = ((PartnerUserDetails) userDetails).isFirstLogin();
-//            }
-//
-//
-//            // 응답 객체를 생성
-//            ApiResponse response = isFirstLogin
-//                    ? new ApiResponse("첫 로그인시. 패스워드를 변경해주세요.", new TokenResponse(accessToken, refreshToken))
-//                    : new ApiResponse("로그인 성공", new TokenResponse(accessToken, refreshToken));
-//
-//            ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-//
+    @PostMapping(value = "init/login")
+    public ResponseEntity<ApiResponse> login(@RequestBody UserLoginReq loginReq) {
+        WellEmployeeUserEntity userEntity = null;
+        try {
+            // 사용자의 인증 정보를 검증
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginReq.getUsername(), loginReq.getPassword())
+
+            );
+            // 인증에 성공하면 JWT 토큰을 생성
+            String accessToken = tokenProvider.createToken(authentication);
+            String refreshToken = tokenProvider.createRefreshToken(authentication);
+            System.out.println("인증 객체: " + authentication);
+
+            // UserDetails 객체를 조회하여 첫 로그인 여부를 확인
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            boolean isFirstLogin = false;
+
+            // 첫 로그인 여부 확인
+            if (userDetails instanceof EmployeeUserDetails) {
+                isFirstLogin = ((EmployeeUserDetails) userDetails).isFirstLogin();
+            } else if (userDetails instanceof PartnerUserDetails) {
+                isFirstLogin = ((PartnerUserDetails) userDetails).isFirstLogin();
+            }
+
+            // 응답 객체를 생성
+            ApiResponse response = isFirstLogin
+                    ? new ApiResponse("첫 로그인시. 패스워드를 변경해주세요.", new TokenResponse(accessToken, refreshToken))
+                    : new ApiResponse("로그인 성공", new TokenResponse(accessToken, refreshToken));
+
+            ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+
 //            executorService.scheduleAtFixedRate(() -> {
 //                String newAccessToken = tokenProvider.createToken(authentication); // 새로운 토큰 생성 로직
 //                System.out.println("New access token: " + newAccessToken);
 //            }, 0, 10, TimeUnit.SECONDS);
-//
-//            // JWT 토큰을 클라이언트에게 응답으로 반환
-//            return ResponseEntity.ok(response);
-//        }catch (UsernameNotFoundException e) {
-//            // 사용자를 찾을 수 없을 때의 예외 처리
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("없는 사용자입니다.", null));
-//        }
-//        catch (BadCredentialsException e) {
-//            System.out.println("username은" + loginReq.getUsername() + "password는" + loginReq.getPassword());
-////            System.out.println(userEntity.getIsPasswordResetRequired());
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("올바르지 않은 사용자 이름 또는 비밀번호입니다.", null));
-//        }
-//        catch (LockedException e) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("계정이 잠겼습니다. 관리자에게 문의하세요.", null));
-//        }
-//        catch (DisabledException e) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("계정이 비활성화되었습니다.", null));
-//        }
-//        catch (AuthenticationException e) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("인증 중 오류가 발생하였습니다.", null));
-//        }
-//    }
+
+
+            // JWT 토큰을 클라이언트에게 응답으로 반환
+            return ResponseEntity.ok(response);
+        } catch (UsernameNotFoundException e) {
+            // 사용자를 찾을 수 없을 때의 예외 처리
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("없는 사용자입니다.", null));
+        } catch (BadCredentialsException e) {
+            System.out.println("username은" + loginReq.getUsername() + "password는" + loginReq.getPassword());
+//            System.out.println(userEntity.getIsPasswordResetRequired());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("올바르지 않은 사용자 이름 또는 비밀번호입니다.", null));
+        } catch (LockedException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("계정이 잠겼습니다. 관리자에게 문의하세요.", null));
+        } catch (DisabledException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("계정이 비활성화되었습니다.", null));
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("인증 중 오류가 발생하였습니다.", null));
+        }
+    }
 
 
     // 패스워드 변경
@@ -147,20 +131,31 @@ public class UserController {
     // 로그아웃
     @PostMapping("/logoutCustom")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("인증 객체: " + authentication);
-        if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken)) {
-            // 사용자 이름을 얻고, 리프레쉬 토큰 삭제 메서드를 호출
-            String username = authentication.getName();
-            logOutService.logoutAndRemoveRefreshToken(username, request, response);
-
-            System.out.println("로그아웃 요청이 수신되었습니다. 리프레쉬 토큰이 삭제되었습니다.");
-            return ResponseEntity.ok().body("로그아웃 되었습니다. 클라이언트 측에서 JWT를 삭제해 주세요.");
-        } else {
-            // 인증되지 않은 사용자에 대한 처리
-            return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.UNAUTHORIZED);
-
+        // 헤더에서 access_token을 추출합니다.
+        String accessToken = request.getHeader("Authorization");
+        if (accessToken != null && accessToken.startsWith("Bearer ")) {
+            accessToken = accessToken.substring(7); // "Bearer " 제거
         }
 
-    }
+        // accessToken이 유효한지 검사합니다.
+        if (accessToken != null && tokenProvider.validateToken(accessToken)) {
+            // accessToken에 해당하는 username을 얻습니다.
+            String username = tokenProvider.getUsernameFromToken(accessToken);
+
+            // username으로 UserDetails 객체를 로드합니다.
+            UserDetails userDetails = detailService.loadUserByUsername(username);
+
+            // UserDetails를 사용하여 리프레시 토큰 삭제 로직 수행
+            refreshTokenService.deleteRefreshToken(userDetails);
+
+            // 쿠키에서 accessToken을 삭제합니다.
+            CookieUtil.deleteCookie(request, response, "access_token");
+
+            // 로그아웃 처리 성공 응답
+            return ResponseEntity.ok("Logged out successfully");
+        } else {
+            // Token이 없거나 유효하지 않은 경우의 처리
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
+        }
 }
+    }

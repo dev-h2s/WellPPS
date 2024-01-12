@@ -13,9 +13,10 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @RequiredArgsConstructor
 @Configuration
 @EnableRedisRepositories
-public class RedisRepositoryConfig {
+public class RedisConfig {
 
     private final RedisProperties redisProperties;
+
 
     // lettuce
     @Bean

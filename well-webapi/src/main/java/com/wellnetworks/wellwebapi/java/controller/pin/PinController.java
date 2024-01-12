@@ -7,13 +7,21 @@ import com.wellnetworks.wellcore.java.service.pin.WellPinService;
 import com.wellnetworks.wellwebapi.java.controller.ResponseUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 
 @RestController
 @RequestMapping(("/pin"))
@@ -73,5 +81,24 @@ public class PinController {
         } catch (Exception e) {
             return ResponseUtil.createErrorResponse(e);
         }
+    }
+
+    // 엑셀 다운로드
+    @GetMapping("/excel/download")
+    public ResponseEntity<Resource> downloadExcelFile() throws UnsupportedEncodingException {
+        String filePath = "C:\\study\\file\\pin 관리 입력폼.xlsx";
+        Resource file = new FileSystemResource(Paths.get(filePath).toAbsolutePath().normalize().toString());
+
+        if (!((FileSystemResource) file).exists()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        String downloadFilename = "pin 관리 양식.xlsx";
+        String encodedFilename = URLEncoder.encode(downloadFilename, StandardCharsets.UTF_8.name()).replaceAll("\\+", "%20");
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .header("Content-Disposition", "attachment; filename*=UTF-8''" + encodedFilename)
+                .body(file);
     }
 }

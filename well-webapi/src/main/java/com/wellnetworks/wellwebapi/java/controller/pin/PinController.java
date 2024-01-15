@@ -1,6 +1,7 @@
 package com.wellnetworks.wellwebapi.java.controller.pin;
 
 import com.wellnetworks.wellcore.java.dto.PIN.WellPinCreateDTO;
+import com.wellnetworks.wellcore.java.dto.PIN.WellPinInfoDTO;
 import com.wellnetworks.wellcore.java.dto.PIN.WellPinListDTO;
 import com.wellnetworks.wellcore.java.dto.PIN.WellPinUpdateDTO;
 import com.wellnetworks.wellcore.java.service.pin.WellPinService;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(("/pin"))
@@ -100,5 +103,21 @@ public class PinController {
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .header("Content-Disposition", "attachment; filename*=UTF-8''" + encodedFilename)
                 .body(file);
+    }
+
+    //개별 상세 조회
+    @GetMapping("/{pinIdx}")
+    public ResponseEntity<?> getPinDetail(@PathVariable Long pinIdx) {
+        try {
+            Optional<WellPinInfoDTO> infoDTO = pinService.infoPin(pinIdx);
+            if (infoDTO.isPresent()) {
+                return ResponseEntity.ok(infoDTO.get());
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("pin을 찾을 수 없습니다.");
+            }
+
+        } catch (Exception e) {
+            return ResponseUtil.createErrorResponse(e);
+        }
     }
 }

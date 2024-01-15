@@ -4,10 +4,7 @@ import com.wellnetworks.wellcore.java.domain.operator.WellOperatorEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.domain.pin.WellPinEntity;
 import com.wellnetworks.wellcore.java.domain.product.WellProductEntity;
-import com.wellnetworks.wellcore.java.dto.PIN.WellPinCreateDTO;
-import com.wellnetworks.wellcore.java.dto.PIN.WellPinExcelCreateDTO;
-import com.wellnetworks.wellcore.java.dto.PIN.WellPinListDTO;
-import com.wellnetworks.wellcore.java.dto.PIN.WellPinUpdateDTO;
+import com.wellnetworks.wellcore.java.dto.PIN.*;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.repository.operator.WellOperatorRepository;
 import com.wellnetworks.wellcore.java.repository.pin.WellPinRepository;
@@ -29,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -158,5 +156,18 @@ public class WellPinService {
         pinEntity.setIsSaleFlag(dto.getIsSaleFlag());
 
         return pinEntity;
+    }
+
+    //개별 상세 조회
+    public Optional<WellPinInfoDTO> infoPin(Long pinIdx) {
+        return pinRepository.findById(pinIdx)
+                .map(pin -> new WellPinInfoDTO(
+                        pin.getStore(),
+                        pin.getOperatorName(),
+                        pin.getProductName(),
+                        pin.getPinNum(),
+                        pin.getManagementNum(),
+                        pin.getIsSaleFlag()
+                ));
     }
 }

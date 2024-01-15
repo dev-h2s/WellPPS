@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class WellPinListDTO {
+    private Long pinIdx;
     private String operatorName; //통신사 (코드)
     private String productName; //요금제 (코드)
     private String network; //통신망 (코드)
@@ -32,6 +33,7 @@ public class WellPinListDTO {
 
     @Builder
     public WellPinListDTO(WellPinEntity pinEntity, String operatorName, String productName, String storeName, String releaseName) {
+        this.pinIdx = pinEntity.getPinIdx();
         this.operatorName = operatorName;
         this.productName = productName;
         this.store = storeName;

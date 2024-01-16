@@ -17,9 +17,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -194,6 +193,41 @@ public class WellPinService {
     }
 
     //일괄출고
+
     //검색
+    public Page<WellPinSearchDTO> searchPinList(Boolean isSaleFlag, Boolean isUseFlag, String network, String operatorName, String productName
+            , String pinNum, String managementNum, String writer, String user, Pageable pageable) {
+            Specification<WellPinEntity> spec = Specification.where(PinSpecification.isSaleFlagEquals(isSaleFlag))
+                    .and(PinSpecification.isUseFlagEquals(isUseFlag))
+                    .and(PinSpecification.networkContains(network))
+                    .and(PinSpecification.operatorNameContains(operatorName))
+                    .and(PinSpecification.productNameContains(productName))
+                    .and(PinSpecification.pinNumContains(pinNum))
+                    .and(PinSpecification.managementNumContains(managementNum))
+                    .and(PinSpecification.writerContains(writer))
+                    .and(PinSpecification.userNameContains(user));
+
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
+
+            Page<WellPinEntity> pins = pinRepository.findAll(spec, pageable);
+
+            List<WellPinSearchDTO> pinInfoList = new ArrayList<>();
+
+        for (WellPinEntity pin : pins) {
+            WellPinSearchDTO pinSearchDTO = new WellPinSearchDTO();
+            pinSearchDTO.setIsSaleFlag(pin.getIsSaleFlag());
+            pinSearchDTO.setIsUseFlag(pin.getIsUseFlag());
+            pinSearchDTO.setNetwork(pin.getNetwork());
+            pinSearchDTO.setOperatorName(pin.getOperatorName());
+            pinSearchDTO.setProductName(pin.getProductName());
+            pinSearchDTO.setPinNum(pin.getPinNum());
+            pinSearchDTO.setManagementNum(pin.getManagementNum());
+            pinSearchDTO.setWriter(pin.getWriter());
+            pinSearchDTO.setUser(pin.getUserName());
+            pinInfoList.add(pinSearchDTO);
+        }
+            return new PageImpl<>(pinInfoList, pageable, pins.getTotalElements());
+    }
+
     //엑셀 중복값 다운로드
 }

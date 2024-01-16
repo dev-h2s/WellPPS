@@ -124,4 +124,31 @@ public class PinController {
     public List<WellReleaseListDTO> getReleaseList() {
             return pinService.getReleaseList();
     }
+
+    //출고
+
+    //검색
+    @GetMapping("/search")
+    public ResponseEntity<?> searchAccount(
+            @RequestParam(value = "isSaleFlag", required = false) Boolean isSaleFlag,
+            @RequestParam(value = "isUseFlag", required = false) Boolean isUseFlag,
+            @RequestParam(value = "network", required = false) String network,
+            @RequestParam(value = "operatorName", required = false) String operatorName,
+            @RequestParam(value = "productName", required = false) String productName,
+            @RequestParam(value = "pinNum", required = false) String pinNum,
+            @RequestParam(value = "managementNum", required = false) String managementNum,
+            @RequestParam(value = "writer", required = false) String writer,
+            @RequestParam(value = "user", required = false) String user,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        try {
+            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+            Page<WellPinSearchDTO> result = pinService.searchPinList(isSaleFlag, isUseFlag, network, operatorName, productName, pinNum, managementNum, writer, user, pageable);
+
+            return ResponseUtil.createOkResponse(result.getContent(), "조회 성공", result);
+        } catch (Exception e) {
+            return ResponseUtil.createErrorResponse(e);
+        }
+    }
 }

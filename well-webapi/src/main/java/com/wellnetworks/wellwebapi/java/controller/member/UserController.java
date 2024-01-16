@@ -41,7 +41,7 @@ public class UserController {
     private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
     private final WellUserDetailService detailService;
-    private final WellLogOutService logOutService;
+        private final WellLogOutService logOutService;
 
 
 
@@ -61,6 +61,8 @@ public class UserController {
             // 인증에 성공하면 JWT 토큰을 생성
             String accessToken = tokenProvider.createToken(authentication);
             String refreshToken = tokenProvider.createRefreshToken(authentication);
+            System.out.println(accessToken);
+            System.out.println(refreshToken);
             System.out.println("인증 객체: " + authentication);
 
             // UserDetails 객체를 조회하여 첫 로그인 여부를 확인
@@ -127,38 +129,28 @@ public class UserController {
     }
 
     // 로그아웃
-    @PostMapping("/logoutCustom")
-    public void logout(HttpServletRequest request, HttpServletResponse response) {
+    @PostMapping("init/logout")
+    public ResponseEntity<?> logoutUser(HttpServletRequest request, HttpServletResponse response) {
 
-//
-//        // 로그아웃 후 처리 (예: 성공 메시지 반환)
-//        return ResponseEntity.ok("로그아웃 되었습니다.");
+        // 토큰 추출 (예: 헤더, 쿠키 등에서)
+//        String refreshToken = CookieUtil.extractToken(request);
+//        // 리프레시 토큰 무효화
+//        refreshTokenService.deleteRefreshToken();
+//        CookieUtil.deleteCookie(request, response, "access_token");
+//        // 성공적인 로그아웃 응답 반환
+//        return ResponseEntity.ok().body("User logged out successfully");
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-            System.out.println("Authentication 객체가 null입니다.");
-            return;
-        }
 
-        Object principal = authentication.getPrincipal();
-        UserDetails userDetails;
+        System.out.println(authentication);
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            refreshTokenService.deleteRefreshToken(userDetails);
+            CookieUtil.deleteCookie(request, response, "access_token");
 
-
-        if (principal instanceof String) {
-            // Principal이 String 타입인 경우, UserDetailsService를 사용하여 UserDetails를 로드합니다.
-            String username = (String) principal;
-            userDetails = detailService.loadUserByUsername(username);
-        } else if (principal instanceof UserDetails) {
-            // Principal이 이미 UserDetails 타입인 경우, 직접 사용합니다.
-            userDetails = (UserDetails) principal;
+            return ResponseEntity.ok().body("User logged out successfully");
         } else {
-            System.out.println("Principal 객체를 처리할 수 없습니다: " + principal.getClass());
-            return;
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No authenticated user found.");
         }
-        System.out.println(userDetails);
-        System.out.println(detailService.loadUserByUsername(userDetails.getUsername()));
-        // UserDetails를 사용하여 로그아웃 로직 수행
-//        logOutService.logoutAndRemoveRefreshToken();
-//        refreshTokenService.deleteRefreshToken(userDetails);
-        CookieUtil.deleteCookie(request, response, "access_token");
     }
 }

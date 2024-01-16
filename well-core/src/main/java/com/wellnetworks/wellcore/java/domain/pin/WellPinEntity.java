@@ -42,7 +42,7 @@ public class WellPinEntity extends BaseEntity { // ctrl + alt + l
     private String release;
 
     @Column(name = "use_flag") //사용유무
-    private Boolean isUseFlag;
+    private Boolean isUseFlag = false;
 
     @Column(name = "user_name") //사용자
     private String userName;

@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -170,4 +171,29 @@ public class WellPinService {
                         pin.getIsSaleFlag()
                 ));
     }
+
+    //일괄 출고 리스트
+    public List<WellReleaseListDTO> getReleaseList() {
+        List<WellReleaseListDTO> releaseList = new ArrayList<>();
+
+        // 통신사와 요금제로 그룹화하여 PIN 개수를 조회
+        List<Object[]> groupedData = pinRepository.countPinsByOperatorNameAndProductName();
+
+        // 그룹화된 데이터를 DTO에 저장
+        for (Object[] group : groupedData) {
+            String operatorName = (String) group[0];
+            String productName = (String) group[1];
+            Long count = (Long) group[2];
+
+            WellReleaseListDTO releaseDTO = new WellReleaseListDTO(operatorName, productName);
+            releaseDTO.setProductCount(count); // PIN 개수 설정
+            releaseList.add(releaseDTO);
+        }
+
+        return releaseList;
+    }
+
+    //일괄출고
+    //검색
+    //엑셀 중복값 다운로드
 }

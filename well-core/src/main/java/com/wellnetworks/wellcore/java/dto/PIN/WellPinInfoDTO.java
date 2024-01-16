@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class WellPinInfoDTO {
     private String store; //입고처(거래처)
     private String operatorName; //통신사 (코드)

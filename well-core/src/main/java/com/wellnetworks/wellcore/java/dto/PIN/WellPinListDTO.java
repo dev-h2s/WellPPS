@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class WellPinListDTO {
     private Long pinIdx;
+    @JsonFormat(pattern = "yyyy-MM-dd.HH:mm:ss")
+    private LocalDateTime createdAt; //생성일
     private String operatorName; //통신사 (코드)
     private String productName; //요금제 (코드)
     private String network; //통신망 (코드)
@@ -18,18 +20,11 @@ public class WellPinListDTO {
     private String managementNum; //관리번호
     private String store; //입고처(거래처)
     private String release; //출고처(거래처)
-    private Boolean isUseFlag; //사용유무
+    private String writer; //입력자
     private String user; //사용자
     @JsonFormat(pattern = "yyyy-MM-dd.HH:mm:ss")
     private LocalDateTime usedAt; //사용날짜
     private Boolean isSaleFlag; //판매전용여부
-
-    @JsonFormat(pattern = "yyyy-MM-dd.HH:mm:ss")
-    private LocalDateTime createdAt; //생성일
-    @JsonFormat(pattern = "yyyy-MM-dd.HH:mm:ss")
-    private LocalDateTime updatedAt; //수정일
-    private String writer; //작성자
-    private String updater; //수정자
 
     @Builder
     public WellPinListDTO(WellPinEntity pinEntity, String operatorName, String productName, String storeName, String releaseName) {
@@ -41,14 +36,11 @@ public class WellPinListDTO {
         this.network = pinEntity.getNetwork();
         this.pinNum = pinEntity.getPinNum();
         this.managementNum = pinEntity.getManagementNum();
-        this.isUseFlag = pinEntity.getIsUseFlag();
         this.user = pinEntity.getUserName();
         this.usedAt = pinEntity.getUsedAt();
         this.isSaleFlag = pinEntity.getIsSaleFlag();
 
         this.createdAt = pinEntity.getCreatedAt();
-        this.updatedAt = pinEntity.getUpdatedAt();
         this.writer = pinEntity.getWriter();
-        this.updater = pinEntity.getUpdater();
     }
 }

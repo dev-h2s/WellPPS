@@ -1,9 +1,6 @@
 package com.wellnetworks.wellwebapi.java.controller.pin;
 
-import com.wellnetworks.wellcore.java.dto.PIN.WellPinCreateDTO;
-import com.wellnetworks.wellcore.java.dto.PIN.WellPinInfoDTO;
-import com.wellnetworks.wellcore.java.dto.PIN.WellPinListDTO;
-import com.wellnetworks.wellcore.java.dto.PIN.WellPinUpdateDTO;
+import com.wellnetworks.wellcore.java.dto.PIN.*;
 import com.wellnetworks.wellcore.java.service.pin.WellPinService;
 import com.wellnetworks.wellwebapi.java.controller.ResponseUtil;
 import jakarta.validation.Valid;
@@ -24,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -119,5 +117,11 @@ public class PinController {
         } catch (Exception e) {
             return ResponseUtil.createErrorResponse(e);
         }
+    }
+
+    //일괄출고 리스트 조회
+    @GetMapping("/release")
+    public List<WellReleaseListDTO> getReleaseList() {
+            return pinService.getReleaseList();
     }
 }

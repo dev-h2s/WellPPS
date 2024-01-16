@@ -20,7 +20,7 @@ public class WellEmployeeUpdateDTO {
     private Long employeeId;
     private String employeeName; //이름
     private String belong; // 소속 회사
-//    private String department; //부서
+    private String department; //부서
     private String position; // 직책
     private String employmentState; // 재직상태
     private String jobType; // 고용형태

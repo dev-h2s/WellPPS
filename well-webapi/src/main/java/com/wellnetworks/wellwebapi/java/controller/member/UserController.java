@@ -9,10 +9,7 @@ import com.wellnetworks.wellsecure.java.request.ApiResponse;
 import com.wellnetworks.wellsecure.java.jwt.TokenProvider;
 import com.wellnetworks.wellsecure.java.request.TokenResponse;
 import com.wellnetworks.wellsecure.java.request.UserLoginReq;
-import com.wellnetworks.wellsecure.java.service.EmployeeUserDetails;
-import com.wellnetworks.wellsecure.java.service.PartnerUserDetails;
-import com.wellnetworks.wellsecure.java.service.RefreshTokenService;
-import com.wellnetworks.wellsecure.java.service.WellUserDetailService;
+import com.wellnetworks.wellsecure.java.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +41,7 @@ public class UserController {
     private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
     private final WellUserDetailService detailService;
+    private final WellLogOutService logOutService;
 
 
 
@@ -130,32 +128,37 @@ public class UserController {
 
     // 로그아웃
     @PostMapping("/logoutCustom")
-    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
-        // 헤더에서 access_token을 추출합니다.
-        String accessToken = request.getHeader("Authorization");
-        if (accessToken != null && accessToken.startsWith("Bearer ")) {
-            accessToken = accessToken.substring(7); // "Bearer " 제거
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+
+//
+//        // 로그아웃 후 처리 (예: 성공 메시지 반환)
+//        return ResponseEntity.ok("로그아웃 되었습니다.");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            System.out.println("Authentication 객체가 null입니다.");
+            return;
         }
 
-        // accessToken이 유효한지 검사합니다.
-        if (accessToken != null && tokenProvider.validateToken(accessToken)) {
-            // accessToken에 해당하는 username을 얻습니다.
-            String username = tokenProvider.getUsernameFromToken(accessToken);
+        Object principal = authentication.getPrincipal();
+        UserDetails userDetails;
 
-            // username으로 UserDetails 객체를 로드합니다.
-            UserDetails userDetails = detailService.loadUserByUsername(username);
 
-            // UserDetails를 사용하여 리프레시 토큰 삭제 로직 수행
-            refreshTokenService.deleteRefreshToken(userDetails);
-
-            // 쿠키에서 accessToken을 삭제합니다.
-            CookieUtil.deleteCookie(request, response, "access_token");
-
-            // 로그아웃 처리 성공 응답
-            return ResponseEntity.ok("Logged out successfully");
+        if (principal instanceof String) {
+            // Principal이 String 타입인 경우, UserDetailsService를 사용하여 UserDetails를 로드합니다.
+            String username = (String) principal;
+            userDetails = detailService.loadUserByUsername(username);
+        } else if (principal instanceof UserDetails) {
+            // Principal이 이미 UserDetails 타입인 경우, 직접 사용합니다.
+            userDetails = (UserDetails) principal;
         } else {
-            // Token이 없거나 유효하지 않은 경우의 처리
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid access token");
+            System.out.println("Principal 객체를 처리할 수 없습니다: " + principal.getClass());
+            return;
         }
-}
+        System.out.println(userDetails);
+        System.out.println(detailService.loadUserByUsername(userDetails.getUsername()));
+        // UserDetails를 사용하여 로그아웃 로직 수행
+//        logOutService.logoutAndRemoveRefreshToken();
+//        refreshTokenService.deleteRefreshToken(userDetails);
+        CookieUtil.deleteCookie(request, response, "access_token");
     }
+}

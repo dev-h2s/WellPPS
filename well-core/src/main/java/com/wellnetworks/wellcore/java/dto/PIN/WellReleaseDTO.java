@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class WellReleaseDTO {
     private String operatorName; //통신사 (코드)
     private String productName; //요금제 (코드)

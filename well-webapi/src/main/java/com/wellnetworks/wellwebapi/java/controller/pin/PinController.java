@@ -126,6 +126,16 @@ public class PinController {
     }
 
     //출고
+    @PostMapping("/release")
+    public ResponseEntity<String> releasePins(@RequestParam("release") String release) {
+        try {
+            pinService.releasePinsByRelease(release);
+
+            return ResponseEntity.ok("출고 처리 완료");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("출고 처리 중 오류 발생: " + e.getMessage());
+        }
+    }
 
     //검색
     @GetMapping("/search")
@@ -151,4 +161,6 @@ public class PinController {
             return ResponseUtil.createErrorResponse(e);
         }
     }
+
+
 }

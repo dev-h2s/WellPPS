@@ -174,11 +174,8 @@ public class WellPinService {
     //일괄 출고 리스트
     public List<WellReleaseListDTO> getReleaseList() {
         List<WellReleaseListDTO> releaseList = new ArrayList<>();
-
-        // 통신사와 요금제로 그룹화하여 PIN 개수를 조회
         List<Object[]> groupedData = pinRepository.countPinsByOperatorNameAndProductName();
 
-        // 그룹화된 데이터를 DTO에 저장
         for (Object[] group : groupedData) {
             String operatorName = (String) group[0];
             String productName = (String) group[1];
@@ -188,11 +185,24 @@ public class WellPinService {
             releaseDTO.setProductCount(count); // PIN 개수 설정
             releaseList.add(releaseDTO);
         }
-
         return releaseList;
     }
 
     //일괄출고
+    @Transactional
+    public void releasePinsByRelease(String release) {
+        List<WellReleaseListDTO> releaseList = getReleaseList();
+
+        for (WellReleaseListDTO releaseDTO : releaseList) {
+            String operatorName = releaseDTO.getOperatorName();
+            String productName = releaseDTO.getProductName();
+
+            // 출고처와 사용여부를 업데이트
+            pinRepository.updateReleaseAndIsUseFlag(release, true, operatorName, productName);
+        }
+    }
+
+
 
     //검색
     public Page<WellPinSearchDTO> searchPinList(Boolean isSaleFlag, Boolean isUseFlag, String network, String operatorName, String productName

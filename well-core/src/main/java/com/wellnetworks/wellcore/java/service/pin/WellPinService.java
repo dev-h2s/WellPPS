@@ -65,7 +65,7 @@ public class WellPinService {
             }).collect(Collectors.toList());
 
             return new PageImpl<>(pinListDTOList, pageable, pins.getTotalElements());
-        }  catch (Exception e) {
+        } catch (Exception e) {
             log.error("PIN 리스트를 가져오는 도중 오류가 발생했습니다: {}", e.getMessage());
             throw new RuntimeException("PIN 리스트 조회 실패", e);
         }
@@ -146,7 +146,7 @@ public class WellPinService {
 
     //엑셀 값들 등록
     private WellPinEntity convertDtoToEntity(WellPinExcelCreateDTO dto) {
-         WellPinEntity pinEntity = new WellPinEntity();
+        WellPinEntity pinEntity = new WellPinEntity();
 
         pinEntity.setStore(dto.getStore());
         pinEntity.setOperatorName(dto.getOperatorName());
@@ -188,9 +188,25 @@ public class WellPinService {
         return releaseList;
     }
 
+    // 출고 개별 값들 조회
+    public List<WellReleaseDTO> getReleaseExcel() {
+        List<WellReleaseDTO> releaseList = new ArrayList<>();
+        List<WellPinEntity> pins = pinRepository.findReleasedAndNotUsedPins(); // 모든 PIN 항목 조회
+
+        for (WellPinEntity pin : pins) {
+            String operatorName = pin.getOperatorName();
+            String productName = pin.getProductName();
+            String pinNum = pin.getPinNum();
+
+            WellReleaseDTO releaseDTO = new WellReleaseDTO(operatorName, productName, pinNum);
+            releaseList.add(releaseDTO);
+        }
+        return releaseList;
+    }
+
     //일괄출고
     @Transactional
-    public void releasePinsByRelease(String release) {
+    public List<WellReleaseListDTO> releasePinsByRelease(String release) {
         List<WellReleaseListDTO> releaseList = getReleaseList();
 
         for (WellReleaseListDTO releaseDTO : releaseList) {
@@ -199,28 +215,27 @@ public class WellPinService {
 
             pinRepository.updateReleaseAndIsUseFlag(release, true, operatorName, productName);
         }
+        return releaseList;
     }
-
-
 
     //검색
     public Page<WellPinSearchDTO> searchPinList(Boolean isSaleFlag, Boolean isUseFlag, String network, String operatorName, String productName
             , String pinNum, String managementNum, String writer, String user, Pageable pageable) {
-            Specification<WellPinEntity> spec = Specification.where(PinSpecification.isSaleFlagEquals(isSaleFlag))
-                    .and(PinSpecification.isUseFlagEquals(isUseFlag))
-                    .and(PinSpecification.networkContains(network))
-                    .and(PinSpecification.operatorNameContains(operatorName))
-                    .and(PinSpecification.productNameContains(productName))
-                    .and(PinSpecification.pinNumContains(pinNum))
-                    .and(PinSpecification.managementNumContains(managementNum))
-                    .and(PinSpecification.writerContains(writer))
-                    .and(PinSpecification.userNameContains(user));
+        Specification<WellPinEntity> spec = Specification.where(PinSpecification.isSaleFlagEquals(isSaleFlag))
+                .and(PinSpecification.isUseFlagEquals(isUseFlag))
+                .and(PinSpecification.networkContains(network))
+                .and(PinSpecification.operatorNameContains(operatorName))
+                .and(PinSpecification.productNameContains(productName))
+                .and(PinSpecification.pinNumContains(pinNum))
+                .and(PinSpecification.managementNumContains(managementNum))
+                .and(PinSpecification.writerContains(writer))
+                .and(PinSpecification.userNameContains(user));
 
-            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
 
-            Page<WellPinEntity> pins = pinRepository.findAll(spec, pageable);
+        Page<WellPinEntity> pins = pinRepository.findAll(spec, pageable);
 
-            List<WellPinSearchDTO> pinInfoList = new ArrayList<>();
+        List<WellPinSearchDTO> pinInfoList = new ArrayList<>();
 
         for (WellPinEntity pin : pins) {
             WellPinSearchDTO pinSearchDTO = new WellPinSearchDTO();
@@ -235,7 +250,7 @@ public class WellPinService {
             pinSearchDTO.setUser(pin.getUserName());
             pinInfoList.add(pinSearchDTO);
         }
-            return new PageImpl<>(pinInfoList, pageable, pins.getTotalElements());
+        return new PageImpl<>(pinInfoList, pageable, pins.getTotalElements());
     }
 
     //엑셀 중복값 다운로드

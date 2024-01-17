@@ -35,4 +35,8 @@ public interface WellPinRepository extends JpaRepository<WellPinEntity, Long> {
                                    @Param("operatorName") String operatorName,
                                    @Param("productName") String productName);
 
+    @Query("SELECT p FROM WellPinEntity p WHERE p.isSaleFlag = true AND p.isUseFlag = false")
+    List<WellPinEntity> findReleasedAndNotUsedPins();
+
+
 }

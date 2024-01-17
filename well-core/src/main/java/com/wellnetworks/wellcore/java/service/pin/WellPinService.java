@@ -197,7 +197,6 @@ public class WellPinService {
             String operatorName = releaseDTO.getOperatorName();
             String productName = releaseDTO.getProductName();
 
-            // 출고처와 사용여부를 업데이트
             pinRepository.updateReleaseAndIsUseFlag(release, true, operatorName, productName);
         }
     }

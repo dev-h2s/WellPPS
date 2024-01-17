@@ -137,6 +137,49 @@ public class PinController {
         }
     }
 
+//    @GetMapping("/release/excel")
+//    public void excelDownload(HttpServletResponse response) throws IOException {
+//        List<WellReleaseListDTO> releaseList = getReleaseList();
+//
+//        Workbook wb = new XSSFWorkbook();
+//        Sheet sheet = wb.createSheet("첫번째 시트");
+//        Row row = null;
+//        Cell cell = null;
+//        int rowNum = 0;
+//
+//        // Header
+//        row = sheet.createRow(rowNum++);
+//        cell = row.createCell(0);
+//        cell.setCellValue("번호");
+//        cell = row.createCell(1);
+//        cell.setCellValue("통신사");
+//        cell = row.createCell(2);
+//        cell.setCellValue("요금제");
+//        cell = row.createCell(3);
+//        cell.setCellValue("PIN번호");
+//
+//        for (WellReleaseListDTO releaseDTO : releaseList) {
+//            row = sheet.createRow(rowNum++);
+//            cell = row.createCell(0);
+//            cell.setCellValue(i);
+//            cell = row.createCell(1);
+//            cell.setCellValue(releaseDTO.getOperatorName());
+//            cell = row.createCell(2);
+//            cell.setCellValue(releaseDTO.getProductName());
+//            cell = row.createCell(3);
+//            cell.setCellValue(releaseDTO.getPinNum());
+//        }
+//
+//        // 컨텐츠 타입과 파일명 지정
+//        response.setContentType("ms-vnd/excel");
+//        response.setHeader("Content-Disposition", "attachment;filename=example.xlsx");
+//
+//        wb.write(response.getOutputStream());
+//        wb.close();
+//    }
+
+
+
     //검색
     @GetMapping("/search")
     public ResponseEntity<?> searchAccount(

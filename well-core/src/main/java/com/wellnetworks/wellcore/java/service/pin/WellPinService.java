@@ -23,10 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,7 +41,7 @@ public class WellPinService {
 
     //리스트 조회
     public Page<WellPinListDTO> getAllPins(Pageable pageable) {
-        try {
+//        try {
             Page<WellPinEntity> pins = pinRepository.findAll(pageable);
 
             List<WellPinListDTO> pinListDTOList = pins.stream().map(pin -> {
@@ -65,10 +62,10 @@ public class WellPinService {
             }).collect(Collectors.toList());
 
             return new PageImpl<>(pinListDTOList, pageable, pins.getTotalElements());
-        } catch (Exception e) {
-            log.error("PIN 리스트를 가져오는 도중 오류가 발생했습니다: {}", e.getMessage());
-            throw new RuntimeException("PIN 리스트 조회 실패", e);
-        }
+//        } catch (Exception e) {
+//            log.error("PIN 리스트를 가져오는 도중 오류가 발생했습니다: {}", e.getMessage());
+//            throw new RuntimeException("PIN 리스트 조회 실패", e);
+//        }
     }
 
     //생성
@@ -128,6 +125,34 @@ public class WellPinService {
             pinRepository.save(pin);
         }
     }
+
+    // 중복된 핀 조회 및 DTO 정보 저장
+    public List<WellPinExcelCreateDTO> findDuplicatePinsWithDetails(MultipartFile file) throws IOException, InvalidFormatException {
+        List<Map<String, Object>> excelData = excelUtil.getListData(file, 1, 6); // 엑셀 파일의 컬럼 수에 맞게 조정
+        List<WellPinExcelCreateDTO> duplicatePinsWithDetails = new ArrayList<>();
+        Set<String> pinSet = new HashSet<>();
+
+        for (Map<String, Object> row : excelData) {
+            WellPinExcelCreateDTO dto = mapRowToDto(row);
+
+            // 엑셀에서 가져온 핀 번호
+            String pinNum = dto.getPinNum();
+
+            // 데이터베이스에 이미 존재하는지 확인
+            if (pinRepository.findByPinNum(pinNum).isPresent()) {
+                // 중복된 핀 번호를 저장
+                duplicatePinsWithDetails.add(dto);
+            } else if (pinSet.contains(pinNum)) {
+                // 중복된 핀 번호를 저장
+                duplicatePinsWithDetails.add(dto);
+            } else {
+                pinSet.add(pinNum);
+            }
+        }
+
+        return duplicatePinsWithDetails;
+    }
+
 
     // Map을 DTO로 변환
     private WellPinExcelCreateDTO mapRowToDto(Map<String, Object> row) {

@@ -97,18 +97,17 @@ public class WellOPeratorService {
 
     // 생성
     public List<WellOperatorEntity> createOperator(WellOperatorCreateDTO createDTO) {
-        try {
             // 중복 체크
             if (operatorRepository.findByOperatorCode(createDTO.getOperatorCode()).isPresent()) {
                 throw new IllegalArgumentException("이미 사용 중인 코드명입니다.");
             }
 
-            List<Object[]> existingVersions = operatorRepository.findDistinctVersions();
+//            List<Object[]> existingVersions = operatorRepository.findDistinctVersions();
             List<WellOperatorEntity> createdOperators = new ArrayList<>();
 
-            for (Object[] versionInfo : existingVersions) {
-                Float versionId = (Float) versionInfo[0];
-                String versionName = (String) versionInfo[1];
+//            for (Object[] versionInfo : existingVersions) {
+//                Float versionId = (Float) versionInfo[0];
+//                String versionName = (String) versionInfo[1];
 
                 WellOperatorEntity newOperator = WellOperatorEntity.builder()
                         .operatorName(createDTO.getOperatorName())
@@ -118,24 +117,13 @@ public class WellOPeratorService {
                         .isVisibleFlag(false)
                         .isPdsFlag(false)
                         .isRunFlag(false)
-                        .versionId(versionId)
-                        .versionName(versionName)
+                        .versionId(1F)
+                        .versionName("versionName")
                         .build();
 
                 createdOperators.add(operatorRepository.save(newOperator));
-            }
-
+//            }
             return createdOperators;
-        } catch (DataAccessException e) {
-            log.error("데이터베이스 접근 중 오류 발생", e);
-            throw e;
-        } catch (IllegalArgumentException e) {
-            log.error("중복된 코드명 오류 발생", e);
-            throw e;
-        } catch (Exception e) {
-            log.error("통신사 생성 중 오류 발생", e);
-            throw e;
-        }
     }
 
 

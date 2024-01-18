@@ -41,13 +41,13 @@ public class PinController {
     @GetMapping
     public ResponseEntity<?> getPinList(@RequestParam(defaultValue = "0") int page,
                                         @RequestParam(defaultValue = "10") int size) {
-        try {
+//        try {
             Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
             Page<WellPinListDTO> pinPage = pinService.getAllPins(pageable);
             return ResponseUtil.createOkResponse(pinPage.getContent(), "조회 성공", pinPage);
-        } catch (Exception e) {
-            return ResponseUtil.createErrorResponse(e);
-        }
+//        } catch (Exception e) {
+//            return ResponseUtil.createErrorResponse(e);
+//        }
     }
 
     @PostMapping
@@ -213,4 +213,18 @@ public class PinController {
     }
 
 
+    @PostMapping("/upload/test")
+    public ResponseEntity<?> uploadAndFindDuplicatePins(@RequestParam("file") MultipartFile file) {
+        try {
+            List<WellPinExcelCreateDTO> duplicatePins = pinService.findDuplicatePinsWithDetails(file);
+
+            if (duplicatePins.isEmpty()) {
+                return ResponseEntity.ok("중복된 핀이 없습니다.");
+            } else {
+                return ResponseEntity.ok("중복된 핀 번호: " + duplicatePins);
+            }
+        } catch (Exception e) {
+            return ResponseUtil.createErrorResponse(e);
+        }
+    }
 }

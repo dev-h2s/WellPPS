@@ -81,7 +81,6 @@ public class OperatorController {
     //생성
     @PostMapping("create")
     public ResponseEntity<?> createOperator(@Valid WellOperatorCreateDTO createDTO) {
-        try {
             // 중복 체크
             if (wellOPeratorService.isOperatorCodeExists(createDTO.getOperatorCode())) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("통신사 코드가 이미 존재합니다.");
@@ -89,9 +88,6 @@ public class OperatorController {
 
             wellOPeratorService.createOperator(createDTO);
             return ResponseEntity.ok(" 통신사 생성 및 저장 완료");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생: " + e.getMessage());
-        }
     }
 
     //중복체크

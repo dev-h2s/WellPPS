@@ -1,21 +1,25 @@
 package com.wellnetworks.wellcore.java.service.partner;
 
-import com.wellnetworks.wellcore.java.domain.backup.partner.WellPartnerEntityBackup;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerPermissionGroupEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerUserEntity;
-import com.wellnetworks.wellcore.java.dto.Partner.*;
-import com.wellnetworks.wellcore.java.dto.Partner.sign.WellPartnerSignInfoDTO;
-import com.wellnetworks.wellcore.java.repository.File.WellPartnerFileRepository;
 import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
-import com.wellnetworks.wellcore.java.repository.Partner.*;
-import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyInRepository;
-import com.wellnetworks.wellcore.java.repository.backup.partner.*;
-import com.wellnetworks.wellcore.java.service.File.WellFileStorageService;
+import com.wellnetworks.wellcore.java.domain.backup.partner.WellPartnerEntityBackup;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerPermissionGroupEntity;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerUserEntity;
+import com.wellnetworks.wellcore.java.dto.Partner.*;
+import com.wellnetworks.wellcore.java.dto.Partner.sign.WellPartnerSignCreateDTO;
+import com.wellnetworks.wellcore.java.dto.Partner.sign.WellPartnerSignInfoDTO;
+import com.wellnetworks.wellcore.java.repository.File.WellPartnerFileRepository;
+import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerGroupRepository;
+import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerPermissionGroupRepository;
+import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
+import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerUserRepository;
+import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyInRepository;
+import com.wellnetworks.wellcore.java.repository.backup.partner.WellPartnerBackupRepository;
+import com.wellnetworks.wellcore.java.service.File.WellFileStorageService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +33,7 @@ import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -56,7 +61,7 @@ public class WellPartnerService {
 
     // 거래처 상세 조회
     public Optional<WellPartnerDetailDTO> getDetailPartnerByPartnerIdx(String partnerIdx) {
-        try {
+//        try {
             WellPartnerEntity entity = wellPartnerRepository.findByPartnerIdx(partnerIdx);
             if (entity == null) {
                 throw new EntityNotFoundException("해당 파트너를 찾을 수 없습니다. 파트너 ID: " + partnerIdx);
@@ -75,12 +80,14 @@ public class WellPartnerService {
             WellPartnerDetailDTO dto = new WellPartnerDetailDTO(entity, fileStorages, depositEntity, partnerUpperName, entity.getPartnerGroup(), apikeyInEntity, subPartnerEntities, partnerGroupName);
 
             return Optional.of(dto);
-        } catch (EntityNotFoundException e) {
-            return Optional.empty();
-        } catch (Exception e) {
-            throw new RuntimeException("거래처 상세 정보 조회 중 오류 발생: " + e.getMessage(), e);
-        }
+//        } catch (EntityNotFoundException e) {
+//            return Optional.empty();
+//        } catch (Exception e) {
+//            throw new RuntimeException("거래처 상세 정보 조회 중 오류 발생: " + e.getMessage(), e);
+//        }
     }
+
+
 
 
     // 거래처 검색
@@ -276,6 +283,7 @@ public class WellPartnerService {
         }
     }
 
+    //거래처 생성
     @Transactional(rollbackOn = Exception.class)
     public String join(WellPartnerCreateDTO createDTO) throws Exception {
         // 거래처 그룹 정보 가져오기
@@ -342,7 +350,7 @@ public class WellPartnerService {
                     .locationDetailAddress(createDTO.getLocationDetailAddress())
                     .partnerMemo(createDTO.getPartnerMemo())
                     //회원가입 관리 관련 컬럼
-                    .registrationStatus(createDTO.getRegistrationStatus())
+                    .registrationStatus("승인")
                     .rejectionReason(createDTO.getRejectionReason())
                     .writer(createDTO.getWriter()) //작성자
                     .event(createDTO.getEvent())//이벤트
@@ -386,6 +394,80 @@ public class WellPartnerService {
         }
         System.out.println("거래처, 거래처유저 생성완료");
         return tempPasswordPlainText;
+    }
+
+
+    //거래처 회원가입 신청 생성
+    @Transactional(rollbackOn = Exception.class)
+    public String signJoin(WellPartnerSignCreateDTO signCreateDTO) throws Exception {
+        // 거래처 그룹 정보 가져오기
+        WellPartnerGroupEntity partnerGroup = wellPartnerGroupRepository.findByPartnerGroupId(signCreateDTO.getPartnerGroupId());
+
+        // API 연동 여부 확인 및 API 키 엔티티 가져오기
+        WellApikeyInEntity apikeyIn = null; // 초기화
+        if (signCreateDTO.isInApiFlag() && signCreateDTO.getApiKeyInIdx() != null) {
+            apikeyIn = wellApikeyInRepository.findByApiKeyInIdx(signCreateDTO.getApiKeyInIdx());
+        }
+
+        // API 연동 여부와 API 키가 설정되지 않은 경우 예외 처리
+        if (signCreateDTO.isInApiFlag() && apikeyIn == null) {
+            throw new RuntimeException("해당 API 키를 찾을 수 없습니다.");
+        }
+
+        // department 값을 기준으로 WellEmployeeGroupEntity 객체 조회
+        String department = signCreateDTO.getDepartment();
+        Optional<WellPartnerPermissionGroupEntity> groupOptional = permissionGroupRepository.findByDepartment(department);
+
+        WellPartnerPermissionGroupEntity group = groupOptional.orElseThrow(()
+                -> new IllegalArgumentException("Invalid department: " + department));
+
+
+        String partnerIdx = UUID.randomUUID().toString();
+
+        try {
+            LocalDateTime requestDate = LocalDateTime.now(ZoneId.systemDefault());
+            // 거래처 Entity 생성
+            WellPartnerEntity partner = WellPartnerEntity.builder()
+                    .partnerIdx(partnerIdx)
+                    .partnerCode(generateUniquePartnerCode())
+                    .ceoName(signCreateDTO.getCeoName())
+                    .partnerName(signCreateDTO.getPartnerName())
+                    .emailAddress(signCreateDTO.getEmailAddress())
+                    .ceoTelephone(signCreateDTO.getCeoTelephone())
+                    .registrationNumber(signCreateDTO.getRegistrationNumber())
+                    .discountCategory(signCreateDTO.getDiscountCategory())
+                    .visitStatus(signCreateDTO.getVisitStatus())
+                    .desiredDate(signCreateDTO.getDesiredDate())
+                    .registrationAddress(signCreateDTO.getRegistrationAddress())
+                    .registrationDetailAddress(signCreateDTO.getRegistrationDetailAddress())
+                    .partnerTelephone(signCreateDTO.getPartnerTelephone())
+                    .termsOfUse(signCreateDTO.getTermsOfUse())
+                    .signRequestDate(requestDate)
+                    .inApiFlag(signCreateDTO.isInApiFlag())
+                    .apiKey(apikeyIn) // apikey 설정
+
+                    //회원가입 관리 관련 컬럼
+                    .registrationStatus("대기")
+                    .visitStatus(signCreateDTO.getVisitStatus())//방문요청여부
+                    .partnerGroup(partnerGroup) // 거래처 그룹 설정
+                    .build();
+
+            //p_code
+            String userId = partner.getPartnerCode();
+
+            // 거래처 저장
+            wellPartnerRepository.save(partner);
+
+            // 파일 저장
+            fileStorageService.saveSignFiles(signCreateDTO, partner.getPartnerIdx());
+
+
+        } catch (Exception e) {
+            // 롤백을 위해 예외 발생
+            throw new RuntimeException("거래처 생성 중 오류 발생", e);
+        }
+        System.out.println("거래처, 회원가입");
+        return signCreateDTO.getPartnerName();
     }
 
 

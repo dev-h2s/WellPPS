@@ -199,7 +199,12 @@ public class WellPartnerEntity {
     private Boolean termsOfUse; // 이용약관 동의
 
     @Column(name="sign_request_date")
-    private LocalDate signRequestDate; // 회원가입 요청일자
+    private LocalDateTime signRequestDate; // 회원가입 요청일자
+
+    @Column(name="desired_date")
+    private LocalDate desiredDate; //방문 희망 날짜
+
+
     @Builder
     public WellPartnerEntity(String partnerIdx, String partnerCode, String partnerName, String partnerType, Boolean specialPolicyOpening, Boolean specialPolicyCharge
                             , WellPartnerGroupEntity partnerGroup, String discountCategory, String salesManager
@@ -210,7 +215,7 @@ public class WellPartnerEntity {
                             , String registrationAddress, String registrationDetailAddress, String locationAddress, String locationDetailAddress
                             , String partnerMemo,
                              String writer, String event, Boolean visitStatus, LocalDateTime openingVisitRequestDate, LocalDateTime openingVisitDecideDate, String openingProgress, Boolean isOpeningFlag, String openingNote
-                             , String registrationStatus,String rejectionReason, LocalDate reviewDate, String reviewer, Boolean termsOfUse, LocalDate signRequestDate) {
+                             , String registrationStatus,String rejectionReason, LocalDate reviewDate, String reviewer, Boolean termsOfUse, LocalDateTime signRequestDate, LocalDate desiredDate) {
         this.partnerIdx = partnerIdx;
         this.partnerCode = partnerCode;
         this.partnerName = partnerName;
@@ -257,6 +262,7 @@ public class WellPartnerEntity {
         this.reviewer = reviewer;
         this.termsOfUse = termsOfUse;
         this.signRequestDate = signRequestDate;
+        this.desiredDate = desiredDate;
     }
 
     public void updateFromDTO(WellPartnerUpdateDTO updateDTO) {

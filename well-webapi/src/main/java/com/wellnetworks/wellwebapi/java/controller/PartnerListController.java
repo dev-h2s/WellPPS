@@ -2,6 +2,7 @@ package com.wellnetworks.wellwebapi.java.controller;
 // 거래처 리스트 컨트롤러
 
 import com.wellnetworks.wellcore.java.dto.Partner.*;
+import com.wellnetworks.wellcore.java.dto.Partner.sign.WellPartnerSignCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.sign.WellPartnerSignInfoDTO;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.service.partner.WellPartnerService;
@@ -28,7 +29,7 @@ public class PartnerListController {
     @Autowired private WellPartnerService wellPartnerService;
     @Autowired private WellPartnerRepository partnerRepository;
 
-    //상세 거래처 idx
+    //상세 거래처 idx 조회
     @GetMapping("business/detail/{partnerIdx}")
     public ResponseEntity<?> getDetailPartner(@PathVariable String partnerIdx) {
         try {
@@ -48,6 +49,28 @@ public class PartnerListController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생: " + e.getMessage());
         }
     }
+
+    //상세 거래처 idx 조회
+    @GetMapping("businessSign/detail/{partnerIdx}")
+    public ResponseEntity<?> getDetailPartnerSign(@PathVariable String partnerIdx) {
+//        try {
+            Optional<WellPartnerDetailDTO> partnerDetailDTO = wellPartnerService.getDetailPartnerByPartnerIdx(partnerIdx);
+
+            if (partnerDetailDTO.isPresent()) {
+                return ResponseEntity.ok(partnerDetailDTO.get());
+            } else {
+                // 데이터가 없는 경우 404 Not Found 반환
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("거래처 상세 정보를 찾을 수 없습니다. IDX: %s", partnerIdx));
+            }
+//        } catch (EntityNotFoundException e) {
+            // EntityNotFoundException이 발생한 경우 404 Not Found 반환
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("거래처 상세 정보를 찾을 수 없습니다. IDX: %s", partnerIdx));
+//        } catch (Exception e) {
+            // 다른 예외가 발생한 경우 500 Internal Server Error 반환
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생: " + e.getMessage());
+//        }
+    }
+
 
 
 
@@ -87,8 +110,8 @@ public class PartnerListController {
     }
 
 
-    //거래처 리스트
-    @GetMapping("business/sign")
+    //거래처 회원가입 리스트
+    @GetMapping("businessSign")
     public ResponseEntity<?> getPartnerSignList(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
@@ -134,6 +157,16 @@ public class PartnerListController {
 
             // 콘솔에 임시 비밀번호 출력
             return ResponseEntity.status(HttpStatus.CREATED).body("거래처가 성공적으로 생성되었습니다. 생성된 아이디"+" 임시 비밀번호: " + tempPassword);
+    }
+
+    //거래처 회원가입 신청 입력
+    @PostMapping(value = "businessSign/create")
+    public ResponseEntity<String> createPartnerSign(@Valid WellPartnerSignCreateDTO signCreateDTO) throws Exception {
+
+        wellPartnerService.signJoin(signCreateDTO);
+
+        // 콘솔에 임시 비밀번호 출력
+        return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 성공적으로 신청되었습니다.");
 
     }
 

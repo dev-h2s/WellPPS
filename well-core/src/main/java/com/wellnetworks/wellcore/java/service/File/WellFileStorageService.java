@@ -3,6 +3,7 @@ package com.wellnetworks.wellcore.java.service.File;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.dto.FIle.WellPartnerFileCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
+import com.wellnetworks.wellcore.java.dto.Partner.sign.WellPartnerSignCreateDTO;
 import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
 import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import com.wellnetworks.wellcore.java.dto.FIle.WellFIleCreateDTO;
@@ -48,6 +49,23 @@ public class WellFileStorageService {
         processFiles(idCardFiles, "대표자신분증", partnerIdx, fileIds, result);
         processFiles(storePhotoFiles, "매장사진", partnerIdx, fileIds, result);
         processFiles(businessCardFiles, "대표자명함", partnerIdx, fileIds, result);
+
+        // 다른 파일 업로드 필드들도 처리
+
+        return result;
+    }
+
+    @Transactional
+    public Map<String, Object> saveSignFiles(WellPartnerSignCreateDTO signCreateDTO, String partnerIdx) throws Exception {
+        Map<String, Object> result = new HashMap<>();
+        List<Long> fileIds = new ArrayList<>();
+
+        List<MultipartFile> businessLicenseFiles = signCreateDTO.getBusinessLicenseFiles();
+        List<MultipartFile> idCardFiles = signCreateDTO.getIdCardFiles();
+
+        // 각 파일 업로드 필드를 처리
+        processFiles(businessLicenseFiles, "사업자등록증", partnerIdx, fileIds, result);
+        processFiles(idCardFiles, "대표자신분증", partnerIdx, fileIds, result);
 
         // 다른 파일 업로드 필드들도 처리
 

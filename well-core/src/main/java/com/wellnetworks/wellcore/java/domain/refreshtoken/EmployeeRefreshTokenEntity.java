@@ -5,14 +5,14 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import org.springframework.data.redis.core.RedisHash;
+//import org.springframework.data.redis.core.RedisHash;
 
 import java.util.Date;
 @Entity
 @NoArgsConstructor // 기본 생성자 생성
 @AllArgsConstructor // 모든 필드를 포함한 생성자 생성
 @Builder // 빌더 패턴 구현
-@RedisHash(value = "refreshToken", timeToLive = 60)
+//@RedisHash(value = "refreshToken", timeToLive = 60)
 public class EmployeeRefreshTokenEntity {
 
     @Id

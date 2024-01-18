@@ -131,13 +131,20 @@ public class WellPartnerService {
         }
     }
 
-    //거래처 리스트 조회
+// 거래처 리스트에서 회원가입이 승인된 것만 나올수 있게끔
+    public static Specification<WellPartnerEntity> registrationStatusIsApproved() {
+        return (root, query, criteriaBuilder) -> {
+            return criteriaBuilder.equal(root.get("registrationStatus"), "승인");
+        };
+    }
 
+    //거래처 리스트 조회
     public Page<WellPartnerInfoDTO> getAllPartners(Pageable pageable) {
         try {
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "productRegisterDate"));
 
-        Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(pageable);
+//        Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(pageable);
+        Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(registrationStatusIsApproved(), pageable);
         List<WellPartnerInfoDTO> partnerInfoList = new ArrayList<>();
 
 
@@ -163,6 +170,53 @@ public class WellPartnerService {
         }
 
         Long totalPartnerCount = partners.getTotalElements();
+
+            return new PageImpl<>(partnerInfoList, pageable, totalPartnerCount);
+        } catch (Exception e) {
+            // 여기에 예외 처리 로직 추가
+            throw new RuntimeException("거래처 리스트 조회 중 오류 발생: " + e.getMessage(), e);
+        }
+    }
+
+    // 거래처 리스트에서 회원가입이 승인된 것만 나올수 있게끔
+    public static Specification<WellPartnerEntity> registrationStatusIsNot() {
+        return (root, query, criteriaBuilder) -> {
+            return criteriaBuilder.notEqual(root.get("registrationStatus"), "승인");
+        };
+    }
+
+    //거래처 회원가입 리스트 조회
+    public Page<WellPartnerSignInfoDTO> getAllPartnerSign(Pageable pageable) {
+        try {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "productRegisterDate"));
+
+//        Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(pageable);
+            Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(registrationStatusIsNot(), pageable);
+            List<WellPartnerSignInfoDTO> partnerInfoList = new ArrayList<>();
+
+
+            for (WellPartnerEntity partnerEntity : partners) {
+                List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerEntity.getPartnerIdx());
+
+                WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
+                WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
+
+
+                String partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
+                String partnerUpperName = null;
+                if (partnerEntity.getPartnerUpperIdx() != null) {
+                    partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx);
+                }
+
+
+                WellPartnerSignInfoDTO partnerSignInfo = new WellPartnerSignInfoDTO(partnerEntity, fileStorages, dipositEntity
+                        , partnerUpperName
+                );
+                partnerInfoList.add(partnerSignInfo);
+
+            }
+
+            Long totalPartnerCount = partners.getTotalElements();
 
             return new PageImpl<>(partnerInfoList, pageable, totalPartnerCount);
         } catch (Exception e) {
@@ -278,6 +332,17 @@ public class WellPartnerService {
                     .locationAddress(createDTO.getLocationAddress())
                     .locationDetailAddress(createDTO.getLocationDetailAddress())
                     .partnerMemo(createDTO.getPartnerMemo())
+            //회원가입 관리 관련 컬럼
+                    .registrationStatus(createDTO.getRegistrationStatus())
+                    .rejectionReason(createDTO.getRejectionReason())
+                    .writer(createDTO.getWriter()) //작성자
+                    .event(createDTO.getEvent())//이벤트
+                    .visitStatus(createDTO.getVisitStatus())//방문요청여부
+                    .openingVisitRequestDate(createDTO.getOpeningVisitRequestDate())//개통점방문희망일자
+                    .openingVisitDecideDate(createDTO.getOpeningVisitDecideDate())//개통점방문확정일자
+                    .openingProgress(createDTO.getOpeningProgress())//개통점진행도
+                    .isOpeningFlag(createDTO.getIsOpeningFlag())//개통점전환여부
+                    .openingNote(createDTO.getOpeningNote())//개통점신청비고
                     .build();
 
             //p_code
@@ -369,7 +434,7 @@ public class WellPartnerService {
             String apiKeyInIdx = String.valueOf(apiKeyInEntity.getApiKeyInIdx());
             // 삭제 등의 동작 수행
         }
-        try {
+//        try {
             String partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
             String partnerUpperName = null;
             if (partnerEntity.getPartnerUpperIdx() != null) {
@@ -424,9 +489,11 @@ public class WellPartnerService {
             partnerBackup.setOpeningVisitRequestDate(partnerEntity.getOpeningVisitRequestDate());
             partnerBackup.setOpeningVisitDecideDate(partnerEntity.getOpeningVisitDecideDate());
             partnerBackup.setOpeningProgress(partnerEntity.getOpeningProgress());
-            partnerBackup.setOpeningFlag(partnerEntity.isOpeningFlag());
+            partnerBackup.setOpeningFlag(partnerEntity.getIsOpeningFlag());
             partnerBackup.setOpeningNote(partnerEntity.getOpeningNote());
             partnerBackup.setInApiFlag(partnerEntity.getInApiFlag());
+            partnerBackup.setRegistrationStatus(partnerEntity.getRegistrationStatus());
+            partnerBackup.setRejectionReason(partnerEntity.getRejectionReason());
 
             // 백업 테이블에 저장
             wellPartnerBackupRepository.save(partnerBackup);
@@ -435,9 +502,9 @@ public class WellPartnerService {
             wellPartnerRepository.delete(partnerEntity);
 
             return new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity, partnerUpperName);
-        } catch (Exception e) {
+//        } catch (Exception e) {
             // 롤백을 위해 예외 발생
-            throw new RuntimeException("거래처 삭제 중 오류 발생", e);
-        }
+//            throw new RuntimeException("거래처 삭제 중 오류 발생", e);
+//        }
     }
 }

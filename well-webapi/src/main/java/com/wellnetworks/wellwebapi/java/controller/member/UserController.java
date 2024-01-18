@@ -52,6 +52,7 @@ public class UserController {
     @PostMapping(value = "init/login")
     public ResponseEntity<ApiResponse> login(@RequestBody UserLoginReq loginReq) {
         WellEmployeeUserEntity userEntity = null;
+        System.out.println("돌아가나");
         try {
             // 사용자의 인증 정보를 검증
             Authentication authentication = authenticationManager.authenticate(

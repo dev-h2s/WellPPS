@@ -63,13 +63,13 @@ public class WellPartnerEntity {
     @Column(name = "pcode", unique = true) //거래처코드
     private String partnerCode;
 
-    @Column(name = "p_name", nullable = false) //거래처명
+    @Column(name = "p_name") //거래처명
     private String partnerName;
 
     @Column(name = "trans_status") //거래유무
     private String transactionStatus;
 
-    @Column(name = "p_type", nullable = false) //거래처구분
+    @Column(name = "p_type") //거래처구분
     private String partnerType;
 
     @Column(name = "p_upper_idx") //상부점_id
@@ -158,13 +158,23 @@ public class WellPartnerEntity {
     @Column(name = "commission_bank_holder") //수수료입금계좌예금주
     private String commissionBankHolder;
 
+    // 회원가입 관리 / 개통점 신청 관련 컬럼
+    @Column(name = "registration_status") //회원가입 여부
+    private String registrationStatus;
+    @Column(name = "rejection_reason") //회원가입 거부 사유
+    private String rejectionReason;
+
+
     @Column(name = "writer") //작성자
     private String writer;
 
     @Column(name = "event") //이벤트
     private String event;
 
-    @Column(name = "opening_visit_reqdt") //개통점방문요청일자
+    @Column(name = "visit_status") //방문요청여부
+    private Boolean visitStatus;
+
+    @Column(name = "opening_visit_reqdt") //개통점방문희망일자
     private LocalDateTime openingVisitRequestDate;
 
     @Column(name = "opening_visit_decdt") //개통점방문확정일자
@@ -174,7 +184,7 @@ public class WellPartnerEntity {
     private String openingProgress;
 
     @Column(name = "opening_flag") //개통점전환여부
-    private boolean openingFlag;
+    private Boolean isOpeningFlag;
 
     @Column(name = "opening_note") //개통점신청비고
     private String openingNote;
@@ -187,7 +197,9 @@ public class WellPartnerEntity {
                             , String partnerTelephone, String commissionBankName, String commissionDepositAccount, String commissionBankHolder
                             , String emailAddress, String registrationNumber
                             , String registrationAddress, String registrationDetailAddress, String locationAddress, String locationDetailAddress
-                            , String partnerMemo) {
+                            , String partnerMemo,
+                             String writer, String event, Boolean visitStatus, LocalDateTime openingVisitRequestDate, LocalDateTime openingVisitDecideDate, String openingProgress, Boolean isOpeningFlag, String openingNote
+                             , String registrationStatus,String rejectionReason) {
         this.partnerIdx = partnerIdx;
         this.partnerCode = partnerCode;
         this.partnerName = partnerName;
@@ -220,6 +232,16 @@ public class WellPartnerEntity {
         this.locationAddress = locationAddress;
         this.locationDetailAddress = locationDetailAddress;
         this.partnerMemo = partnerMemo;
+        this.writer = writer;
+        this.event = event;
+        this.visitStatus = visitStatus;
+        this.openingVisitRequestDate = openingVisitRequestDate;
+        this.openingVisitDecideDate = openingVisitDecideDate;
+        this.openingProgress = openingProgress;
+        this.isOpeningFlag = isOpeningFlag;
+        this.openingNote = openingNote;
+        this.registrationStatus = registrationStatus;
+        this.rejectionReason = rejectionReason;
     }
 
     public void updateFromDTO(WellPartnerUpdateDTO updateDTO) {
@@ -247,6 +269,16 @@ public class WellPartnerEntity {
         this.locationAddress = updateDTO.getLocationAddress();
         this.locationDetailAddress = updateDTO.getLocationDetailAddress();
         this.partnerMemo = updateDTO.getPartnerMemo();
+        this.writer = writer;
+        this.event = event;
+        this.visitStatus = visitStatus;
+        this.openingVisitRequestDate = openingVisitRequestDate;
+        this.openingVisitDecideDate = openingVisitDecideDate;
+        this.openingProgress = openingProgress;
+        this.isOpeningFlag = isOpeningFlag;
+        this.openingNote = openingNote;
+        this.registrationStatus = registrationStatus;
+        this.rejectionReason = rejectionReason;
     }
 
     public void setApiKey(WellApikeyInEntity apiKey) {this.apiKey = apiKey;}

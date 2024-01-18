@@ -1,5 +1,6 @@
 package com.wellnetworks.wellcore.java.domain.employee;
 //직원 테이블
+
 import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
 import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeUpdateDTO;
@@ -26,40 +27,28 @@ import static jakarta.persistence.FetchType.LAZY;
 public class WellEmployeeEntity {
 
 
-
     @Id
-    @Column(name= "em_idx")
+    @Column(name = "em_idx")
     private String employeeIdx;
 
     @OneToOne(fetch = LAZY)
-    @JoinColumn(name = "em_idx", insertable = false, updatable = false
-//            , nullable = false
-    )
+    @JoinColumn(name = "em_idx", insertable = false, updatable = false)
     private WellEmployeeUserEntity employeeUser;
 
     @Column(name = "em_id") //직원의 아이디
     private Long employeeId;
 
-    //여러 사원 관련 파일을 가질 수 있음
-//    @OneToMany(mappedBy = "employee")
-//    private List<WellEmployeeFileStorageEntity> files = new ArrayList<>();
 
-    @Column(name = "belong"
-//            , nullable = false
-    ) // 소속회사
+    @Column(name = "belong") // 소속회사
     private String belong;
 
-    @Column(name = "name"
-//            , nullable = false
-    ) //사원 이름
+    @Column(name = "name") //사원 이름
     private String employeeName;
 
     @Column(name = "e_mail") //사원 이메일
     private String email;
 
-    @Column(name = "tel_private"
-//            , nullable = false
-    ) // 개인 전화번호
+    @Column(name = "tel_private") // 개인 전화번호
     private String telPrivate;
 
     @Column(name = "tel_work") // 직장 전화번호
@@ -69,9 +58,7 @@ public class WellEmployeeEntity {
     private String registrationNumber;
 
 
-    @Column(name = "position"
-//            , nullable = false
-    ) //직급(대표,부장 등)
+    @Column(name = "position") //직급(대표,부장 등)
     private String position;
 
 //    @Column(name = "level") //!!(미정의)
@@ -92,22 +79,16 @@ public class WellEmployeeEntity {
     @Column(name = "bank_holder") //은행 계좌 소유자
     private String bankHolder;
 
-    @Column(name = "emp_state"
-//            , nullable = false
-    ) //재직 상태(재직,퇴사 등)
+    @Column(name = "emp_state") //재직 상태(재직,퇴사 등)
     private String employmentState;
 
-    @Column(name = "emp_type"
-//            , nullable = false
-    ) //고용형태 유형(정규직, 비정규직 등)
+    @Column(name = "emp_type") //고용형태 유형(정규직, 비정규직 등)
     private String jobType;
 
     @Column(name = "external_access_cert", columnDefinition = "bit") //외부 접속여부
     private Boolean externalAccessCert;
 
-    @Column(name = "entry_dt"
-//            , nullable = false
-    ) //입사 일자
+    @Column(name = "entry_dt"    ) //입사 일자
     private LocalDate entryDate;
 
     @Column(name = "retire_dt") //퇴사 일자
@@ -129,7 +110,7 @@ public class WellEmployeeEntity {
     private String memo;
 
 
-//    @Column(name = "em_moddt") //마지막 수정 날짜
+    //    @Column(name = "em_moddt") //마지막 수정 날짜
 //    private LocalDateTime employeeModifyDate;
 //
 //    @Column(name = "em_regdt") //생성 날짜와 시간
@@ -146,7 +127,6 @@ public class WellEmployeeEntity {
                               String memo, LocalDateTime employeeModifyDate, LocalDateTime employeeRegisterDate) {
         this.employeeIdx = employeeIdx;
         this.employeeUser = employeeUser;
-//        this.files = files;
         this.employeeId = employeeId;
         this.belong = belong;
         this.employeeName = employeeName;
@@ -174,6 +154,7 @@ public class WellEmployeeEntity {
 //        this.employeeModifyDate = employeeModifyDate;
 //        this.employeeRegisterDate = employeeRegisterDate;
     }
+
     public void updateFromDTO(WellEmployeeUpdateDTO updateDTO) {
         this.employeeName = updateDTO.getEmployeeName(); //이름
         this.belong = updateDTO.getBelong(); // 소속 회사

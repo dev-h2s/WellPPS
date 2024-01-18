@@ -6,12 +6,7 @@ import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeManagerGroupEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 
-import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
 import com.wellnetworks.wellcore.java.dto.member.*;
 import com.wellnetworks.wellcore.java.repository.File.WellEmployeeFileRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeGroupRepository;

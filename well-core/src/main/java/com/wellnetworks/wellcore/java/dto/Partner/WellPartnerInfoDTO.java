@@ -33,6 +33,8 @@ public class WellPartnerInfoDTO {
     private String writer;
     private String partnerUpperIdx;
     private String partnerUpperName;
+    private Boolean isOpeningFlag;
+    private String registrationStatus; // 회원가입 승인 여부
 
     //리스트
     public WellPartnerInfoDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, WellDipositEntity diposit
@@ -51,11 +53,13 @@ public class WellPartnerInfoDTO {
         if (entity.getSubscriptionDate() != null){
             this.subscriptionDate = LocalDate.from(entity.getSubscriptionDate());
         }
+
         this.partnerCode = entity.getPartnerCode();
         this.partnerName = entity.getPartnerName();
         this.partnerType = entity.getPartnerType();
         this.discountCategory = entity.getDiscountCategory();
-
+        this.isOpeningFlag = entity.getIsOpeningFlag();
+        this.registrationStatus = entity.getRegistrationStatus();
         this.dipositBalance = diposit != null ? diposit.getDipositBalance() : 0;
 
         this.salesManager = entity.getSalesManager();

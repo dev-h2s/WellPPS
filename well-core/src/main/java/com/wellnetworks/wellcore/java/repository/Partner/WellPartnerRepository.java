@@ -1,19 +1,16 @@
 package com.wellnetworks.wellcore.java.repository.Partner;
 
-import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
-import jakarta.annotation.Nullable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface WellPartnerRepository extends JpaRepository<WellPartnerEntity, String>, JpaSpecificationExecutor<WellPartnerEntity>{
@@ -22,6 +19,8 @@ public interface WellPartnerRepository extends JpaRepository<WellPartnerEntity, 
 
     //거래처_idx 조회
     WellPartnerEntity findByPartnerIdx(String partnerIdx);
+
+    Optional<WellPartnerEntity> findByPartnerName(String partnerName);
 
     // partnerUpperIdx를 사용하여 상부점의 이름을 조회
     @Query("SELECT  p.partnerName FROM WellPartnerEntity p WHERE p.partnerIdx = :partnerIdx")

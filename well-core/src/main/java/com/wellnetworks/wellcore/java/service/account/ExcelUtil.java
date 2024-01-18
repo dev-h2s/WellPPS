@@ -19,14 +19,11 @@ public class ExcelUtil {
             return "";
         }
 
-        switch (cell.getCellTypeEnum()) {
-            case STRING:
-                return cell.getStringCellValue();
-            case NUMERIC:
-                return String.valueOf((int) cell.getNumericCellValue());
-            default:
-                return "";
-        }
+        return switch (cell.getCellTypeEnum()) {
+            case STRING -> cell.getStringCellValue();
+            case NUMERIC -> String.valueOf((int) cell.getNumericCellValue());
+            default -> "";
+        };
     }
 
     public List<Map<String, Object>> getListData(MultipartFile file, int startRowNum, int columnLength) throws IOException, InvalidFormatException {

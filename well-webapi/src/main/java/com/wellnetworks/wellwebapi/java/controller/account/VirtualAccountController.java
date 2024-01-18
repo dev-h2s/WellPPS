@@ -5,6 +5,7 @@ import com.wellnetworks.wellcore.java.dto.VirtualAccount.*;
 import com.wellnetworks.wellcore.java.repository.account.WellVirtualAccountRepository;
 import com.wellnetworks.wellcore.java.service.account.ExcelUtil;
 import com.wellnetworks.wellcore.java.service.account.WellVirtualAccountService;
+import com.wellnetworks.wellwebapi.java.controller.ResponseUtil;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,24 +74,9 @@ public class VirtualAccountController {
             Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "issueDate"));
             Page<WellVirtualAccountInfoDTO> partnersPage = virtualAccountService.getAllAccounts(pageable);
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("currentPage", partnersPage.getNumber());
-            response.put("items", partnersPage.getContent());
-            response.put("message", "조회 성공");
-            response.put("status", "OK");
-            response.put("totalItems", partnersPage.getTotalElements());
-            response.put("totalPages", partnersPage.getTotalPages());
-
-            response.put("issuedCount", virtualAccountRepository.issuedCount());
-            response.put("notIssuedCount", virtualAccountRepository.notIssuedCount());
-            response.put("collectCount", virtualAccountRepository.collectCount());
-
-            return ResponseEntity.ok(response);
+            return ResponseUtil.createOkResponse(partnersPage.getContent(), "조회 성공", partnersPage);
         } catch (Exception e) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("message", "서버 오류 발생: " + e.getMessage());
-            errorResponse.put("status", "ERROR");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+            return ResponseUtil.createErrorResponse(e);
         }
     }
 

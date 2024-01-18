@@ -15,7 +15,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
-
 import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
@@ -38,7 +37,7 @@ public class WellPartnerEntity {
 
     // API 키와의 다대일 관계 (하나의 거래처는 API 키를 가짐)
     @OneToOne(fetch = LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "apikey_in_idx", nullable = false)
+    @JoinColumn(name = "apikey_in_idx")
     private WellApikeyInEntity apiKey;
 
     // 가상계좌 연결 1대1

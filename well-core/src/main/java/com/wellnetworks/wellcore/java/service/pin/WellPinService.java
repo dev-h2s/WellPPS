@@ -41,32 +41,20 @@ public class WellPinService {
 
     //리스트 조회
     public Page<WellPinListDTO> getAllPins(Pageable pageable) {
-//        try {
-            Page<WellPinEntity> pins = pinRepository.findAll(pageable);
+        Page<WellPinEntity> pins = pinRepository.findAll(pageable);
 
-            List<WellPinListDTO> pinListDTOList = pins.stream().map(pin -> {
-                String operatorName = operatorRepository.findByOperatorName(pin.getOperatorName())
-                        .map(WellOperatorEntity::getOperatorName)
-                        .orElse("");
-                String productName = productRepository.findByProductName(pin.getProductName())
-                        .map(WellProductEntity::getProductName)
-                        .orElse("");
-                String storeName = partnerRepository.findByPartnerName(pin.getStore())
-                        .map(WellPartnerEntity::getPartnerName)
-                        .orElse("");
-                String releaseName = partnerRepository.findByPartnerName(pin.getRelease())
-                        .map(WellPartnerEntity::getPartnerName)
-                        .orElse("");
+        List<WellPinListDTO> pinListDTOList = pins.stream().map(pin -> {
+            String operatorName = operatorRepository.findByOperatorName(pin.getOperatorName()).map(WellOperatorEntity::getOperatorName).orElse("");
+            String productName = productRepository.findByProductName(pin.getProductName()).map(WellProductEntity::getProductName).orElse("");
+            String storeName = partnerRepository.findByPartnerName(pin.getStore()).map(WellPartnerEntity::getPartnerName).orElse("");
+            String releaseName = partnerRepository.findByPartnerName(pin.getRelease()).map(WellPartnerEntity::getPartnerName).orElse("");
 
-                return new WellPinListDTO(pin, operatorName, productName, storeName, releaseName);
-            }).collect(Collectors.toList());
+            return new WellPinListDTO(pin, operatorName, productName, storeName, releaseName);
+        }).collect(Collectors.toList());
 
-            return new PageImpl<>(pinListDTOList, pageable, pins.getTotalElements());
-//        } catch (Exception e) {
-//            log.error("PIN 리스트를 가져오는 도중 오류가 발생했습니다: {}", e.getMessage());
-//            throw new RuntimeException("PIN 리스트 조회 실패", e);
-//        }
+        return new PageImpl<>(pinListDTOList, pageable, pins.getTotalElements());
     }
+
 
     //생성
     public WellPinEntity createPin(WellPinCreateDTO createDTO) {

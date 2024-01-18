@@ -29,6 +29,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -41,13 +42,13 @@ public class PinController {
     @GetMapping
     public ResponseEntity<?> getPinList(@RequestParam(defaultValue = "0") int page,
                                         @RequestParam(defaultValue = "10") int size) {
-//        try {
+        try {
             Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
             Page<WellPinListDTO> pinPage = pinService.getAllPins(pageable);
             return ResponseUtil.createOkResponse(pinPage.getContent(), "조회 성공", pinPage);
-//        } catch (Exception e) {
-//            return ResponseUtil.createErrorResponse(e);
-//        }
+        } catch (Exception e) {
+            return ResponseUtil.createErrorResponse(e);
+        }
     }
 
     @PostMapping
@@ -84,12 +85,18 @@ public class PinController {
     @PostMapping("/excel")
     public ResponseEntity<?> importPins(@RequestParam("file") MultipartFile file) {
         try {
-            pinService.importPinsFromExcel(file);
-            return ResponseEntity.ok("핀 데이터가 성공적으로 업로드되었습니다.");
+            List<WellPinExcelCreateDTO> duplicatePins = pinService.importPinsFromExcel(file);
+
+            if (duplicatePins.isEmpty()) {
+                return ResponseEntity.ok("핀 데이터가 성공적으로 업로드되었습니다.");
+            } else {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "중복된 핀 번호가 있습니다.", "items", duplicatePins));
+            }
         } catch (Exception e) {
             return ResponseUtil.createErrorResponse(e);
         }
     }
+
 
     // 엑셀 다운로드
     @GetMapping("/excel/download")
@@ -212,19 +219,4 @@ public class PinController {
         }
     }
 
-
-    @PostMapping("/upload/test")
-    public ResponseEntity<?> uploadAndFindDuplicatePins(@RequestParam("file") MultipartFile file) {
-        try {
-            List<WellPinExcelCreateDTO> duplicatePins = pinService.findDuplicatePinsWithDetails(file);
-
-            if (duplicatePins.isEmpty()) {
-                return ResponseEntity.ok("중복된 핀이 없습니다.");
-            } else {
-                return ResponseEntity.ok("중복된 핀 번호: " + duplicatePins);
-            }
-        } catch (Exception e) {
-            return ResponseUtil.createErrorResponse(e);
-        }
-    }
 }

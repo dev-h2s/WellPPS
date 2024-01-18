@@ -1,7 +1,9 @@
 package com.wellnetworks.wellsecure.java.service;
 
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerUserEntity;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -9,12 +11,15 @@ import java.util.Collection;
 import java.util.Objects;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PartnerUserDetails implements UserDetails {
 
     private String username;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
     private boolean isFirstLogin; // 첫 로그인 여부
+    // partner 필드를 반환하는 메서드
+    @Getter
     private WellPartnerUserEntity partner;
     /**
      * EmployeeUserDetails 객체를 생성합니다.
@@ -31,10 +36,6 @@ public class PartnerUserDetails implements UserDetails {
         this.isFirstLogin = isFirstLogin;
         this.partner =partner;
 
-    }
-    // partner 필드를 반환하는 메서드
-    public WellPartnerUserEntity getPartner() {
-        return this.partner;
     }
 
 

@@ -1,4 +1,4 @@
-package com.wellnetworks.wellcore.java.dto.Partner;
+package com.wellnetworks.wellcore.java.dto.Partner.sign;
 
 import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
@@ -22,7 +22,7 @@ public class WellPartnerSignInfoDTO {
     private String partnerIdx;
     private List<WellFileDetailDTO> fileDetails = new ArrayList<>();
 
-// 요청일자 넣어야함
+    private LocalDate signRequestDate;// (회원가입) 요청일자
     private String discountCategory; // 가입형태
     private String partnerName; //거래처명
     private String ceoName; //대표자명
@@ -31,8 +31,8 @@ public class WellPartnerSignInfoDTO {
     private LocalDateTime openingVisitRequestDate; //방문 희망일자
     private String registrationStatus; // 회원가입 승인 여부(승인대기)
     private String rejectionReason; // 회원가입 거부사유
-    // 검수일자
-    //검수자
+    private LocalDate reviewDate;// 검수일자
+    private String reviewer;//검수자
 
 
 
@@ -48,6 +48,8 @@ public class WellPartnerSignInfoDTO {
         this.openingVisitRequestDate = entity.getOpeningVisitRequestDate();
         this.registrationStatus = entity.getRegistrationStatus();
         this.rejectionReason = entity.getRejectionReason();
+        this.reviewDate = entity.getReviewDate();
+        this.reviewer = entity.getReviewer();
 
         for (WellPartnerFIleStorageEntity fileStorage : fileStorages) {
             if (fileStorage != null && fileStorage.getFile() != null) {

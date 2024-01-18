@@ -13,6 +13,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static jakarta.persistence.FetchType.LAZY;
@@ -158,7 +159,7 @@ public class WellPartnerEntity {
     private String commissionBankHolder;
 
     // 회원가입 관리 / 개통점 신청 관련 컬럼
-    @Column(name = "registration_status") //회원가입 여부
+    @Column(name = "registration_status") //회원가입 여부(승인관리)
     private String registrationStatus;
     @Column(name = "rejection_reason") //회원가입 거부 사유
     private String rejectionReason;
@@ -188,6 +189,17 @@ public class WellPartnerEntity {
     @Column(name = "opening_note") //개통점신청비고
     private String openingNote;
 
+    @Column(name = "review_date") //회원가입 관리 검수일자
+    private LocalDate reviewDate;
+
+    @Column(name = "reviwer") //회원가입 관리 검수자
+    private String reviewer;
+
+    @Column(name="terms_ofUse")
+    private Boolean termsOfUse; // 이용약관 동의
+
+    @Column(name="sign_request_date")
+    private LocalDate signRequestDate; // 회원가입 요청일자
     @Builder
     public WellPartnerEntity(String partnerIdx, String partnerCode, String partnerName, String partnerType, Boolean specialPolicyOpening, Boolean specialPolicyCharge
                             , WellPartnerGroupEntity partnerGroup, String discountCategory, String salesManager
@@ -198,7 +210,7 @@ public class WellPartnerEntity {
                             , String registrationAddress, String registrationDetailAddress, String locationAddress, String locationDetailAddress
                             , String partnerMemo,
                              String writer, String event, Boolean visitStatus, LocalDateTime openingVisitRequestDate, LocalDateTime openingVisitDecideDate, String openingProgress, Boolean isOpeningFlag, String openingNote
-                             , String registrationStatus,String rejectionReason) {
+                             , String registrationStatus,String rejectionReason, LocalDate reviewDate, String reviewer, Boolean termsOfUse, LocalDate signRequestDate) {
         this.partnerIdx = partnerIdx;
         this.partnerCode = partnerCode;
         this.partnerName = partnerName;
@@ -241,6 +253,10 @@ public class WellPartnerEntity {
         this.openingNote = openingNote;
         this.registrationStatus = registrationStatus;
         this.rejectionReason = rejectionReason;
+        this.reviewDate = reviewDate;
+        this.reviewer = reviewer;
+        this.termsOfUse = termsOfUse;
+        this.signRequestDate = signRequestDate;
     }
 
     public void updateFromDTO(WellPartnerUpdateDTO updateDTO) {

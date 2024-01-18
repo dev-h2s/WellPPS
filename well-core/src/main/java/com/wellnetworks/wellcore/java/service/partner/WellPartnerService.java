@@ -4,6 +4,7 @@ import com.wellnetworks.wellcore.java.domain.backup.partner.WellPartnerEntityBac
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerPermissionGroupEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerUserEntity;
 import com.wellnetworks.wellcore.java.dto.Partner.*;
+import com.wellnetworks.wellcore.java.dto.Partner.sign.WellPartnerSignInfoDTO;
 import com.wellnetworks.wellcore.java.repository.File.WellPartnerFileRepository;
 import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
@@ -22,7 +23,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.repository.query.Param;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +30,6 @@ import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

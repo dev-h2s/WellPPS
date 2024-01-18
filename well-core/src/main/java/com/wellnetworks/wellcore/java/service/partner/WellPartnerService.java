@@ -36,14 +36,22 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class WellPartnerService {
 
-    @Autowired private WellPartnerRepository wellPartnerRepository;
-    @Autowired private WellPartnerBackupRepository wellPartnerBackupRepository;
-    @Autowired private WellPartnerGroupRepository wellPartnerGroupRepository;
-    @Autowired private WellApikeyInRepository wellApikeyInRepository;
-    @Autowired private WellFileStorageService fileStorageService;
-    @Autowired private WellPartnerFileRepository partnerFileRepository;
-    @Autowired private WellPartnerUserRepository partnerUserRepository;
-    @Autowired private WellPartnerPermissionGroupRepository permissionGroupRepository;
+    @Autowired
+    private WellPartnerRepository wellPartnerRepository;
+    @Autowired
+    private WellPartnerBackupRepository wellPartnerBackupRepository;
+    @Autowired
+    private WellPartnerGroupRepository wellPartnerGroupRepository;
+    @Autowired
+    private WellApikeyInRepository wellApikeyInRepository;
+    @Autowired
+    private WellFileStorageService fileStorageService;
+    @Autowired
+    private WellPartnerFileRepository partnerFileRepository;
+    @Autowired
+    private WellPartnerUserRepository partnerUserRepository;
+    @Autowired
+    private WellPartnerPermissionGroupRepository permissionGroupRepository;
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
@@ -76,7 +84,6 @@ public class WellPartnerService {
     }
 
 
-
     // 거래처 검색
     public Page<WellPartnerSearchDTO> searchPartnerList(String partnerName, String ceoName, String ceoTelephone, String partnerCode, String address, String writer, String partnerTelephone
             , LocalDate startDate, LocalDate endDate
@@ -84,45 +91,49 @@ public class WellPartnerService {
             , String partnerUpperIdx, Boolean hasBusinessLicense, Boolean hasContractDocument, Pageable pageable) {
 
         try {
-        Specification<WellPartnerEntity> spec = Specification.where(PartnerSpecification.partnerNameContains(partnerName))
-                .and(PartnerSpecification.partnerCeoNameContains(ceoName))
-                .and(PartnerSpecification.partnerCeoTelephoneContains(ceoTelephone))
-                .and(PartnerSpecification.partnerCodeContains(partnerCode))
-                .and(PartnerSpecification.partnerAddressContains(address))
-                .and(PartnerSpecification.writerContains(writer))
-                .and(PartnerSpecification.partnerTelephoneContains(partnerTelephone))
-                .and(PartnerSpecification.productRegisterDateBetween(startDate, endDate))
-                .and(PartnerSpecification.discountCategoryEquals(discountCategory))
-                .and(PartnerSpecification.partnerTypeEquals(partnerType))
-                .and(PartnerSpecification.salesManagerEquals(salesManager))
-                .and(PartnerSpecification.transactionStatusEquals(transactionStatus))
-                .and(PartnerSpecification.regionAddressContains(regionAddress))
-                .and(PartnerSpecification.partnerUpperNameEquals(partnerUpperIdx))
-                .and(PartnerSpecification.businessLicenseEquals(hasBusinessLicense))
-                .and(PartnerSpecification.contractDocumentEquals(hasContractDocument));
+            // 1. registrationStatusIsApproved() 스펙을 추가합니다.
+            Specification<WellPartnerEntity> approvedStatusSpec = registrationStatusIsApproved();
 
-        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "productRegisterDate"));
+            Specification<WellPartnerEntity> spec = Specification.where(PartnerSpecification.partnerNameContains(partnerName))
+                    .and(PartnerSpecification.partnerCeoNameContains(ceoName))
+                    .and(PartnerSpecification.partnerCeoTelephoneContains(ceoTelephone))
+                    .and(PartnerSpecification.partnerCodeContains(partnerCode))
+                    .and(PartnerSpecification.partnerAddressContains(address))
+                    .and(PartnerSpecification.writerContains(writer))
+                    .and(PartnerSpecification.partnerTelephoneContains(partnerTelephone))
+                    .and(PartnerSpecification.productRegisterDateBetween(startDate, endDate))
+                    .and(PartnerSpecification.discountCategoryEquals(discountCategory))
+                    .and(PartnerSpecification.partnerTypeEquals(partnerType))
+                    .and(PartnerSpecification.salesManagerEquals(salesManager))
+                    .and(PartnerSpecification.transactionStatusEquals(transactionStatus))
+                    .and(PartnerSpecification.regionAddressContains(regionAddress))
+                    .and(PartnerSpecification.partnerUpperNameEquals(partnerUpperIdx))
+                    .and(PartnerSpecification.businessLicenseEquals(hasBusinessLicense))
+                    .and(PartnerSpecification.contractDocumentEquals(hasContractDocument))
+                    .and(approvedStatusSpec);
 
-        Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(spec, pageable);
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "productRegisterDate"));
 
-        List<WellPartnerSearchDTO> partnerInfoList = new ArrayList<>();
+            Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(spec, pageable);
 
-        for (WellPartnerEntity partnerEntity : partners) {
-            List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerEntity.getPartnerIdx());
+            List<WellPartnerSearchDTO> partnerInfoList = new ArrayList<>();
 
-            WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
-            WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
+            for (WellPartnerEntity partnerEntity : partners) {
+                List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerEntity.getPartnerIdx());
 
-            Integer dipositBalance = dipositEntity != null && dipositEntity.getDipositBalance() != null ? dipositEntity.getDipositBalance() : 0;
+                WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
+                WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
 
-            partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
-            String partnerUpperName = null;
-            if (partnerEntity.getPartnerUpperIdx() != null) {
-                partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx);
+                Integer dipositBalance = dipositEntity != null && dipositEntity.getDipositBalance() != null ? dipositEntity.getDipositBalance() : 0;
+
+                partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
+                String partnerUpperName = null;
+                if (partnerEntity.getPartnerUpperIdx() != null) {
+                    partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx);
+                }
+                WellPartnerSearchDTO partnerInfo = new WellPartnerSearchDTO(partnerEntity, fileStorages, dipositBalance, partnerUpperName);
+                partnerInfoList.add(partnerInfo);
             }
-            WellPartnerSearchDTO partnerInfo = new WellPartnerSearchDTO(partnerEntity, fileStorages, dipositBalance, partnerUpperName);
-            partnerInfoList.add(partnerInfo);
-        }
 
             return new PageImpl<>(partnerInfoList, pageable, partners.getTotalElements());
         } catch (Exception e) {
@@ -131,38 +142,92 @@ public class WellPartnerService {
         }
     }
 
-    //거래처 리스트 조회
+    // 거래처 리스트에서 회원가입이 승인된 것만 나올수 있게끔
+    public static Specification<WellPartnerEntity> registrationStatusIsApproved() {
+        return (root, query, criteriaBuilder) -> {
+            return criteriaBuilder.equal(root.get("registrationStatus"), "승인");
+        };
+    }
 
+    //거래처 리스트 조회
     public Page<WellPartnerInfoDTO> getAllPartners(Pageable pageable) {
         try {
-        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "productRegisterDate"));
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "productRegisterDate"));
 
-        Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(pageable);
-        List<WellPartnerInfoDTO> partnerInfoList = new ArrayList<>();
-
-
-        for (WellPartnerEntity partnerEntity : partners) {
-            List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerEntity.getPartnerIdx());
-
-            WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
-            WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
+//        Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(pageable);
+            Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(registrationStatusIsApproved(), pageable);
+            List<WellPartnerInfoDTO> partnerInfoList = new ArrayList<>();
 
 
-            String partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
-            String partnerUpperName = null;
-            if (partnerEntity.getPartnerUpperIdx() != null) {
-                partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx);
+            for (WellPartnerEntity partnerEntity : partners) {
+                List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerEntity.getPartnerIdx());
+
+                WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
+                WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
+
+
+                String partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
+                String partnerUpperName = null;
+                if (partnerEntity.getPartnerUpperIdx() != null) {
+                    partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx);
+                }
+
+
+                WellPartnerInfoDTO partnerInfo = new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity
+                        , partnerUpperName
+                );
+                partnerInfoList.add(partnerInfo);
+
             }
 
+            Long totalPartnerCount = partners.getTotalElements();
 
-            WellPartnerInfoDTO partnerInfo = new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity
-                    , partnerUpperName
-            );
-            partnerInfoList.add(partnerInfo);
-
+            return new PageImpl<>(partnerInfoList, pageable, totalPartnerCount);
+        } catch (Exception e) {
+            // 여기에 예외 처리 로직 추가
+            throw new RuntimeException("거래처 리스트 조회 중 오류 발생: " + e.getMessage(), e);
         }
+    }
 
-        Long totalPartnerCount = partners.getTotalElements();
+    // 거래처 리스트에서 회원가입이 승인된 것만 나올수 있게끔
+    public static Specification<WellPartnerEntity> registrationStatusIsNot() {
+        return (root, query, criteriaBuilder) -> {
+            return criteriaBuilder.notEqual(root.get("registrationStatus"), "승인");
+        };
+    }
+
+    //거래처 회원가입 리스트 조회
+    public Page<WellPartnerSignInfoDTO> getAllPartnerSign(Pageable pageable) {
+        try {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "productRegisterDate"));
+
+//        Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(pageable);
+            Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(registrationStatusIsNot(), pageable);
+            List<WellPartnerSignInfoDTO> partnerInfoList = new ArrayList<>();
+
+
+            for (WellPartnerEntity partnerEntity : partners) {
+                List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerEntity.getPartnerIdx());
+
+                WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
+                WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
+
+
+                String partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
+                String partnerUpperName = null;
+                if (partnerEntity.getPartnerUpperIdx() != null) {
+                    partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx);
+                }
+
+
+                WellPartnerSignInfoDTO partnerSignInfo = new WellPartnerSignInfoDTO(partnerEntity, fileStorages, dipositEntity
+                        , partnerUpperName
+                );
+                partnerInfoList.add(partnerSignInfo);
+
+            }
+
+            Long totalPartnerCount = partners.getTotalElements();
 
             return new PageImpl<>(partnerInfoList, pageable, totalPartnerCount);
         } catch (Exception e) {
@@ -208,7 +273,7 @@ public class WellPartnerService {
 
             String rawPassword = builder.toString();
             String encryptedPassword = ENCODER.encode(rawPassword); // 암호화된 비밀번호를 반환
-            return new String[] {rawPassword, encryptedPassword};
+            return new String[]{rawPassword, encryptedPassword};
         }
     }
 
@@ -227,7 +292,6 @@ public class WellPartnerService {
         String[] passwords = WellPartnerService.PasswordUtil.generateRandomPassword();
         String tempPasswordPlainText = passwords[0]; // 사용자에게 전달할 임시 비밀번호 평문
         String tempPasswordEncrypted = passwords[1]; // 데이터베이스에 저장할 암호화된 비밀번호
-
 
 
         // API 연동 여부와 API 키가 설정되지 않은 경우 예외 처리
@@ -278,6 +342,17 @@ public class WellPartnerService {
                     .locationAddress(createDTO.getLocationAddress())
                     .locationDetailAddress(createDTO.getLocationDetailAddress())
                     .partnerMemo(createDTO.getPartnerMemo())
+                    //회원가입 관리 관련 컬럼
+                    .registrationStatus(createDTO.getRegistrationStatus())
+                    .rejectionReason(createDTO.getRejectionReason())
+                    .writer(createDTO.getWriter()) //작성자
+                    .event(createDTO.getEvent())//이벤트
+                    .visitStatus(createDTO.getVisitStatus())//방문요청여부
+                    .openingVisitRequestDate(createDTO.getOpeningVisitRequestDate())//개통점방문희망일자
+                    .openingVisitDecideDate(createDTO.getOpeningVisitDecideDate())//개통점방문확정일자
+                    .openingProgress(createDTO.getOpeningProgress())//개통점진행도
+                    .isOpeningFlag(createDTO.getIsOpeningFlag())//개통점전환여부
+                    .openingNote(createDTO.getOpeningNote())//개통점신청비고
                     .build();
 
             //p_code
@@ -353,7 +428,6 @@ public class WellPartnerService {
     }
 
 
-
     //거래처 삭제 (관련 엔티티 백업 후 삭제)
     @Transactional(rollbackOn = Exception.class)
     public WellPartnerInfoDTO deletePartnerIdx(String partnerIdx) {
@@ -369,75 +443,77 @@ public class WellPartnerService {
             String apiKeyInIdx = String.valueOf(apiKeyInEntity.getApiKeyInIdx());
             // 삭제 등의 동작 수행
         }
-        try {
-            String partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
-            String partnerUpperName = null;
-            if (partnerEntity.getPartnerUpperIdx() != null) {
-                partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx);
-            }
-
-            List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerIdx);
-
-            // 거래처가 가상계좌를 가지고 있는 경우, 예치금 정보를 가져옴
-            WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
-            WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
-
-            // 백업 엔티티에 복사
-            WellPartnerEntityBackup partnerBackup = new WellPartnerEntityBackup();
-            partnerBackup.setPartnerIdx(partnerIdx);
-            partnerBackup.setPartnerGroupId(partnerEntity.getPartnerGroup().getPartnerGroupId());
-            partnerBackup.setApiKeyInIdx(null);
-            partnerBackup.setPartnerCode(null);
-            partnerBackup.setPartnerName(partnerEntity.getPartnerName());
-            partnerBackup.setTransactionStatus(partnerEntity.getTransactionStatus());
-            partnerBackup.setPartnerType(partnerEntity.getPartnerType());
-            partnerBackup.setPartnerUpperIdx(partnerEntity.getPartnerUpperIdx());
-            partnerBackup.setPartnerTelephone(partnerEntity.getPartnerTelephone());
-            partnerBackup.setProductRegisterDate(partnerEntity.getProductRegisterDate());
-            partnerBackup.setProductModifyDate(partnerEntity.getProductModifyDate());
-            partnerBackup.setSalesManager(partnerEntity.getSalesManager());
-            partnerBackup.setCeoName(partnerEntity.getCeoName());
-            partnerBackup.setCeoTelephone(partnerEntity.getCeoTelephone());
-            partnerBackup.setRegistrationAddress(partnerEntity.getRegistrationAddress());
-            partnerBackup.setRegistrationDetailAddress(partnerEntity.getRegistrationDetailAddress());
-            partnerBackup.setLocationAddress(partnerEntity.getLocationAddress());
-            partnerBackup.setLocationDetailAddress(partnerEntity.getLocationDetailAddress());
-            partnerBackup.setCommisionType(partnerEntity.getCommisionType());
-            partnerBackup.setSize(partnerEntity.getSize());
-            partnerBackup.setPage(partnerEntity.getPage());
-            partnerBackup.setDiscountCategory(partnerEntity.getDiscountCategory());
-            partnerBackup.setSubscriptionDate(partnerEntity.getSubscriptionDate());
-            partnerBackup.setSpecialPolicyOpening(partnerEntity.getSpecialPolicyOpening());
-            partnerBackup.setSpecialPolicyCharge(partnerEntity.getSpecialPolicyCharge());
-            partnerBackup.setPassword(partnerEntity.getPassword());
-            partnerBackup.setPreApprovalNumber(partnerEntity.getPreApprovalNumber());
-            partnerBackup.setEmailAddress(partnerEntity.getEmailAddress());
-            partnerBackup.setRegistrationNumber(partnerEntity.getRegistrationNumber());
-            partnerBackup.setPartnerMemo(partnerEntity.getPartnerMemo());
-            partnerBackup.setSalesTeamVisitDate(partnerEntity.getSalesTeamVisitDate());
-            partnerBackup.setSalesTeamVisitMemo(partnerEntity.getSalesTeamVisitMemo());
-            partnerBackup.setCommissionDepositAccount(partnerEntity.getCommissionDepositAccount());
-            partnerBackup.setCommissionBankName(partnerEntity.getCommissionBankName());
-            partnerBackup.setCommissionBankHolder(partnerEntity.getCommissionBankHolder());
-            partnerBackup.setWriter(partnerEntity.getWriter());
-            partnerBackup.setEvent(partnerEntity.getEvent());
-            partnerBackup.setOpeningVisitRequestDate(partnerEntity.getOpeningVisitRequestDate());
-            partnerBackup.setOpeningVisitDecideDate(partnerEntity.getOpeningVisitDecideDate());
-            partnerBackup.setOpeningProgress(partnerEntity.getOpeningProgress());
-            partnerBackup.setOpeningFlag(partnerEntity.isOpeningFlag());
-            partnerBackup.setOpeningNote(partnerEntity.getOpeningNote());
-            partnerBackup.setInApiFlag(partnerEntity.getInApiFlag());
-
-            // 백업 테이블에 저장
-            wellPartnerBackupRepository.save(partnerBackup);
-
-            // 거래처 삭제
-            wellPartnerRepository.delete(partnerEntity);
-
-            return new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity, partnerUpperName);
-        } catch (Exception e) {
-            // 롤백을 위해 예외 발생
-            throw new RuntimeException("거래처 삭제 중 오류 발생", e);
+//        try {
+        String partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
+        String partnerUpperName = null;
+        if (partnerEntity.getPartnerUpperIdx() != null) {
+            partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx);
         }
+
+        List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerIdx);
+
+        // 거래처가 가상계좌를 가지고 있는 경우, 예치금 정보를 가져옴
+        WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
+        WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
+
+        // 백업 엔티티에 복사
+        WellPartnerEntityBackup partnerBackup = new WellPartnerEntityBackup();
+        partnerBackup.setPartnerIdx(partnerIdx);
+        partnerBackup.setPartnerGroupId(partnerEntity.getPartnerGroup().getPartnerGroupId());
+        partnerBackup.setApiKeyInIdx(null);
+        partnerBackup.setPartnerCode(null);
+        partnerBackup.setPartnerName(partnerEntity.getPartnerName());
+        partnerBackup.setTransactionStatus(partnerEntity.getTransactionStatus());
+        partnerBackup.setPartnerType(partnerEntity.getPartnerType());
+        partnerBackup.setPartnerUpperIdx(partnerEntity.getPartnerUpperIdx());
+        partnerBackup.setPartnerTelephone(partnerEntity.getPartnerTelephone());
+        partnerBackup.setProductRegisterDate(partnerEntity.getProductRegisterDate());
+        partnerBackup.setProductModifyDate(partnerEntity.getProductModifyDate());
+        partnerBackup.setSalesManager(partnerEntity.getSalesManager());
+        partnerBackup.setCeoName(partnerEntity.getCeoName());
+        partnerBackup.setCeoTelephone(partnerEntity.getCeoTelephone());
+        partnerBackup.setRegistrationAddress(partnerEntity.getRegistrationAddress());
+        partnerBackup.setRegistrationDetailAddress(partnerEntity.getRegistrationDetailAddress());
+        partnerBackup.setLocationAddress(partnerEntity.getLocationAddress());
+        partnerBackup.setLocationDetailAddress(partnerEntity.getLocationDetailAddress());
+        partnerBackup.setCommisionType(partnerEntity.getCommisionType());
+        partnerBackup.setSize(partnerEntity.getSize());
+        partnerBackup.setPage(partnerEntity.getPage());
+        partnerBackup.setDiscountCategory(partnerEntity.getDiscountCategory());
+        partnerBackup.setSubscriptionDate(partnerEntity.getSubscriptionDate());
+        partnerBackup.setSpecialPolicyOpening(partnerEntity.getSpecialPolicyOpening());
+        partnerBackup.setSpecialPolicyCharge(partnerEntity.getSpecialPolicyCharge());
+        partnerBackup.setPassword(partnerEntity.getPassword());
+        partnerBackup.setPreApprovalNumber(partnerEntity.getPreApprovalNumber());
+        partnerBackup.setEmailAddress(partnerEntity.getEmailAddress());
+        partnerBackup.setRegistrationNumber(partnerEntity.getRegistrationNumber());
+        partnerBackup.setPartnerMemo(partnerEntity.getPartnerMemo());
+        partnerBackup.setSalesTeamVisitDate(partnerEntity.getSalesTeamVisitDate());
+        partnerBackup.setSalesTeamVisitMemo(partnerEntity.getSalesTeamVisitMemo());
+        partnerBackup.setCommissionDepositAccount(partnerEntity.getCommissionDepositAccount());
+        partnerBackup.setCommissionBankName(partnerEntity.getCommissionBankName());
+        partnerBackup.setCommissionBankHolder(partnerEntity.getCommissionBankHolder());
+        partnerBackup.setWriter(partnerEntity.getWriter());
+        partnerBackup.setEvent(partnerEntity.getEvent());
+        partnerBackup.setOpeningVisitRequestDate(partnerEntity.getOpeningVisitRequestDate());
+        partnerBackup.setOpeningVisitDecideDate(partnerEntity.getOpeningVisitDecideDate());
+        partnerBackup.setOpeningProgress(partnerEntity.getOpeningProgress());
+        partnerBackup.setOpeningFlag(partnerEntity.getIsOpeningFlag());
+        partnerBackup.setOpeningNote(partnerEntity.getOpeningNote());
+        partnerBackup.setInApiFlag(partnerEntity.getInApiFlag());
+        partnerBackup.setRegistrationStatus(partnerEntity.getRegistrationStatus());
+        partnerBackup.setRejectionReason(partnerEntity.getRejectionReason());
+
+        // 백업 테이블에 저장
+        wellPartnerBackupRepository.save(partnerBackup);
+
+        // 거래처 삭제
+        wellPartnerRepository.delete(partnerEntity);
+
+        return new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity, partnerUpperName);
+//        } catch (Exception e) {
+        // 롤백을 위해 예외 발생
+//            throw new RuntimeException("거래처 삭제 중 오류 발생", e);
+//        }
     }
 }

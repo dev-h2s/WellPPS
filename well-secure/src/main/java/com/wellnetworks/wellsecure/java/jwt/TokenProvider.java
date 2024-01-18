@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
 import org.slf4j.Logger;
 
 // 클래스에 대한 주석: JWT 토큰 생성 및 검증 역할을 하는 클래스
@@ -36,6 +37,7 @@ public class TokenProvider {
 
     private Date accessTokenValidity; // acess 토큰 인증 만료 기간
     private Date refreshTokenValidity; // refresh 토큰 시간
+
     // 생성자에서 의존성 주입
     public TokenProvider(SecurityProperties securityProperties, WellUserDetailService wellUserDetailService) {
         this.securityProperties = securityProperties;
@@ -63,7 +65,7 @@ public class TokenProvider {
 
         // 현재 시간으로부터 accessToken 만료 시간을 설정
         this.accessTokenValidity = new Date(System.currentTimeMillis() +
-                (long) securityProperties.getAccessTokenExpirationTime() * 2 * 1000);
+                (long) securityProperties.getAccessTokenExpirationTime() * 60 * 60 * 1000);
 
 
         // JWT 토큰 생성 및 반환
@@ -77,12 +79,11 @@ public class TokenProvider {
     }
 
 
-
     // refreshToken 생성 메서드
     public String createRefreshToken(Authentication authentication) {
         // 현재 시간으로부터 refreshToken 만료 시간을 설정
         this.refreshTokenValidity = new Date(System.currentTimeMillis() +
-                (long) securityProperties.getRefreshTokenExpirationTime() * 5 * 1000);
+                (long) securityProperties.getRefreshTokenExpirationTime() * 24 * 60 * 60 * 1000);
 
         // refreshToken 생성 코드...
         // refreshToken은 사용자의 권한이나 다른 정보 없이, 오직 사용자 이름만 포함하는 것이 일반적
@@ -98,7 +99,7 @@ public class TokenProvider {
      *
      * @param token 사용자의 JWT 토큰
      * @return 사용자의 인증 정보를 포함하는 Authentication 객체.
-     *         토큰 검증에 실패한 경우 null 반환.
+     * 토큰 검증에 실패한 경우 null 반환.
      */
     public Authentication getAuthentication(String token) {
         try {
@@ -120,6 +121,18 @@ public class TokenProvider {
             throw new BadCredentialsException("Invalid token", e);
         }
     }
+
+    // 엑세스 토큰의 유효성을 검사하는 메서드
+    public boolean validateToken(String accessToken) {
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken);
+            return true; // 토큰이 유효하면 true 반환
+        } catch (Exception e) {
+            log.error("Token validation error: {}", e.getMessage(), e);
+            return false; // 토큰이 유효하지 않으면 false 반환
+        }
+    }
+
     // 리프레시 토큰의 유효성을 검사하는 메서드
     public boolean validateRefreshToken(String refreshToken) {
         try {

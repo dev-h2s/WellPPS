@@ -28,6 +28,10 @@ public class WellVirtualAccountEntity {
     @JoinColumn(name = "p_idx", referencedColumnName = "p_idx")
     private WellPartnerEntity partner;
 
+//    @OneToOne(fetch = LAZY) //거래처_idx 거래처랑 1대1
+//    @JoinColumn(name = "p_idx", referencedColumnName = "p_idx")
+//    private WellPartnerEntity partnerSign;
+
     @OneToOne(mappedBy = "virtualAccount", fetch = LAZY, cascade = CascadeType.ALL) // 예치금이랑 1대1(양방향)
     private WellDipositEntity deposit;
 

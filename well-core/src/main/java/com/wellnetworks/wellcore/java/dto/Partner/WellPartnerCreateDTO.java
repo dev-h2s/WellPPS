@@ -68,6 +68,20 @@ public class WellPartnerCreateDTO {
     private String locationDetailAddress;
     private String partnerMemo;
 
+
+    //회원가입 관리 관련 컬럼
+    private String registrationStatus; //회원가입 여부
+    private String rejectionReason; // 회원가입 거부 사유
+    private String writer; //작성자
+    private String event;//이벤트
+    private Boolean visitStatus;//방문요청여부
+    private LocalDateTime openingVisitRequestDate;//개통점방문희망일자
+    private LocalDateTime openingVisitDecideDate;//개통점방문확정일자
+    private String openingProgress;//개통점진행도
+    private Boolean isOpeningFlag;//개통점전환여부
+    private String openingNote;//개통점신청비고
+
+
     private List<WellFileDetailDTO> fileDetails = new ArrayList<>();
 
     private List<MultipartFile> businessLicenseFiles;

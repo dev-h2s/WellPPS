@@ -1,0 +1,203 @@
+package com.wellnetworks.wellcore.java.domain.partner;
+//회원가입 관리(거래처 회원가입시 충전점 리스트)
+
+import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
+import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
+import com.wellnetworks.wellcore.java.dto.FIle.WellFileDetailDTO;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static jakarta.persistence.FetchType.LAZY;
+
+
+@Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
+
+public class WellPartnerSignEntity {
+
+    @Id //거래처_idx
+    @Column(name = "p_idx", columnDefinition = "uniqueidentifier")
+    private String partnerIdx;
+
+//    @ManyToOne(fetch = LAZY) //거래처 그룹_id
+//    @JoinColumn(insertable = true, updatable = true)
+//    private WellPartnerGroupEntity partnerGroupSign;
+//
+//    @OneToOne(fetch = LAZY)
+//    @JoinColumn(name = "p_idx")
+//    private WellPartnerUserEntity partnerUserSign;
+//
+//    // API 키와의 다대일 관계 (하나의 거래처는 API 키를 가짐)
+//    @OneToOne(fetch = LAZY, cascade = CascadeType.ALL)
+//    @JoinColumn(name = "apikey_in_idx", nullable = false)
+//    private WellApikeyInEntity apiKeySign;
+//
+//    // 가상계좌 연결 1대1
+//    @OneToOne(mappedBy = "partnerSign", fetch = LAZY)
+//    private WellVirtualAccountEntity virtualAccount;
+
+    // 개통 연결 1대다
+//    @OneToMany(mappedBy = "partner")
+//    private List<WellOpeningEntity> openings = new ArrayList<>();
+
+    // 요금제 조회 테이블 연결 1대 다
+//    @OneToMany(mappedBy = "partner")
+//    private List<WellProductSearchEntity> productSearch = new ArrayList<>();
+
+    // 충전 시도내역 테이블 연결 1대 다
+//    @OneToMany(mappedBy = "partner")
+//    private List<WellChargeHistoryEntity> chargeHistory = new ArrayList<>();
+
+    @Column(name = "in_api_flag") //내부API연동여부
+    private Boolean inApiFlag;
+
+    @Column(name = "pcode", unique = true) //거래처코드
+    private String partnerCode;
+
+    @Column(name = "p_name") //거래처명
+    private String partnerName;
+
+    @Column(name = "trans_status") //거래유무
+    private String transactionStatus;
+
+    @Column(name = "p_type") //거래처구분
+    private String partnerType;
+
+    @Column(name = "p_upper_idx") //상부점_id
+    private String partnerUpperIdx;
+
+    @Column(name="p_tel") //사업장전화번호
+    private String partnerTelephone;
+
+    @CreatedDate
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+    @Column(name = "product_regdt") //시작날짜
+    private LocalDateTime productRegisterDate;
+
+    @Column(name = "product_moddt") //종료날짜
+    private LocalDateTime productModifyDate;
+
+    @Column(name="sales_manager") //영업담당자
+    private String salesManager;
+
+    @Column(name = "ceo_name") //대표자명 : 회원가입 입력
+    private String ceoName;
+
+    @Column(name="ceo_tel") //대표자전화번호 : 회원가입 입력
+    private String ceoTelephone;
+
+    @Column(name = "reg_addr") //사업자등록증주소
+    private String registrationAddress;
+
+    @Column(name = "reg_detail_addr") //사업자등록증상세주소
+    private String registrationDetailAddress;
+
+    @Column(name = "loc_addr") //사업자소재지주소
+    private String locationAddress;
+
+    @Column(name = "loc_detail_addr") //사업자소재지상세주소
+    private String locationDetailAddress;
+
+    @Column(name = "commision_type") //수수료타입
+    private String commisionType;
+
+    @Column(name = "size") //size
+    private Integer size;
+
+    @Column(name = "page") //page
+    private Integer page;
+
+    @Column(name = "discount_category") //충전할인율구분
+    private String discountCategory;
+
+    @Column(name = "subdt") //가입승인일자
+    private LocalDateTime subscriptionDate;
+
+    @Column(name = "special_policy_opening") //특수정책개통
+    private Boolean specialPolicyOpening;
+
+    @Column(name = "special_policy_charge") //특수정책충전
+    private Boolean specialPolicyCharge;
+
+    @Column(name = "pwd") //비밀번호
+    private String password;
+
+    @Column(name = "pre_approval_number") //사전승낙번호
+    private String preApprovalNumber;
+
+    @Column(name="email_addr") //이메일주소 : 회원가입 입력
+    private String emailAddress;
+
+    @Column(name = "registration_number") //사업자등록번호 : 회원가입 입력
+    private String registrationNumber;
+
+    @Column(name = "partner_memo") //메모
+    private String partnerMemo;
+
+    @Column(name = "sales_team_visdt") //영업팀최근방문일자
+    private LocalDateTime salesTeamVisitDate;
+
+    @Column(name = "sales_team_visit_memo") //영업팀방문일지
+    private String salesTeamVisitMemo;
+
+    @Column(name="commission_deposit_account") //수수료입금계좌
+    private String commissionDepositAccount;
+
+    @Column(name = "commission_bank_name") //수수료입금계좌은행명
+    private String commissionBankName;
+
+    @Column(name = "commission_bank_holder") //수수료입금계좌예금주
+    private String commissionBankHolder;
+
+    @Column(name = "writer") //작성자
+    private String writer;
+
+    @Column(name = "event") //이벤트
+    private String event;
+
+    @Column(name = "opening_visit_reqdt") //개통점방문요청일자
+    private LocalDateTime openingVisitRequestDate;
+
+    @Column(name = "opening_visit_decdt") //개통점방문확정일자
+    private LocalDateTime openingVisitDecideDate;
+
+    @Column(name = "opening_progress") //개통점진행도
+    private String openingProgress;
+
+    @Column(name = "opening_flag") //개통점전환여부
+    private boolean openingFlag;
+
+    @Column(name = "opening_note") //개통점신청비고
+    private String openingNote;
+
+    @Column(name = "visit_status") //방문요청여부
+    private Boolean visitStatus;
+
+    @Column(name = "desired_date") //요청 일자
+    private LocalDate desiredDate;
+
+    @Column(name = "vidit_desired_date") //방문희망날짜
+    private LocalDate visitDesiredDate;
+
+    @Column(name = "confirmed_visit_date") //방문확정날짜
+    private LocalDate ConfirmedVisitDate;
+
+    @Column(name = "TermsOf_use") //이용약관 동의 여부
+    private Boolean TermsOfUse;
+
+}

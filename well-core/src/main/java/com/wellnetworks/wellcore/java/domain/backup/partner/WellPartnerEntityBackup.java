@@ -159,4 +159,14 @@ public class WellPartnerEntityBackup {
 
     @Column(name = "opening_note") //개통점신청비고
     private String openingNote;
+
+    // 회원가입 관리 / 개통점 신청 관련 컬럼
+    @Column(name = "registration_status") //회원가입 여부
+    private String registrationStatus;
+    @Column(name = "rejection_reason") //회원가입 거부 사유
+    private String rejectionReason;
+
+
+
+
 }

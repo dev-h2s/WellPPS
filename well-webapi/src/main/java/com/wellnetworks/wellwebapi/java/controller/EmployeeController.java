@@ -167,19 +167,19 @@ public class EmployeeController {
 
     // 사원 수정
     @PatchMapping("employee/update/{employeeIdx}")
-    public ResponseEntity<String> UpdateEmployee(@Valid WellEmployeeUpdateDTO updateDTO,
-                                                 @PathVariable String employeeIdx) {
-        try {
+    public ResponseEntity<String> UpdateEmployee(@ModelAttribute @Valid WellEmployeeUpdateDTO updateDTO,
+                                                 @PathVariable String employeeIdx) throws Exception {
+//        try {
             if (employeeIdx == null) {
                 throw new ClassNotFoundException(String.format("IDX[%s] not found", employeeIdx));
             }
             wellEmployeeService.update(employeeIdx, updateDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body("사원 정보가 성공적으로 수정되었습니다.");
-        } catch (ClassNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("사원을 찾을 수 없습니다. IDX: %s", employeeIdx));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("사원 수정 중 오류가 발생하였습니다.");
+//        } catch (ClassNotFoundException e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("사원을 찾을 수 없습니다. IDX: %s", employeeIdx));
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("사원 수정 중 오류가 발생하였습니다.");
         }
     }
 
-}
+//}

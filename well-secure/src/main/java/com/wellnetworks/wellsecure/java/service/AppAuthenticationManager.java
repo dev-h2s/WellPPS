@@ -25,6 +25,7 @@ public class AppAuthenticationManager implements AuthenticationManager {
         this.wellUserDetailService = wellUserDetailService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
+
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 

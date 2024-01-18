@@ -22,4 +22,7 @@ public class WellPartnerGroupEntity {
 
     @OneToMany(mappedBy = "partnerGroup") // 파트너 리스트 가져오기(양방향)
     private List<WellPartnerEntity> partners = new ArrayList<>();
+
+//    @OneToMany(mappedBy = "partnerGroupSign") // 파트너 회원가입 리스트 가져오기(양방향)
+//    private List<WellPartnerSignEntity> partnerSign = new ArrayList<>();
 }

@@ -11,6 +11,7 @@ import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUse
 import com.wellnetworks.wellsecure.java.config.SecurityProperties;
 import com.wellnetworks.wellsecure.java.jwt.TokenProvider;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -25,27 +26,21 @@ import java.util.Date;
 
 @Service
 @EnableScheduling // 스캐쥴링을 쓰기위함
+@RequiredArgsConstructor
 public class RefreshTokenService {
-    @Autowired private EmployeeRefreshTokenRepository employeeRefreshTokenRepository;
 
-    @Autowired private PartnerRefreshTokenRepository partnerRefreshTokenRepository;
+    private final EmployeeRefreshTokenRepository employeeRefreshTokenRepository;
 
-    @Autowired private UserDetailsService userDetailsService;
+    private final PartnerRefreshTokenRepository partnerRefreshTokenRepository;
 
-    @Autowired private TokenProvider tokenProvider;
-    @Autowired private SecurityProperties securityProperties;
+    private UserDetailsService userDetailsService;
+
+    private final TokenProvider tokenProvider;
+    private final SecurityProperties securityProperties;
 
     // 생성자 주입
 
-    public RefreshTokenService(EmployeeRefreshTokenRepository employeeRefreshTokenRepository,
-                               PartnerRefreshTokenRepository partnerRefreshTokenRepository,
-                               TokenProvider tokenProvider,
-                               SecurityProperties securityProperties) {
-        this.employeeRefreshTokenRepository = employeeRefreshTokenRepository;
-        this.partnerRefreshTokenRepository = partnerRefreshTokenRepository;
-        this.tokenProvider = tokenProvider;
-        this.securityProperties = securityProperties;
-    }
+
 
     // 리프레쉬 토큰 생성 밑 기존 idx있을때 수정하는 메서드
     @Transactional
@@ -68,16 +63,15 @@ public class RefreshTokenService {
 
             // 토큰 업데이트 또는 새로 생성
             employeeTokenEntity.updateToken(newRefreshTokenValue, expiryDate);
-            employeeRefreshTokenRepository.save(employeeTokenEntity);
-        }
-        else if (userDetails instanceof PartnerUserDetails) {
+            employeeRefreshTokenRepository.save(employeeTokenEntity); // 레디스
+        } else if (userDetails instanceof PartnerUserDetails) {
             WellPartnerUserEntity partner = ((PartnerUserDetails) userDetails).getPartner();
             PartnerRefreshTokenEntity partnerTokenEntity = partnerRefreshTokenRepository
                     .findByPartnerUser(partner)
                     .orElseGet(() -> new PartnerRefreshTokenEntity(partner, newRefreshTokenValue, expiryDate));
             // 토큰 업데이트 또는 새로 생성
             partnerTokenEntity.updateToken(newRefreshTokenValue, expiryDate);
-            partnerRefreshTokenRepository.save(partnerTokenEntity);
+            partnerRefreshTokenRepository.save(partnerTokenEntity); // 레디스
 
         } else {
             throw new IllegalArgumentException("존재하지 않는 타입의 유저입니다.");
@@ -85,8 +79,6 @@ public class RefreshTokenService {
 
         return newRefreshTokenValue;
     }
-
-
 
 
     // 리프레쉬 토큰을 사용하여 새로운 액세스 토큰을 생성하는 메서드
@@ -119,7 +111,6 @@ public class RefreshTokenService {
     }
 
 
-
     // 토큰 삭제 메서드
     @Transactional
     public void deleteRefreshToken(UserDetails userDetails) {
@@ -146,13 +137,12 @@ public class RefreshTokenService {
     }
 
 
-//      리프레쉬 토큰의 만료 시간을 계산하는 메서드.
+    //      리프레쉬 토큰의 만료 시간을 계산하는 메서드.
     private Date calculateExpiryDate(int refreshTokenExpirationTime) {
         Calendar calendar = Calendar.getInstance(); // 현재 시간을 기준으로 Calendar 객체를 생성
         calendar.add(Calendar.MINUTE, refreshTokenExpirationTime); // 현재 시간에 유효 시간을 더함
         return calendar.getTime(); // 새로운 만료 시간을 가진 Date 객체를 반환
     }
-
 
 
 }

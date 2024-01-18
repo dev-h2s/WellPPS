@@ -6,12 +6,7 @@ import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeManagerGroupEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 
-import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
-import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
 import com.wellnetworks.wellcore.java.dto.member.*;
 import com.wellnetworks.wellcore.java.repository.File.WellEmployeeFileRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeGroupRepository;
@@ -366,13 +361,28 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
             WellEmployeeUserEntity employeeUser = wellEmployeeUserRepository.findByEmployeeIdx(employeeIdx);
             BeanUtils.copyProperties(updateDTO, employee);
 
-            // 거래처 그룹 및 API 키 설정
-            WellEmployeeManagerGroupEntity employeeGroup = wellEmployeeGroupRepository.findByEmployeeManagerGroupKey(updateDTO.getEmployeeManagerGroupKey());
+            // 요청에서 department 이름을 받습니다.
+            String departmentName = updateDTO.getDepartment();
+
+        // 유효하지 않은 부서 이름을 처리합니다.
+        if (departmentName == null || departmentName.trim().isEmpty()) {
+            throw new IllegalArgumentException("부서 이름이 유효하지 않습니다.");
+        }
+
+        // department 이름으로 WellEmployeeManagerGroupEntity를 조회합니다.
+        Optional<WellEmployeeManagerGroupEntity> employeeGroupOptional = wellEmployeeGroupRepository.findByDepartment(departmentName);
+
+        if (!employeeGroupOptional.isPresent()) {
+            throw new RuntimeException("해당 부서를 찾을 수 없습니다.");
+        }
+
+            // 사원 그룹 설정
+//            WellEmployeeManagerGroupEntity employeeGroup = wellEmployeeGroupRepository.findByEmployeeManagerGroupKey(updateDTO.getEmployeeManagerGroupKey());
 
 
-            if (employeeGroup == null) {
-                throw new RuntimeException("해당 사원 그룹을 찾을 수 없습니다.");
-            }
+            WellEmployeeManagerGroupEntity employeeGroup = employeeGroupOptional.get();
+            String employeeManagerGroupKey = employeeGroup.getEmployeeManagerGroupKey();
+            updateDTO.setEmployeeManagerGroupKey(employeeManagerGroupKey);
 
             employeeUser.setEmployeeGroup(employeeGroup);
             employeeUser.setEmployeeUserModifyDate(LocalDateTime.now());
@@ -383,7 +393,7 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
 
         } catch (Exception e) {
             // 롤백을 위해 예외 발생
-            throw new RuntimeException("사원 수정 중 오류 발생", e);
+//            throw new RuntimeException("사원 수정 중 오류 발생", e);
         }
     }
 

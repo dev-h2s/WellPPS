@@ -30,6 +30,10 @@ public class WellPartnerUserEntity {
     @JoinColumn(name = "p_idx")
     private WellPartnerEntity partner;
 
+//    @OneToOne(fetch = LAZY) //거래처 회원가입 1대1
+//    @JoinColumn(name = "p_idx")
+//    private WellPartnerSignEntity partnerUserSign;
+
     @ManyToOne(fetch = LAZY) //그룹별권한
     @JoinColumn(name = "pm_gkey")
     private WellPartnerPermissionGroupEntity partnerManagerGroupKey; //거래처유저그룹 엔티티 참조
@@ -97,6 +101,7 @@ public class WellPartnerUserEntity {
                                  Boolean isFirstLogin, PartnerRefreshTokenEntity partnerRefreshToken, List<String> permissionsKeysStringList, PartnerRefreshTokenEntity refreshTokens) {
         this.partnerIdx = partnerIdx;
         this.partner = partner;
+//        this.partnerUserSign = partnerUserSign;
         this.partnerManagerGroupKey = partnerManagerGroupKey;
         this.partnerIdentification = partnerIdentification;
         this.partnerUserPwd = partnerUserPwd;

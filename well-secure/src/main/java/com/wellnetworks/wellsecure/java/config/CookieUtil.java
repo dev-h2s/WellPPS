@@ -7,6 +7,7 @@ import org.springframework.util.SerializationUtils;
 
 import java.util.Base64;
 
+
 public class CookieUtil {
 
         public static void setAccessTokenCookie(HttpServletResponse response, String token, int maxAge) {
@@ -20,6 +21,14 @@ public class CookieUtil {
 //        // Access Token 쿠키 삭제
 //        deleteCookie(response, "access_token");
 //    }
+
+    public static String extractToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
 
     public static void addCookieForAccess(HttpServletResponse response, String name, String value, int maxAge) {
         // 쿠키를 생성

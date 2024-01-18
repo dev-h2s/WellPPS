@@ -24,7 +24,7 @@ public class WellEmployeeManagerGroupEntity{
     private List<WellEmployeeUserEntity> employee = new ArrayList<>();
 
     @Column(name = "department"
-            , nullable = false
+//            , nullable = false
     )//부서명
     private String department;
 

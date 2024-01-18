@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.querydsl.core.annotations.QueryProjection;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -75,5 +76,17 @@ public class WellPartnerUpdateDTO {
     private List<MultipartFile> idCardFiles;
     private List<MultipartFile> storePhotoFiles;
     private List<MultipartFile> businessCardFiles;
+
+//    회원가입 관련 관련 컬럼
+    private String registrationStatus;
+    private String rejectionReason;
+    private String writer; //작성자
+    private String event;//이벤트
+    private Boolean visitStatus;//방문요청여부
+    private LocalDateTime openingVisitRequestDate;//개통점방문희망일자
+    private LocalDateTime openingVisitDecideDate;//개통점방문확정일자
+    private String openingProgress;//개통점진행도
+    private Boolean isOpeningFlag;//개통점전환여부
+    private String openingNote;//개통점신청비고
 
 }

@@ -2,6 +2,7 @@ package com.wellnetworks.wellcore.java.domain.apikeyIn;
 // 내부 apikey
 
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+//import com.wellnetworks.wellcore.java.domain.partner.WellPartnerSignEntity;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.WellApiKeyUpdateDTO;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,6 +23,10 @@ public class WellApikeyInEntity {
     // 거래처와의 일대다 관계 (하나의 API 키는 여러 개의 거래처를 가질 수 있음)
     @OneToOne(mappedBy = "apiKey")
     private WellPartnerEntity partners;
+
+//    // 거래처 sign와의 일대다 관계 (하나의 API 키는 여러 개의 거래처를 가질 수 있음)
+//    @OneToOne(mappedBy = "apiKeySign")
+//    private WellPartnerSignEntity partnerSign;
 
     @Column(name = "api_key_in") //내부APIKEY
     private String apiKeyIn;

@@ -22,6 +22,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import org.springframework.security.core.AuthenticationException;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -36,7 +37,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private final TokenProvider tokenProvider; // JWT 토큰을 생성하거나 검증하는 제공자
 
     private final RefreshTokenService refreshTokenService;
-
 
 
     /**
@@ -137,8 +137,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
 
-
-
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
 
@@ -160,8 +158,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             errorMessage = "존재하지 않는 아이디 입니다."; // 사용자를 찾을 수 없을 때의 오류 메시지
         } else if (failed instanceof BadCredentialsException) {
             errorMessage = "비밀번호가 일치하지 않습니다."; // 비밀번호가 틀렸을 때의 오류 메시지
-        }
-        else {
+        } else {
             errorMessage = "인증에 실패했습니다."; // 그 외 다른 인증 오류에 대한 일반적인 메시지
         }
         responseData.put("message", errorMessage);

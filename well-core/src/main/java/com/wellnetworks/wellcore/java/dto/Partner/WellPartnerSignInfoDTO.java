@@ -1,15 +1,16 @@
 package com.wellnetworks.wellcore.java.dto.Partner;
 
 import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.dto.FIle.WellFileDetailDTO;
+import jakarta.persistence.Column;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,30 +18,37 @@ import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-public class WellPartnerInfoDTO {
+public class WellPartnerSignInfoDTO {
     private String partnerIdx;
     private List<WellFileDetailDTO> fileDetails = new ArrayList<>();
-    private LocalDate subscriptionDate;
-    private String partnerCode;
-    private String partnerName;
-    private String partnerType;
-    private String discountCategory;
-    private Integer dipositBalance;
-    private String salesManager;
-    private String ceoName;
-    private String ceoTelephone;
-    private String transactionStatus;
-    private String writer;
-    private String partnerUpperIdx;
-    private String partnerUpperName;
-    private Boolean isOpeningFlag;
-    private String registrationStatus; // 회원가입 승인 여부
+
+// 요청일자 넣어야함
+    private String discountCategory; // 가입형태
+    private String partnerName; //거래처명
+    private String ceoName; //대표자명
+    private Boolean visitStatus; //방문요청여부
+    private String registrationAddress; // 방문주소
+    private LocalDateTime openingVisitRequestDate; //방문 희망일자
+    private String registrationStatus; // 회원가입 승인 여부(승인대기)
+    private String rejectionReason; // 회원가입 거부사유
+    // 검수일자
+    //검수자
+
+
 
     //리스트
-    public WellPartnerInfoDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, WellDipositEntity diposit
-            , String partnerUpperName
-                                ) {
+    public WellPartnerSignInfoDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, WellDipositEntity diposit
+            , String partnerUpperName) {
         this.partnerIdx = entity.getPartnerIdx();
+        this.discountCategory = entity.getDiscountCategory();
+        this.partnerName = entity.getPartnerName();
+        this.ceoName = entity.getCeoName();
+        this.visitStatus =entity.getVisitStatus();
+        this.registrationAddress = entity.getRegistrationAddress();
+        this.openingVisitRequestDate = entity.getOpeningVisitRequestDate();
+        this.registrationStatus = entity.getRegistrationStatus();
+        this.rejectionReason = entity.getRejectionReason();
+
         for (WellPartnerFIleStorageEntity fileStorage : fileStorages) {
             if (fileStorage != null && fileStorage.getFile() != null) {
                 WellFileDetailDTO fileDetail = new WellFileDetailDTO();
@@ -50,30 +58,7 @@ public class WellPartnerInfoDTO {
                 this.fileDetails.add(fileDetail);
             }
         }
-        if (entity.getSubscriptionDate() != null){
-            this.subscriptionDate = LocalDate.from(entity.getSubscriptionDate());
-        }
 
-        this.partnerCode = entity.getPartnerCode();
-        this.partnerName = entity.getPartnerName();
-        this.partnerType = entity.getPartnerType();
-        this.discountCategory = entity.getDiscountCategory();
-        this.isOpeningFlag = entity.getIsOpeningFlag();
-        this.registrationStatus = entity.getRegistrationStatus();
-        this.dipositBalance = diposit != null ? diposit.getDipositBalance() : 0;
-
-        this.salesManager = entity.getSalesManager();
-        this.ceoName = entity.getCeoName();
-        this.ceoTelephone = entity.getCeoTelephone();
-        this.transactionStatus = entity.getTransactionStatus();
-        this.writer = entity.getWriter();
-        this.partnerUpperIdx = entity.getPartnerUpperIdx();
-        if (partnerUpperIdx != null) {
-            this.partnerUpperName = partnerUpperName;
-        }
-        else {
-            this.partnerUpperName = null;
-        }
         List<String> requiredFileKinds = Arrays.asList("사업자등록증", "계약서", "대표자신분증", "매장사진", "대표자명함");
 
         // 파일 종류별로 첫 번째 항목을 찾고, 없으면 빈 정보를 추가

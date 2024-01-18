@@ -37,14 +37,13 @@ public class SecurityProperties {
     private int strength = 10;
 
     @Positive
-    private int accessTokenExpirationTime = 1;
+    private int accessTokenExpirationTime = 1; // 1시간
 
     @Positive
-    private int refreshTokenExpirationTime = 1; // 2주
+    private int refreshTokenExpirationTime = 14; // 2주
 
     private final String tokenPrefix = "Bearer ";
     private final String headerString = "Authorization";
-
 
 
 }

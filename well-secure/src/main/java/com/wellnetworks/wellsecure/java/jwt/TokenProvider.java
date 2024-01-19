@@ -34,9 +34,6 @@ public class TokenProvider {
     private Date tokenValidity;
     private static final Logger log = LoggerFactory.getLogger(TokenProvider.class);
 
-    private Date accessTokenValidity; // acess 토큰 인증 만료 기간
-    private Date refreshTokenValidity; // refresh 토큰 시간
-
     // 생성자에서 의존성 주입
     public TokenProvider(SecurityProperties securityProperties, WellUserDetailService wellUserDetailService) {
         this.securityProperties = securityProperties;
@@ -63,9 +60,8 @@ public class TokenProvider {
         authentication.getAuthorities().forEach(claim -> authClaims.add(claim.toString()));
 
         // 현재 시간으로부터 accessToken 만료 시간을 설정
-        this.accessTokenValidity = new Date(System.currentTimeMillis() +
+        Date accessTokenValidity = new Date(System.currentTimeMillis() +
                 (long) securityProperties.getAccessTokenExpirationTime() * 60 * 60 * 1000);
-
 
         // JWT 토큰 생성 및 반환
         return Jwts.builder()
@@ -81,7 +77,8 @@ public class TokenProvider {
     // refreshToken 생성 메서드
     public String createRefreshToken(Authentication authentication) {
         // 현재 시간으로부터 refreshToken 만료 시간을 설정
-        this.refreshTokenValidity = new Date(System.currentTimeMillis() +
+        // refresh 토큰 시간
+        Date refreshTokenValidity = new Date(System.currentTimeMillis() +
                 (long) securityProperties.getRefreshTokenExpirationTime() * 24 * 60 * 60 * 1000);
 
         // refreshToken 생성 코드...

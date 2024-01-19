@@ -12,27 +12,13 @@ import java.util.Objects;
  * EmployeeUserDetails 클래스는 Spring Security에서 사용자의 세부 정보를 담는데 사용됨
  * 이 클래스는 UserDetails 인터페이스를 구현하여 Spring Security가 사용자 인증과 권한 부여를 수행할 수 있도록 함
  */
+
 @Getter
 public class EmployeeUserDetails implements UserDetails {
 
-    private String username;
-    private String password;
-    private Collection<? extends GrantedAuthority> authorities;
-    private boolean isFirstLogin; // 추가된 필드
-    private WellEmployeeUserEntity employee; // 추가된 필드
-    /**
-     * EmployeeUserDetails 객체를 생성합니다.
-     *
-     * @param username    사용자의 이름
-     * @param password    사용자의 비밀번호
-     * @param authorities 사용자에게 부여된 권한
-     */
-    public EmployeeUserDetails(String username, String password,Boolean isFirstLogin , Collection<? extends GrantedAuthority> authorities
-    , WellEmployeeUserEntity employee) {
-        this.username = username;
-        this.password = password;
-        this.authorities = authorities;
-        this.isFirstLogin = isFirstLogin;
+    private final WellEmployeeUserEntity employee; // 추가된 필드
+
+    public EmployeeUserDetails(WellEmployeeUserEntity employee) {
         this.employee = employee;
 
     }
@@ -48,7 +34,7 @@ public class EmployeeUserDetails implements UserDetails {
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        return null;
     }
 
     /**
@@ -58,12 +44,13 @@ public class EmployeeUserDetails implements UserDetails {
      */
     @Override
     public String getPassword() {
-        return password;
+        return employee.getIsPasswordResetRequired() ?
+                employee.getTmpPwd() : employee.getEmployeeUserPwd();
     }
 
-    public void getFirstLogin(boolean isFirstLogin) {
-        this.isFirstLogin = isFirstLogin;
-    }
+//    public void getFirstLogin(boolean isFirstLogin) {
+//        this.isFirstLogin = isFirstLogin;
+//    }
 
     /**
      * 사용자의 이름을 반환합니다.
@@ -72,7 +59,7 @@ public class EmployeeUserDetails implements UserDetails {
      */
     @Override
     public String getUsername() {
-        return username;
+        return employee.getEmployeeIdx();
     }
 
     /**
@@ -121,11 +108,11 @@ public class EmployeeUserDetails implements UserDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EmployeeUserDetails that = (EmployeeUserDetails) o;
-        return Objects.equals(username, that.username);
+        return Objects.equals(employee.getEmployeeIdx(), that.getEmployee().getEmployeeIdx());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(username);
+        return Objects.hash(employee.getEmployeeIdx());
     }
 }

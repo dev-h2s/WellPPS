@@ -4,15 +4,12 @@ import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerUserEntity;
 import com.wellnetworks.wellcore.java.domain.refreshtoken.EmployeeRefreshTokenEntity;
 import com.wellnetworks.wellcore.java.domain.refreshtoken.PartnerRefreshTokenEntity;
-import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerUserRepository;
 import com.wellnetworks.wellcore.java.repository.member.EmployeeRefreshTokenRepository;
 import com.wellnetworks.wellcore.java.repository.member.PartnerRefreshTokenRepository;
-import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
 import com.wellnetworks.wellsecure.java.config.SecurityProperties;
 import com.wellnetworks.wellsecure.java.jwt.TokenProvider;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -49,7 +46,7 @@ public class RefreshTokenService {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(
                         userDetails.getUsername(), null, userDetails.getAuthorities());
-        String newRefreshTokenValue = tokenProvider.createRefreshToken(authenticationToken);
+        String newRefreshTokenValue = tokenProvider.createToken(authenticationToken);
         // 리프레쉬 토큰의 만료 날짜를 계산
         Date expiryDate = calculateExpiryDate(securityProperties.getRefreshTokenExpirationTime());
 
@@ -99,15 +96,15 @@ public class RefreshTokenService {
 
     private String getUsernameFromRefreshToken(String refreshToken) {
         // 리프레시 토큰이 null이거나 유효하지 않은 경우 예외를 발생시킵니다.
-        if (refreshToken == null || !tokenProvider.validateRefreshToken(refreshToken)) {
+        if (refreshToken == null || !tokenProvider.validateToken(refreshToken)) {
             throw new IllegalArgumentException("유효하지 않거나 null인 리프레시 토큰입니다.");
         }
         // TokenProvider를 사용하여 리프레시 토큰에서 사용자 이름을 추출합니다.
-        String username = tokenProvider.getUsernameFromToken(refreshToken);
-        if (username == null || username.isEmpty()) {
+        Authentication username = tokenProvider.getAuthentication(refreshToken);
+        if (username == null || !username.isAuthenticated()) {
             throw new IllegalArgumentException("리프레시 토큰에서 사용자 이름을 찾을 수 없습니다.");
         }
-        return username;
+        return username.getName();
     }
 
 

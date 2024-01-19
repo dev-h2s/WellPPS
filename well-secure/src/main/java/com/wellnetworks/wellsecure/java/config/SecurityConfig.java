@@ -1,20 +1,15 @@
 package com.wellnetworks.wellsecure.java.config;
 
-import com.wellnetworks.wellsecure.java.jwt.JwtAuthenticationFilter;
-import com.wellnetworks.wellsecure.java.jwt.JwtAuthorizationFilter;
+import com.wellnetworks.wellsecure.java.jwt.JwtFilter;
 import com.wellnetworks.wellsecure.java.jwt.TokenProvider;
-import com.wellnetworks.wellsecure.java.service.AppAuthenticationManager;
-//import com.wellnetworks.wellsecure.java.service.CustomLogoutHandler;
-import com.wellnetworks.wellsecure.java.service.RefreshTokenService;
-//import com.wellnetworks.wellsecure.java.service.WellLogOutService;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -29,31 +24,13 @@ import java.util.List;
 @Configuration  // 이 클래스를 스프링의 설정 클래스로 선언
 @EnableWebSecurity  // 웹 보안을 활성화
 @EnableMethodSecurity  // 메소드 레벨의 보안을 활성화
-@ComponentScan("com.wellnetworks.wellsecure")
-
 public class SecurityConfig {
-    private final SecurityProperties securityProperties;
-    private final AppAuthenticationManager authenticationManager;
+
     private final TokenProvider tokenProvider;
-    private final RefreshTokenService refreshTokenService;
-//    private final WellLogOutService logOutService;
 
-
-    public SecurityConfig(SecurityProperties securityProperties, AppAuthenticationManager authenticationManager,
-                          TokenProvider tokenProvider,
-//                          CustomLogoutHandler customLogoutHandler,
-                          RefreshTokenService refreshTokenService) {
-        this.securityProperties = securityProperties;
-        this.authenticationManager = authenticationManager;
+    public SecurityConfig(TokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;
-        this.refreshTokenService = refreshTokenService;
-//        this.customLogoutHandler = customLogoutHandler;
-//        this.logOutService = logOutService;
     }
-//    @Bean
-//    public CustomLogoutHandler customLogoutHandler(RefreshTokenService refreshTokenService) {
-//        return new CustomLogoutHandler(refreshTokenService);
-//    }
 
     /**
      * Spring Security의 Filter Chain 설정을 제공합니다.
@@ -65,17 +42,14 @@ public class SecurityConfig {
                 .and()
                 .csrf().disable()  // CSRF 방지 기능 비활성화
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()  // 세션을 사용하지 않도록 설정
-                .addFilter(new JwtAuthenticationFilter(authenticationManager, securityProperties, tokenProvider, refreshTokenService))  // JWT 인증 필터 추가
-                .addFilter(new JwtAuthorizationFilter(authenticationManager, securityProperties, tokenProvider))  // JWT 권한 확인 필터 추가
+                .addFilterBefore(
+                        new JwtFilter(tokenProvider),
+                        UsernamePasswordAuthenticationFilter.class
+                )
                 .logout()
-//                .logoutUrl("init/logout")  // 로그아웃 경로 설정
-////                .addLogoutHandler(logOutService)
-//                .logoutSuccessUrl("/loginTest.html")  // 로그아웃 후 리다이렉트할 경로 설정
                 .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID", "access_token", "refresh_token");// 로그아웃 시 삭제할 쿠키 설정
-
-
-        http.authorizeRequests()
+                .deleteCookies("JSESSIONID", "access_token", "refresh_token")// 로그아웃 시 삭제할 쿠키 설정
+                .and().authorizeHttpRequests()
                 .requestMatchers("/init/**").permitAll()// "/init/**" 경로는 누구나 접근 가능
                 .requestMatchers("/api/**").permitAll()
                 .requestMatchers("/", "/**", "/init/**").permitAll()
@@ -87,10 +61,7 @@ public class SecurityConfig {
                 .requestMatchers("/logout").permitAll()
                 .requestMatchers("/signup").permitAll()
                 .requestMatchers("/user/logoutCustom").permitAll()
-
-//                .requestMatchers("/**").permitAll() // 나머지 모든 요청은 누구나 접근 가능
-                .anyRequest().authenticated();// 그 외 나머지 요청은 인증된 사용자만 접근 가능
-
+                .anyRequest().authenticated();
         return http.build();
     }
 
@@ -113,9 +84,9 @@ public class SecurityConfig {
                 , "http://welldev.iptime.org:8080"
                 , "http://112.146.206.134:8888"
                 , "http://112.146.206.134:8080"
-                , "http://112.146.206.134"
+                , "http://112.146.206.134", "http://192.168.0.11:3000"
         )); // 클라이언트 도메인 추가
-        config.setAllowedMethods(List.of("PATCH","POST", "PUT", "DELETE", "GET", "OPTIONS", "HEAD")); // 허용할 HTTP 메서드 설정
+        config.setAllowedMethods(List.of("PATCH", "POST", "PUT", "DELETE", "GET", "OPTIONS", "HEAD")); // 허용할 HTTP 메서드 설정
         config.setAllowedHeaders(List.of("*"));  // 허용할 헤더 설정
         // PNA 관련 설정을 위해 여기에 추가
 //        config.addAllowedHeader("Access-Control-Allow-Private-Network"); // 요청해더

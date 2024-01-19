@@ -5,12 +5,18 @@ import com.wellnetworks.wellcore.java.domain.partner.WellPartnerUserEntity;
 import com.wellnetworks.wellcore.java.dto.member.ChangePasswordRequest;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerUserRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,11 +30,11 @@ public class WellUserDetailService implements UserDetailsService {
     private final WellPartnerUserRepository partnerUserRepository;
     private PasswordEncoder passwordEncoder;
 
-    private RefreshTokenService refreshTokenService;
+     private RefreshTokenService refreshTokenService;
 
     public WellUserDetailService(WellEmployeeUserRepository employeeUserRepository,
                                  WellPartnerUserRepository partnerUserRepository
-            , PasswordEncoder passwordEncoder
+                                ,PasswordEncoder passwordEncoder
     ) {
         this.employeeUserRepository = employeeUserRepository;
         this.partnerUserRepository = partnerUserRepository;
@@ -53,7 +59,16 @@ public class WellUserDetailService implements UserDetailsService {
                 .orElse(null);
 
         if (employee != null) {
-            return new EmployeeUserDetails(employee);
+            String effectivePassword = employee.getIsPasswordResetRequired() ?
+                    employee.getTmpPwd() : employee.getEmployeeUserPwd();
+            // EmployeeUserDetails 객체를 생성하고, 조회된 employee 객체를 포함합니다.
+            return new EmployeeUserDetails(
+                    employee.getEmployeeIdentification(),
+                    effectivePassword,
+                    employee.getIsFirstLogin(),
+                    employee.getAuthorities(),
+                    employee
+            );
         }
 
         // 사원이 없으면 파트너 저장소에서 사용자를 조회합니다.
@@ -63,7 +78,13 @@ public class WellUserDetailService implements UserDetailsService {
         String effectivePassword = partner.getIsPasswordResetRequired() ?
                 partner.getTmpPwd() : partner.getPartnerUserPwd();
         // PartnerUserDetails 객체를 생성하고, 조회된 partner 객체를 포함합니다.
-        return new PartnerUserDetails(partner);
+        return new PartnerUserDetails(
+                partner.getPartnerIdentification(),
+                effectivePassword,
+                partner.getIsFirstLogin(),
+                partner.getAuthorities(),
+                partner
+        );
     }
 //    @Transactional
 //    public void logoutDeleteRefreshToken(Object principal) {
@@ -73,7 +94,7 @@ public class WellUserDetailService implements UserDetailsService {
 //    }
 
 
-    //패스워드 변경
+//패스워드 변경
     @Transactional  // 데이터베이스 변경 사항을 하나의 트랜잭션으로 처리
     public void changePassword(ChangePasswordRequest request) {
         // 새 비밀번호와 확인 비밀번호가 일치하는지 검증
@@ -99,7 +120,8 @@ public class WellUserDetailService implements UserDetailsService {
             // 비밀번호 변경 메서드 호출
             partner.changePasswordAndInvalidateTempPassword(request.getNewPassword(), passwordEncoder);
             partnerUserRepository.save(partner); // 변경 사항을 데이터베이스에 저장
-        } else {
+        }
+        else {
             throw new UsernameNotFoundException("사용자 이름에 해당하는 사용자를 찾을 수 없습니다.: " + request.getUsername());
         }
     }

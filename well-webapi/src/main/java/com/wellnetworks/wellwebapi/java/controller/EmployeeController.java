@@ -1,7 +1,9 @@
 package com.wellnetworks.wellwebapi.java.controller;
 
-import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeManagerGroupEntity;
-import com.wellnetworks.wellcore.java.dto.member.*;
+import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDTO;
+import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDetailDTO;
+import com.wellnetworks.wellcore.java.dto.member.WellEmployeeJoinDTO;
+import com.wellnetworks.wellcore.java.dto.member.WellEmployeeUpdateDTO;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeGroupRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
 import com.wellnetworks.wellcore.java.service.member.WellEmployeeService;
@@ -13,12 +15,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @RequestMapping("/admin/hr/")
 @RestController
@@ -95,7 +98,7 @@ public class EmployeeController {
     //@ModelAttribute  key-value 쌍 데이터(폼 데이터)를 Java 객체로 바인딩
     @PostMapping(value = "employee/signUp")
     public ResponseEntity<String> createEmployeeUser(@ModelAttribute @Valid WellEmployeeJoinDTO createDTO) throws Exception {
-//        System.out.println("ㅗㅗㅗㅗ");
+        System.out.println("ㅗㅗㅗㅗ");
         try {
             String tempPassword = wellEmployeeService.employeeJoin(createDTO);
             // 콘솔에 임시 비밀번호 출력

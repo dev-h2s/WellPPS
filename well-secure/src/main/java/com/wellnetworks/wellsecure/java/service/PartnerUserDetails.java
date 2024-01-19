@@ -14,12 +14,27 @@ import java.util.Objects;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PartnerUserDetails implements UserDetails {
 
+    private String username;
+    private String password;
+    private Collection<? extends GrantedAuthority> authorities;
+    private boolean isFirstLogin; // 첫 로그인 여부
     // partner 필드를 반환하는 메서드
     @Getter
     private WellPartnerUserEntity partner;
-
-    public PartnerUserDetails(WellPartnerUserEntity partner) {
-        this.partner = partner;
+    /**
+     * EmployeeUserDetails 객체를 생성합니다.
+     *
+     * @param username    사용자의 이름
+     * @param password    사용자의 비밀번호
+     * @param authorities 사용자에게 부여된 권한
+     */
+    public PartnerUserDetails(String username, String password,Boolean isFirstLogin , Collection<? extends GrantedAuthority> authorities
+    , WellPartnerUserEntity partner) {
+        this.username = username;
+        this.password = password;
+        this.authorities = authorities;
+        this.isFirstLogin = isFirstLogin;
+        this.partner =partner;
 
     }
 
@@ -31,7 +46,7 @@ public class PartnerUserDetails implements UserDetails {
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return authorities;
     }
 
     /**
@@ -41,9 +56,12 @@ public class PartnerUserDetails implements UserDetails {
      */
     @Override
     public String getPassword() {
-        return partner.getPartnerUserPwd();
+        return password;
     }
 
+    public void getFirstLogin(boolean isFirstLogin) {
+        this.isFirstLogin = isFirstLogin;
+    }
 
     /**
      * 사용자의 이름을 반환합니다.
@@ -52,7 +70,7 @@ public class PartnerUserDetails implements UserDetails {
      */
     @Override
     public String getUsername() {
-        return partner.getPartnerIdx();
+        return username;
     }
 
     /**
@@ -101,11 +119,11 @@ public class PartnerUserDetails implements UserDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PartnerUserDetails that = (PartnerUserDetails) o;
-        return Objects.equals(partner.getPartnerIdx(), that.partner.getPartnerIdx());
+        return Objects.equals(username, that.username);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(partner.getPartnerIdx());
+        return Objects.hash(username);
     }
 }

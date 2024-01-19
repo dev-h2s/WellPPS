@@ -2,7 +2,6 @@ package com.wellnetworks.wellcore.java.dto.Partner;
 
 import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
@@ -12,7 +11,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -85,7 +83,8 @@ public class WellPartnerDetailDTO {
         }
 
         this.preApprovalNumber = entity.getPreApprovalNumber();
-        this.subscriptionDate = LocalDate.from(entity.getSubscriptionDate());
+        this.subscriptionDate = entity.getSubscriptionDate() != null ? LocalDate.from(entity.getSubscriptionDate()) : null;
+
         this.transactionStatus = entity.getTransactionStatus();
         this.partnerUpperIdx = entity.getPartnerUpperIdx();
         if (partnerUpperIdx != null) {

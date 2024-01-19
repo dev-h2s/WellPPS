@@ -1,70 +1,54 @@
 package com.wellnetworks.wellwebapi.java.controller.member;
 
-import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
 import com.wellnetworks.wellcore.java.dto.member.ChangePasswordRequest;
-import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
 import com.wellnetworks.wellsecure.java.config.CookieUtil;
-import com.wellnetworks.wellsecure.java.request.ApiResponse;
-
 import com.wellnetworks.wellsecure.java.jwt.TokenProvider;
+import com.wellnetworks.wellsecure.java.request.ApiResponse;
 import com.wellnetworks.wellsecure.java.request.TokenResponse;
 import com.wellnetworks.wellsecure.java.request.UserLoginReq;
-import com.wellnetworks.wellsecure.java.service.*;
+import com.wellnetworks.wellsecure.java.service.EmployeeUserDetails;
+import com.wellnetworks.wellsecure.java.service.PartnerUserDetails;
+import com.wellnetworks.wellsecure.java.service.RefreshTokenService;
+import com.wellnetworks.wellsecure.java.service.WellUserDetailService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.*;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@ComponentScan(basePackages = {"com.wellnetworks.wellcore", "com.wellnetworks.wellsecure"})
 @RequiredArgsConstructor
-
 public class UserController {
-
     private final RefreshTokenService refreshTokenService;
-    private final WellEmployeeUserRepository employeeUserRepository;
-    private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
     private final WellUserDetailService detailService;
-        private final WellLogOutService logOutService;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-
-
-
-
-    // 기존 로그인 로직
-//    //로그인
-    @PostMapping(value = "init/login")
+    @PostMapping(value = "/init/login")
     public ResponseEntity<ApiResponse> login(@RequestBody UserLoginReq loginReq) {
-        WellEmployeeUserEntity userEntity = null;
-        System.out.println("돌아가나");
         try {
-            // 사용자의 인증 정보를 검증
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginReq.getUsername(), loginReq.getPassword())
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(loginReq.getUsername(), loginReq.getPassword());
 
-            );
+            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
             // 인증에 성공하면 JWT 토큰을 생성
             String accessToken = tokenProvider.createToken(authentication);
             String refreshToken = tokenProvider.createRefreshToken(authentication);
-            System.out.println(accessToken);
-            System.out.println(refreshToken);
-            System.out.println("인증 객체: " + authentication);
 
             // UserDetails 객체를 조회하여 첫 로그인 여부를 확인
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -72,23 +56,14 @@ public class UserController {
 
             // 첫 로그인 여부 확인
             if (userDetails instanceof EmployeeUserDetails) {
-                isFirstLogin = ((EmployeeUserDetails) userDetails).isFirstLogin();
+                isFirstLogin = ((EmployeeUserDetails) userDetails).getEmployee().getIsFirstLogin();
             } else if (userDetails instanceof PartnerUserDetails) {
-                isFirstLogin = ((PartnerUserDetails) userDetails).isFirstLogin();
+                isFirstLogin = ((PartnerUserDetails) userDetails).getPartner().getIsFirstLogin();
             }
-
             // 응답 객체를 생성
             ApiResponse response = isFirstLogin
                     ? new ApiResponse("첫 로그인시. 패스워드를 변경해주세요.", new TokenResponse(accessToken, refreshToken))
                     : new ApiResponse("로그인 성공", new TokenResponse(accessToken, refreshToken));
-
-            ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-
-//            executorService.scheduleAtFixedRate(() -> {
-//                String newAccessToken = tokenProvider.createToken(authentication); // 새로운 토큰 생성 로직
-//                System.out.println("New access token: " + newAccessToken);
-//            }, 0, 10, TimeUnit.SECONDS);
-
 
             // JWT 토큰을 클라이언트에게 응답으로 반환
             return ResponseEntity.ok(response);
@@ -130,11 +105,10 @@ public class UserController {
     }
 
     // 로그아웃
-    @PostMapping("init/logout")
-    public ResponseEntity<?> logoutUser(HttpServletRequest request, HttpServletResponse response) {
-
-        // 토큰 추출 (예: 헤더, 쿠키 등에서)
-//        String refreshToken = CookieUtil.extractToken(request);
+    @PostMapping("/init/logout")
+    public ResponseEntity<?> logoutUser(HttpServletRequest request, HttpServletResponse response) {        // 토큰 추출 (예: 헤더, 쿠키 등에서)
+        String refreshToken = CookieUtil.extractToken(request);
+        System.out.println(refreshToken);
 //        // 리프레시 토큰 무효화
 //        refreshTokenService.deleteRefreshToken();
 //        CookieUtil.deleteCookie(request, response, "access_token");
@@ -142,8 +116,6 @@ public class UserController {
 //        return ResponseEntity.ok().body("User logged out successfully");
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        System.out.println(authentication);
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             refreshTokenService.deleteRefreshToken(userDetails);

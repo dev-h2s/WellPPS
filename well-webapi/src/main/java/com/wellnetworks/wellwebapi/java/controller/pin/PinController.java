@@ -3,6 +3,7 @@ package com.wellnetworks.wellwebapi.java.controller.pin;
 import com.wellnetworks.wellcore.java.dto.PIN.*;
 import com.wellnetworks.wellcore.java.service.pin.WellPinService;
 import com.wellnetworks.wellwebapi.java.controller.ResponseUtil;
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -83,17 +83,25 @@ public class PinController {
 
     // 엑셀 파일 업로드
     @PostMapping("/excel")
-    public ResponseEntity<?> importPins(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> importPins(@RequestParam("file") MultipartFile file, HttpServletResponse response) {
         try {
-            List<WellPinExcelCreateDTO> duplicatePins = pinService.importPinsFromExcel(file);
+            Workbook workbook = pinService.importPinsFromExcel(file);
 
-            if (duplicatePins.isEmpty()) {
-                return ResponseEntity.ok("핀 데이터가 성공적으로 업로드되었습니다.");
+            if (workbook != null) {
+                // 중복이 있을 경우: 수정된 엑셀 파일을 응답으로 제공
+                response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                response.setHeader("Content-Disposition", "attachment; filename=duplicatePins.xlsx");
+
+                ServletOutputStream outputStream = response.getOutputStream();
+                workbook.write(outputStream);
+                workbook.close();
+                outputStream.close();
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 핀이 있습니다. 수정된 파일을 다운로드하세요.");
             } else {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "중복된 핀 번호가 있습니다.", "items", duplicatePins));
+                return ResponseEntity.ok("핀 데이터가 성공적으로 업로드되었으며 중복된 핀이 없습니다.");
             }
         } catch (Exception e) {
-            return ResponseUtil.createErrorResponse(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 처리 중 오류 발생: " + e.getMessage());
         }
     }
 
@@ -175,8 +183,8 @@ public class PinController {
         }
 
         // 컨텐츠 타입과 파일명 지정
-        response.setContentType("ms-vnd/excel");
-        response.setHeader("Content-Disposition", "attachment;filename=example.xlsx");
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment;filename=release.xlsx");
 
         wb.write(response.getOutputStream());
         wb.close();

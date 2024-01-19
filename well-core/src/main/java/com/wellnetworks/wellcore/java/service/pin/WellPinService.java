@@ -15,6 +15,8 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.*;
@@ -95,31 +97,75 @@ public class WellPinService {
 
     // 핀 엑셀 저장
     @Transactional
-    public List<WellPinExcelCreateDTO> importPinsFromExcel(MultipartFile file) throws IOException, InvalidFormatException {
-        List<Map<String, Object>> excelData = excelUtil.getListData(file, 1, 6);
-        List<WellPinExcelCreateDTO> duplicatePins = new ArrayList<>();
-        List<WellPinExcelCreateDTO> allPins = new ArrayList<>();
+    public Workbook importPinsFromExcel(MultipartFile file) throws IOException, InvalidFormatException {
+        Workbook workbook = new XSSFWorkbook(file.getInputStream());
+        Sheet sheet = workbook.getSheetAt(0);
+        boolean hasDuplicates = false;
 
-        for (Map<String, Object> row : excelData) {
-            WellPinExcelCreateDTO dto = mapRowToDto(row);
-            allPins.add(dto);
+        // Excel 헤더에 중복 체크 열 추가
+        Row headerRow = sheet.getRow(0);
+        if (headerRow == null) {
+            headerRow = sheet.createRow(0);
+        }
+        Cell newHeaderCell = headerRow.createCell(headerRow.getLastCellNum());
+        newHeaderCell.setCellValue("중복 체크");
 
-            if (pinRepository.findByPinNum(dto.getPinNum()).isPresent()) {
-                duplicatePins.add(dto);
+        List<WellPinExcelCreateDTO> pinList = new ArrayList<>();
+
+        int rowNum = 1; // 첫 번째 행(헤더) 건너뛰고 시작
+        while (rowNum <= sheet.getLastRowNum()) {
+            Row currentRow = sheet.getRow(rowNum);
+            if (currentRow != null) {
+                Map<String, Object> rowData = convertRowToMap(currentRow);
+                WellPinExcelCreateDTO dto = mapRowToDto(rowData);
+                if (pinRepository.findByPinNum(dto.getPinNum()).isPresent()) {
+                    Cell newCell = currentRow.createCell(currentRow.getLastCellNum());
+                    newCell.setCellValue("중복됨");
+                    hasDuplicates = true;
+                } else {
+                    pinList.add(dto);
+                }
+                rowNum++;
             }
         }
 
-        // 중복된 핀이 없으면 모든 핀 저장
-        if (duplicatePins.isEmpty()) {
-            for (WellPinExcelCreateDTO dto : allPins) {
+        if (!hasDuplicates) {
+            for (WellPinExcelCreateDTO dto : pinList) {
                 WellPinEntity pin = convertDtoToEntity(dto);
                 pinRepository.save(pin);
             }
+            workbook.close();
+            return null;
+        } else {
+            return workbook; // 중복이 있는 경우에만 Workbook 반환
         }
-
-        return duplicatePins;
     }
 
+    private Map<String, Object> convertRowToMap(Row row) {
+        Map<String, Object> rowData = new HashMap<>();
+        // 예시: 엑셀 파일에 6개의 컬럼이 있다고 가정
+        for (int i = 0; i < 6; i++) {
+            Cell cell = row.getCell(i, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+            switch (cell.getCellType()) {
+                case STRING:
+                    rowData.put(String.valueOf(i), cell.getStringCellValue());
+                    break;
+                case NUMERIC:
+                    if (DateUtil.isCellDateFormatted(cell)) {
+                        rowData.put(String.valueOf(i), cell.getDateCellValue());
+                    } else {
+                        rowData.put(String.valueOf(i), cell.getNumericCellValue());
+                    }
+                    break;
+                case BOOLEAN:
+                    rowData.put(String.valueOf(i), cell.getBooleanCellValue());
+                    break;
+                default:
+                    rowData.put(String.valueOf(i), "");
+            }
+        }
+        return rowData;
+    }
 
     // Map을 DTO로 변환
     private WellPinExcelCreateDTO mapRowToDto(Map<String, Object> row) {

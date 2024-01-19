@@ -111,14 +111,19 @@ public class PartnerListController {
 
 
     //거래처 회원가입 리스트
-    @GetMapping("businessSign")
+    @GetMapping("business/sign")
     public ResponseEntity<?> getPartnerSignList(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
+            , @RequestParam(value = "partnerName", required = false) String partnerName
+            , @RequestParam(value = "ceoName", required = false) String ceoName
+            , @RequestParam(value = "ceoTelephone", required = false) String ceoTelephone
+            , @RequestParam(value = "discountCategory", required = false) String discountCategory
+            , @RequestParam(value = "registrationStatus", required = false) String registrationStatus
     ) {
         try {
-            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "productRegisterDate"));
-            Page<WellPartnerSignInfoDTO> partnersPage = wellPartnerService.getAllPartnerSign(pageable);
+            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "signRequestDate"));
+            Page<WellPartnerSignInfoDTO> partnersPage = wellPartnerService.getAllPartnerSign(pageable, ceoTelephone, ceoName, partnerName);
 
             Map<String, Object> response = new HashMap<>();
             response.put("currentPage", partnersPage.getNumber());
@@ -160,7 +165,7 @@ public class PartnerListController {
     }
 
     //거래처 회원가입 신청 입력
-    @PostMapping(value = "businessSign/create")
+    @PostMapping(value = "business/sign/create")
     public ResponseEntity<String> createPartnerSign(@Valid WellPartnerSignCreateDTO signCreateDTO) throws Exception {
 
         wellPartnerService.signJoin(signCreateDTO);
@@ -242,8 +247,6 @@ public class PartnerListController {
     }
 
 
-
-
     // 거래처 체크항목 삭제
     @DeleteMapping("business/delete/{partnerIdx}")
     public ResponseEntity<String> deletePartner(@PathVariable String partnerIdx) {
@@ -256,6 +259,20 @@ public class PartnerListController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("거래처 삭제 중 오류 발생: " + e.getMessage());
         }
     }
+
+    // 거래처 회원가입 체크항목 삭제
+    @DeleteMapping("business/sign/delete/{partnerIdx}")
+    public ResponseEntity<String> deleteSignPartner(@PathVariable String partnerIdx) {
+        try {
+            wellPartnerService.deletePartnerSign(partnerIdx);
+            return ResponseEntity.status(HttpStatus.CREATED).body("거래처가 성공적으로 삭제되었습니다.");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("삭제할 거래처를 찾을 수 없습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("거래처 삭제 중 오류 발생: " + e.getMessage());
+        }
+    }
+
 
 
 }

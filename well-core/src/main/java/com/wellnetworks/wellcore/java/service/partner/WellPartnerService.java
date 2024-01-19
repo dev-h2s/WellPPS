@@ -21,6 +21,7 @@ import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyInRepository
 import com.wellnetworks.wellcore.java.repository.backup.partner.WellPartnerBackupRepository;
 import com.wellnetworks.wellcore.java.service.File.WellFileStorageService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -62,32 +63,30 @@ public class WellPartnerService {
     // 거래처 상세 조회
     public Optional<WellPartnerDetailDTO> getDetailPartnerByPartnerIdx(String partnerIdx) {
 //        try {
-            WellPartnerEntity entity = wellPartnerRepository.findByPartnerIdx(partnerIdx);
-            if (entity == null) {
-                throw new EntityNotFoundException("해당 파트너를 찾을 수 없습니다. 파트너 ID: " + partnerIdx);
-            }
+        WellPartnerEntity entity = wellPartnerRepository.findByPartnerIdx(partnerIdx);
+        if (entity == null) {
+            throw new EntityNotFoundException("해당 파트너를 찾을 수 없습니다. 파트너 ID: " + partnerIdx);
+        }
 
-            List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerIdx);
-            WellDipositEntity depositEntity = entity.getVirtualAccount() != null ? entity.getVirtualAccount().getDeposit() : null;
-            String partnerUpperName = entity.getPartnerUpperIdx() != null ? wellPartnerRepository.findPartnerNameByPartnerIdxSafely(entity.getPartnerUpperIdx()) : null;
+        List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerIdx);
+        WellDipositEntity depositEntity = entity.getVirtualAccount() != null ? entity.getVirtualAccount().getDeposit() : null;
+        String partnerUpperName = entity.getPartnerUpperIdx() != null ? wellPartnerRepository.findPartnerNameByPartnerIdxSafely(entity.getPartnerUpperIdx()) : null;
 
-            List<WellPartnerEntity> subPartnerEntities = wellPartnerRepository.findSubPartnersByPartnerUpperIdx(partnerIdx);
-            Long groupId = entity.getPartnerGroup() != null ? entity.getPartnerGroup().getPartnerGroupId() : null;
-            String partnerGroupName = groupId != null ? entity.getPartnerGroup().getPartnerGroupName() : null;
+        List<WellPartnerEntity> subPartnerEntities = wellPartnerRepository.findSubPartnersByPartnerUpperIdx(partnerIdx);
+        Long groupId = entity.getPartnerGroup() != null ? entity.getPartnerGroup().getPartnerGroupId() : null;
+        String partnerGroupName = groupId != null ? entity.getPartnerGroup().getPartnerGroupName() : null;
 
-            WellApikeyInEntity apikeyInEntity = entity.getApiKey();
+        WellApikeyInEntity apikeyInEntity = entity.getApiKey();
 
-            WellPartnerDetailDTO dto = new WellPartnerDetailDTO(entity, fileStorages, depositEntity, partnerUpperName, entity.getPartnerGroup(), apikeyInEntity, subPartnerEntities, partnerGroupName);
+        WellPartnerDetailDTO dto = new WellPartnerDetailDTO(entity, fileStorages, depositEntity, partnerUpperName, entity.getPartnerGroup(), apikeyInEntity, subPartnerEntities, partnerGroupName);
 
-            return Optional.of(dto);
+        return Optional.of(dto);
 //        } catch (EntityNotFoundException e) {
 //            return Optional.empty();
 //        } catch (Exception e) {
 //            throw new RuntimeException("거래처 상세 정보 조회 중 오류 발생: " + e.getMessage(), e);
 //        }
     }
-
-
 
 
     // 거래처 검색
@@ -195,21 +194,47 @@ public class WellPartnerService {
         }
     }
 
-    // 거래처 리스트에서 회원가입이 승인된 것만 나올수 있게끔
-    public static Specification<WellPartnerEntity> registrationStatusIsNot() {
+    // 거래처 리스트에서 회원가입이 승인이 아닌 것만 나올수 있게끔
+    public static Specification<WellPartnerEntity> registrationStatusIsNotAndDeleteStatusIsFalse() {
         return (root, query, criteriaBuilder) -> {
-            return criteriaBuilder.notEqual(root.get("registrationStatus"), "승인");
+            Predicate registrationStatusNotApproved = criteriaBuilder.notEqual(root.get("registrationStatus"), "승인");
+            Predicate deleteStatusFalse = criteriaBuilder.equal(root.get("deleteStatus"), false);
+
+            return criteriaBuilder.and(registrationStatusNotApproved, deleteStatusFalse);
         };
     }
 
     //거래처 회원가입 리스트 조회
-    public Page<WellPartnerSignInfoDTO> getAllPartnerSign(Pageable pageable) {
+    public Page<WellPartnerSignInfoDTO> getAllPartnerSign(Pageable pageable, String ceoTelephone, String ceoName, String partnerName) {
         try {
-            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "productRegisterDate"));
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "signRequestDate"));
 
-//        Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(pageable);
-            Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(registrationStatusIsNot(), pageable);
+            Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(registrationStatusIsNotAndDeleteStatusIsFalse(), pageable);
             List<WellPartnerSignInfoDTO> partnerInfoList = new ArrayList<>();
+
+            WellPartnerEntity partner = WellPartnerEntity.builder()
+                    .build();
+
+            String discountCategory = partner.getDiscountCategory();
+            String registrationStatus = partner.getRegistrationStatus();
+
+
+
+            Specification<WellPartnerEntity> approvedStatusSpec = registrationStatusIsNotAndDeleteStatusIsFalse();
+
+
+           // 검색 Like 조건
+            Specification<WellPartnerEntity> spec = Specification.where(PartnerSpecification.partnerCeoNameContains(ceoName))
+                    .and(PartnerSpecification.partnerNameContains(partnerName))
+                    .and(PartnerSpecification.partnerCeoTelephoneContains(ceoTelephone))
+                    .and(approvedStatusSpec);
+
+            if(discountCategory !=null){
+                spec = spec.and(PartnerSpecification.discountCategoryEquals(discountCategory));
+            }
+            if(registrationStatus !=null){
+                spec = spec.and(PartnerSpecification.transactionStatusEquals(registrationStatus));
+            }
 
 
             for (WellPartnerEntity partnerEntity : partners) {
@@ -236,7 +261,8 @@ public class WellPartnerService {
             Long totalPartnerCount = partners.getTotalElements();
 
             return new PageImpl<>(partnerInfoList, pageable, totalPartnerCount);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             // 여기에 예외 처리 로직 추가
             throw new RuntimeException("거래처 리스트 조회 중 오류 발생: " + e.getMessage(), e);
         }
@@ -524,77 +550,97 @@ public class WellPartnerService {
             String apiKeyInIdx = String.valueOf(apiKeyInEntity.getApiKeyInIdx());
             // 삭제 등의 동작 수행
         }
-//        try {
-        String partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
-        String partnerUpperName = null;
-        if (partnerEntity.getPartnerUpperIdx() != null) {
-            partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx);
+        try {
+            String partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
+            String partnerUpperName = null;
+            if (partnerEntity.getPartnerUpperIdx() != null) {
+                partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx);
+            }
+
+            List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerIdx);
+
+            // 거래처가 가상계좌를 가지고 있는 경우, 예치금 정보를 가져옴
+            WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
+            WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
+
+            // 백업 엔티티에 복사
+            WellPartnerEntityBackup partnerBackup = new WellPartnerEntityBackup();
+            partnerBackup.setPartnerIdx(partnerIdx);
+            partnerBackup.setPartnerGroupId(partnerEntity.getPartnerGroup().getPartnerGroupId());
+            partnerBackup.setApiKeyInIdx(null);
+            partnerBackup.setPartnerCode(null);
+            partnerBackup.setPartnerName(partnerEntity.getPartnerName());
+            partnerBackup.setTransactionStatus(partnerEntity.getTransactionStatus());
+            partnerBackup.setPartnerType(partnerEntity.getPartnerType());
+            partnerBackup.setPartnerUpperIdx(partnerEntity.getPartnerUpperIdx());
+            partnerBackup.setPartnerTelephone(partnerEntity.getPartnerTelephone());
+            partnerBackup.setProductRegisterDate(partnerEntity.getProductRegisterDate());
+            partnerBackup.setProductModifyDate(partnerEntity.getProductModifyDate());
+            partnerBackup.setSalesManager(partnerEntity.getSalesManager());
+            partnerBackup.setCeoName(partnerEntity.getCeoName());
+            partnerBackup.setCeoTelephone(partnerEntity.getCeoTelephone());
+            partnerBackup.setRegistrationAddress(partnerEntity.getRegistrationAddress());
+            partnerBackup.setRegistrationDetailAddress(partnerEntity.getRegistrationDetailAddress());
+            partnerBackup.setLocationAddress(partnerEntity.getLocationAddress());
+            partnerBackup.setLocationDetailAddress(partnerEntity.getLocationDetailAddress());
+            partnerBackup.setCommisionType(partnerEntity.getCommisionType());
+            partnerBackup.setSize(partnerEntity.getSize());
+            partnerBackup.setPage(partnerEntity.getPage());
+            partnerBackup.setDiscountCategory(partnerEntity.getDiscountCategory());
+            partnerBackup.setSubscriptionDate(partnerEntity.getSubscriptionDate());
+            partnerBackup.setSpecialPolicyOpening(partnerEntity.getSpecialPolicyOpening());
+            partnerBackup.setSpecialPolicyCharge(partnerEntity.getSpecialPolicyCharge());
+            partnerBackup.setPassword(partnerEntity.getPassword());
+            partnerBackup.setPreApprovalNumber(partnerEntity.getPreApprovalNumber());
+            partnerBackup.setEmailAddress(partnerEntity.getEmailAddress());
+            partnerBackup.setRegistrationNumber(partnerEntity.getRegistrationNumber());
+            partnerBackup.setPartnerMemo(partnerEntity.getPartnerMemo());
+            partnerBackup.setSalesTeamVisitDate(partnerEntity.getSalesTeamVisitDate());
+            partnerBackup.setSalesTeamVisitMemo(partnerEntity.getSalesTeamVisitMemo());
+            partnerBackup.setCommissionDepositAccount(partnerEntity.getCommissionDepositAccount());
+            partnerBackup.setCommissionBankName(partnerEntity.getCommissionBankName());
+            partnerBackup.setCommissionBankHolder(partnerEntity.getCommissionBankHolder());
+            partnerBackup.setWriter(partnerEntity.getWriter());
+            partnerBackup.setEvent(partnerEntity.getEvent());
+            partnerBackup.setOpeningVisitRequestDate(partnerEntity.getOpeningVisitRequestDate());
+            partnerBackup.setOpeningVisitDecideDate(partnerEntity.getOpeningVisitDecideDate());
+            partnerBackup.setOpeningProgress(partnerEntity.getOpeningProgress());
+            partnerBackup.setOpeningFlag(partnerEntity.getIsOpeningFlag());
+            partnerBackup.setOpeningNote(partnerEntity.getOpeningNote());
+            partnerBackup.setInApiFlag(partnerEntity.getInApiFlag());
+            partnerBackup.setRegistrationStatus(partnerEntity.getRegistrationStatus());
+            partnerBackup.setRejectionReason(partnerEntity.getRejectionReason());
+//        partnerBackup.setReviewDate(partnerEntity.getReviewDate());
+//        partnerBackup.setReviewer(partnerEntity.getReviewer());
+//        partnerBackup.setTermsOfUse(partnerEntity.getTermsOfUse());
+//        partnerBackup.setSignRequestDate(partnerEntity.getSignRequestDate());
+//        partnerBackup.setDesiredDate(partnerEntity.getDesiredDate());
+
+            // 백업 테이블에 저장
+            wellPartnerBackupRepository.save(partnerBackup);
+
+            // 거래처 삭제
+            wellPartnerRepository.delete(partnerEntity);
+
+            return new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity, partnerUpperName);
+        } catch (Exception e) {
+            // 롤백을 위해 예외 발생
+            throw new RuntimeException("거래처 삭제 중 오류 발생", e);
+        }
+    }
+
+    //거래처 회원가입 삭제
+    @Transactional(rollbackOn = Exception.class)
+    public int deletePartnerSign(String partnerIdx) {
+        WellPartnerEntity partnerEntity = wellPartnerRepository.findByPartnerIdx(partnerIdx);
+        if (partnerEntity == null) {
+            throw new EntityNotFoundException("해당하는 거래처를 찾을 수 없습니다.");
         }
 
-        List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerIdx);
+        partnerEntity.setDeleteStatusOn();
+        wellPartnerRepository.save(partnerEntity);
 
-        // 거래처가 가상계좌를 가지고 있는 경우, 예치금 정보를 가져옴
-        WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
-        WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
+        return 1;
 
-        // 백업 엔티티에 복사
-        WellPartnerEntityBackup partnerBackup = new WellPartnerEntityBackup();
-        partnerBackup.setPartnerIdx(partnerIdx);
-        partnerBackup.setPartnerGroupId(partnerEntity.getPartnerGroup().getPartnerGroupId());
-        partnerBackup.setApiKeyInIdx(null);
-        partnerBackup.setPartnerCode(null);
-        partnerBackup.setPartnerName(partnerEntity.getPartnerName());
-        partnerBackup.setTransactionStatus(partnerEntity.getTransactionStatus());
-        partnerBackup.setPartnerType(partnerEntity.getPartnerType());
-        partnerBackup.setPartnerUpperIdx(partnerEntity.getPartnerUpperIdx());
-        partnerBackup.setPartnerTelephone(partnerEntity.getPartnerTelephone());
-        partnerBackup.setProductRegisterDate(partnerEntity.getProductRegisterDate());
-        partnerBackup.setProductModifyDate(partnerEntity.getProductModifyDate());
-        partnerBackup.setSalesManager(partnerEntity.getSalesManager());
-        partnerBackup.setCeoName(partnerEntity.getCeoName());
-        partnerBackup.setCeoTelephone(partnerEntity.getCeoTelephone());
-        partnerBackup.setRegistrationAddress(partnerEntity.getRegistrationAddress());
-        partnerBackup.setRegistrationDetailAddress(partnerEntity.getRegistrationDetailAddress());
-        partnerBackup.setLocationAddress(partnerEntity.getLocationAddress());
-        partnerBackup.setLocationDetailAddress(partnerEntity.getLocationDetailAddress());
-        partnerBackup.setCommisionType(partnerEntity.getCommisionType());
-        partnerBackup.setSize(partnerEntity.getSize());
-        partnerBackup.setPage(partnerEntity.getPage());
-        partnerBackup.setDiscountCategory(partnerEntity.getDiscountCategory());
-        partnerBackup.setSubscriptionDate(partnerEntity.getSubscriptionDate());
-        partnerBackup.setSpecialPolicyOpening(partnerEntity.getSpecialPolicyOpening());
-        partnerBackup.setSpecialPolicyCharge(partnerEntity.getSpecialPolicyCharge());
-        partnerBackup.setPassword(partnerEntity.getPassword());
-        partnerBackup.setPreApprovalNumber(partnerEntity.getPreApprovalNumber());
-        partnerBackup.setEmailAddress(partnerEntity.getEmailAddress());
-        partnerBackup.setRegistrationNumber(partnerEntity.getRegistrationNumber());
-        partnerBackup.setPartnerMemo(partnerEntity.getPartnerMemo());
-        partnerBackup.setSalesTeamVisitDate(partnerEntity.getSalesTeamVisitDate());
-        partnerBackup.setSalesTeamVisitMemo(partnerEntity.getSalesTeamVisitMemo());
-        partnerBackup.setCommissionDepositAccount(partnerEntity.getCommissionDepositAccount());
-        partnerBackup.setCommissionBankName(partnerEntity.getCommissionBankName());
-        partnerBackup.setCommissionBankHolder(partnerEntity.getCommissionBankHolder());
-        partnerBackup.setWriter(partnerEntity.getWriter());
-        partnerBackup.setEvent(partnerEntity.getEvent());
-        partnerBackup.setOpeningVisitRequestDate(partnerEntity.getOpeningVisitRequestDate());
-        partnerBackup.setOpeningVisitDecideDate(partnerEntity.getOpeningVisitDecideDate());
-        partnerBackup.setOpeningProgress(partnerEntity.getOpeningProgress());
-        partnerBackup.setOpeningFlag(partnerEntity.getIsOpeningFlag());
-        partnerBackup.setOpeningNote(partnerEntity.getOpeningNote());
-        partnerBackup.setInApiFlag(partnerEntity.getInApiFlag());
-        partnerBackup.setRegistrationStatus(partnerEntity.getRegistrationStatus());
-        partnerBackup.setRejectionReason(partnerEntity.getRejectionReason());
-
-        // 백업 테이블에 저장
-        wellPartnerBackupRepository.save(partnerBackup);
-
-        // 거래처 삭제
-        wellPartnerRepository.delete(partnerEntity);
-
-        return new WellPartnerInfoDTO(partnerEntity, fileStorages, dipositEntity, partnerUpperName);
-//        } catch (Exception e) {
-        // 롤백을 위해 예외 발생
-//            throw new RuntimeException("거래처 삭제 중 오류 발생", e);
-//        }
     }
 }

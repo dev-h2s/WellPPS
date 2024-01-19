@@ -204,6 +204,8 @@ public class WellPartnerEntity {
     @Column(name="desired_date")
     private LocalDate desiredDate; //방문 희망 날짜
 
+    @Column(name="delete_status")
+    private Boolean deleteStatus = false; //삭제 상태
 
     @Builder
     public WellPartnerEntity(String partnerIdx, String partnerCode, String partnerName, String partnerType, Boolean specialPolicyOpening, Boolean specialPolicyCharge
@@ -215,7 +217,7 @@ public class WellPartnerEntity {
                             , String registrationAddress, String registrationDetailAddress, String locationAddress, String locationDetailAddress
                             , String partnerMemo,
                              String writer, String event, Boolean visitStatus, LocalDateTime openingVisitRequestDate, LocalDateTime openingVisitDecideDate, String openingProgress, Boolean isOpeningFlag, String openingNote
-                             , String registrationStatus,String rejectionReason, LocalDate reviewDate, String reviewer, Boolean termsOfUse, LocalDateTime signRequestDate, LocalDate desiredDate) {
+                             , String registrationStatus,String rejectionReason, LocalDate reviewDate, String reviewer, Boolean termsOfUse, LocalDateTime signRequestDate, LocalDate desiredDate, Boolean deleteStatus) {
         this.partnerIdx = partnerIdx;
         this.partnerCode = partnerCode;
         this.partnerName = partnerName;
@@ -263,6 +265,7 @@ public class WellPartnerEntity {
         this.termsOfUse = termsOfUse;
         this.signRequestDate = signRequestDate;
         this.desiredDate = desiredDate;
+        this.deleteStatus = deleteStatus;
     }
 
     public void updateFromDTO(WellPartnerUpdateDTO updateDTO) {
@@ -290,16 +293,16 @@ public class WellPartnerEntity {
         this.locationAddress = updateDTO.getLocationAddress();
         this.locationDetailAddress = updateDTO.getLocationDetailAddress();
         this.partnerMemo = updateDTO.getPartnerMemo();
-        this.writer = writer;
-        this.event = event;
-        this.visitStatus = visitStatus;
-        this.openingVisitRequestDate = openingVisitRequestDate;
-        this.openingVisitDecideDate = openingVisitDecideDate;
-        this.openingProgress = openingProgress;
-        this.isOpeningFlag = isOpeningFlag;
-        this.openingNote = openingNote;
-        this.registrationStatus = registrationStatus;
-        this.rejectionReason = rejectionReason;
+        this.writer = updateDTO.getWriter();
+        this.event = updateDTO.getEvent();
+        this.visitStatus = updateDTO.getVisitStatus();
+        this.openingVisitRequestDate = updateDTO.getOpeningVisitRequestDate();
+        this.openingVisitDecideDate = updateDTO.getOpeningVisitDecideDate();
+        this.openingProgress = updateDTO.getOpeningProgress();
+        this.isOpeningFlag = updateDTO.getIsOpeningFlag();
+        this.openingNote = updateDTO.getOpeningNote();
+        this.registrationStatus = updateDTO.getRegistrationStatus();
+        this.rejectionReason = updateDTO.getRejectionReason();
     }
 
     public void setApiKey(WellApikeyInEntity apiKey) {this.apiKey = apiKey;}
@@ -307,4 +310,5 @@ public class WellPartnerEntity {
         this.partnerGroup = partnerGroup;
     }
     public void setInApiFlag(Boolean inApiFlag) {this.inApiFlag = inApiFlag;}
+    public void setDeleteStatusOn() {this.deleteStatus = true;}
 }

@@ -4,7 +4,6 @@ import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.dto.FIle.WellFileDetailDTO;
-import jakarta.persistence.Column;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,7 +22,7 @@ public class WellPartnerSignInfoDTO {
     private List<WellFileDetailDTO> fileDetails = new ArrayList<>();
 
     private LocalDate signRequestDate;// (회원가입) 요청일자
-    private String discountCategory; // 가입형태
+    private String discountCategory; // 가입형태(충전할인율)
     private String partnerName; //거래처명
     private String ceoName; //대표자명
     private Boolean visitStatus; //방문요청여부
@@ -34,6 +33,8 @@ public class WellPartnerSignInfoDTO {
     private LocalDate reviewDate;// 검수일자
     private String reviewer;//검수자
 
+    //검색시 필요
+    private String ceoTelephone;
 
 
     //리스트
@@ -50,6 +51,7 @@ public class WellPartnerSignInfoDTO {
         this.rejectionReason = entity.getRejectionReason();
         this.reviewDate = entity.getReviewDate();
         this.reviewer = entity.getReviewer();
+        this.ceoTelephone = entity.getCeoTelephone();
 
         for (WellPartnerFIleStorageEntity fileStorage : fileStorages) {
             if (fileStorage != null && fileStorage.getFile() != null) {

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -139,6 +140,12 @@ public class WellPartnerEntityBackup {
     @Column(name = "commission_bank_holder") //수수료입금계좌예금주
     private String commissionBankHolder;
 
+    // 회원가입 관리 / 개통점 신청 관련 컬럼
+    @Column(name = "registration_status") //회원가입 여부
+    private String registrationStatus;
+    @Column(name = "rejection_reason") //회원가입 거부 사유
+    private String rejectionReason;
+
     @Column(name = "writer") //작성자
     private String writer;
 
@@ -160,11 +167,20 @@ public class WellPartnerEntityBackup {
     @Column(name = "opening_note") //개통점신청비고
     private String openingNote;
 
-    // 회원가입 관리 / 개통점 신청 관련 컬럼
-    @Column(name = "registration_status") //회원가입 여부
-    private String registrationStatus;
-    @Column(name = "rejection_reason") //회원가입 거부 사유
-    private String rejectionReason;
+    @Column(name = "review_date") //회원가입 관리 검수일자
+    private LocalDate reviewDate;
+
+    @Column(name = "reviwer") //회원가입 관리 검수자
+    private String reviewer;
+
+    @Column(name="terms_ofUse")
+    private Boolean termsOfUse; // 이용약관 동의
+
+    @Column(name="sign_request_date")
+    private LocalDateTime signRequestDate; // 회원가입 요청일자
+
+    @Column(name="desired_date")
+    private LocalDate desiredDate; //방문 희망 날짜
 
 
 

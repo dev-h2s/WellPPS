@@ -1,37 +1,34 @@
 package com.wellnetworks.wellcore.java.service.member;
-import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
-import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 
-import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeManagerGroupEntity;
 import com.wellnetworks.wellcore.java.domain.employee.WellEmployeeUserEntity;
-
-import com.wellnetworks.wellcore.java.dto.member.*;
+import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
+import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDTO;
+import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDetailDTO;
+import com.wellnetworks.wellcore.java.dto.member.WellEmployeeJoinDTO;
+import com.wellnetworks.wellcore.java.dto.member.WellEmployeeUpdateDTO;
 import com.wellnetworks.wellcore.java.repository.File.WellEmployeeFileRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeGroupRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
-
 import com.wellnetworks.wellcore.java.service.File.WellFileStorageService;
 import io.micrometer.common.KeyValues;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -173,30 +170,7 @@ public class WellEmployeeService {
     // 사원 생성
 @Transactional
 public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
-    System.out.println("Employee Identification: " + joinDTO.getEmployeeIdentification());
-    System.out.println("employeeName:"+joinDTO.getEmployeeName());
-    System.out.println("belong:"+joinDTO.getBelong());
-    System.out.println("Department: " + joinDTO.getDepartment());
-//    System.out.println("position:"+joinDTO.getEmployeeName());
-//    System.out.println("employmentState:"+joinDTO.getEmploymentState());
-//    System.out.println("jobType:"+joinDTO.getJobType());
-//    System.out.println("entryDate:"+joinDTO.getEntryDate());
-//    System.out.println("retireDate:"+joinDTO.getRetireDate());
-//    System.out.println("employmentQuitType:"+joinDTO.getEmploymentQuitType());
-//    System.out.println("remainingLeaveDays:"+joinDTO.getRemainingLeaveDays());
-//    System.out.println("residentRegistrationNumber:"+joinDTO.getResidentRegistrationNumber());
-//    System.out.println("telPrivate:"+joinDTO.getTelPrivate());
-//    System.out.println("phoneVerificationCode:"+joinDTO.getPhoneVerificationCode());
-//    System.out.println("isPhoneVerified:"+joinDTO.getIsPhoneVerified());
-//    System.out.println("phoneVerificationAttempts:"+joinDTO.getPhoneVerificationAttempts());
-//    System.out.println("telWork:"+joinDTO.getTelWork());
-//    System.out.println("email:"+joinDTO.getEmail());
-//    System.out.println("bankAccount:"+joinDTO.getBankAccount());
-//    System.out.println("bankHolder:"+joinDTO.getBankHolder());
-//    System.out.println("homeAddress1:"+joinDTO.getHomeAddress1());
-//    System.out.println("homeAddress2:"+joinDTO.getHomeAddress2());
-//    System.out.println("externalAccessCert:"+joinDTO.getExternalAccessCert());
-//    System.out.println("memo:"+joinDTO.getMemo());
+
 
     // 중복 아이디 검사
     boolean exists = wellEmployeeUserRepository.existsByEmployeeIdentification(joinDTO.getEmployeeIdentification());
@@ -330,14 +304,6 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
         // 검색 조건에 맞는 데이터 조회
         List<WellEmployeeInfoDTO> employeeList = new ArrayList<>();
 
-        // 검색된 WellEmployeeUserEntity 리스트를 WellEmployeeInfoDTO 리스트로 변환
-//        List<WellEmployeeInfoDTO> employeeInfoDTOList = employeeUsers.stream()
-//                .map(user -> {
-//                    WellEmployeeEntity employeeEntity = user.getEmployeeEntity();
-//                    WellEmployeeManagerGroupEntity managerGroupEntity = user.getManagerGroupEntity();
-//                    return new WellEmployeeInfoDTO(employeeEntity, managerGroupEntity);
-//                })
-//                .collect(Collectors.toList());
 
         for(WellEmployeeUserEntity employeeUser : employeeUsers){
             WellEmployeeEntity employeeEntity = employeeUser.getEmployeeEntity(); // 가정

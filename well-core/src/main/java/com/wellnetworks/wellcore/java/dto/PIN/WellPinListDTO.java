@@ -18,6 +18,7 @@ public class WellPinListDTO {
     private String network; //통신망 (코드)
     private String pinNum; //PIN번호
     private String managementNum; //관리번호
+    private String partnerIdx; //거래처 idx
     private String store; //입고처(거래처)
     private String release; //출고처(거래처)
     private String writer; //입력자
@@ -39,7 +40,6 @@ public class WellPinListDTO {
         this.user = pinEntity.getUserName();
         this.usedAt = pinEntity.getUsedAt();
         this.isSaleFlag = pinEntity.getIsSaleFlag();
-
         this.createdAt = pinEntity.getCreatedAt();
         this.writer = pinEntity.getWriter();
     }

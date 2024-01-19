@@ -41,32 +41,20 @@ public class WellPinService {
 
     //리스트 조회
     public Page<WellPinListDTO> getAllPins(Pageable pageable) {
-//        try {
-            Page<WellPinEntity> pins = pinRepository.findAll(pageable);
+        Page<WellPinEntity> pins = pinRepository.findAll(pageable);
 
-            List<WellPinListDTO> pinListDTOList = pins.stream().map(pin -> {
-                String operatorName = operatorRepository.findByOperatorName(pin.getOperatorName())
-                        .map(WellOperatorEntity::getOperatorName)
-                        .orElse("");
-                String productName = productRepository.findByProductName(pin.getProductName())
-                        .map(WellProductEntity::getProductName)
-                        .orElse("");
-                String storeName = partnerRepository.findByPartnerName(pin.getStore())
-                        .map(WellPartnerEntity::getPartnerName)
-                        .orElse("");
-                String releaseName = partnerRepository.findByPartnerName(pin.getRelease())
-                        .map(WellPartnerEntity::getPartnerName)
-                        .orElse("");
+        List<WellPinListDTO> pinListDTOList = pins.stream().map(pin -> {
+            String operatorName = operatorRepository.findByOperatorName(pin.getOperatorName()).map(WellOperatorEntity::getOperatorName).orElse("");
+            String productName = productRepository.findByProductName(pin.getProductName()).map(WellProductEntity::getProductName).orElse("");
+            String storeName = partnerRepository.findByPartnerName(pin.getStore()).map(WellPartnerEntity::getPartnerName).orElse("");
+            String releaseName = partnerRepository.findByPartnerName(pin.getRelease()).map(WellPartnerEntity::getPartnerName).orElse("");
 
-                return new WellPinListDTO(pin, operatorName, productName, storeName, releaseName);
-            }).collect(Collectors.toList());
+            return new WellPinListDTO(pin, operatorName, productName, storeName, releaseName);
+        }).collect(Collectors.toList());
 
-            return new PageImpl<>(pinListDTOList, pageable, pins.getTotalElements());
-//        } catch (Exception e) {
-//            log.error("PIN 리스트를 가져오는 도중 오류가 발생했습니다: {}", e.getMessage());
-//            throw new RuntimeException("PIN 리스트 조회 실패", e);
-//        }
+        return new PageImpl<>(pinListDTOList, pageable, pins.getTotalElements());
     }
+
 
     //생성
     public WellPinEntity createPin(WellPinCreateDTO createDTO) {
@@ -107,50 +95,29 @@ public class WellPinService {
 
     // 핀 엑셀 저장
     @Transactional
-    public void importPinsFromExcel(MultipartFile file) throws IOException, InvalidFormatException {
-        List<Map<String, Object>> excelData = excelUtil.getListData(file, 1, 6); // 엑셀 파일의 컬럼 수에 맞게 조정
+    public List<WellPinExcelCreateDTO> importPinsFromExcel(MultipartFile file) throws IOException, InvalidFormatException {
+        List<Map<String, Object>> excelData = excelUtil.getListData(file, 1, 6);
+        List<WellPinExcelCreateDTO> duplicatePins = new ArrayList<>();
+        List<WellPinExcelCreateDTO> allPins = new ArrayList<>();
 
         for (Map<String, Object> row : excelData) {
             WellPinExcelCreateDTO dto = mapRowToDto(row);
+            allPins.add(dto);
 
-            // 중복 PIN 체크
-            String pinNum = dto.getPinNum();
-            if (pinRepository.findByPinNum(pinNum).isPresent()) {
-                throw new IllegalArgumentException("중복된 PIN 값입니다: " + pinNum);
-            }
-
-            log.info("PIN 번호가 중복되지 않았습니다.");
-
-            WellPinEntity pin = convertDtoToEntity(dto);
-            pinRepository.save(pin);
-        }
-    }
-
-    // 중복된 핀 조회 및 DTO 정보 저장
-    public List<WellPinExcelCreateDTO> findDuplicatePinsWithDetails(MultipartFile file) throws IOException, InvalidFormatException {
-        List<Map<String, Object>> excelData = excelUtil.getListData(file, 1, 6); // 엑셀 파일의 컬럼 수에 맞게 조정
-        List<WellPinExcelCreateDTO> duplicatePinsWithDetails = new ArrayList<>();
-        Set<String> pinSet = new HashSet<>();
-
-        for (Map<String, Object> row : excelData) {
-            WellPinExcelCreateDTO dto = mapRowToDto(row);
-
-            // 엑셀에서 가져온 핀 번호
-            String pinNum = dto.getPinNum();
-
-            // 데이터베이스에 이미 존재하는지 확인
-            if (pinRepository.findByPinNum(pinNum).isPresent()) {
-                // 중복된 핀 번호를 저장
-                duplicatePinsWithDetails.add(dto);
-            } else if (pinSet.contains(pinNum)) {
-                // 중복된 핀 번호를 저장
-                duplicatePinsWithDetails.add(dto);
-            } else {
-                pinSet.add(pinNum);
+            if (pinRepository.findByPinNum(dto.getPinNum()).isPresent()) {
+                duplicatePins.add(dto);
             }
         }
 
-        return duplicatePinsWithDetails;
+        // 중복된 핀이 없으면 모든 핀 저장
+        if (duplicatePins.isEmpty()) {
+            for (WellPinExcelCreateDTO dto : allPins) {
+                WellPinEntity pin = convertDtoToEntity(dto);
+                pinRepository.save(pin);
+            }
+        }
+
+        return duplicatePins;
     }
 
 

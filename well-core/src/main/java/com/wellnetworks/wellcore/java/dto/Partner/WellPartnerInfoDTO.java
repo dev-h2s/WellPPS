@@ -1,7 +1,6 @@
 package com.wellnetworks.wellcore.java.dto.Partner;
 
 import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.dto.FIle.WellFileDetailDTO;
@@ -35,6 +34,8 @@ public class WellPartnerInfoDTO {
     private String partnerUpperName;
     private Boolean isOpeningFlag;
     private String registrationStatus; // 회원가입 승인 여부
+
+    private String registrationAddress;
 
     //리스트
     public WellPartnerInfoDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, WellDipositEntity diposit
@@ -89,5 +90,7 @@ public class WellPartnerInfoDTO {
 
         // 중복 제거
         this.fileDetails = this.fileDetails.stream().distinct().collect(Collectors.toList());
+
+        this.registrationAddress = entity.getRegistrationAddress();
     }
 }

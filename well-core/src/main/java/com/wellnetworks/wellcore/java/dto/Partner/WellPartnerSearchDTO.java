@@ -1,18 +1,17 @@
 package com.wellnetworks.wellcore.java.dto.Partner;
 
-        import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
-        import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
-        import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
-        import com.wellnetworks.wellcore.java.dto.FIle.WellFileDetailDTO;
-        import lombok.AccessLevel;
-        import lombok.Data;
-        import lombok.NoArgsConstructor;
+import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
+import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
+import com.wellnetworks.wellcore.java.dto.FIle.WellFileDetailDTO;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-        import java.time.LocalDate;
-        import java.util.ArrayList;
-        import java.util.Arrays;
-        import java.util.List;
-        import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
@@ -32,6 +31,8 @@ public class WellPartnerSearchDTO {
     private String writer;
     private String partnerUpperIdx;
     private String partnerUpperName;
+
+    private String registrationAddress;
 
     //리스트
     public WellPartnerSearchDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, Integer dipositBalance
@@ -84,5 +85,7 @@ public class WellPartnerSearchDTO {
 
         // 중복 제거
         this.fileDetails = this.fileDetails.stream().distinct().collect(Collectors.toList());
+
+        this.registrationAddress = entity.getRegistrationAddress();
     }
 }

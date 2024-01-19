@@ -50,6 +50,9 @@ subprojects {
 		implementation 'commons-io:commons-io:2.6'
 		implementation 'org.springframework.data:spring-data-redis:3.0.1'
 		implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+		implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+		implementation 'io.springfox:springfox-swagger-ui:3.0.0'
 	}
 
 	test {

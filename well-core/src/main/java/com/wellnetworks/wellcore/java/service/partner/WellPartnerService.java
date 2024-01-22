@@ -192,6 +192,8 @@ public class WellPartnerService {
                 }
                 WellPartnerSignSearchDTO partnerInfo = new WellPartnerSignSearchDTO(partnerEntity, fileStorages, dipositBalance, partnerUpperName);
                 partnerInfoList.add(partnerInfo);
+                partnerEntity.getRegistrationStatus();
+
             }
 
             return new PageImpl<>(partnerInfoList, pageable, partners.getTotalElements());
@@ -254,11 +256,11 @@ public class WellPartnerService {
         }
     }
 
-    // 거래처 회원가입 리스트에서 회원가입이 승인이 아닌 것만 나올수 있게끔
+    // 거래처 회원가입 리스트에서 조건
     public static Specification<WellPartnerEntity> registrationStatusIsNotAndDeleteStatusIsFalse() {
         return (root, query, criteriaBuilder) -> {
             Predicate statusRefusal = criteriaBuilder.equal(root.get("registrationStatus"), "거부");
-            Predicate statusApproved = criteriaBuilder.equal(root.get("registrationStatus"), "승인");
+            Predicate statusApproved = criteriaBuilder.equal(root.get("registrationStatus"), "승인1");
             Predicate statusAtmosphere = criteriaBuilder.equal(root.get("registrationStatus"), "대기");
 
             Predicate registrationStatus = criteriaBuilder.or(statusApproved, statusRefusal, statusAtmosphere);
@@ -274,7 +276,7 @@ public class WellPartnerService {
 
     //거래처  회원가입 리스트 조회
     public Page<WellPartnerSignInfoDTO> getAllPartnerSign(Pageable pageable) {
-        try {
+//        try {
             pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "productRegisterDate"));
 
 //        Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(pageable);
@@ -306,11 +308,12 @@ public class WellPartnerService {
             Long totalPartnerCount = partners.getTotalElements();
 
             return new PageImpl<>(partnerInfoList, pageable, totalPartnerCount);
-        } catch (Exception e) {
-            // 여기에 예외 처리 로직 추가
-            throw new RuntimeException("거래처 리스트 조회 중 오류 발생: " + e.getMessage(), e);
         }
-    }
+//        catch (Exception e) {
+            // 여기에 예외 처리 로직 추가
+//            throw new RuntimeException("거래처 리스트 조회 중 오류 발생: " + e.getMessage(), e);
+//        }
+//    }
 
 
 

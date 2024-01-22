@@ -254,11 +254,11 @@ public class PartnerListController {
             , @RequestParam(value = "ceoName", required = false) String ceoName
             , @RequestParam(value = "ceoTelephone", required = false) String ceoTelephone
             , @RequestParam(value = "discountCategory", required = false) String discountCategory
-            , @RequestParam(value = "registrationStatus", required = false) String transactionStatus
+            , @RequestParam(value = "registrationStatus", required = false) String registrationStatus
     ) {
         try {
             Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "signRequestDate"));
-            Page<WellPartnerSignSearchDTO> partnersPage = wellPartnerService.getAllPartnerSignSearch(pageable, ceoTelephone, ceoName, partnerName, discountCategory, transactionStatus);
+            Page<WellPartnerSignSearchDTO> partnersPage = wellPartnerService.getAllPartnerSignSearch(pageable, ceoTelephone, ceoName, partnerName, discountCategory, registrationStatus);
 
             Map<String, Object> response = new HashMap<>();
             response.put("currentPage", partnersPage.getNumber());

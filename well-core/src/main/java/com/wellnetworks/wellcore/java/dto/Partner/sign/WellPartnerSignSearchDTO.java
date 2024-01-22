@@ -78,7 +78,7 @@ public class WellPartnerSignSearchDTO {
         this.signRequestDate = LocalDate.from(entity.getSignRequestDate());// (회원가입) 요청일자
         this.visitStatus = entity.getVisitStatus(); //방문요청여부
         this.openingVisitRequestDate = entity.getOpeningVisitRequestDate(); //방문 희망일자
-        this.registrationStatus = entity.getTransactionStatus(); // 회원가입 승인 여부(승인대기)
+        this.registrationStatus = entity.getRegistrationStatus(); // 회원가입 승인 여부(승인대기)
         this.rejectionReason = entity.getRejectionReason(); // 회원가입 거부사유
         if (partnerUpperIdx != null) {
             this.partnerUpperName = partnerUpperName;

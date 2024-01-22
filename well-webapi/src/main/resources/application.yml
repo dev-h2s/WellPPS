@@ -21,6 +21,11 @@ spring:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     username: sa
     url: jdbc:sqlserver://112.146.206.134:1433;databaseName=jin_test1;;encrypt=true;trustServerCertificate=true;
+  data:
+    redis:
+      port: 6379
+      host: localhost
+      password: asdf
 logging:
   level:
     org:

@@ -3,6 +3,8 @@ package com.wellnetworks.wellwebapi.java.controller.pin;
 import com.wellnetworks.wellcore.java.dto.PIN.*;
 import com.wellnetworks.wellcore.java.service.pin.WellPinService;
 import com.wellnetworks.wellwebapi.java.controller.ResponseUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -25,13 +27,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
+@Tag(name = "PIN 관리", description = "PIN 관리 API")
 @RestController
 @RequestMapping(("/pin"))
 @RequiredArgsConstructor
@@ -39,49 +41,39 @@ public class PinController {
 
     private final WellPinService pinService;
 
+    @Operation(summary = "PIN 관리 리스트 조회")
     @GetMapping
     public ResponseEntity<?> getPinList(@RequestParam(defaultValue = "0") int page,
                                         @RequestParam(defaultValue = "10") int size) {
-        try {
-            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-            Page<WellPinListDTO> pinPage = pinService.getAllPins(pageable);
-            return ResponseUtil.createOkResponse(pinPage.getContent(), "조회 성공", pinPage);
-        } catch (Exception e) {
-            return ResponseUtil.createErrorResponse(e);
-        }
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<WellPinListDTO> pinPage = pinService.getAllPins(pageable);
+        return ResponseUtil.createOkResponse(pinPage.getContent(), "조회 성공", pinPage);
+
     }
 
+    @Operation(summary = "PIN 관리 수동 생성")
     @PostMapping
     public ResponseEntity<?> generatePin(@Valid WellPinCreateDTO createDTO) {
-        try {
-            pinService.createPin(createDTO);
-            return ResponseEntity.ok("PIN 생성 및 저장 완료");
-        } catch (Exception e) {
-            return ResponseUtil.createErrorResponse(e);
-        }
+        pinService.createPin(createDTO);
+        return ResponseEntity.ok("PIN 생성 및 저장 완료");
+
     }
 
+    @Operation(summary = "PIN 관리 수정")
     @PutMapping("/{pinIdx}")
     public ResponseEntity<?> updatePin(@Valid WellPinUpdateDTO updateDTO) {
-        try {
-            pinService.updatePin(updateDTO);
-            return ResponseEntity.ok("pin이 수정되었습니다.");
-        } catch (Exception e) {
-            return ResponseUtil.createErrorResponse(e);
-        }
+        pinService.updatePin(updateDTO);
+        return ResponseEntity.ok("pin이 수정되었습니다.");
     }
 
+    @Operation(summary = "PIN 관리 삭제")
     @DeleteMapping("/{pinIdx}")
     public ResponseEntity<?> deletePin(@PathVariable Long pinIdx) {
-        try {
-            pinService.deletePin(pinIdx);
-            return ResponseEntity.ok("pin이 삭제되었습니다.");
-        } catch (Exception e) {
-            return ResponseUtil.createErrorResponse(e);
-        }
+        pinService.deletePin(pinIdx);
+        return ResponseEntity.ok("pin이 삭제되었습니다.");
     }
 
-    // 엑셀 파일 업로드
+    @Operation(summary = "PIN 관리 엑셀 등록")
     @PostMapping("/excel")
     public ResponseEntity<?> importPins(@RequestParam("file") MultipartFile file, HttpServletResponse response) {
         try {
@@ -105,19 +97,18 @@ public class PinController {
         }
     }
 
-
-    // 엑셀 다운로드
+    @Operation(summary = "PIN 관리 엑셀 양식 다운로드")
     @GetMapping("/excel/download")
-    public ResponseEntity<Resource> downloadExcelFile() throws UnsupportedEncodingException {
+    public ResponseEntity<Resource> downloadExcelFile() {
         String filePath = "C:\\study\\file\\pin 관리 입력폼.xlsx";
-        Resource file = new FileSystemResource(Paths.get(filePath).toAbsolutePath().normalize().toString());
+        FileSystemResource file = new FileSystemResource(Paths.get(filePath).toAbsolutePath().normalize().toString());
 
-        if (!((FileSystemResource) file).exists()) {
+        if (!file.exists()) {
             return ResponseEntity.notFound().build();
         }
 
         String downloadFilename = "pin 관리 양식.xlsx";
-        String encodedFilename = URLEncoder.encode(downloadFilename, StandardCharsets.UTF_8.name()).replaceAll("\\+", "%20");
+        String encodedFilename = URLEncoder.encode(downloadFilename, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
@@ -125,37 +116,33 @@ public class PinController {
                 .body(file);
     }
 
-    //개별 상세 조회
+    @Operation(summary = "PIN 관리 개별 상세 조회")
     @GetMapping("/{pinIdx}")
     public ResponseEntity<?> getPinDetail(@PathVariable Long pinIdx) {
-        try {
-            Optional<WellPinInfoDTO> infoDTO = pinService.infoPin(pinIdx);
-            if (infoDTO.isPresent()) {
-                return ResponseEntity.ok(infoDTO.get());
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("pin을 찾을 수 없습니다.");
-            }
 
-        } catch (Exception e) {
-            return ResponseUtil.createErrorResponse(e);
+        Optional<WellPinInfoDTO> infoDTO = pinService.infoPin(pinIdx);
+        if (infoDTO.isPresent()) {
+            return ResponseEntity.ok(infoDTO.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("pin을 찾을 수 없습니다.");
         }
     }
 
-    //일괄출고 리스트 조회
+    @Operation(summary = "PIN 관리 일괄 출고 리스트 조회")
     @GetMapping("/release")
     public List<WellReleaseListDTO> getReleaseList() {
         return pinService.getReleaseList();
     }
 
-    //출고 엑셀
+    @Operation(summary = "PIN 관리 출고된 값 엑셀 다운로드")
     @GetMapping("/release/excel")
     public void excelDownload(HttpServletResponse response) throws IOException {
         List<WellReleaseDTO> releaseList = pinService.getReleaseExcel();
 
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("첫번째 시트");
-        Row row = null;
-        Cell cell = null;
+        Row row;
+        Cell cell;
         int rowNum = 0;
         int num = 1;
 
@@ -190,19 +177,14 @@ public class PinController {
         wb.close();
     }
 
-    //출고
+    @Operation(summary = "PIN 관리 출고")
     @PostMapping("/release")
     public ResponseEntity<String> releasePins(@RequestParam("release") String release) {
-        try {
-            pinService.releasePinsByRelease(release);
-
-            return ResponseEntity.ok("출고 처리 완료");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("출고 처리 중 오류 발생: " + e.getMessage());
-        }
+        pinService.releasePinsByRelease(release);
+        return ResponseEntity.ok("출고 처리 완료");
     }
 
-    //검색
+    @Operation(summary = "PIN 관리 다중 검색")
     @GetMapping("/search")
     public ResponseEntity<?> searchAccount(
             @RequestParam(value = "isSaleFlag", required = false) Boolean isSaleFlag,
@@ -217,14 +199,10 @@ public class PinController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        try {
-            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-            Page<WellPinSearchDTO> result = pinService.searchPinList(isSaleFlag, isUseFlag, network, operatorName, productName, pinNum, managementNum, writer, user, pageable);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<WellPinSearchDTO> result = pinService.searchPinList(isSaleFlag, isUseFlag, network, operatorName, productName, pinNum, managementNum, writer, user, pageable);
 
-            return ResponseUtil.createOkResponse(result.getContent(), "조회 성공", result);
-        } catch (Exception e) {
-            return ResponseUtil.createErrorResponse(e);
-        }
+        return ResponseUtil.createOkResponse(result.getContent(), "조회 성공", result);
     }
 
 }

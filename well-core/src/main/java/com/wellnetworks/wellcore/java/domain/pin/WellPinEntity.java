@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class WellPinEntity extends BaseEntity { // ctrl + alt + l
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pin_idx")
     private Long pinIdx;
 

@@ -2,6 +2,7 @@ package com.wellnetworks.wellcore.java.dto.PIN;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wellnetworks.wellcore.java.domain.pin.WellPinEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.time.LocalDateTime;

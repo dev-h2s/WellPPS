@@ -32,6 +32,9 @@ public class WellPartnerSignInfoDTO {
     private String rejectionReason; // 회원가입 거부사유
     private LocalDate reviewDate;// 검수일자
     private String reviewer;//검수자
+    private String partnerUpperIdx;
+    private String partnerUpperName;
+    private Integer dipositBalance;
 
     //검색시 필요
     private String ceoTelephone;
@@ -51,8 +54,15 @@ public class WellPartnerSignInfoDTO {
         this.rejectionReason = entity.getRejectionReason();
         this.reviewDate = entity.getReviewDate();
         this.reviewer = entity.getReviewer();
+        this.partnerUpperIdx = entity.getPartnerUpperIdx();
+        if (partnerUpperIdx != null) {
+            this.partnerUpperName = partnerUpperName;
+        }
+        else {
+            this.partnerUpperName = null;
+        }
         this.ceoTelephone = entity.getCeoTelephone();
-
+        this.dipositBalance = diposit != null ? diposit.getDipositBalance() : 0;
         for (WellPartnerFIleStorageEntity fileStorage : fileStorages) {
             if (fileStorage != null && fileStorage.getFile() != null) {
                 WellFileDetailDTO fileDetail = new WellFileDetailDTO();

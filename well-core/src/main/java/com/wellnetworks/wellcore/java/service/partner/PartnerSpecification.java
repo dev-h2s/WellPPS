@@ -3,16 +3,12 @@ package com.wellnetworks.wellcore.java.service.partner;
 import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.criteria.*;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class PartnerSpecification {
     //거래처명
@@ -247,6 +243,20 @@ public class PartnerSpecification {
             }
         };
     }
+
+//회원가입 관리
+    //회원가입 승인 여부
+    public static Specification<WellPartnerEntity> registrationStatusContains(String searchKeyword) {
+        return (root, query, criteriaBuilder) -> {
+            if (searchKeyword == null || searchKeyword.isEmpty()) {
+                return criteriaBuilder.conjunction();
+            } else {
+                return criteriaBuilder.equal(root.get("registrationStatus"), searchKeyword);
+            }
+        };
+    }
+
+
 }
 
 

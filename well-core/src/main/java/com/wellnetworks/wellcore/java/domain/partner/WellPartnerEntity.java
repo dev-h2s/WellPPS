@@ -205,7 +205,7 @@ public class WellPartnerEntity {
     private LocalDate desiredDate; //방문 희망 날짜
 
     @Column(name="delete_status")
-    private Boolean deleteStatus = false; //삭제 상태
+    private Boolean deleteStatus; //삭제 상태
 
     @Builder
     public WellPartnerEntity(String partnerIdx, String partnerCode, String partnerName, String partnerType, Boolean specialPolicyOpening, Boolean specialPolicyCharge

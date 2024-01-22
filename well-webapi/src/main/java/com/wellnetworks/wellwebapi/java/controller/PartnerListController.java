@@ -4,6 +4,7 @@ package com.wellnetworks.wellwebapi.java.controller;
 import com.wellnetworks.wellcore.java.dto.Partner.*;
 import com.wellnetworks.wellcore.java.dto.Partner.sign.WellPartnerSignCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Partner.sign.WellPartnerSignInfoDTO;
+import com.wellnetworks.wellcore.java.dto.Partner.sign.WellPartnerSignSearchDTO;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.service.partner.WellPartnerService;
 import jakarta.persistence.EntityNotFoundException;
@@ -115,15 +116,11 @@ public class PartnerListController {
     public ResponseEntity<?> getPartnerSignList(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
-            , @RequestParam(value = "partnerName", required = false) String partnerName
-            , @RequestParam(value = "ceoName", required = false) String ceoName
-            , @RequestParam(value = "ceoTelephone", required = false) String ceoTelephone
-            , @RequestParam(value = "discountCategory", required = false) String discountCategory
-            , @RequestParam(value = "registrationStatus", required = false) String registrationStatus
+
     ) {
         try {
             Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "signRequestDate"));
-            Page<WellPartnerSignInfoDTO> partnersPage = wellPartnerService.getAllPartnerSign(pageable, ceoTelephone, ceoName, partnerName);
+            Page<WellPartnerSignInfoDTO> partnersPage = wellPartnerService.getAllPartnerSign(pageable);
 
             Map<String, Object> response = new HashMap<>();
             response.put("currentPage", partnersPage.getNumber());
@@ -149,6 +146,8 @@ public class PartnerListController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
+
+
 
 
 
@@ -241,6 +240,46 @@ public class PartnerListController {
             // 검색 중 예외 발생 시 500 Internal Server Error 응답 반환
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("message", "거래처 검색 중 오류 발생: " + e.getMessage());
+            errorResponse.put("status", "ERROR");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    //거래처 회원가입 검색리스트
+    @GetMapping("business/sign/serch")
+    public ResponseEntity<Map<String, Object>> getPartnerSignList(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+            , @RequestParam(value = "partnerName", required = false) String partnerName
+            , @RequestParam(value = "ceoName", required = false) String ceoName
+            , @RequestParam(value = "ceoTelephone", required = false) String ceoTelephone
+            , @RequestParam(value = "discountCategory", required = false) String discountCategory
+            , @RequestParam(value = "registrationStatus", required = false) String transactionStatus
+    ) {
+        try {
+            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "signRequestDate"));
+            Page<WellPartnerSignSearchDTO> partnersPage = wellPartnerService.getAllPartnerSignSearch(pageable, ceoTelephone, ceoName, partnerName, discountCategory, transactionStatus);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("currentPage", partnersPage.getNumber());
+            response.put("items", partnersPage.getContent());
+            response.put("message", "");
+            response.put("status", "OK");
+            response.put("totalItems", partnersPage.getTotalElements());
+            response.put("totalPages", partnersPage.getTotalPages());
+
+            response.put("registeredCount", partnerRepository.registeredCount());
+            response.put("preRegisteredCount", partnerRepository.preRegisteredCount());
+            response.put("managementCount", partnerRepository.managementCount());
+            response.put("suspendedCount", partnerRepository.suspendedCount());
+            response.put("businessLicenseCount", partnerRepository.countBusinessLicenseMissing());
+            response.put("contractDocumentCount", partnerRepository.countContractDocumentMissing());
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            // 예외가 발생하면 500 Internal Server Error 응답을 반환
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "서버 오류 발생: " + e.getMessage());
             errorResponse.put("status", "ERROR");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }

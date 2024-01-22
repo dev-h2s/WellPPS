@@ -53,7 +53,7 @@ public class PinController {
 
     @Operation(summary = "PIN 관리 수동 생성")
     @PostMapping
-    public ResponseEntity<?> generatePin(@Valid WellPinCreateDTO createDTO) {
+    public ResponseEntity<?> generatePin(@RequestBody WellPinCreateDTO createDTO) {
         pinService.createPin(createDTO);
         return ResponseEntity.ok("PIN 생성 및 저장 완료");
 
@@ -61,7 +61,7 @@ public class PinController {
 
     @Operation(summary = "PIN 관리 수정")
     @PutMapping("/{pinIdx}")
-    public ResponseEntity<?> updatePin(@Valid WellPinUpdateDTO updateDTO) {
+    public ResponseEntity<?> updatePin(@RequestBody WellPinUpdateDTO updateDTO) {
         pinService.updatePin(updateDTO);
         return ResponseEntity.ok("pin이 수정되었습니다.");
     }

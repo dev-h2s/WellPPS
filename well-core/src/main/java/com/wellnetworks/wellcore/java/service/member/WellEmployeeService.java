@@ -12,12 +12,11 @@ import com.wellnetworks.wellcore.java.repository.File.WellEmployeeFileRepository
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeGroupRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeRepository;
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
-import com.wellnetworks.wellcore.java.service.File.WellFileStorageService;
-import io.micrometer.common.KeyValues;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -34,29 +33,13 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class WellEmployeeService {
-    /*
-    사원의 정부에 관련된 기능을 처리:
-            주어진 회원 ID에 해당하는 회원 정보를 가져오는 함수 : getMemberByIdx
-            회원 정보를 검색하고 페이지별로 반환하는 함수: searchMember
-            주어진 회원 이름에 해당하는 회원 정보를 가져오는 함수: getMemberByMemberName
-            새 회원 정보를 생성하는 함수: createMember
-            회원 정보를 업데이트하고 파일을 업로드하는 함수: updateMember
-            주어진 회원 ID에 해당하는 회원 정보를 삭제하는 함수: deleteMemberById
-    */
+    private static final Logger log = LoggerFactory.getLogger(WellEmployeeService.class);
 
-    @Autowired private WellEmployeeUserRepository wellEmployeeUserRepository; // 사원에 관한
-
-    @Autowired private WellEmployeeRepository wellEmployeeRepository;
-    @Autowired private WellFileStorageService fileStorageService;
-    @Autowired private WellEmployeeGroupRepository wellEmployeeGroupRepository;
-
-    @Autowired private WellEmployeeFileStorageService employeeFileService;
-
-    @Autowired private  WellEmployeeFileRepository employeeFileRepository;
-
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    private KeyValues baseSpec;
-
+    private final WellEmployeeUserRepository wellEmployeeUserRepository; // 사원에 관한
+    private final WellEmployeeRepository wellEmployeeRepository;
+    private final WellEmployeeGroupRepository wellEmployeeGroupRepository;
+    private final WellEmployeeFileStorageService employeeFileService;
+    private final WellEmployeeFileRepository employeeFileRepository;
 
     // 사원 상세 조회
     public Optional<WellEmployeeInfoDetailDTO> getEmployeeByEmployeeIdx(String employeeIdx) {
@@ -86,7 +69,7 @@ public class WellEmployeeService {
             // 이 DTO 객체는 사원 정보, 파일 정보, 부서 정보를 포함한다
             return Optional.of(new WellEmployeeInfoDetailDTO(employeeEntity, identification, department, fileStorages));
 
-        }else {
+        } else {
             // 해당 사원 정보가 DB에 없는 경우, 빈 Optional 객체를 반환
             return Optional.empty();
         }
@@ -94,23 +77,14 @@ public class WellEmployeeService {
 
 
     //사원 리스트 조회
-    public Page<WellEmployeeInfoDTO> getAllemployees(Pageable pageable) {
+    public Page<WellEmployeeInfoDTO> getAllEmployees(Pageable pageable) {
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "employeeUserRegisterDate"));
         Page<WellEmployeeUserEntity> employeeUsers = wellEmployeeUserRepository.findAll(pageable);
 
         // 검색 조건에 맞는 데이터 조회
         List<WellEmployeeInfoDTO> employeeList = new ArrayList<>();
 
-        // 검색된 WellEmployeeUserEntity 리스트를 WellEmployeeInfoDTO 리스트로 변환
-//        List<WellEmployeeInfoDTO> employeeInfoDTOList = employeeUsers.stream()
-//                .map(user -> {
-//                    WellEmployeeEntity employeeEntity = user.getEmployeeEntity();
-//                    WellEmployeeManagerGroupEntity managerGroupEntity = user.getManagerGroupEntity();
-//                    return new WellEmployeeInfoDTO(employeeEntity, managerGroupEntity);
-//                })
-//                .collect(Collectors.toList());
-
-        for(WellEmployeeUserEntity employeeUser : employeeUsers){
+        for (WellEmployeeUserEntity employeeUser : employeeUsers) {
             WellEmployeeEntity employeeEntity = employeeUser.getEmployeeEntity(); // 가정
             WellEmployeeManagerGroupEntity managerGroupEntity = employeeUser.getManagerGroupEntity(); // 가정
 
@@ -122,19 +96,7 @@ public class WellEmployeeService {
         return new PageImpl<>(employeeList, pageable, employeeUsers.getTotalElements());
     }
 
-    public class UserAndEmployee {
-        private WellEmployeeUserEntity userEntity;
-        private WellEmployeeEntity employeeEntity;
-
-        // 생성자
-        public UserAndEmployee(WellEmployeeUserEntity userEntity, WellEmployeeEntity employeeEntity) {
-            this.userEntity = userEntity;
-            this.employeeEntity = employeeEntity;
-        }}
-
-
-
-// employee id 생성
+    // employee id 생성
     private Long generateNextEmployeeId() {
         // 여기에서 다음 직원 ID를 조회하고 1을 더해서 반환하도록 로직을 작성
         // 이 로직은 현재 저장된 직원 중 가장 큰 ID를 조회하고 1을 더하는 방식으로 구현 가능
@@ -148,146 +110,116 @@ public class WellEmployeeService {
         }
     }
 
-//패스워드 랜덤
+    //패스워드 랜덤
     public class PasswordUtil {
         private static final String ALLOWED_STRING = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()";
         private static final int TEMP_PWD_LENGTH = 10;
         private static final SecureRandom RANDOM = new SecureRandom();
         private static final BCryptPasswordEncoder ENCODER = new BCryptPasswordEncoder();
 
-    public static String[] generateRandomPassword() {
-        StringBuilder builder = new StringBuilder(TEMP_PWD_LENGTH);
+        public static String[] generateRandomPassword() {
+            StringBuilder builder = new StringBuilder(TEMP_PWD_LENGTH);
 
-        for (int i = 0; i < TEMP_PWD_LENGTH; i++) {
-            builder.append(ALLOWED_STRING.charAt(RANDOM.nextInt(ALLOWED_STRING.length())));
+            for (int i = 0; i < TEMP_PWD_LENGTH; i++) {
+                builder.append(ALLOWED_STRING.charAt(RANDOM.nextInt(ALLOWED_STRING.length())));
+            }
+
+            String rawPassword = builder.toString();
+            String encryptedPassword = ENCODER.encode(rawPassword); // 암호화된 비밀번호를 반환
+            return new String[]{rawPassword, encryptedPassword};
         }
-
-        String rawPassword = builder.toString();
-        String encryptedPassword = ENCODER.encode(rawPassword); // 암호화된 비밀번호를 반환
-        return new String[] {rawPassword, encryptedPassword};
-    }
     }
 
     // 사원 생성
-@Transactional
-public String employeeJoin (MultipartHttpServletRequest request, WellEmployeeJoinDTO joinDTO) throws Exception {
+    @Transactional
+    public String employeeJoin(MultipartHttpServletRequest request, WellEmployeeJoinDTO joinDTO) throws Exception {
 
 
-    // 중복 아이디 검사
-    boolean exists = wellEmployeeUserRepository.existsByEmployeeIdentification(joinDTO.getEmployeeIdentification());
-    if (exists) {
-        throw new IllegalArgumentException("중복된 아이디 입니다");
-    }
-    String[] passwords = PasswordUtil.generateRandomPassword();
-    String tempPasswordPlainText = passwords[0]; // 사용자에게 전달할 임시 비밀번호 평문
-    String tempPasswordEncrypted = passwords[1]; // 데이터베이스에 저장할 암호화된 비밀번호
+        // 중복 아이디 검사
+        boolean exists = wellEmployeeUserRepository.existsByEmployeeIdentification(joinDTO.getEmployeeIdentification());
+        if (exists) {
+            throw new IllegalArgumentException("중복된 아이디 입니다");
+        }
+        String[] passwords = PasswordUtil.generateRandomPassword();
+        String tempPasswordPlainText = passwords[0]; // 사용자에게 전달할 임시 비밀번호 평문
+        String tempPasswordEncrypted = passwords[1]; // 데이터베이스에 저장할 암호화된 비밀번호
 
 // DTO에서 department 값을 가져옴
-    String department = joinDTO.getDepartment();
+        String department = joinDTO.getDepartment();
 
-    // department 값을 기준으로 WellEmployeeGroupEntity 객체 조회
-    Optional<WellEmployeeManagerGroupEntity> groupOptional = wellEmployeeGroupRepository.findByDepartment(department);
+        // department 값을 기준으로 WellEmployeeGroupEntity 객체 조회
+        Optional<WellEmployeeManagerGroupEntity> groupOptional = wellEmployeeGroupRepository.findByDepartment(department);
 //    WellEmployeeManagerGroupEntity group = groupOptional.orElseThrow(IllegalArgumentException::new);
-    // 그룹(부서) 정보가 없으면 예외 처리
-    WellEmployeeManagerGroupEntity group = groupOptional.orElseThrow(()
-            -> new IllegalArgumentException("없는 부서 입니다: " + department));
+        // 그룹(부서) 정보가 없으면 예외 처리
+        WellEmployeeManagerGroupEntity group = groupOptional.orElseThrow(()
+                -> new IllegalArgumentException("없는 부서 입니다: " + department));
 
 
-    // 휴대폰 인증 코드의 만료 시간 설정. 예를 들어, 현재 시간으로부터 10분 후로 설정.
-    LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(10);
-    LocalDateTime currentDateTime = LocalDateTime.now();
-    String newEmployeeIdx = UUID.randomUUID().toString();
-    // WellEmployeeUserEntity 객체 생성 및 설정
-    try{
-    WellEmployeeUserEntity userEntity = WellEmployeeUserEntity.builder()
-            .employeeIdx(newEmployeeIdx) //생성되는 idx
-            .employeeIdentification(joinDTO.getEmployeeIdentification()) // 로그인 id
+        // 휴대폰 인증 코드의 만료 시간 설정. 예를 들어, 현재 시간으로부터 10분 후로 설정.
+        LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(10);
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        String newEmployeeIdx = UUID.randomUUID().toString();
+        // WellEmployeeUserEntity 객체 생성 및 설정
+        try {
+            WellEmployeeUserEntity userEntity = WellEmployeeUserEntity.builder()
+                    .employeeIdx(newEmployeeIdx) //생성되는 idx
+                    .employeeIdentification(joinDTO.getEmployeeIdentification()) // 로그인 id
 //            .employeeUserPwd(joinDTO.getEmployeeUserPwd())
-            .isPhoneVerified(joinDTO.getIsPhoneVerified()) // user-휴대폰 인증 여부
-            .phoneVerificationCode(joinDTO.getPhoneVerificationCode()) // user-휴대폰 인증 코드
-            .phoneVerificationAttempts(joinDTO.getPhoneVerificationAttempts()) // user-휴대폰 인증 시도 횟수
-            .phoneVerificationExpiration(expirationTime) // user-휴대폰 인증 만료 시간
-            .tmpPwd(tempPasswordEncrypted) // 임시 암호화된 비밀번호를 설정
-            .employeeManagerGroupKey(group) // 연관 관계 설정
-            .isFirstLogin(true)
-            .isPasswordResetRequired(true)
-            .employeeUserRegisterDate(LocalDateTime.now())
-            .build();
+                    .isPhoneVerified(joinDTO.getIsPhoneVerified()) // user-휴대폰 인증 여부
+                    .phoneVerificationCode(joinDTO.getPhoneVerificationCode()) // user-휴대폰 인증 코드
+                    .phoneVerificationAttempts(joinDTO.getPhoneVerificationAttempts()) // user-휴대폰 인증 시도 횟수
+                    .phoneVerificationExpiration(expirationTime) // user-휴대폰 인증 만료 시간
+                    .tmpPwd(tempPasswordEncrypted) // 임시 암호화된 비밀번호를 설정
+                    .employeeManagerGroupKey(group) // 연관 관계 설정
+                    .isFirstLogin(true)
+                    .isPasswordResetRequired(true)
+                    .employeeUserRegisterDate(LocalDateTime.now())
+                    .build();
 
-    wellEmployeeUserRepository.save(userEntity);
+            wellEmployeeUserRepository.save(userEntity);
 
-    Long newEmployeeId = generateNextEmployeeId(); // id 증가
-    // WellEmployeeEntity 객체 생성 및 설정
-    WellEmployeeEntity employeeEntity = WellEmployeeEntity.builder()
-            .employeeIdx(newEmployeeIdx)
-            .employeeId(newEmployeeId)
-            .employeeName(joinDTO.getEmployeeName())
-            .belong(joinDTO.getBelong())
-            .position(joinDTO.getPosition())
-            .employmentState(joinDTO.getEmploymentState())
-            .jobType(joinDTO.getJobType())
-            .entryDate(joinDTO.getEntryDate())
-            .retireDate(joinDTO.getRetireDate())
-            .employmentQuitType(joinDTO.getEmploymentQuitType())
-            .remainingLeaveDays(joinDTO.getRemainingLeaveDays())
-            .residentRegistrationNumber(joinDTO.getResidentRegistrationNumber())
-            .telPrivate(joinDTO.getTelPrivate())
-            .telWork(joinDTO.getTelWork())
-            .email(joinDTO.getEmail())
-            .bankName(joinDTO.getBankName())
-            .bankAccount(joinDTO.getBankAccount())
-            .bankHolder(joinDTO.getBankHolder())
-            .homeAddress1(joinDTO.getHomeAddress1())
-            .homeAddress2(joinDTO.getHomeAddress2())
-            .externalAccessCert(joinDTO.getExternalAccessCert())
-            .memo(joinDTO.getMemo())
+            Long newEmployeeId = generateNextEmployeeId(); // id 증가
+            // WellEmployeeEntity 객체 생성 및 설정
+            WellEmployeeEntity employeeEntity = WellEmployeeEntity.builder()
+                    .employeeIdx(newEmployeeIdx)
+                    .employeeId(newEmployeeId)
+                    .employeeName(joinDTO.getEmployeeName())
+                    .belong(joinDTO.getBelong())
+                    .position(joinDTO.getPosition())
+                    .employmentState(joinDTO.getEmploymentState())
+                    .jobType(joinDTO.getJobType())
+                    .entryDate(joinDTO.getEntryDate())
+                    .retireDate(joinDTO.getRetireDate())
+                    .employmentQuitType(joinDTO.getEmploymentQuitType())
+                    .remainingLeaveDays(joinDTO.getRemainingLeaveDays())
+                    .residentRegistrationNumber(joinDTO.getResidentRegistrationNumber())
+                    .telPrivate(joinDTO.getTelPrivate())
+                    .telWork(joinDTO.getTelWork())
+                    .email(joinDTO.getEmail())
+                    .bankName(joinDTO.getBankName())
+                    .bankAccount(joinDTO.getBankAccount())
+                    .bankHolder(joinDTO.getBankHolder())
+                    .homeAddress1(joinDTO.getHomeAddress1())
+                    .homeAddress2(joinDTO.getHomeAddress2())
+                    .externalAccessCert(joinDTO.getExternalAccessCert())
+                    .memo(joinDTO.getMemo())
 //            .employeeRegisterDate(LocalDateTime.now())
-            .build();
-    wellEmployeeRepository.save(employeeEntity);
-    employeeFileService.saveFiles(request, employeeEntity.getEmployeeIdx());
-        System.out.println("사원 생성완료");
-    } catch (Exception e) {
-        // 롤백을 위해 예외 발생
-        throw new RuntimeException("사원 생성 중 오류 발생", e);
+                    .build();
+            wellEmployeeRepository.save(employeeEntity);
+            employeeFileService.saveFiles(request, employeeEntity.getEmployeeIdx());
+        } catch (Exception e) {
+            // 롤백을 위해 예외 발생
+            throw new RuntimeException("사원 생성 중 오류 발생", e);
+        }
+
+        // 임시 비밀번호 반환
+        return tempPasswordPlainText; // 호출하는 곳에서 임시 비밀번호를 받아 화면에 출력할 수 있음
     }
-    System.out.println("사원 생성완료");
-    // 임시 비밀번호 반환
-    return tempPasswordPlainText; // 호출하는 곳에서 임시 비밀번호를 받아 화면에 출력할 수 있음
-    }
-
-    //패스워드 변경 : user pwd 통일
-//    public void changePassword(ChangePasswordRequest changePasswordRequest) {
-//        if (!changePasswordRequest.getNewPassword().equals(changePasswordRequest.getConfirmPassword())) {
-//            throw new IllegalArgumentException("새 비밀번호가 일치하지 않습니다.");
-//        }
-//
-//        WellEmployeeUserEntity userEntity = wellEmployeeUserRepository.findByEmployeeIdentification(changePasswordRequest.getUsername())
-//                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
-//
-//        // 임시 비밀번호로 로그인된 상태인지 확인
-////        if (!passwordEncoder.matches(changePasswordRequest.getCurrentPassword(), userEntity.getTmpPwd())) {
-////            throw new IllegalArgumentException("Current password is incorrect.");
-////        }
-//
-//        // 새 비밀번호 설정 및 임시 비밀번호 무효화
-//        userEntity.changePasswordAndInvalidateTempPassword(changePasswordRequest.getNewPassword(), passwordEncoder);
-//
-//        wellEmployeeUserRepository.save(userEntity);
-//    }
-
-
-
 
     // 사원 검색
-    public Page<WellEmployeeInfoDTO> searchEmployeeList(String belong, String employmentState,
-                                                        String employeeName,
-                                                        String employeeIdentification,
-                                                        String position,
-                                                        String telPrivate,
-                                                        String department,
-                                                        Pageable pageable
-
-    ) {
+    public Page<WellEmployeeInfoDTO> searchEmployeeList(String belong, String employmentState, String employeeName,
+                                                        String employeeIdentification, String position,
+                                                        String telPrivate, String department, Pageable pageable) {
         // 복합 검색 조건에 대한 Specification 생성
         Specification<WellEmployeeUserEntity> spec = // Specification을 WellEmployeeUserEntity에 대해 적용
                 Specification.where(EmployeeSpecification.belongContains(belong))
@@ -299,14 +231,12 @@ public String employeeJoin (MultipartHttpServletRequest request, WellEmployeeJoi
                         .and(EmployeeSpecification.departmentContains(department));
 
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "employeeUserRegisterDate"));
-
         Page<WellEmployeeUserEntity> employeeUsers = wellEmployeeUserRepository.findAll(spec, pageable);
 
         // 검색 조건에 맞는 데이터 조회
         List<WellEmployeeInfoDTO> employeeList = new ArrayList<>();
 
-
-        for(WellEmployeeUserEntity employeeUser : employeeUsers){
+        for (WellEmployeeUserEntity employeeUser : employeeUsers) {
             WellEmployeeEntity employeeEntity = employeeUser.getEmployeeEntity(); // 가정
             WellEmployeeManagerGroupEntity managerGroupEntity = employeeUser.getManagerGroupEntity(); // 가정
 
@@ -321,7 +251,7 @@ public String employeeJoin (MultipartHttpServletRequest request, WellEmployeeJoi
 
     //수정
     @Transactional(rollbackOn = Exception.class)
-    public void update(String employeeIdx, WellEmployeeUpdateDTO updateDTO) throws Exception {
+    public void update(MultipartHttpServletRequest request, String employeeIdx, WellEmployeeUpdateDTO updateDTO) throws RuntimeException {
         try {
             // DTO를 통해 엔티티 업데이트
             WellEmployeeEntity employee = wellEmployeeRepository.findByEmployeeIdx(employeeIdx);
@@ -331,32 +261,29 @@ public String employeeJoin (MultipartHttpServletRequest request, WellEmployeeJoi
             // 요청에서 department 이름을 받습니다.
             String departmentName = updateDTO.getDepartment();
 
-        // 유효하지 않은 부서 이름을 처리합니다.
-        if (departmentName == null || departmentName.trim().isEmpty()) {
-            throw new IllegalArgumentException("부서 이름이 유효하지 않습니다.");
-        }
+            // 유효하지 않은 부서 이름을 처리합니다.
+            if (departmentName == null || departmentName.trim().isEmpty()) {
+                throw new IllegalArgumentException("부서 이름이 유효하지 않습니다.");
+            }
 
-        // department 이름으로 WellEmployeeManagerGroupEntity를 조회합니다.
-        Optional<WellEmployeeManagerGroupEntity> employeeGroupOptional = wellEmployeeGroupRepository.findByDepartment(departmentName);
+            // department 이름으로 WellEmployeeManagerGroupEntity를 조회합니다.
+            Optional<WellEmployeeManagerGroupEntity> employeeGroupOptional = wellEmployeeGroupRepository.findByDepartment(departmentName);
 
-        if (!employeeGroupOptional.isPresent()) {
-            throw new RuntimeException("해당 부서를 찾을 수 없습니다.");
-        }
-
-            // 사원 그룹 설정
-//            WellEmployeeManagerGroupEntity employeeGroup = wellEmployeeGroupRepository.findByEmployeeManagerGroupKey(updateDTO.getEmployeeManagerGroupKey());
-
-
+            if (employeeGroupOptional.isEmpty()) {
+                throw new RuntimeException("해당 부서를 찾을 수 없습니다."); // todo 사설 에러로 변경
+            }
             WellEmployeeManagerGroupEntity employeeGroup = employeeGroupOptional.get();
             String employeeManagerGroupKey = employeeGroup.getEmployeeManagerGroupKey();
             updateDTO.setEmployeeManagerGroupKey(employeeManagerGroupKey);
 
             employeeUser.setEmployeeGroup(employeeGroup);
             employeeUser.setEmployeeUserModifyDate(LocalDateTime.now());
-            employeeFileService.updateFiles(updateDTO, employeeIdx);
+            employeeFileService.deleteFileByEmployeeIdx(employeeIdx);
+            employeeFileService.saveFiles(request, employeeIdx);
 
             // 엔티티의 업데이트 메서드 호출
             employee.updateFromDTO(updateDTO);
+            wellEmployeeRepository.save(employee);
 
         } catch (Exception e) {
             // 롤백을 위해 예외 발생

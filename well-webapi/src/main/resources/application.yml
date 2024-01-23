@@ -42,6 +42,6 @@ logging:
     web: debug
     sql: debug
 upload:
-  path: files/file
+  path: files/
 server:
   port: 8080

@@ -2,19 +2,14 @@ package com.wellnetworks.wellcore.java.domain.employee;
 //직원 테이블
 
 import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeUpdateDTO;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,7 +21,6 @@ import static jakarta.persistence.FetchType.LAZY;
 @NoArgsConstructor
 public class WellEmployeeEntity {
 
-
     @Id
     @Column(name = "em_idx")
     private String employeeIdx;
@@ -37,7 +31,6 @@ public class WellEmployeeEntity {
 
     @Column(name = "em_id") //직원의 아이디
     private Long employeeId;
-
 
     @Column(name = "belong") // 소속회사
     private String belong;
@@ -56,7 +49,6 @@ public class WellEmployeeEntity {
 
     @Column(name = "reg_num") //사원 등록번호
     private String registrationNumber;
-
 
     @Column(name = "position") //직급(대표,부장 등)
     private String position;
@@ -88,7 +80,7 @@ public class WellEmployeeEntity {
     @Column(name = "external_access_cert", columnDefinition = "bit") //외부 접속여부
     private Boolean externalAccessCert;
 
-    @Column(name = "entry_dt"    ) //입사 일자
+    @Column(name = "entry_dt") //입사 일자
     private LocalDate entryDate;
 
     @Column(name = "retire_dt") //퇴사 일자

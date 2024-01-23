@@ -4,8 +4,6 @@ import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDTO;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDetailDTO;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeJoinDTO;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeUpdateDTO;
-import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeGroupRepository;
-import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
 import com.wellnetworks.wellcore.java.service.member.WellEmployeeService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,21 +28,13 @@ import java.util.Optional;
 @ComponentScan(basePackages = {"com.wellnetworks.wellcore", "com.wellnetworks.wellsecure"})
 public class EmployeeController {
 
-    @Autowired
-    private WellEmployeeService wellEmployeeService;
-    private WellEmployeeUserRepository wellEmployeeUserRepository;
-
-    private WellEmployeeGroupRepository wellEmployeeGroupRepository;
+    private final WellEmployeeService wellEmployeeService;
 
 
     @Autowired
-    public EmployeeController(WellEmployeeService wellEmployeeService,
-                              WellEmployeeGroupRepository wellEmployeeGroupRepository,
-                              WellEmployeeUserRepository wellEmployeeUserRepository
+    public EmployeeController(WellEmployeeService wellEmployeeService
     ) {
         this.wellEmployeeService = wellEmployeeService;
-        this.wellEmployeeGroupRepository = wellEmployeeGroupRepository;
-        this.wellEmployeeUserRepository = wellEmployeeUserRepository;
     }
 
     // 사원 상세 조회
@@ -76,7 +66,7 @@ public class EmployeeController {
     ) {
         try {
             Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "employeeUserRegisterDate"));
-            Page<WellEmployeeInfoDTO> employeePage = wellEmployeeService.getAllemployees(pageable);
+            Page<WellEmployeeInfoDTO> employeePage = wellEmployeeService.getAllEmployees(pageable);
 
             Map<String, Object> response = new HashMap<>();
             response.put("currentPage", employeePage.getNumber());
@@ -171,13 +161,15 @@ public class EmployeeController {
 
     // 사원 수정
     @PatchMapping("employee/update/{employeeIdx}")
-    public ResponseEntity<String> UpdateEmployee(@ModelAttribute @Valid WellEmployeeUpdateDTO updateDTO,
+    public ResponseEntity<String> updateEmployee(HttpServletRequest httpServletRequest,
+                                                 @ModelAttribute @Valid WellEmployeeUpdateDTO updateDTO,
                                                  @PathVariable String employeeIdx) throws Exception {
+        MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) httpServletRequest;
 //        try {
         if (employeeIdx == null) {
             throw new ClassNotFoundException(String.format("IDX[%s] not found", employeeIdx));
         }
-        wellEmployeeService.update(employeeIdx, updateDTO);
+        wellEmployeeService.update(multiRequest, employeeIdx, updateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body("사원 정보가 성공적으로 수정되었습니다.");
 //        } catch (ClassNotFoundException e) {
 //            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("사원을 찾을 수 없습니다. IDX: %s", employeeIdx));

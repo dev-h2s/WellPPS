@@ -2,11 +2,7 @@ package com.wellnetworks.wellcore.java.dto.member;
 
 
 import com.querydsl.core.annotations.QueryProjection;
-import jakarta.annotation.Nullable;
-import jakarta.persistence.Column;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -18,7 +14,6 @@ import java.util.List;
 public class WellEmployeeJoinDTO {
     private String employeeIdx; // user-idx
     private Long employeeId;
-//    private Integer Long;
     private String employeeIdentification; // user-id
     private String employeeName; // 사원명
     private String employeeManagerGroupKey; // 그룹 에서 받은 fk
@@ -51,21 +46,9 @@ public class WellEmployeeJoinDTO {
     private String tmpPwd; // user-임시패스워드
     private LocalDateTime employeeRegisterDate;
 
-
-
     private List<String> fileKinds = new ArrayList<>();
-
     private List<MultipartFile> uploadFile1;
-    private List<MultipartFile> uploadFile2;
-    private List<MultipartFile> uploadFile3;
-    private List<MultipartFile> uploadFile4;
-    private List<MultipartFile> uploadFile5;
-
 //    private List<MultipartFile> files;
-
-
-
-
 
     @QueryProjection
     public WellEmployeeJoinDTO(String employeeIdx, Long employeeId, String employeeIdentification, String employeeName, String belong, String department, String position,

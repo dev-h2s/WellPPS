@@ -8,6 +8,7 @@ import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeGro
 import com.wellnetworks.wellcore.java.repository.member.employee.WellEmployeeUserRepository;
 import com.wellnetworks.wellcore.java.service.member.WellEmployeeService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +27,7 @@ import java.util.Optional;
 
 @RequestMapping("/admin/hr/")
 @RestController
-@ComponentScan(basePackages={"com.wellnetworks.wellcore","com.wellnetworks.wellsecure"})
+@ComponentScan(basePackages = {"com.wellnetworks.wellcore", "com.wellnetworks.wellsecure"})
 public class EmployeeController {
 
     @Autowired
@@ -39,11 +41,12 @@ public class EmployeeController {
     public EmployeeController(WellEmployeeService wellEmployeeService,
                               WellEmployeeGroupRepository wellEmployeeGroupRepository,
                               WellEmployeeUserRepository wellEmployeeUserRepository
-                              ) {
+    ) {
         this.wellEmployeeService = wellEmployeeService;
         this.wellEmployeeGroupRepository = wellEmployeeGroupRepository;
         this.wellEmployeeUserRepository = wellEmployeeUserRepository;
     }
+
     // 사원 상세 조회
     @GetMapping("employee/{employeeIdx}")
     public ResponseEntity<?> getEmployee(@PathVariable String employeeIdx) {
@@ -71,34 +74,37 @@ public class EmployeeController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-    try{
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "employeeUserRegisterDate"));
-        Page<WellEmployeeInfoDTO> employeePage = wellEmployeeService.getAllemployees(pageable);
+        try {
+            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "employeeUserRegisterDate"));
+            Page<WellEmployeeInfoDTO> employeePage = wellEmployeeService.getAllemployees(pageable);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("currentPage", employeePage.getNumber());
-        response.put("items", employeePage.getContent());
-        response.put("message", "");
-        response.put("status", "OK");
-        response.put("totalItems", employeePage.getTotalElements());
-        response.put("totalPages", employeePage.getTotalPages());
+            Map<String, Object> response = new HashMap<>();
+            response.put("currentPage", employeePage.getNumber());
+            response.put("items", employeePage.getContent());
+            response.put("message", "");
+            response.put("status", "OK");
+            response.put("totalItems", employeePage.getTotalElements());
+            response.put("totalPages", employeePage.getTotalPages());
 
-        return ResponseEntity.ok(response);
-    } catch (Exception e) {
-        // 예외가 발생하면 500 Internal Server Error 응답을 반환
-        Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("message", "서버 오류 발생: " + e.getMessage());
-        errorResponse.put("status", "ERROR");
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-    }
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            // 예외가 발생하면 500 Internal Server Error 응답을 반환
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "서버 오류 발생: " + e.getMessage());
+            errorResponse.put("status", "ERROR");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
     }
 
     //사원 생성
     // 웹으로 할때 @RequestBody  추가
     //@ModelAttribute  key-value 쌍 데이터(폼 데이터)를 Java 객체로 바인딩
     @PostMapping(value = "employee/signUp")
-    public ResponseEntity<String> createEmployeeUser(@ModelAttribute @Valid WellEmployeeJoinDTO createDTO) throws Exception {
+    public ResponseEntity<String> createEmployeeUser(HttpServletRequest httpServletRequest, @ModelAttribute @Valid WellEmployeeJoinDTO createDTO) throws Exception {
         System.out.println("ㅗㅗㅗㅗ");
+        MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) httpServletRequest;
+
+        System.out.println(multiRequest.getFiles("uploadFile"));
         try {
             String tempPassword = wellEmployeeService.employeeJoin(createDTO);
             // 콘솔에 임시 비밀번호 출력
@@ -127,7 +133,6 @@ public class EmployeeController {
 //    }
 
 
-
     // 사원 검색
     @GetMapping("employee/search")
     public ResponseEntity<Map<String, Object>> searchEmployeeList(
@@ -143,29 +148,28 @@ public class EmployeeController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        try{
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "employeeUserRegisterDate"));
-        Page<WellEmployeeInfoDTO> employeePage = wellEmployeeService.searchEmployeeList(belong,employmentState,employeeName,employeeIdentification,position,telPrivate,department,pageable);
-        // 서비스 레이어의 검색 메서드 호출
+        try {
+            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "employeeUserRegisterDate"));
+            Page<WellEmployeeInfoDTO> employeePage = wellEmployeeService.searchEmployeeList(belong, employmentState, employeeName, employeeIdentification, position, telPrivate, department, pageable);
+            // 서비스 레이어의 검색 메서드 호출
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("currentPage", employeePage.getNumber());
-        response.put("items", employeePage.getContent());
-        response.put("message", "");
-        response.put("status", "OK");
-        response.put("totalItems", employeePage.getTotalElements());
-        response.put("totalPages", employeePage.getTotalPages());
+            Map<String, Object> response = new HashMap<>();
+            response.put("currentPage", employeePage.getNumber());
+            response.put("items", employeePage.getContent());
+            response.put("message", "");
+            response.put("status", "OK");
+            response.put("totalItems", employeePage.getTotalElements());
+            response.put("totalPages", employeePage.getTotalPages());
 
-        return ResponseEntity.ok(response);
-        } catch (Exception e){
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
             // 예외가 발생하면 500 Internal Server Error 응답을 반환
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("message", "서버 오류 발생: " + e.getMessage());
             errorResponse.put("status", "ERROR");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
-        }
-
+    }
 
 
     // 사원 수정
@@ -173,16 +177,16 @@ public class EmployeeController {
     public ResponseEntity<String> UpdateEmployee(@ModelAttribute @Valid WellEmployeeUpdateDTO updateDTO,
                                                  @PathVariable String employeeIdx) throws Exception {
 //        try {
-            if (employeeIdx == null) {
-                throw new ClassNotFoundException(String.format("IDX[%s] not found", employeeIdx));
-            }
-            wellEmployeeService.update(employeeIdx, updateDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body("사원 정보가 성공적으로 수정되었습니다.");
+        if (employeeIdx == null) {
+            throw new ClassNotFoundException(String.format("IDX[%s] not found", employeeIdx));
+        }
+        wellEmployeeService.update(employeeIdx, updateDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body("사원 정보가 성공적으로 수정되었습니다.");
 //        } catch (ClassNotFoundException e) {
 //            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("사원을 찾을 수 없습니다. IDX: %s", employeeIdx));
 //        } catch (Exception e) {
 //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("사원 수정 중 오류가 발생하였습니다.");
-        }
     }
+}
 
 //}

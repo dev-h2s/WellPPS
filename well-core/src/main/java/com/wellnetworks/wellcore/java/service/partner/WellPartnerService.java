@@ -150,9 +150,7 @@ public class WellPartnerService {
 
     //거래처 회원가입 검색 조회
     public Page<WellPartnerSignSearchDTO> getAllPartnerSignSearch(Pageable pageable, String ceoTelephone, String ceoName, String partnerName, String discountCategory, String registrationStatus ) {
-        try {
-//            discountCategory = partner.getDiscountCategory();
-//            transactionStatus = partner.getRegistrationStatus();
+//        try {
             Specification<WellPartnerEntity> approvedStatusSpec = registrationStatusIsNotAndDeleteStatusIsFalse();
 
             // 검색 Like 조건
@@ -163,12 +161,12 @@ public class WellPartnerService {
                     .and(PartnerSpecification.registrationStatusContains(registrationStatus))
                     .and(approvedStatusSpec);
 
-//            if(discountCategory !=null){
-//                spec = spec.and(PartnerSpecification.discountCategoryEquals(discountCategory));
-//            }
-//            if(transactionStatus !=null){
-//                spec = spec.and(PartnerSpecification.transactionStatusEquals(transactionStatus));
-//            }
+            if(discountCategory !=null){
+                spec = spec.and(PartnerSpecification.discountCategoryEquals(discountCategory));
+            }
+            if(registrationStatus !=null){
+                spec = spec.and(PartnerSpecification.registrationStatusContains(registrationStatus));
+            }
 
 
             pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "productRegisterDate"));
@@ -192,15 +190,15 @@ public class WellPartnerService {
                 }
                 WellPartnerSignSearchDTO partnerInfo = new WellPartnerSignSearchDTO(partnerEntity, fileStorages, dipositBalance, partnerUpperName);
                 partnerInfoList.add(partnerInfo);
-                partnerEntity.getRegistrationStatus();
+                System.out.println(partnerEntity.getRegistrationStatus());
 
             }
 
             return new PageImpl<>(partnerInfoList, pageable, partners.getTotalElements());
-        } catch (Exception e) {
-            // 여기에 예외 처리 로직 추가
-            throw new RuntimeException("거래처 검색 중 오류 발생: " + e.getMessage(), e);
-        }
+//        } catch (Exception e) {
+//            // 여기에 예외 처리 로직 추가
+//            throw new RuntimeException("거래처 검색 중 오류 발생: " + e.getMessage(), e);
+//        }
     }
 
     // 거래처 리스트에서 회원가입이 승인된 것만 나올수 있게끔
@@ -260,21 +258,18 @@ public class WellPartnerService {
     public static Specification<WellPartnerEntity> registrationStatusIsNotAndDeleteStatusIsFalse() {
         return (root, query, criteriaBuilder) -> {
             Predicate statusRefusal = criteriaBuilder.equal(root.get("registrationStatus"), "거부");
-            Predicate statusApproved = criteriaBuilder.equal(root.get("registrationStatus"), "승인1");
             Predicate statusAtmosphere = criteriaBuilder.equal(root.get("registrationStatus"), "대기");
-
-            Predicate registrationStatus = criteriaBuilder.or(statusApproved, statusRefusal, statusAtmosphere);
+            Predicate statusApproved2 = criteriaBuilder.equal(root.get("registrationStatus"), "승인");
+            Predicate registrationStatus = criteriaBuilder.or(statusApproved2, statusRefusal, statusAtmosphere);
 
             Predicate deleteStatusFalse = criteriaBuilder.equal(root.get("deleteStatus"), false); // 삭제되지않음
-
-
 
             return criteriaBuilder.and(deleteStatusFalse,registrationStatus);
         };
     }
 
 
-    //거래처  회원가입 리스트 조회
+    //거래처 회원가입 리스트 조회
     public Page<WellPartnerSignInfoDTO> getAllPartnerSign(Pageable pageable) {
 //        try {
             pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "productRegisterDate"));
@@ -550,6 +545,44 @@ public class WellPartnerService {
     //거래처 수정
     @Transactional(rollbackOn = Exception.class)
     public void update(String partnerIdx, WellPartnerUpdateDTO updateDTO) throws Exception {
+        try {
+            // DTO를 통해 엔티티 업데이트
+            WellPartnerEntity partner = wellPartnerRepository.findByPartnerIdx(partnerIdx);
+            BeanUtils.copyProperties(updateDTO, partner);
+
+            // 거래처 그룹 및 API 키 설정
+            WellPartnerGroupEntity partnerGroup = wellPartnerGroupRepository.findByPartnerGroupId(updateDTO.getPartnerGroupId());
+            WellApikeyInEntity apikeyIn = null;
+            if (updateDTO.isInApiFlag() && updateDTO.getApiKeyInIdx() != null) {
+                apikeyIn = wellApikeyInRepository.findByApiKeyInIdx(updateDTO.getApiKeyInIdx());
+            }
+
+            if (partnerGroup == null) {
+                throw new RuntimeException("해당 거래처 그룹을 찾을 수 없습니다.");
+            }
+
+            if (updateDTO.isInApiFlag() && apikeyIn == null) {
+                throw new RuntimeException("해당 API 키를 찾을 수 없습니다.");
+            }
+
+            partner.setPartnerGroup(partnerGroup);
+            partner.setApiKey(apikeyIn);
+
+            fileStorageService.updateFiles(updateDTO, partnerIdx);
+
+            // 엔티티의 업데이트 메서드 호출
+            partner.updateFromDTO(updateDTO);
+
+        } catch (Exception e) {
+            // 롤백을 위해 예외 발생
+            throw new RuntimeException("거래처 수정 중 오류 발생", e);
+        }
+    }
+
+
+    //거래처 회원가입 수정
+    @Transactional(rollbackOn = Exception.class)
+    public void updateSign(String partnerIdx, WellPartnerUpdateDTO updateDTO) throws Exception {
         try {
             // DTO를 통해 엔티티 업데이트
             WellPartnerEntity partner = wellPartnerRepository.findByPartnerIdx(partnerIdx);

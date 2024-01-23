@@ -75,7 +75,11 @@ public class WellPartnerSignSearchDTO {
         this.partnerUpperIdx = entity.getPartnerUpperIdx();
         this.reviewDate = entity.getReviewDate();// 검수일자
         this.reviewer = entity.getReviewer();//검수자
-        this.signRequestDate = LocalDate.from(entity.getSignRequestDate());// (회원가입) 요청일자
+        if (entity.getSignRequestDate() != null) {
+            this.signRequestDate = LocalDate.from(entity.getSignRequestDate());// (회원가입) 요청일자
+        } else {
+            this.signRequestDate = null; //
+        }
         this.visitStatus = entity.getVisitStatus(); //방문요청여부
         this.openingVisitRequestDate = entity.getOpeningVisitRequestDate(); //방문 희망일자
         this.registrationStatus = entity.getRegistrationStatus(); // 회원가입 승인 여부(승인대기)

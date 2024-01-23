@@ -256,6 +256,16 @@ public class PartnerSpecification {
         };
     }
 
+//    public static Specification<WellPartnerEntity> registrationStatusContains(String searchKeyword) {
+//        return (root, query, criteriaBuilder) -> {
+//            if (searchKeyword == null || searchKeyword.isEmpty()) {
+//                return criteriaBuilder.conjunction();
+//            } else {
+//                return criteriaBuilder.like(root.get("registrationStatus"), "%" + searchKeyword + "%");
+//            }
+//        };
+//    }
+
 
 }
 

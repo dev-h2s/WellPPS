@@ -191,6 +191,22 @@ public class PartnerListController {
         }
     }
 
+    //거래처 수정
+    @PatchMapping("business/update/sign/{partnerIdx}")
+    public ResponseEntity<String> patchPartnerSign(@Valid WellPartnerUpdateDTO updateDTO,
+                                               @PathVariable String partnerIdx) {
+        try {
+            if (partnerIdx == null) {
+                throw new ClassNotFoundException(String.format("IDX[%s] not found", partnerIdx));
+            }
+            wellPartnerService.updateSign(partnerIdx, updateDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body("거래처가 성공적으로 수정되었습니다.");
+        } catch (ClassNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("거래처를 찾을 수 없습니다. IDX: %s", partnerIdx));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("거래처 수정 중 오류가 발생하였습니다.");
+        }
+    }
 
     // 거래처 검색
     @GetMapping("business/search")
@@ -256,7 +272,7 @@ public class PartnerListController {
             , @RequestParam(value = "discountCategory", required = false) String discountCategory
             , @RequestParam(value = "registrationStatus", required = false) String registrationStatus
     ) {
-        try {
+//        try {
             Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "signRequestDate"));
             Page<WellPartnerSignSearchDTO> partnersPage = wellPartnerService.getAllPartnerSignSearch(pageable, ceoTelephone, ceoName, partnerName, discountCategory, registrationStatus);
 
@@ -276,13 +292,13 @@ public class PartnerListController {
             response.put("contractDocumentCount", partnerRepository.countContractDocumentMissing());
 
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
+//        } catch (Exception e) {
             // 예외가 발생하면 500 Internal Server Error 응답을 반환
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("message", "서버 오류 발생: " + e.getMessage());
-            errorResponse.put("status", "ERROR");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-        }
+//            Map<String, Object> errorResponse = new HashMap<>();
+//            errorResponse.put("message", "서버 오류 발생: " + e.getMessage());
+//            errorResponse.put("status", "ERROR");
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+//        }
     }
 
 

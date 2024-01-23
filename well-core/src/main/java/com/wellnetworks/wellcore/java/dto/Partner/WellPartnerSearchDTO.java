@@ -58,6 +58,7 @@ public class WellPartnerSearchDTO {
 
         this.dipositBalance = dipositBalance;
 
+        this.registrationAddress = entity.getRegistrationAddress();
         this.salesManager = entity.getSalesManager();
         this.ceoName = entity.getCeoName();
         this.ceoTelephone = entity.getCeoTelephone();
@@ -86,6 +87,5 @@ public class WellPartnerSearchDTO {
         // 중복 제거
         this.fileDetails = this.fileDetails.stream().distinct().collect(Collectors.toList());
 
-        this.registrationAddress = entity.getRegistrationAddress();
     }
 }

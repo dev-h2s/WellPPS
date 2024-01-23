@@ -22,6 +22,7 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -169,7 +170,7 @@ public class WellEmployeeService {
 
     // 사원 생성
 @Transactional
-public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
+public String employeeJoin (MultipartHttpServletRequest request, WellEmployeeJoinDTO joinDTO) throws Exception {
 
 
     // 중복 아이디 검사
@@ -243,7 +244,7 @@ public String employeeJoin (WellEmployeeJoinDTO joinDTO) throws Exception {
 //            .employeeRegisterDate(LocalDateTime.now())
             .build();
     wellEmployeeRepository.save(employeeEntity);
-    employeeFileService.saveFiles(joinDTO, employeeEntity.getEmployeeIdx());
+    employeeFileService.saveFiles(request, employeeEntity.getEmployeeIdx());
         System.out.println("사원 생성완료");
     } catch (Exception e) {
         // 롤백을 위해 예외 발생

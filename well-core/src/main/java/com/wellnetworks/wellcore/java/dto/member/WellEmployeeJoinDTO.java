@@ -47,7 +47,7 @@ public class WellEmployeeJoinDTO {
     private LocalDateTime employeeRegisterDate;
 
     private List<String> fileKinds = new ArrayList<>();
-    private List<MultipartFile> uploadFile1;
+    private List<MultipartFile> uploadFile;
 //    private List<MultipartFile> files;
 
     @QueryProjection

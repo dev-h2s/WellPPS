@@ -101,12 +101,9 @@ public class EmployeeController {
     //@ModelAttribute  key-value 쌍 데이터(폼 데이터)를 Java 객체로 바인딩
     @PostMapping(value = "employee/signUp")
     public ResponseEntity<String> createEmployeeUser(HttpServletRequest httpServletRequest, @ModelAttribute @Valid WellEmployeeJoinDTO createDTO) throws Exception {
-        System.out.println("ㅗㅗㅗㅗ");
         MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) httpServletRequest;
-
-        System.out.println(multiRequest.getFiles("uploadFile"));
         try {
-            String tempPassword = wellEmployeeService.employeeJoin(createDTO);
+            String tempPassword = wellEmployeeService.employeeJoin(multiRequest, createDTO);
             // 콘솔에 임시 비밀번호 출력
             System.out.println("생성된 임시 비밀번호: " + tempPassword);
             return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 완료되었습니다. 임시 비밀번호: " + tempPassword);

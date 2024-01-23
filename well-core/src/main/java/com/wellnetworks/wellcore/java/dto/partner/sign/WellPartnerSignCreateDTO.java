@@ -1,4 +1,4 @@
-package com.wellnetworks.wellcore.java.dto.Partner.sign;
+package com.wellnetworks.wellcore.java.dto.partner.sign;
 
 import com.wellnetworks.wellcore.java.dto.FIle.WellFileDetailDTO;
 import lombok.AccessLevel;

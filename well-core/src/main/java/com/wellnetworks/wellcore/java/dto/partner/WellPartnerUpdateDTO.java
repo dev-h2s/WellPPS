@@ -1,13 +1,11 @@
-package com.wellnetworks.wellcore.java.dto.Partner;
+package com.wellnetworks.wellcore.java.dto.partner;
 
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -61,12 +59,6 @@ public class WellPartnerUpdateDTO {
 //    @NotBlank(message = "상세주소는 필수 입력 항목입니다.")
     private String locationDetailAddress;
     private String partnerMemo;
-
-    private List<MultipartFile> businessLicenseFiles;
-    private List<MultipartFile> contractDocumentFiles;
-    private List<MultipartFile> idCardFiles;
-    private List<MultipartFile> storePhotoFiles;
-    private List<MultipartFile> businessCardFiles;
 
 //    회원가입 관련  컬럼
     private String registrationStatus; // 회원가입 여부(승인 관리)

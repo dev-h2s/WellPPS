@@ -3,21 +3,16 @@ package com.wellnetworks.wellwebapi.java.controller.File;
 
 import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
-import com.wellnetworks.wellcore.java.service.File.WellFileStorageService;
+import com.wellnetworks.wellcore.java.service.file.WellFileStorageService;
 import com.wellnetworks.wellcore.java.service.member.WellEmployeeFileStorageService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 

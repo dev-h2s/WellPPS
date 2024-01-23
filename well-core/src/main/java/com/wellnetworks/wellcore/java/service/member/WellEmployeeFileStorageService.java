@@ -68,7 +68,7 @@ public class WellEmployeeFileStorageService {
                 if (file != null && !file.isEmpty()) {
                     String originalFileName = file.getOriginalFilename();
                     assert originalFileName != null;
-                    String extension = originalFileName.substring(".".lastIndexOf(originalFileName));
+                    String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
                     String savedFileName = employeeIdx + File.separator + UUID.randomUUID().toString().substring(0,5) + "-" + file.getOriginalFilename();
 
                     File targetFile = new File(uploadDir + savedFileName);

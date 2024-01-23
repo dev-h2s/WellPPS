@@ -1,13 +1,10 @@
-package com.wellnetworks.wellcore.java.service.File;
+package com.wellnetworks.wellcore.java.service.file;
 
-import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
-import com.wellnetworks.wellcore.java.dto.FIle.WellPartnerFileCreateDTO;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
-import com.wellnetworks.wellcore.java.dto.Partner.sign.WellPartnerSignCreateDTO;
-import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
 import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
+import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.dto.FIle.WellFIleCreateDTO;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerCreateDTO;
+import com.wellnetworks.wellcore.java.dto.FIle.WellPartnerFileCreateDTO;
+import com.wellnetworks.wellcore.java.repository.File.WellFileStorageRepository;
 import com.wellnetworks.wellcore.java.repository.File.WellPartnerFileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.File;
 import java.io.InputStream;
@@ -33,68 +31,30 @@ public class WellFileStorageService {
     private final WellPartnerFileRepository partnerFileRepository;
 
     @Transactional
-    public Map<String, Object> saveFiles(WellPartnerCreateDTO createDTO, String partnerIdx) throws Exception {
+    public void saveFiles(MultipartHttpServletRequest files, String partnerIdx) {
         Map<String, Object> result = new HashMap<>();
         List<Long> fileIds = new ArrayList<>();
-
-        List<MultipartFile> businessLicenseFiles = createDTO.getBusinessLicenseFiles();
-        List<MultipartFile> contractDocumentFiles = createDTO.getContractDocumentFiles();
-        List<MultipartFile> idCardFiles = createDTO.getIdCardFiles();
-        List<MultipartFile> storePhotoFiles = createDTO.getStorePhotoFiles();
-        List<MultipartFile> businessCardFiles = createDTO.getBusinessCardFiles();
-
         // 각 파일 업로드 필드를 처리
-        processFiles(businessLicenseFiles, "사업자등록증", partnerIdx, fileIds, result);
-        processFiles(contractDocumentFiles, "계약서", partnerIdx, fileIds, result);
-        processFiles(idCardFiles, "대표자신분증", partnerIdx, fileIds, result);
-        processFiles(storePhotoFiles, "매장사진", partnerIdx, fileIds, result);
-        processFiles(businessCardFiles, "대표자명함", partnerIdx, fileIds, result);
+        processFiles(files.getFiles("businessLicenseFile"), "사업자등록증", partnerIdx, fileIds, result);
+        processFiles(files.getFiles("contractDocumentFiles"), "계약서", partnerIdx, fileIds, result);
+        processFiles(files.getFiles("idCardFiles"), "대표자신분증", partnerIdx, fileIds, result);
+        processFiles(files.getFiles("storePhotoFiles"), "매장사진", partnerIdx, fileIds, result);
+        processFiles(files.getFiles("businessCardFiles"), "대표자명함", partnerIdx, fileIds, result);
 
-        // 다른 파일 업로드 필드들도 처리
-
-        return result;
+        // 결과 값 리턴
     }
 
     @Transactional
-    public Map<String, Object> saveSignFiles(WellPartnerSignCreateDTO signCreateDTO, String partnerIdx) throws Exception {
+    public void saveSignFiles(MultipartHttpServletRequest files, String partnerIdx) {
         Map<String, Object> result = new HashMap<>();
         List<Long> fileIds = new ArrayList<>();
-
-        List<MultipartFile> businessLicenseFiles = signCreateDTO.getBusinessLicenseFiles();
-        List<MultipartFile> idCardFiles = signCreateDTO.getIdCardFiles();
-
         // 각 파일 업로드 필드를 처리
-        processFiles(businessLicenseFiles, "사업자등록증", partnerIdx, fileIds, result);
-        processFiles(idCardFiles, "대표자신분증", partnerIdx, fileIds, result);
+        processFiles(files.getFiles("businessLicenseFile"), "사업자등록증", partnerIdx, fileIds, result);
+        processFiles(files.getFiles("idCardFiles"), "대표자신분증", partnerIdx, fileIds, result);
 
         // 다른 파일 업로드 필드들도 처리
 
-        return result;
     }
-
-    @Transactional
-    public Map<String, Object> updateFiles(WellPartnerUpdateDTO updateDTO, String partnerIdx) throws Exception {
-        Map<String, Object> result = new HashMap<>();
-        List<Long> fileIds = new ArrayList<>();
-
-        List<MultipartFile> businessLicenseFiles = updateDTO.getBusinessLicenseFiles();
-        List<MultipartFile> contractDocumentFiles = updateDTO.getContractDocumentFiles();
-        List<MultipartFile> idCardFiles = updateDTO.getIdCardFiles();
-        List<MultipartFile> storePhotoFiles = updateDTO.getStorePhotoFiles();
-        List<MultipartFile> businessCardFiles = updateDTO.getBusinessCardFiles();
-
-        // 각 파일 업로드 필드를 처리
-        processFiles(businessLicenseFiles, "사업자등록증", partnerIdx, fileIds, result);
-        processFiles(contractDocumentFiles, "계약서", partnerIdx, fileIds, result);
-        processFiles(idCardFiles, "대표자신분증", partnerIdx, fileIds, result);
-        processFiles(storePhotoFiles, "매장사진", partnerIdx, fileIds, result);
-        processFiles(businessCardFiles, "대표자명함", partnerIdx, fileIds, result);
-
-        // 다른 파일 업로드 필드들도 처리
-
-        return result;
-    }
-
     @Transactional
     public Long insertFile(WellFileStorageEntity file) {
         return fileStorageRepository.save(file).getId();
@@ -112,9 +72,15 @@ public class WellFileStorageService {
                 if (file != null && !file.isEmpty()) {
                     String originalFileName = file.getOriginalFilename();
                     String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-                    String savedFileName = UUID.randomUUID() + extension;
+                    String savedFileName = partnerIdx + File.separator + UUID.randomUUID().toString().substring(0,5) + "-" + file.getOriginalFilename();
 
                     File targetFile = new File(uploadDir + savedFileName);
+                    File targetFolder = new File(uploadDir + partnerIdx);
+                    if(!targetFolder.exists()) {
+                        targetFolder.mkdirs();
+                    }
+                    targetFolder.setWritable(true);
+
 
                     WellFIleCreateDTO fileDto = WellFIleCreateDTO.builder()
                             .originFileName(originalFileName)
@@ -159,5 +125,15 @@ public class WellFileStorageService {
         partnerFileRepository.deleteByFileId(fileId);
         fileStorageRepository.deleteById(fileId);
 
+    }
+
+    public void deleteFileByPartnerIdx(String partnerIdx) {
+        File targetFile = new File(uploadDir + File.separator + partnerIdx);
+        File[] removeList = targetFile.listFiles();
+
+        assert removeList != null;
+        for (File file : removeList) {
+            file.delete(); //파일 삭제
+        }
     }
 }

@@ -3,7 +3,7 @@ package com.wellnetworks.wellcore.java.domain.partner;
 
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
+import com.wellnetworks.wellcore.java.dto.partner.WellPartnerUpdateDTO;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

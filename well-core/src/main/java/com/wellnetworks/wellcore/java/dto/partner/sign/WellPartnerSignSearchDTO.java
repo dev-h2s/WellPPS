@@ -1,4 +1,4 @@
-package com.wellnetworks.wellcore.java.dto.Partner.sign;
+package com.wellnetworks.wellcore.java.dto.partner.sign;
 
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;

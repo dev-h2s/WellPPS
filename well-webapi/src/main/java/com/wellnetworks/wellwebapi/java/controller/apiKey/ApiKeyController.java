@@ -2,7 +2,6 @@ package com.wellnetworks.wellwebapi.java.controller.apiKey;
 
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyIssueEntity;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.*;
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerInfoDTO;
 import com.wellnetworks.wellcore.java.service.apiKey.WellApiKeyService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

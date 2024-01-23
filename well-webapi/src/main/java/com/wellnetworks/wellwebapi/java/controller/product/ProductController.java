@@ -1,6 +1,5 @@
 package com.wellnetworks.wellwebapi.java.controller.product;
 
-import com.wellnetworks.wellcore.java.dto.Partner.WellPartnerUpdateDTO;
 import com.wellnetworks.wellcore.java.dto.Product.WellProductCreateDTO;
 import com.wellnetworks.wellcore.java.dto.Product.WellProductDetailDTO;
 import com.wellnetworks.wellcore.java.dto.Product.WellProductUpdateDTO;

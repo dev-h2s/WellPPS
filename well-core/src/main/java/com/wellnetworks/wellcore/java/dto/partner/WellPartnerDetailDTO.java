@@ -1,4 +1,4 @@
-package com.wellnetworks.wellcore.java.dto.Partner;
+package com.wellnetworks.wellcore.java.dto.partner;
 
 import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;

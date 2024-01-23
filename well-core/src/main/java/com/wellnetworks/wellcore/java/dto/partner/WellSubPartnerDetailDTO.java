@@ -1,4 +1,4 @@
-package com.wellnetworks.wellcore.java.dto.Partner;
+package com.wellnetworks.wellcore.java.dto.partner;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

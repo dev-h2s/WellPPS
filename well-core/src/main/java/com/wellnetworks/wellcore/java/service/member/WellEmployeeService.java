@@ -132,8 +132,7 @@ public class WellEmployeeService {
 
     // 사원 생성
     @Transactional
-    public String employeeJoin(MultipartHttpServletRequest request, WellEmployeeJoinDTO joinDTO) throws Exception {
-
+    public String employeeJoin(MultipartHttpServletRequest request, WellEmployeeJoinDTO joinDTO) {
 
         // 중복 아이디 검사
         boolean exists = wellEmployeeUserRepository.existsByEmployeeIdentification(joinDTO.getEmployeeIdentification());
@@ -250,9 +249,9 @@ public class WellEmployeeService {
 
 
     //수정
-    @Transactional(rollbackOn = Exception.class)
-    public void update(MultipartHttpServletRequest request, String employeeIdx, WellEmployeeUpdateDTO updateDTO) throws RuntimeException {
-        try {
+    @Transactional
+    public void update(MultipartHttpServletRequest request, String employeeIdx, WellEmployeeUpdateDTO updateDTO) {
+//        try {
             // DTO를 통해 엔티티 업데이트
             WellEmployeeEntity employee = wellEmployeeRepository.findByEmployeeIdx(employeeIdx);
             WellEmployeeUserEntity employeeUser = wellEmployeeUserRepository.findByEmployeeIdx(employeeIdx);
@@ -269,9 +268,9 @@ public class WellEmployeeService {
             // department 이름으로 WellEmployeeManagerGroupEntity를 조회합니다.
             Optional<WellEmployeeManagerGroupEntity> employeeGroupOptional = wellEmployeeGroupRepository.findByDepartment(departmentName);
 
-            if (employeeGroupOptional.isEmpty()) {
-                throw new RuntimeException("해당 부서를 찾을 수 없습니다."); // todo 사설 에러로 변경
-            }
+//            if (employeeGroupOptional.isEmpty()) {
+//                throw new RuntimeException("해당 부서를 찾을 수 없습니다."); // todo 사설 에러로 변경
+//            }
             WellEmployeeManagerGroupEntity employeeGroup = employeeGroupOptional.get();
             String employeeManagerGroupKey = employeeGroup.getEmployeeManagerGroupKey();
             updateDTO.setEmployeeManagerGroupKey(employeeManagerGroupKey);
@@ -285,10 +284,11 @@ public class WellEmployeeService {
             employee.updateFromDTO(updateDTO);
             wellEmployeeRepository.save(employee);
 
-        } catch (Exception e) {
+//        } catch (Exception e) {
+//            log.error(e.getMessage());
             // 롤백을 위해 예외 발생
 //            throw new RuntimeException("사원 수정 중 오류 발생", e);
-        }
+//        }
     }
 
 

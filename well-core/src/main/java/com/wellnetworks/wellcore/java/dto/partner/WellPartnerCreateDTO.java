@@ -1,4 +1,4 @@
-package com.wellnetworks.wellcore.java.dto.Partner;
+package com.wellnetworks.wellcore.java.dto.partner;
 
 import com.querydsl.core.annotations.QueryProjection;
 import com.wellnetworks.wellcore.java.dto.FIle.WellFileDetailDTO;

@@ -199,7 +199,7 @@ public class PartnerListController {
             if (partnerIdx == null) {
                 throw new ClassNotFoundException(String.format("IDX[%s] not found", partnerIdx));
             }
-            wellPartnerService.updateSign(partnerIdx, updateDTO);
+            wellPartnerService.update(partnerIdx, updateDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body("거래처가 성공적으로 수정되었습니다.");
         } catch (ClassNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("거래처를 찾을 수 없습니다. IDX: %s", partnerIdx));

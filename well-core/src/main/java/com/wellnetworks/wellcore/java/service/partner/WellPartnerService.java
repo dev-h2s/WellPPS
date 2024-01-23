@@ -428,7 +428,7 @@ public class WellPartnerService {
                     .openingVisitRequestDate(createDTO.getOpeningVisitRequestDate())//개통점방문희망일자
                     .openingVisitDecideDate(createDTO.getOpeningVisitDecideDate())//개통점방문확정일자
                     .openingProgress(createDTO.getOpeningProgress())//개통점진행도
-                    .isOpeningFlag(createDTO.getIsOpeningFlag())//개통점전환여부
+                    .openingStatus(createDTO.getOpeningStatus())//개통점전환여부
                     .openingNote(createDTO.getOpeningNote())//개통점신청비고
                     .build();
 
@@ -580,42 +580,6 @@ public class WellPartnerService {
     }
 
 
-//    //거래처 회원가입 수정
-//    @Transactional(rollbackOn = Exception.class)
-//    public void updateSign(String partnerIdx, WellPartnerUpdateDTO updateDTO) throws Exception {
-//        try {
-//            // DTO를 통해 엔티티 업데이트
-//            WellPartnerEntity partner = wellPartnerRepository.findByPartnerIdx(partnerIdx);
-//            BeanUtils.copyProperties(updateDTO, partner);
-//
-//            // 거래처 그룹 및 API 키 설정
-//            WellPartnerGroupEntity partnerGroup = wellPartnerGroupRepository.findByPartnerGroupId(updateDTO.getPartnerGroupId());
-//            WellApikeyInEntity apikeyIn = null;
-//            if (updateDTO.isInApiFlag() && updateDTO.getApiKeyInIdx() != null) {
-//                apikeyIn = wellApikeyInRepository.findByApiKeyInIdx(updateDTO.getApiKeyInIdx());
-//            }
-//
-//            if (partnerGroup == null) {
-//                throw new RuntimeException("해당 거래처 그룹을 찾을 수 없습니다.");
-//            }
-//
-//            if (updateDTO.isInApiFlag() && apikeyIn == null) {
-//                throw new RuntimeException("해당 API 키를 찾을 수 없습니다.");
-//            }
-//
-//            partner.setPartnerGroup(partnerGroup);
-//            partner.setApiKey(apikeyIn);
-//
-//            fileStorageService.updateFiles(updateDTO, partnerIdx);
-//
-//            // 엔티티의 업데이트 메서드 호출
-//            partner.updateFromDTO(updateDTO);
-//
-//        } catch (Exception e) {
-//            // 롤백을 위해 예외 발생
-//            throw new RuntimeException("거래처 수정 중 오류 발생", e);
-//        }
-//    }
 
 
     //거래처 삭제 (관련 엔티티 백업 후 삭제)
@@ -688,16 +652,16 @@ public class WellPartnerService {
             partnerBackup.setOpeningVisitRequestDate(partnerEntity.getOpeningVisitRequestDate());
             partnerBackup.setOpeningVisitDecideDate(partnerEntity.getOpeningVisitDecideDate());
             partnerBackup.setOpeningProgress(partnerEntity.getOpeningProgress());
-            partnerBackup.setOpeningFlag(partnerEntity.getIsOpeningFlag());
+            partnerBackup.setOpeningStatus(partnerEntity.getOpeningStatus());
             partnerBackup.setOpeningNote(partnerEntity.getOpeningNote());
             partnerBackup.setInApiFlag(partnerEntity.getInApiFlag());
             partnerBackup.setRegistrationStatus(partnerEntity.getRegistrationStatus());
             partnerBackup.setRejectionReason(partnerEntity.getRejectionReason());
-//        partnerBackup.setReviewDate(partnerEntity.getReviewDate());
-//        partnerBackup.setReviewer(partnerEntity.getReviewer());
-//        partnerBackup.setTermsOfUse(partnerEntity.getTermsOfUse());
-//        partnerBackup.setSignRequestDate(partnerEntity.getSignRequestDate());
-//        partnerBackup.setDesiredDate(partnerEntity.getDesiredDate());
+            partnerBackup.setReviewDate(partnerEntity.getReviewDate());
+            partnerBackup.setReviewer(partnerEntity.getReviewer());
+            partnerBackup.setTermsOfUse(partnerEntity.getTermsOfUse());
+            partnerBackup.setSignRequestDate(partnerEntity.getSignRequestDate());
+            partnerBackup.setDesiredDate(partnerEntity.getDesiredDate());
 
             // 백업 테이블에 저장
             wellPartnerBackupRepository.save(partnerBackup);

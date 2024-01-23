@@ -164,6 +164,8 @@ public class WellPartnerEntity {
     @Column(name = "rejection_reason") //회원가입 거부 사유
     private String rejectionReason;
 
+    @Column(name = "opening_rejection_reason") //회원가입 거부 사유
+    private String openingRejectionReason;
 
     @Column(name = "writer") //작성자
     private String writer;
@@ -183,8 +185,8 @@ public class WellPartnerEntity {
     @Column(name = "opening_progress") //개통점진행도
     private String openingProgress;
 
-    @Column(name = "opening_flag") //개통점전환여부
-    private Boolean isOpeningFlag;
+    @Column(name = "opening_status") //개통점전환여부
+    private String openingStatus;
 
     @Column(name = "opening_note") //개통점신청비고
     private String openingNote;
@@ -216,8 +218,9 @@ public class WellPartnerEntity {
                             , String emailAddress, String registrationNumber
                             , String registrationAddress, String registrationDetailAddress, String locationAddress, String locationDetailAddress
                             , String partnerMemo,
-                             String writer, String event, Boolean visitStatus, LocalDateTime openingVisitRequestDate, LocalDateTime openingVisitDecideDate, String openingProgress, Boolean isOpeningFlag, String openingNote
-                             , String registrationStatus,String rejectionReason, LocalDate reviewDate, String reviewer, Boolean termsOfUse, LocalDateTime signRequestDate, LocalDate desiredDate, Boolean deleteStatus) {
+                             String writer, String event, Boolean visitStatus, LocalDateTime openingVisitRequestDate, LocalDateTime openingVisitDecideDate, String openingProgress, String openingStatus, String openingNote
+                             , String registrationStatus,String rejectionReason, LocalDate reviewDate, String reviewer, Boolean termsOfUse, LocalDateTime signRequestDate, LocalDate desiredDate,
+                             Boolean deleteStatus, LocalDateTime salesTeamVisitDate, String salesTeamVisitMemo, String openingRejectionReason ) {
         this.partnerIdx = partnerIdx;
         this.partnerCode = partnerCode;
         this.partnerName = partnerName;
@@ -256,7 +259,7 @@ public class WellPartnerEntity {
         this.openingVisitRequestDate = openingVisitRequestDate;
         this.openingVisitDecideDate = openingVisitDecideDate;
         this.openingProgress = openingProgress;
-        this.isOpeningFlag = isOpeningFlag;
+        this.openingStatus = openingStatus;
         this.openingNote = openingNote;
         this.registrationStatus = registrationStatus;
         this.rejectionReason = rejectionReason;
@@ -266,6 +269,9 @@ public class WellPartnerEntity {
         this.signRequestDate = signRequestDate;
         this.desiredDate = desiredDate;
         this.deleteStatus = deleteStatus;
+        this.salesTeamVisitMemo = salesTeamVisitMemo;
+        this.salesTeamVisitDate = salesTeamVisitDate;
+        this.openingRejectionReason = openingRejectionReason;
     }
 
     public void updateFromDTO(WellPartnerUpdateDTO updateDTO) {
@@ -293,16 +299,23 @@ public class WellPartnerEntity {
         this.locationAddress = updateDTO.getLocationAddress();
         this.locationDetailAddress = updateDTO.getLocationDetailAddress();
         this.partnerMemo = updateDTO.getPartnerMemo();
+        this.registrationStatus = updateDTO.getRegistrationStatus();
+        this.rejectionReason = updateDTO.getRejectionReason();
         this.writer = updateDTO.getWriter();
         this.event = updateDTO.getEvent();
         this.visitStatus = updateDTO.getVisitStatus();
         this.openingVisitRequestDate = updateDTO.getOpeningVisitRequestDate();
         this.openingVisitDecideDate = updateDTO.getOpeningVisitDecideDate();
         this.openingProgress = updateDTO.getOpeningProgress();
-        this.isOpeningFlag = updateDTO.getIsOpeningFlag();
+        this.openingStatus = updateDTO.getOpeningStatus();
         this.openingNote = updateDTO.getOpeningNote();
-        this.registrationStatus = updateDTO.getRegistrationStatus();
-        this.rejectionReason = updateDTO.getRejectionReason();
+        this.reviewDate = reviewDate;
+        this.reviewer = reviewer;
+        this.termsOfUse = termsOfUse;
+        this.signRequestDate = signRequestDate;
+        this.desiredDate = desiredDate;
+        this.deleteStatus = deleteStatus;
+
     }
 
     public void setApiKey(WellApikeyInEntity apiKey) {this.apiKey = apiKey;}

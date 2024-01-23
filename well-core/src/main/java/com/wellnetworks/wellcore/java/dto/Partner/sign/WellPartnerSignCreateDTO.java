@@ -37,10 +37,10 @@ public class WellPartnerSignCreateDTO {
     private String  partnerTelephone; // 연락처
     private Boolean termsOfUse; // 이용약관 동의
     private LocalDateTime signRequestDate; // 회원가입 요청일자
-    private Boolean deleteStatus;
+    private Boolean deleteStatus; // 삭제 여부
     private String apiKeyInIdx;
     private boolean inApiFlag;
-    private String department;
+    private String department; // 부서
     private Long partnerGroupId; // 거래처 그룹 정보 추가
 
 }

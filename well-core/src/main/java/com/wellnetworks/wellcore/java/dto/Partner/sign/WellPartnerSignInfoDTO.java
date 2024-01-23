@@ -38,6 +38,7 @@ public class WellPartnerSignInfoDTO {
 
     //검색시 필요
     private String ceoTelephone;
+    private String openingStatus;
 
 
     //리스트
@@ -54,6 +55,7 @@ public class WellPartnerSignInfoDTO {
         this.rejectionReason = entity.getRejectionReason();
         this.reviewDate = entity.getReviewDate();
         this.reviewer = entity.getReviewer();
+        this.openingStatus = entity.getOpeningStatus();
         this.partnerUpperIdx = entity.getPartnerUpperIdx();
         if (partnerUpperIdx != null) {
             this.partnerUpperName = partnerUpperName;

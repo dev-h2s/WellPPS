@@ -78,7 +78,7 @@ public class WellPartnerCreateDTO {
     private LocalDateTime openingVisitRequestDate;//개통점방문희망일자
     private LocalDateTime openingVisitDecideDate;//개통점방문확정일자
     private String openingProgress;//개통점진행도
-    private Boolean isOpeningFlag;//개통점전환여부
+    private String openingStatus;//개통점전환여부
     private String openingNote;//개통점신청비고
 
 

@@ -161,8 +161,8 @@ public class WellPartnerEntityBackup {
     @Column(name = "opening_progress") //개통점진행도
     private String openingProgress;
 
-    @Column(name = "opening_flag") //개통점전환여부
-    private boolean openingFlag;
+    @Column(name = "opening_status") //개통점전환여부
+    private String openingStatus;
 
     @Column(name = "opening_note") //개통점신청비고
     private String openingNote;

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class WellPartnerUpdateDTO {
     private List<MultipartFile> storePhotoFiles;
     private List<MultipartFile> businessCardFiles;
 
-//    회원가입 관련 관련 컬럼
+//    회원가입 관련  컬럼
     private String registrationStatus; // 회원가입 여부(승인 관리)
     private String rejectionReason; // 회원가입 거부 사유
     private String writer; //작성자
@@ -76,7 +77,17 @@ public class WellPartnerUpdateDTO {
     private LocalDateTime openingVisitRequestDate;//개통점방문희망일자
     private LocalDateTime openingVisitDecideDate;//개통점방문확정일자
     private String openingProgress;//개통점진행도
-    private Boolean isOpeningFlag;//개통점전환여부
+    private String isOpeningFlag;//개통점전환여부
     private String openingNote;//개통점신청비고
+    private LocalDate reviewDate;//회원가입 관리 검수일자
+    private String reviewer;//회원가입 관리 검수자
+    private Boolean termsOfUse;// 이용약관 동의
+    private LocalDateTime signRequestDate; // 회원가입 요청일자
+    private LocalDate desiredDate; //방문 희망 날짜
+    private Boolean deleteStatus; //삭제 상태
+
+    //개통점 신청 관련 컬럼
+    private String openingStatus;
+
 
 }

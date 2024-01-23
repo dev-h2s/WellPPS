@@ -32,7 +32,7 @@ public class WellPartnerInfoDTO {
     private String writer;
     private String partnerUpperIdx;
     private String partnerUpperName;
-    private Boolean isOpeningFlag;
+    private String openingStatus; // 개통점 신청 여부
     private String registrationStatus; // 회원가입 승인 여부
 
     private String registrationAddress;
@@ -59,7 +59,7 @@ public class WellPartnerInfoDTO {
         this.partnerName = entity.getPartnerName();
         this.partnerType = entity.getPartnerType();
         this.discountCategory = entity.getDiscountCategory();
-        this.isOpeningFlag = entity.getIsOpeningFlag();
+        this.openingStatus = entity.getOpeningStatus();
         this.registrationStatus = entity.getRegistrationStatus();
         this.dipositBalance = diposit != null ? diposit.getDipositBalance() : 0;
 

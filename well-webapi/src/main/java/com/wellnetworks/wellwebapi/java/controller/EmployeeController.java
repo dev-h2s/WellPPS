@@ -90,7 +90,7 @@ public class EmployeeController {
     // 웹으로 할때 @RequestBody  추가
     //@ModelAttribute  key-value 쌍 데이터(폼 데이터)를 Java 객체로 바인딩
     @PostMapping(value = "employee/signUp")
-    public ResponseEntity<String> createEmployeeUser(HttpServletRequest httpServletRequest, @RequestBody @Valid WellEmployeeJoinDTO createDTO) throws Exception {
+    public ResponseEntity<String> createEmployeeUser(HttpServletRequest httpServletRequest, @RequestPart("createDTO") @Valid WellEmployeeJoinDTO createDTO) throws Exception {
         MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) httpServletRequest;
         try {
             String tempPassword = wellEmployeeService.employeeJoin(multiRequest, createDTO);
@@ -162,7 +162,7 @@ public class EmployeeController {
     // 사원 수정
     @PatchMapping("employee/update/{employeeIdx}")
     public ResponseEntity<String> updateEmployee(HttpServletRequest httpServletRequest,
-                                                 @ModelAttribute @Valid WellEmployeeUpdateDTO updateDTO,
+                                                 @RequestPart("updateDTO") @Valid WellEmployeeUpdateDTO updateDTO,
                                                  @PathVariable String employeeIdx) throws Exception {
         MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) httpServletRequest;
 //        try {

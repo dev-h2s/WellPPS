@@ -150,7 +150,7 @@ public class PartnerListController {
 
     //거래처 생성
     @PostMapping(value = "business/create")
-    public ResponseEntity<String> createPartner(HttpServletRequest httpServletRequest, @Valid WellPartnerCreateDTO createDTO) throws Exception {
+    public ResponseEntity<String> createPartner(@RequestPart(value = "createDTO") HttpServletRequest httpServletRequest, @Valid WellPartnerCreateDTO createDTO) throws Exception {
         MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) httpServletRequest;
         String tempPassword = wellPartnerService.join(multiRequest, createDTO);
 
@@ -160,7 +160,7 @@ public class PartnerListController {
 
     //거래처 회원가입 신청 입력
     @PostMapping(value = "business/sign/create")
-    public ResponseEntity<String> createPartnerSign(HttpServletRequest httpServletRequest, @Valid WellPartnerSignCreateDTO createDTO) throws Exception {
+    public ResponseEntity<String> createPartnerSign(@RequestPart(value = "createDTO") HttpServletRequest httpServletRequest, @Valid WellPartnerSignCreateDTO createDTO) throws Exception {
         MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) httpServletRequest;
         wellPartnerService.signJoin(multiRequest, createDTO);
 
@@ -172,7 +172,7 @@ public class PartnerListController {
     //거래처 수정
     @PatchMapping("business/update/{partnerIdx}")
     public ResponseEntity<String> patchPartner(HttpServletRequest httpServletRequest
-            , @ModelAttribute @Valid WellPartnerUpdateDTO updateDTO, @PathVariable String partnerIdx) {
+            , @RequestPart(value = "updateDTO") @ModelAttribute @Valid WellPartnerUpdateDTO updateDTO, @PathVariable String partnerIdx) {
         MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) httpServletRequest;
         try {
             if (partnerIdx == null) {

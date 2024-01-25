@@ -26,7 +26,6 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -43,23 +42,15 @@ import java.util.*;
 @RequiredArgsConstructor
 public class WellPartnerService {
 
-    @Autowired
-    private WellPartnerRepository wellPartnerRepository;
-    @Autowired
-    private WellPartnerBackupRepository wellPartnerBackupRepository;
-    @Autowired
-    private WellPartnerGroupRepository wellPartnerGroupRepository;
-    @Autowired
-    private WellApikeyInRepository wellApikeyInRepository;
-    @Autowired
-    private WellFileStorageService fileStorageService;
-    @Autowired
-    private WellPartnerFileRepository partnerFileRepository;
-    @Autowired
-    private WellPartnerUserRepository partnerUserRepository;
-    @Autowired
-    private WellPartnerPermissionGroupRepository permissionGroupRepository;
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final WellPartnerRepository wellPartnerRepository;
+    private final WellPartnerBackupRepository wellPartnerBackupRepository;
+    private final WellPartnerGroupRepository wellPartnerGroupRepository;
+    private final WellApikeyInRepository wellApikeyInRepository;
+    private final WellFileStorageService fileStorageService;
+    private final WellPartnerFileRepository partnerFileRepository;
+    private final WellPartnerUserRepository partnerUserRepository;
+    private final WellPartnerPermissionGroupRepository permissionGroupRepository;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
     // 거래처 상세 조회

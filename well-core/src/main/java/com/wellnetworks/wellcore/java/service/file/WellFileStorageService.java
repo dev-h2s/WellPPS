@@ -128,12 +128,19 @@ public class WellFileStorageService {
     }
 
     public void deleteFileByPartnerIdx(String partnerIdx) {
+        List<WellPartnerFIleStorageEntity> partnerFileList = partnerFileRepository.findByPartnerIdx(partnerIdx);
+
+        for (WellPartnerFIleStorageEntity entity : partnerFileList) {
+            partnerFileRepository.deleteById(entity.getId());
+            fileStorageRepository.deleteById(entity.getFile().getId());
+        }
         File targetFile = new File(uploadDir + File.separator + partnerIdx);
         File[] removeList = targetFile.listFiles();
 
-        assert removeList != null;
-        for (File file : removeList) {
-            file.delete(); //파일 삭제
+        if (removeList != null) {
+            for (File file : removeList) {
+                file.delete(); //파일 삭제
+            }
         }
     }
 }

@@ -125,14 +125,24 @@ public class WellEmployeeFileStorageService {
 
     }
 
+    @Transactional
     public void deleteFileByEmployeeIdx(String employeeIdx) {
+        List<WellEmployeeFileStorageEntity> employeeFileList = employeeFileRepository.findByEmployeeIdx(employeeIdx);
+
+        for (WellEmployeeFileStorageEntity entity : employeeFileList) {
+            employeeFileRepository.deleteById(entity.getId());
+            fileStorageRepository.deleteById(entity.getFile().getId());
+        }
+
         File targetFile = new File(uploadDir + File.separator + employeeIdx);
         File[] removeList = targetFile.listFiles();
 
-        assert removeList != null;
-        for (File file : removeList) {
-            file.delete(); //파일 삭제
+        if (removeList != null) {
+            for (File file : removeList) {
+                file.delete(); //파일 삭제
+            }
         }
+
     }
 
 }

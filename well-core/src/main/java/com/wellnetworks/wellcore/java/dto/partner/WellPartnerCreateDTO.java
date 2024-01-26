@@ -70,6 +70,7 @@ public class WellPartnerCreateDTO {
     private String partnerMemo;
 
 
+
     //회원가입 관리 관련 컬럼
     @Schema(description = "회원가입 여부", example = "승인")
     private String registrationStatus;

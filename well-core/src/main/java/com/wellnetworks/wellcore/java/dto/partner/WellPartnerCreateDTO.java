@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDateTime;
-
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Validated

@@ -1,6 +1,6 @@
 package com.wellnetworks.wellcore.java.domain.file;
 //거래처 파일
-import com.querydsl.core.annotations.QueryProjection;
+
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -13,6 +13,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 public class WellPartnerFIleStorageEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "partner_file_id")
@@ -26,7 +27,7 @@ public class WellPartnerFIleStorageEntity {
     private WellFileStorageEntity file;
 
     @Builder
-    public WellPartnerFIleStorageEntity(String partnerIdx, Long fileId, WellFileStorageEntity file){
+    public WellPartnerFIleStorageEntity(String partnerIdx, Long fileId, WellFileStorageEntity file) {
         this.partnerIdx = partnerIdx;
         this.file = file;
     }

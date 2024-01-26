@@ -2,7 +2,7 @@ package com.wellnetworks.wellcore.java.dto.partner;
 
 import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
+import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
 import com.wellnetworks.wellcore.java.dto.FIle.WellFileDetailDTO;
@@ -13,9 +13,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -95,12 +93,15 @@ public class WellPartnerDetailDTO {
 
     @Schema(description = "메모")
     private String partnerMemo;
+    private String businessLicenseFile;
+    private String contractDocumentFile;
+    private String idCardFile;
+    private String storePhotoFile;
+    private String businessCardFile;
 
-    private List<WellFileDetailDTO> fileDetails = new ArrayList<>();
-
-    public WellPartnerDetailDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, WellDipositEntity diposit
-            , String partnerUpperName, WellPartnerGroupEntity group, WellApikeyInEntity apikey, List<WellPartnerEntity> subPartners
-            , String PartnerGroupName) {
+    public WellPartnerDetailDTO(WellPartnerEntity entity, WellDipositEntity diposit, String partnerUpperName
+            , WellPartnerGroupEntity group, WellApikeyInEntity apikey, List<WellPartnerEntity> subPartners
+            , String PartnerGroupName, List<WellFileStorageEntity> fileStorageEntities) {
         this.partnerCode = entity.getPartnerCode();
         this.partnerName = entity.getPartnerName();
         this.partnerType = entity.getPartnerType();
@@ -127,8 +128,7 @@ public class WellPartnerDetailDTO {
         this.partnerUpperIdx = entity.getPartnerUpperIdx();
         if (partnerUpperIdx != null) {
             this.partnerUpperName = partnerUpperName;
-        }
-        else {
+        } else {
             this.partnerUpperName = null;
         }
 
@@ -156,30 +156,16 @@ public class WellPartnerDetailDTO {
         this.locationAddress = entity.getLocationAddress();
         this.locationDetailAddress = entity.getLocationDetailAddress();
         this.partnerMemo = entity.getPartnerMemo();
-        for (WellPartnerFIleStorageEntity fileStorage : fileStorages) {
-            if (fileStorage != null && fileStorage.getFile() != null) {
-                WellFileDetailDTO fileDetail = new WellFileDetailDTO();
-                fileDetail.setFileId(fileStorage.getFile().getId());
-                fileDetail.setOriginFileName(fileStorage.getFile().getOriginFileName());
-                fileDetail.setFileKind(fileStorage.getFile().getFileKind());
-                this.fileDetails.add(fileDetail);
+
+        for (WellFileStorageEntity fileDetailDTO : fileStorageEntities) {
+            switch (fileDetailDTO.getFileKind()) {
+                case "사업자등록증" -> this.businessLicenseFile = fileDetailDTO.getSavedFileName();
+                case "계약서" -> this.contractDocumentFile = fileDetailDTO.getSavedFileName();
+                case "대표자신분증" -> this.idCardFile = fileDetailDTO.getSavedFileName();
+                case "매장사진" -> this.storePhotoFile = fileDetailDTO.getSavedFileName();
+                case "대표자명함" -> this.businessCardFile = fileDetailDTO.getSavedFileName();
             }
         }
-        List<String> requiredFileKinds = Arrays.asList("사업자등록증", "계약서", "대표자신분증", "매장사진", "대표자명함");
-
-        // 파일 종류별로 첫 번째 항목을 찾고, 없으면 빈 정보를 추가
-        for (String fileKind : requiredFileKinds) {
-            WellFileDetailDTO fileDetail = fileStorages.stream()
-                    .filter(fileStorage -> fileStorage != null && fileStorage.getFile() != null && fileStorage.getFile().getFileKind().equals(fileKind))
-                    .map(fileStorage -> new WellFileDetailDTO(fileStorage.getFile().getId(), fileStorage.getFile().getOriginFileName(), fileStorage.getFile().getFileKind()))
-                    .findFirst()
-                    .orElse(new WellFileDetailDTO(null, null, fileKind));
-
-            this.fileDetails.add(fileDetail);
-        }
-
-        // 중복 제거
-        this.fileDetails = this.fileDetails.stream().distinct().collect(Collectors.toList());
     }
 }
 

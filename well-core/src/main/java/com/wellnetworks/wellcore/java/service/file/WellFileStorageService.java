@@ -36,12 +36,10 @@ public class WellFileStorageService {
         List<Long> fileIds = new ArrayList<>();
         // 각 파일 업로드 필드를 처리
         processFiles(files.getFiles("businessLicenseFile"), "사업자등록증", partnerIdx, fileIds, result);
-        processFiles(files.getFiles("contractDocumentFiles"), "계약서", partnerIdx, fileIds, result);
-        processFiles(files.getFiles("idCardFiles"), "대표자신분증", partnerIdx, fileIds, result);
-        processFiles(files.getFiles("storePhotoFiles"), "매장사진", partnerIdx, fileIds, result);
-        processFiles(files.getFiles("businessCardFiles"), "대표자명함", partnerIdx, fileIds, result);
-
-        // 결과 값 리턴
+        processFiles(files.getFiles("contractDocumentFile"), "계약서", partnerIdx, fileIds, result);
+        processFiles(files.getFiles("idCardFile"), "대표자신분증", partnerIdx, fileIds, result);
+        processFiles(files.getFiles("storePhotoFile"), "매장사진", partnerIdx, fileIds, result);
+        processFiles(files.getFiles("businessCardFile"), "대표자명함", partnerIdx, fileIds, result);
     }
 
     @Transactional
@@ -50,17 +48,13 @@ public class WellFileStorageService {
         List<Long> fileIds = new ArrayList<>();
         // 각 파일 업로드 필드를 처리
         processFiles(files.getFiles("businessLicenseFile"), "사업자등록증", partnerIdx, fileIds, result);
-        processFiles(files.getFiles("idCardFiles"), "대표자신분증", partnerIdx, fileIds, result);
-
-        // 다른 파일 업로드 필드들도 처리
-
+        processFiles(files.getFiles("idCardFile"), "대표자신분증", partnerIdx, fileIds, result);
     }
-    @Transactional
+
     public Long insertFile(WellFileStorageEntity file) {
         return fileStorageRepository.save(file).getId();
     }
 
-    @Transactional
     public Long insertPartnerFile(WellPartnerFIleStorageEntity partnerFile) {
         return partnerFileRepository.save(partnerFile).getId();
     }

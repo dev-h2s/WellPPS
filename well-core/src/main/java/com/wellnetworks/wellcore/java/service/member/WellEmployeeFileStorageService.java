@@ -37,26 +37,21 @@ public class WellEmployeeFileStorageService {
         Map<String, Object> result = new HashMap<>(); // 파일 저장 결과를 저장할 Map 객체 초기화
         List<Long> fileIds = new ArrayList<>(); // 업로드된 파일의 고유 식별자(ID)를 저장할 리스트 초기화
 
-        // 각 파일 업로드 필드를 처리하는 processFiles 메서드 호출
-        // "첨부파일"은 파일 종류 또는 카테고리를 나타내며, employeeIdx는 사원을 식별하는 인덱스를 전달
+        // 각 파일 업로드 필드를 처리 하는 processFiles 메서드 호출
+        // "첨부 파일"은 파일 종류 또는 카테고리를 나타 내며, employeeIdx 는 사원을 식별 하는 IDX 를 전달
         processFiles(files.getFiles("uploadFile1"), "첨부파일1", employeeIdx, fileIds, result);
         processFiles(files.getFiles("uploadFile2"), "첨부파일2", employeeIdx, fileIds, result);
         processFiles(files.getFiles("uploadFile3"), "첨부파일3", employeeIdx, fileIds, result);
         processFiles(files.getFiles("uploadFile4"), "첨부파일4", employeeIdx, fileIds, result);
         processFiles(files.getFiles("uploadFile5"), "첨부파일5", employeeIdx, fileIds, result);
-
-        // 파일 저장 결과 Map 반환
     }
 
-    // processFiles에서 사용 , 파일 저장
-    @Transactional
+    // processFiles 에서 사용 , 파일 저장
     public Long insertFile(WellFileStorageEntity file) {
         return fileStorageRepository.save(file).getId();
     }
 
-
     // processFiles 에서 사용
-    @Transactional
     public void insertEmployeeFile(WellEmployeeFileStorageEntity employeeFile) {
         employeeFileRepository.save(employeeFile);
     }
@@ -71,11 +66,11 @@ public class WellEmployeeFileStorageService {
                     String originalFileName = file.getOriginalFilename();
                     assert originalFileName != null;
                     String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-                    String savedFileName = employeeIdx + File.separator + UUID.randomUUID().toString().substring(0,5) + "-" + file.getOriginalFilename();
+                    String savedFileName = employeeIdx + File.separator + UUID.randomUUID().toString().substring(0, 5) + "-" + file.getOriginalFilename();
 
                     File targetFile = new File(uploadDir + savedFileName);
                     File targetFolder = new File(uploadDir + employeeIdx);
-                    if(!targetFolder.exists()) {
+                    if (!targetFolder.exists()) {
                         targetFolder.mkdirs();
                     }
                     targetFolder.setWritable(true);

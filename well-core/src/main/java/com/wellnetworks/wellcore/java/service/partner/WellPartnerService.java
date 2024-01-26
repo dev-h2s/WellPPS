@@ -4,6 +4,7 @@ import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.backup.partner.WellPartnerEntityBackup;
+import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
@@ -21,6 +22,7 @@ import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerUserReposito
 import com.wellnetworks.wellcore.java.repository.apikeyIn.WellApikeyInRepository;
 import com.wellnetworks.wellcore.java.repository.backup.partner.WellPartnerBackupRepository;
 import com.wellnetworks.wellcore.java.service.file.WellFileStorageService;
+import com.wellnetworks.wellcore.java.service.member.PasswordUtil;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
@@ -32,7 +34,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -41,6 +42,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class WellPartnerService {
+
 
     private final WellPartnerRepository wellPartnerRepository;
     private final WellPartnerBackupRepository wellPartnerBackupRepository;
@@ -54,6 +56,7 @@ public class WellPartnerService {
 
 
     // 거래처 상세 조회
+    @Transactional
     public Optional<WellPartnerDetailDTO> getDetailPartnerByPartnerIdx(String partnerIdx) {
 
         WellPartnerEntity entity = wellPartnerRepository.findByPartnerIdx(partnerIdx);
@@ -62,6 +65,11 @@ public class WellPartnerService {
         }
 
         List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerIdx);
+        List<WellFileStorageEntity> fileStorageEntities = new ArrayList<>();
+        for (WellPartnerFIleStorageEntity fIleStorage : fileStorages) {
+            fileStorageEntities.add(fIleStorage.getFile());
+        }
+
         WellDipositEntity depositEntity = entity.getVirtualAccount() != null ? entity.getVirtualAccount().getDeposit() : null;
         String partnerUpperName = entity.getPartnerUpperIdx() != null ? wellPartnerRepository.findPartnerNameByPartnerIdxSafely(entity.getPartnerUpperIdx()) : null;
 
@@ -71,7 +79,8 @@ public class WellPartnerService {
 
         WellApikeyInEntity apikeyInEntity = entity.getApiKey();
 
-        WellPartnerDetailDTO dto = new WellPartnerDetailDTO(entity, fileStorages, depositEntity, partnerUpperName, entity.getPartnerGroup(), apikeyInEntity, subPartnerEntities, partnerGroupName);
+        WellPartnerDetailDTO dto = new WellPartnerDetailDTO(entity, depositEntity, partnerUpperName
+                , entity.getPartnerGroup(), apikeyInEntity, subPartnerEntities, partnerGroupName, fileStorageEntities);
 
         return Optional.of(dto);
 
@@ -79,6 +88,7 @@ public class WellPartnerService {
 
 
     // 거래처 검색
+    @Transactional
     public Page<WellPartnerSearchDTO> searchPartnerList(String partnerName, String ceoName, String ceoTelephone, String partnerCode, String address, String writer, String partnerTelephone
             , LocalDate startDate, LocalDate endDate
             , String discountCategory, String partnerType, String salesManager, String transactionStatus, String regionAddress
@@ -278,10 +288,7 @@ public class WellPartnerService {
         return new PageImpl<>(partnerInfoList, pageable, totalPartnerCount);
     }
 
-
-
     //거래처 생성
-
     //p_code 랜덤 값
     public String generateUniquePartnerCode() {
         String partnerCode = null;
@@ -300,26 +307,6 @@ public class WellPartnerService {
         return partnerCode;
     }
 
-    //패스워드 랜덤
-    public class PasswordUtil {
-        private static final String ALLOWED_STRING = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()";
-        private static final int TEMP_PWD_LENGTH = 10;
-        private static final SecureRandom RANDOM = new SecureRandom();
-        private static final BCryptPasswordEncoder ENCODER = new BCryptPasswordEncoder();
-
-        public static String[] generateRandomPassword() {
-            StringBuilder builder = new StringBuilder(TEMP_PWD_LENGTH);
-
-            for (int i = 0; i < TEMP_PWD_LENGTH; i++) {
-                builder.append(ALLOWED_STRING.charAt(RANDOM.nextInt(ALLOWED_STRING.length())));
-            }
-
-            String rawPassword = builder.toString();
-            String encryptedPassword = ENCODER.encode(rawPassword); // 암호화된 비밀번호를 반환
-            return new String[]{rawPassword, encryptedPassword};
-        }
-    }
-
     //거래처 생성
     @Transactional(rollbackOn = Exception.class)
     public String join(MultipartHttpServletRequest request, WellPartnerCreateDTO createDTO) throws Exception {
@@ -330,7 +317,8 @@ public class WellPartnerService {
         if (createDTO.isInApiFlag() && createDTO.getApiKeyInIdx() != null) {
             apikeyIn = wellApikeyInRepository.findByApiKeyInIdx(createDTO.getApiKeyInIdx());
         }
-        String[] passwords = WellPartnerService.PasswordUtil.generateRandomPassword();
+
+        String[] passwords = PasswordUtil.generateRandomPassword();
         String tempPasswordPlainText = passwords[0]; // 사용자에게 전달할 임시 비밀번호 평문
         String tempPasswordEncrypted = passwords[1]; // 데이터베이스에 저장할 암호화된 비밀번호
 
@@ -422,7 +410,7 @@ public class WellPartnerService {
 
     //거래처 회원가입 신청 생성
     @Transactional(rollbackOn = Exception.class)
-    public String signJoin(MultipartHttpServletRequest request, WellPartnerSignCreateDTO signCreateDTO) throws Exception {
+    public void signJoin(MultipartHttpServletRequest request, WellPartnerSignCreateDTO signCreateDTO) throws Exception {
         // 거래처 그룹 정보 가져오기
         WellPartnerGroupEntity partnerGroup = wellPartnerGroupRepository.findByPartnerGroupId(signCreateDTO.getPartnerGroupId());
 
@@ -443,7 +431,6 @@ public class WellPartnerService {
 
         WellPartnerPermissionGroupEntity group = groupOptional.orElseThrow(()
                 -> new IllegalArgumentException("Invalid department: " + department));
-
 
         String partnerIdx = UUID.randomUUID().toString();
 
@@ -478,14 +465,10 @@ public class WellPartnerService {
             wellPartnerRepository.save(partner);
             // 파일 저장
             fileStorageService.saveSignFiles(request, partner.getPartnerIdx());
-
-
         } catch (Exception e) {
             // 롤백을 위해 예외 발생
             throw new RuntimeException("거래처 생성 중 오류 발생", e);
         }
-
-        return signCreateDTO.getPartnerName();
     }
 
 
@@ -611,9 +594,9 @@ public class WellPartnerService {
         }
     }
 
-    //거래처 회원가입 삭제
+    //거래처 회원 가입 삭제
     @Transactional(rollbackOn = Exception.class)
-    public int deletePartnerSign(String partnerIdx) {
+    public void deletePartnerSign(String partnerIdx) {
         WellPartnerEntity partnerEntity = wellPartnerRepository.findByPartnerIdx(partnerIdx);
         if (partnerEntity == null) {
             throw new EntityNotFoundException("해당하는 거래처를 찾을 수 없습니다.");
@@ -621,8 +604,5 @@ public class WellPartnerService {
 
         partnerEntity.setDeleteStatusOn();
         wellPartnerRepository.save(partnerEntity);
-
-        return 1;
-
     }
 }

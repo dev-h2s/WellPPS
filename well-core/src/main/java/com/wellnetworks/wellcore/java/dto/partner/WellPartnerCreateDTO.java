@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDateTime;
-
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Validated
@@ -68,6 +67,7 @@ public class WellPartnerCreateDTO {
     private String locationDetailAddress;
     @Schema(description = "메모", example = "기타 내용 메모")
     private String partnerMemo;
+
 
 
     //회원가입 관리 관련 컬럼

@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -30,8 +29,11 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Tag(name = "PIN 관리", description = "PIN 관리 API")
 @RestController
@@ -43,17 +45,27 @@ public class PinController {
 
     @Operation(summary = "PIN 관리 리스트 조회")
     @GetMapping
-    public ResponseEntity<?> getPinList(@RequestParam(defaultValue = "0") int page,
-                                        @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<WellPinListDTO>> getPinList(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<WellPinListDTO> pinPage = pinService.getAllPins(pageable);
-        return ResponseUtil.createOkResponse(pinPage.getContent(), "조회 성공", pinPage);
 
+        AtomicReference<Map<String, Object>> response = new AtomicReference<>(new HashMap<>());
+        response.get().put("currentPage", pinPage.getNumber());
+        response.get().put("items", pinPage.getContent());
+        response.get().put("message", "");
+        response.get().put("status", "OK");
+        response.get().put("totalItems", pinPage.getTotalElements());
+        response.get().put("totalPages", pinPage.getTotalPages());
+
+        return ResponseEntity.ok(pinPage);
     }
+
 
     @Operation(summary = "PIN 관리 수동 생성")
     @PostMapping
-    public ResponseEntity<?> generatePin(@RequestBody WellPinCreateDTO createDTO) {
+    public ResponseEntity<String> generatePin(@RequestBody WellPinCreateDTO createDTO) {
         pinService.createPin(createDTO);
         return ResponseEntity.ok("PIN 생성 및 저장 완료");
 
@@ -61,21 +73,21 @@ public class PinController {
 
     @Operation(summary = "PIN 관리 수정")
     @PutMapping("/{pinIdx}")
-    public ResponseEntity<?> updatePin(@RequestBody WellPinUpdateDTO updateDTO) {
+    public ResponseEntity<String> updatePin(@RequestBody WellPinUpdateDTO updateDTO) {
         pinService.updatePin(updateDTO);
         return ResponseEntity.ok("pin이 수정되었습니다.");
     }
 
     @Operation(summary = "PIN 관리 삭제")
     @DeleteMapping("/{pinIdx}")
-    public ResponseEntity<?> deletePin(@PathVariable Long pinIdx) {
+    public ResponseEntity<String> deletePin(@PathVariable Long pinIdx) {
         pinService.deletePin(pinIdx);
         return ResponseEntity.ok("pin이 삭제되었습니다.");
     }
 
     @Operation(summary = "PIN 관리 엑셀 등록")
     @PostMapping("/excel")
-    public ResponseEntity<?> importPins(@RequestParam("file") MultipartFile file, HttpServletResponse response) {
+    public ResponseEntity<String> importPins(@RequestParam("file") MultipartFile file, HttpServletResponse response) {
         try {
             Workbook workbook = pinService.importPinsFromExcel(file);
 
@@ -118,14 +130,9 @@ public class PinController {
 
     @Operation(summary = "PIN 관리 개별 상세 조회")
     @GetMapping("/{pinIdx}")
-    public ResponseEntity<?> getPinDetail(@PathVariable Long pinIdx) {
-
+    public ResponseEntity<Optional<WellPinInfoDTO>> getPinDetail(@PathVariable Long pinIdx) {
         Optional<WellPinInfoDTO> infoDTO = pinService.infoPin(pinIdx);
-        if (infoDTO.isPresent()) {
-            return ResponseEntity.ok(infoDTO.get());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("pin을 찾을 수 없습니다.");
-        }
+        return ResponseEntity.ok(infoDTO);
     }
 
     @Operation(summary = "PIN 관리 일괄 출고 리스트 조회")
@@ -186,7 +193,7 @@ public class PinController {
 
     @Operation(summary = "PIN 관리 다중 검색")
     @GetMapping("/search")
-    public ResponseEntity<?> searchAccount(
+    public ResponseEntity<Map<String, Object>> searchAccount(
             @RequestParam(value = "isSaleFlag", required = false) Boolean isSaleFlag,
             @RequestParam(value = "isUseFlag", required = false) Boolean isUseFlag,
             @RequestParam(value = "network", required = false) String network,
@@ -202,7 +209,15 @@ public class PinController {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<WellPinSearchDTO> result = pinService.searchPinList(isSaleFlag, isUseFlag, network, operatorName, productName, pinNum, managementNum, writer, user, pageable);
 
-        return ResponseUtil.createOkResponse(result.getContent(), "조회 성공", result);
+        Map<String, Object> response = new HashMap<>();
+        response.put("currentPage", result.getNumber());
+        response.put("items", result.getContent());
+        response.put("message", "");
+        response.put("status", "OK");
+        response.put("totalItems", result.getTotalElements());
+        response.put("totalPages", result.getTotalPages());
+
+        return ResponseEntity.ok(response);
     }
 
 }

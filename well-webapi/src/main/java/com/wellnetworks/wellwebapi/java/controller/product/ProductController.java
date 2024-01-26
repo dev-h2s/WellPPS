@@ -6,7 +6,7 @@ import com.wellnetworks.wellcore.java.dto.Product.WellProductUpdateDTO;
 import com.wellnetworks.wellcore.java.service.product.WellProductService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +17,11 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(("/product/"))
-@ComponentScan(basePackages={"com.wellnetworks.wellcore"})
+@ComponentScan(basePackages = {"com.wellnetworks.wellcore"})
+@RequiredArgsConstructor
 public class ProductController {
 
-    @Autowired private WellProductService productService;
+    private final WellProductService productService;
 
     //상세 조회
     @GetMapping("/info/detail/{productIdx}")
@@ -51,8 +52,8 @@ public class ProductController {
 
     //수정
     @PatchMapping("update/{productIdx}")
-    public ResponseEntity<String> patchProduct(@Valid WellProductUpdateDTO updateDTO,
-                                               @PathVariable String productIdx) {
+    public ResponseEntity<String> patchProduct(@Valid WellProductUpdateDTO updateDTO, @PathVariable String productIdx) {
+
         try {
             if (productIdx == null) {
                 throw new ClassNotFoundException(String.format("요금제IDX가 일치하지 않습니다. : ", productIdx));

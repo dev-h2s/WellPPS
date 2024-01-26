@@ -19,11 +19,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -107,26 +105,6 @@ public class WellEmployeeService {
             return 1L; // 만약 직원이 하나도 없으면 1부터 시작
         } else {
             return maxEmployeeId + 1L;
-        }
-    }
-
-    //패스워드 랜덤
-    public class PasswordUtil {
-        private static final String ALLOWED_STRING = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()";
-        private static final int TEMP_PWD_LENGTH = 10;
-        private static final SecureRandom RANDOM = new SecureRandom();
-        private static final BCryptPasswordEncoder ENCODER = new BCryptPasswordEncoder();
-
-        public static String[] generateRandomPassword() {
-            StringBuilder builder = new StringBuilder(TEMP_PWD_LENGTH);
-
-            for (int i = 0; i < TEMP_PWD_LENGTH; i++) {
-                builder.append(ALLOWED_STRING.charAt(RANDOM.nextInt(ALLOWED_STRING.length())));
-            }
-
-            String rawPassword = builder.toString();
-            String encryptedPassword = ENCODER.encode(rawPassword); // 암호화된 비밀번호를 반환
-            return new String[]{rawPassword, encryptedPassword};
         }
     }
 
@@ -251,8 +229,6 @@ public class WellEmployeeService {
     //수정
     @Transactional
     public void update(MultipartHttpServletRequest request, String employeeIdx, WellEmployeeUpdateDTO updateDTO) {
-//        try {
-            // DTO를 통해 엔티티 업데이트
             WellEmployeeEntity employee = wellEmployeeRepository.findByEmployeeIdx(employeeIdx);
             WellEmployeeUserEntity employeeUser = wellEmployeeUserRepository.findByEmployeeIdx(employeeIdx);
             BeanUtils.copyProperties(updateDTO, employee);
@@ -265,7 +241,6 @@ public class WellEmployeeService {
                 throw new IllegalArgumentException("부서 이름이 유효하지 않습니다.");
             }
 
-            // department 이름으로 WellEmployeeManagerGroupEntity를 조회합니다.
             Optional<WellEmployeeManagerGroupEntity> employeeGroupOptional = wellEmployeeGroupRepository.findByDepartment(departmentName);
 
 //            if (employeeGroupOptional.isEmpty()) {
@@ -283,12 +258,6 @@ public class WellEmployeeService {
             // 엔티티의 업데이트 메서드 호출
             employee.updateFromDTO(updateDTO);
             wellEmployeeRepository.save(employee);
-
-//        } catch (Exception e) {
-//            log.error(e.getMessage());
-            // 롤백을 위해 예외 발생
-//            throw new RuntimeException("사원 수정 중 오류 발생", e);
-//        }
     }
 
 

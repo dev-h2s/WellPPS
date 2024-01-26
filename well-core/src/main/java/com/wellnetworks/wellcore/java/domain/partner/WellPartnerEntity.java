@@ -299,7 +299,6 @@ public class WellPartnerEntity {
         this.locationAddress = updateDTO.getLocationAddress();
         this.locationDetailAddress = updateDTO.getLocationDetailAddress();
         this.partnerMemo = updateDTO.getPartnerMemo();
-        this.registrationStatus = updateDTO.getRegistrationStatus();
         this.rejectionReason = updateDTO.getRejectionReason();
         this.writer = updateDTO.getWriter();
         this.event = updateDTO.getEvent();

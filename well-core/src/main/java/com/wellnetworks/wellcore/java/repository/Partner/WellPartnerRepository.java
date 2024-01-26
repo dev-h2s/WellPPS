@@ -27,7 +27,7 @@ public interface WellPartnerRepository extends JpaRepository<WellPartnerEntity, 
     String findPartnerUpperNameByPartnerUpperIdx(String partnerIdx);
 
     default String findPartnerNameByPartnerIdxSafely(String partnerUpperIdx) {
-        if (partnerUpperIdx == null) {
+        if (partnerUpperIdx == null || partnerUpperIdx.isEmpty()) {
             return null; // 또는 원하는 기본값을 반환
         } else {
             try {
@@ -43,9 +43,6 @@ public interface WellPartnerRepository extends JpaRepository<WellPartnerEntity, 
     @Query("SELECT p FROM WellPartnerEntity p WHERE p.partnerUpperIdx = :partnerUpperIdx")
     List<WellPartnerEntity> findSubPartnersByPartnerUpperIdx(String partnerUpperIdx);
 
-
-
-
     WellPartnerEntity findByPartnerCode(String partnerCode);
 
     //거래처 거래유무 개수
@@ -54,8 +51,6 @@ public interface WellPartnerRepository extends JpaRepository<WellPartnerEntity, 
     // 등록된 거래처 개수
     @Query("SELECT COUNT(p) FROM WellPartnerEntity p WHERE p.transactionStatus = '등록'")
     Long registeredCount();
-
-
 
     // 가등록된 거래처 개수
     @Query("SELECT COUNT(p) FROM WellPartnerEntity p WHERE p.transactionStatus = '가등록'")

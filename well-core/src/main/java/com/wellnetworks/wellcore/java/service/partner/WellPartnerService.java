@@ -43,7 +43,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class WellPartnerService {
 
-    
     private final WellPartnerRepository wellPartnerRepository;
     private final WellPartnerBackupRepository wellPartnerBackupRepository;
     private final WellPartnerGroupRepository wellPartnerGroupRepository;
@@ -58,7 +57,6 @@ public class WellPartnerService {
     // 거래처 상세 조회
     @Transactional
     public Optional<WellPartnerDetailDTO> getDetailPartnerByPartnerIdx(String partnerIdx) {
-//        try {
         WellPartnerEntity entity = wellPartnerRepository.findByPartnerIdx(partnerIdx);
         if (entity == null) {
             throw new EntityNotFoundException("해당 파트너를 찾을 수 없습니다. 파트너 ID: " + partnerIdx);
@@ -83,11 +81,7 @@ public class WellPartnerService {
                 , entity.getPartnerGroup(), apikeyInEntity, subPartnerEntities, partnerGroupName, fileStorageEntities);
 
         return Optional.of(dto);
-//        } catch (EntityNotFoundException e) {
-//            return Optional.empty();
-//        } catch (Exception e) {
-//            throw new RuntimeException("거래처 상세 정보 조회 중 오류 발생: " + e.getMessage(), e);
-//        }
+
     }
 
     // 거래처 검색
@@ -216,6 +210,7 @@ public class WellPartnerService {
     }
 
     //거래처 리스트 조회
+    @Transactional
     public Page<WellPartnerInfoDTO> getAllPartners(Pageable pageable) {
         try {
             pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "productRegisterDate"));

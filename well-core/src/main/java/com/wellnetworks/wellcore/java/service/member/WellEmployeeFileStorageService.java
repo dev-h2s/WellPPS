@@ -63,6 +63,8 @@ public class WellEmployeeFileStorageService {
 
     // 각 파일 업로드 필드를 처리하는 메서드 saveFiles에서 사용
     private void processFiles(List<MultipartFile> files, String fileKind, String employeeIdx, List<Long> fileIds, Map<String, Object> result) {
+        uploadDir = uploadDir + "employee/";
+
         if (files != null) {
             for (MultipartFile file : files) {
                 if (file != null && !file.isEmpty()) {

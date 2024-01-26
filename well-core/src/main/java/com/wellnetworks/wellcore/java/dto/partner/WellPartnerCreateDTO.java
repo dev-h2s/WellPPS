@@ -1,17 +1,13 @@
 package com.wellnetworks.wellcore.java.dto.partner;
 
 import com.querydsl.core.annotations.QueryProjection;
-import com.wellnetworks.wellcore.java.dto.FIle.WellFileDetailDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -46,134 +42,86 @@ public class WellPartnerCreateDTO {
     private String transactionStatus;
     @Schema(description = "상부점idx", example = "상부점 idx")
     private String partnerUpperIdx;
-    //    @NotBlank(message = "ceo이름은 필수 입력 항목입니다.")
     @Schema(description = "대표자명", example = "김형술")
     private String ceoName;
-
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
+    @Schema(description = "사업장전화번호", example = "010-4849-9822")
     private String ceoTelephone;
-    //    @Pattern(regexp = "^\\d{2,3}-\\d{3,4}-\\d{4}$", message = "올바른 휴대폰 번호를 입력하세요.")
-//    @NotBlank(message = "휴대폰 번호는 필수 입력 항목입니다.")
     @Schema(description = "대표자전화번호", example = "010-9822-4849")
     private String partnerTelephone;
-    //    @Email(message = "올바른 이메일 주소를 입력하세요.")
-//    @NotBlank(message = "이메일 주소는 필수 입력 항목입니다.")
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
+    @Schema(description = "이메일주소", example = "gugi92@naver.com")
     private String emailAddress;
-
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
+    @Schema(description = "수수료 입금계좌", example = "524902-01-438111")
     private String commissionDepositAccount;
-
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
+    @Schema(description = "수수료 입금 계좌은행 이름", example = "국민")
     private String commissionBankName;
-
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
+    @Schema(description = "수수료 입금계좌 은행주", example = "김진")
     private String commissionBankHolder;
-    //    @NotBlank(message = "등록번호는 필수 입력 항목입니다.")
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
+    @Schema(description = "사업자등록번호", example = "23141345")
     private String registrationNumber;
-    //    @NotBlank(message = "주소는 필수 입력 항목입니다.")
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
+    @Schema(description = "사업자 등록주소", example = "서울시 강서구")
     private String registrationAddress;
-    //    @NotBlank(message = "상세주소는 필수 입력 항목입니다.")
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
+    @Schema(description = "사업자 등록 상세주소", example = "허준로 224 1308호")
     private String registrationDetailAddress;
-    //    @NotBlank(message = "주소는 필수 입력 항목입니다.")
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
+    @Schema(description = "사업자소재지주소", example = "서울시 강서구")
     private String locationAddress;
-    //    @NotBlank(message = "상세주소는 필수 입력 항목입니다.")
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
+    @Schema(description = "사업자소재지상세주소", example = "허준로 224 1308호")
     private String locationDetailAddress;
-
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
+    @Schema(description = "메모", example = "기타 내용 메모")
     private String partnerMemo;
 
 
     //회원가입 관리 관련 컬럼
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
-    private String registrationStatus; //회원가입 여부
-
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
-    private String rejectionReason; // 회원가입 거부 사유
-
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
-    private String writer; //작성자
-
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
-    private String event;//이벤트
-
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
+    @Schema(description = "회원가입 여부", example = "승인")
+    private String registrationStatus;
+    @Schema(description = "회원가입 거부 사유", example = "대표자명 불일치")
+    private String rejectionReason;
+    @Schema(description = "작성자", example = "김형술")
+    private String writer;
+    @Schema(description = "이벤트", example = "미정")
+    private String event;
+    @Schema(description = "방문요청여부", example = "true")
     private Boolean visitStatus;//방문요청여부
-
-    @Schema(description = "대표자전화번호", example = "2024-01-17T12:34:56")
-    private LocalDateTime openingVisitRequestDate;//개통점방문희망일자
-
-    @Schema(description = "대표자전화번호", example = "2024-01-17T12:34:56")
-    private LocalDateTime openingVisitDecideDate;//개통점방문확정일자
-
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
-    private String openingProgress;//개통점진행도
-
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
-    private String openingStatus;//개통점전환여부
-
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
-    private String openingNote;//개통점신청비고
-
-
-    private List<WellFileDetailDTO> fileDetails = new ArrayList<>();
-
-    private List<MultipartFile> businessLicenseFiles;
-    private List<MultipartFile> contractDocumentFiles;
-    private List<MultipartFile> idCardFiles;
-    private List<MultipartFile> storePhotoFiles;
-    private List<MultipartFile> businessCardFiles;
+    @Schema(description = "개통점방문희망일자", example = "2024-01-17T12:34:56")
+    private LocalDateTime openingVisitRequestDate;
+    @Schema(description = "개통점방문확정일자", example = "2024-01-17T12:34:56")
+    private LocalDateTime openingVisitDecideDate;
+    @Schema(description = "개통점진행도", example = "요청수신")
+    private String openingProgress;
+    @Schema(description = "개통점전환여부", example = "대기")
+    private String openingStatus;
+    @Schema(description = "개통점신청비고", example = "비고 메모")
+    private String openingNote;
 
     //거래처유저
-//    @NotBlank(message = "거래처 유저 부서는 필수 입력 항목입니다.")
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
+    @Schema(description = "거래처 부서명??", example = "대리점???")
     private String department;
-
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
+    @Schema(description = "그룹별권한", example = "1??")
     private String partnerManagerGroupKey;
-
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
+    @Schema(description = "로그인시아이디", example = "pa-12345")
     private String partnerIdentification;
-
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
+    @Schema(description = "로그인시패스워드", example = "!@#SDFfq3")
     private String partnerUserPwd;
-
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
+    @Schema(description = "권한", example = "???")
     private String permissions;
-
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
+    @Schema(description = "임시 비밀번호", example = "!@#SDFfq3")
     private String tmpPwd;
-
-    @Schema(description = "대표자전화번호", example = "2024-01-17T12:34:56")
+    @Schema(description = "임시비밀번호 만료날짜", example = "2024-01-17T12:34:56")
     private LocalDateTime tmpPwdExpiration;
-
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
+    @Schema(description = "임시비밀번호 사용횟수", example = "3")
     private Integer tmpPwdCount;
-
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
+    @Schema(description = "임시비밀번호 생성일자", example = "2024-01-17T12:34:56")
     private LocalDateTime tmpPwdDate;
-
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
+    @Schema(description = "전화번호 인증여부", example = "true")
     private Boolean isPhoneVerified;
-
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
+    @Schema(description = "휴대폰 인증 코드", example = "345513")
     private String phoneVerificationCode;
-
-    @Schema(description = "대표자전화번호", example = "010-9822-4849")
+    @Schema(description = "휴대폰 인증 시도 횟수", example = "1")
     private Integer phoneVerificationAttempts;
-
-    @Schema(description = "대표자전화번호", example = "2024-01-17T12:34:56")
+    @Schema(description = "휴대폰 인증 만료 시간", example = "2024-01-17T12:34:56")
     private LocalDateTime phoneVerificationExpiration;
-
-    @Schema(description = "대표자전화번호", example = "2024-01-17T12:34:56")
+    @Schema(description = "휴대폰 인증 코드 전송 시간", example = "2024-01-17T12:34:56")
     private LocalDateTime phoneVerificationSentTime;
-
-    @Schema(description = "대표자전화번호", example = "2024-01-17T12:34:56")
+    @Schema(description = "유저정보 생성일자", example = "2024-01-17T12:34:56")
     private LocalDateTime partnerUserRegisterDate;
 
 
@@ -183,8 +131,7 @@ public class WellPartnerCreateDTO {
             , LocalDateTime subscriptionDate, String transactionStatus, String partnerUpperIdx, String ceoName, String ceoTelephone
             , String partnerTelephone, String emailAddress, String commissionDepositAccount, String commissionBankName, String commissionBankHolder
             , String registrationNumber, String registrationAddress, String registrationDetailAddress, String locationAddress, String locationDetailAddress
-            , String partnerMemo, List<WellFileDetailDTO> fileDetails
-            , String partnerManagerGroupKey, String partnerIdentification, String partnerUserPwd, String permissions
+            , String partnerMemo            , String partnerManagerGroupKey, String partnerIdentification, String partnerUserPwd, String permissions
             , String tmpPwd, LocalDateTime tmpPwdExpiration, Integer tmpPwdCount, LocalDateTime tmpPwdDate, Boolean isPhoneVerified
             , String phoneVerificationCode, Integer phoneVerificationAttempts, LocalDateTime phoneVerificationExpiration, LocalDateTime phoneVerificationSentTime, LocalDateTime partnerUserRegisterDate
             , String department
@@ -218,7 +165,6 @@ public class WellPartnerCreateDTO {
         this.locationAddress = locationAddress;
         this.locationDetailAddress = locationDetailAddress;
         this.partnerMemo = partnerMemo;
-        this.fileDetails = fileDetails;
 
         //거래처유저
         this.partnerManagerGroupKey = partnerManagerGroupKey;

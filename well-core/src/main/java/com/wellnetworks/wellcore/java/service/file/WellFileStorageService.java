@@ -67,6 +67,8 @@ public class WellFileStorageService {
 
     // 각 파일 업로드 필드를 처리하는 메서드
     private void processFiles(List<MultipartFile> files, String fileKind, String partnerIdx, List<Long> fileIds, Map<String, Object> result) {
+        uploadDir = uploadDir + "partner/";
+
         if (files != null) {
             for (MultipartFile file : files) {
                 if (file != null && !file.isEmpty()) {

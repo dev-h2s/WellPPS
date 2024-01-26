@@ -4,6 +4,7 @@ import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.dto.FIle.WellFileDetailDTO;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,24 +18,41 @@ import java.util.stream.Collectors;
 @Data
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class WellPartnerInfoDTO {
+    @Schema(description = "거래처idx")
     private String partnerIdx;
+    @Schema(description = "파일리스트")
     private List<WellFileDetailDTO> fileDetails = new ArrayList<>();
+    @Schema(description = "가입승인날짜")
     private LocalDate subscriptionDate;
+    @Schema(description = "거래처 로그인 id로쓰는 코드")
     private String partnerCode;
+    @Schema(description = "거래처 이름")
     private String partnerName;
+    @Schema(description = "거래처 타입")
     private String partnerType;
+    @Schema(description = "파트너 로그인 id로쓰는 코드")
     private String discountCategory;
+    @Schema(description = "파트너 로그인 id로쓰는 코드")
     private Integer dipositBalance;
+    @Schema(description = "파트너 로그인 id로쓰는 코드")
     private String salesManager;
+    @Schema(description = "파트너 로그인 id로쓰는 코드")
     private String ceoName;
+    @Schema(description = "파트너 로그인 id로쓰는 코드")
     private String ceoTelephone;
+    @Schema(description = "파트너 로그인 id로쓰는 코드")
     private String transactionStatus;
+    @Schema(description = "파트너 로그인 id로쓰는 코드")
     private String writer;
+    @Schema(description = "파트너 로그인 id로쓰는 코드")
     private String partnerUpperIdx;
+    @Schema(description = "파트너 로그인 id로쓰는 코드")
     private String partnerUpperName;
+    @Schema(description = "파트너 로그인 id로쓰는 코드")
     private String openingStatus; // 개통점 신청 여부
+    @Schema(description = "파트너 로그인 id로쓰는 코드")
     private String registrationStatus; // 회원가입 승인 여부
-
+    @Schema(description = "파트너 로그인 id로쓰는 코드")
     private String registrationAddress;
 
     //리스트

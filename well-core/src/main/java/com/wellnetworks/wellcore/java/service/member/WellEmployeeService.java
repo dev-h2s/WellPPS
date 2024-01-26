@@ -157,7 +157,8 @@ public class WellEmployeeService {
         // 휴대폰 인증 코드의 만료 시간 설정. 예를 들어, 현재 시간으로부터 10분 후로 설정.
         LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(10);
         LocalDateTime currentDateTime = LocalDateTime.now();
-        String newEmployeeIdx = UUID.randomUUID().toString();
+        String newEmployeeIdx = UUID.randomUUID().toString().toLowerCase();
+
         // WellEmployeeUserEntity 객체 생성 및 설정
         try {
             WellEmployeeUserEntity userEntity = WellEmployeeUserEntity.builder()

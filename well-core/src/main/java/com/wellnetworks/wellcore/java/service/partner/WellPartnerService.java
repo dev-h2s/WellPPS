@@ -4,7 +4,6 @@ import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
 import com.wellnetworks.wellcore.java.domain.account.WellVirtualAccountEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
 import com.wellnetworks.wellcore.java.domain.backup.partner.WellPartnerEntityBackup;
-import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
@@ -43,7 +42,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class WellPartnerService {
 
-    
+
     private final WellPartnerRepository wellPartnerRepository;
     private final WellPartnerBackupRepository wellPartnerBackupRepository;
     private final WellPartnerGroupRepository wellPartnerGroupRepository;
@@ -65,11 +64,6 @@ public class WellPartnerService {
         }
 
         List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerIdx);
-        List<WellFileStorageEntity> fileStorageEntities = new ArrayList<>();
-        for (WellPartnerFIleStorageEntity fIleStorage : fileStorages) {
-            fileStorageEntities.add(fIleStorage.getFile());
-        }
-
         WellDipositEntity depositEntity = entity.getVirtualAccount() != null ? entity.getVirtualAccount().getDeposit() : null;
         String partnerUpperName = entity.getPartnerUpperIdx() != null ? wellPartnerRepository.findPartnerNameByPartnerIdxSafely(entity.getPartnerUpperIdx()) : null;
 
@@ -80,7 +74,7 @@ public class WellPartnerService {
         WellApikeyInEntity apikeyInEntity = entity.getApiKey();
 
         WellPartnerDetailDTO dto = new WellPartnerDetailDTO(entity, depositEntity, partnerUpperName
-                , entity.getPartnerGroup(), apikeyInEntity, subPartnerEntities, partnerGroupName, fileStorageEntities);
+                , entity.getPartnerGroup(), apikeyInEntity, subPartnerEntities, partnerGroupName, fileStorages);
 
         return Optional.of(dto);
 

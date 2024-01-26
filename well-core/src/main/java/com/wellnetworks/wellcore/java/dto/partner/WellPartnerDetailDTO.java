@@ -2,10 +2,9 @@ package com.wellnetworks.wellcore.java.dto.partner;
 
 import com.wellnetworks.wellcore.java.domain.account.WellDipositEntity;
 import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyInEntity;
-import com.wellnetworks.wellcore.java.domain.file.WellFileStorageEntity;
+import com.wellnetworks.wellcore.java.domain.file.WellPartnerFIleStorageEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.domain.partner.WellPartnerGroupEntity;
-import com.wellnetworks.wellcore.java.dto.FIle.WellFileDetailDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -93,15 +92,15 @@ public class WellPartnerDetailDTO {
 
     @Schema(description = "메모")
     private String partnerMemo;
-    private String businessLicenseFile;
-    private String contractDocumentFile;
-    private String idCardFile;
-    private String storePhotoFile;
-    private String businessCardFile;
+    private WellPartnerFIleStorageEntity businessLicenseFile;
+    private WellPartnerFIleStorageEntity contractDocumentFile;
+    private WellPartnerFIleStorageEntity idCardFile;
+    private WellPartnerFIleStorageEntity storePhotoFile;
+    private WellPartnerFIleStorageEntity businessCardFile;
 
     public WellPartnerDetailDTO(WellPartnerEntity entity, WellDipositEntity diposit, String partnerUpperName
             , WellPartnerGroupEntity group, WellApikeyInEntity apikey, List<WellPartnerEntity> subPartners
-            , String PartnerGroupName, List<WellFileStorageEntity> fileStorageEntities) {
+            , String PartnerGroupName, List<WellPartnerFIleStorageEntity> fileStorageEntities) {
         this.partnerCode = entity.getPartnerCode();
         this.partnerName = entity.getPartnerName();
         this.partnerType = entity.getPartnerType();
@@ -157,13 +156,13 @@ public class WellPartnerDetailDTO {
         this.locationDetailAddress = entity.getLocationDetailAddress();
         this.partnerMemo = entity.getPartnerMemo();
 
-        for (WellFileStorageEntity fileDetailDTO : fileStorageEntities) {
-            switch (fileDetailDTO.getFileKind()) {
-                case "사업자등록증" -> this.businessLicenseFile = fileDetailDTO.getSavedFileName();
-                case "계약서" -> this.contractDocumentFile = fileDetailDTO.getSavedFileName();
-                case "대표자신분증" -> this.idCardFile = fileDetailDTO.getSavedFileName();
-                case "매장사진" -> this.storePhotoFile = fileDetailDTO.getSavedFileName();
-                case "대표자명함" -> this.businessCardFile = fileDetailDTO.getSavedFileName();
+        for (WellPartnerFIleStorageEntity fileDetailDTO : fileStorageEntities) {
+            switch (fileDetailDTO.getFile().getFileKind()) {
+                case "사업자등록증" -> this.businessLicenseFile = fileDetailDTO;
+                case "계약서" -> this.contractDocumentFile = fileDetailDTO;
+                case "대표자신분증" -> this.idCardFile = fileDetailDTO;
+                case "매장사진" -> this.storePhotoFile = fileDetailDTO;
+                case "대표자명함" -> this.businessCardFile = fileDetailDTO;
             }
         }
     }

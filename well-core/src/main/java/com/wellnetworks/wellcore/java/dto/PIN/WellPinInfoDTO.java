@@ -12,7 +12,7 @@ import lombok.Setter;
 public class WellPinInfoDTO {
     @Schema(description = "입고처", example = "김진")
     private String store;
-    @Schema(description = "통신사", example = "김진")
+    @Schema(description = "통신사", example = "벨류컴")
     private String operatorName;
     @Schema(description = "요금제", example = "문자 전용 요금제")
     private String productName;

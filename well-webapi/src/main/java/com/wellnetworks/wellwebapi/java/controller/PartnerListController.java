@@ -38,7 +38,7 @@ public class PartnerListController {
     //상세 거래처 idx 조회
     @GetMapping("business/detail/{partnerIdx}")
     public ResponseEntity<?> getDetailPartner(@PathVariable String partnerIdx) {
-        try {
+
             Optional<WellPartnerDetailDTO> partnerDetailDTO = wellPartnerService.getDetailPartnerByPartnerIdx(partnerIdx);
 
             if (partnerDetailDTO.isPresent()) {
@@ -47,19 +47,14 @@ public class PartnerListController {
                 // 데이터가 없는 경우 404 Not Found 반환
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("거래처 상세 정보를 찾을 수 없습니다. IDX: %s", partnerIdx));
             }
-        } catch (EntityNotFoundException e) {
-            // EntityNotFoundException이 발생한 경우 404 Not Found 반환
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("거래처 상세 정보를 찾을 수 없습니다. IDX: %s", partnerIdx));
-        } catch (Exception e) {
-            // 다른 예외가 발생한 경우 500 Internal Server Error 반환
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생: " + e.getMessage());
+
         }
-    }
+
 
     //상세 거래처 idx 조회
     @GetMapping("businessSign/detail/{partnerIdx}")
     public ResponseEntity<?> getDetailPartnerSign(@PathVariable String partnerIdx) {
-//        try {
+
         Optional<WellPartnerDetailDTO> partnerDetailDTO = wellPartnerService.getDetailPartnerByPartnerIdx(partnerIdx);
 
         if (partnerDetailDTO.isPresent()) {
@@ -68,13 +63,7 @@ public class PartnerListController {
             // 데이터가 없는 경우 404 Not Found 반환
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("거래처 상세 정보를 찾을 수 없습니다. IDX: %s", partnerIdx));
         }
-//        } catch (EntityNotFoundException e) {
-        // EntityNotFoundException이 발생한 경우 404 Not Found 반환
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("거래처 상세 정보를 찾을 수 없습니다. IDX: %s", partnerIdx));
-//        } catch (Exception e) {
-        // 다른 예외가 발생한 경우 500 Internal Server Error 반환
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생: " + e.getMessage());
-//        }
+
     }
 
 
@@ -84,7 +73,7 @@ public class PartnerListController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        try {
+
             Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "productRegisterDate"));
             Page<WellPartnerInfoDTO> partnersPage = wellPartnerService.getAllPartners(pageable);
 
@@ -104,13 +93,7 @@ public class PartnerListController {
             response.put("contractDocumentCount", partnerRepository.countContractDocumentMissing());
 
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            // 예외가 발생하면 500 Internal Server Error 응답을 반환
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("message", "서버 오류 발생: " + e.getMessage());
-            errorResponse.put("status", "ERROR");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-        }
+
     }
 
 
@@ -121,7 +104,7 @@ public class PartnerListController {
             @RequestParam(defaultValue = "10") int size
 
     ) {
-        try {
+
             Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "signRequestDate"));
             Page<WellPartnerSignInfoDTO> partnersPage = wellPartnerService.getAllPartnerSign(pageable);
 
@@ -141,13 +124,7 @@ public class PartnerListController {
             response.put("contractDocumentCount", partnerRepository.countContractDocumentMissing());
 
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            // 예외가 발생하면 500 Internal Server Error 응답을 반환
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("message", "서버 오류 발생: " + e.getMessage());
-            errorResponse.put("status", "ERROR");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-        }
+
     }
 
     //거래처 생성
@@ -176,36 +153,28 @@ public class PartnerListController {
     public ResponseEntity<String> patchPartner(HttpServletRequest httpServletRequest
             , @RequestPart(value = "updateDTO") @ModelAttribute @Valid WellPartnerUpdateDTO updateDTO, @PathVariable String partnerIdx) {
         MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) httpServletRequest;
-        try {
-            if (partnerIdx == null) {
-                throw new ClassNotFoundException(String.format("IDX[%s] not found", null));
-            }
-            wellPartnerService.update(multiRequest, partnerIdx, updateDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body("거래처가 성공적으로 수정되었습니다.");
-        } catch (ClassNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("거래처를 찾을 수 없습니다. IDX: %s", partnerIdx));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("거래처 수정 중 오류가 발생하였습니다.");
-        }
-    }
 
-    //거래처 수정
-    @PatchMapping("business/update/sign/{partnerIdx}")
-    public ResponseEntity<String> patchPartnerSign(HttpServletRequest httpServletRequest, @RequestPart(value = "updateDTO") @Valid WellPartnerUpdateDTO updateDTO,
-                                                   @PathVariable String partnerIdx) {
-        MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) httpServletRequest;
-        try {
-            if (partnerIdx == null) {
-                throw new ClassNotFoundException(String.format("IDX[%s] not found", partnerIdx));
-            }
             wellPartnerService.update(multiRequest, partnerIdx, updateDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body("거래처가 성공적으로 수정되었습니다.");
-        } catch (ClassNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("거래처를 찾을 수 없습니다. IDX: %s", partnerIdx));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("거래처 수정 중 오류가 발생하였습니다.");
         }
-    }
+
+//    //거래처 수정
+//    @PatchMapping("business/update/sign/{partnerIdx}")
+//    public ResponseEntity<String> patchPartnerSign(HttpServletRequest httpServletRequest, @RequestPart(value = "updateDTO") @Valid WellPartnerUpdateDTO updateDTO,
+//                                                   @PathVariable String partnerIdx) {
+//        MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) httpServletRequest;
+//        try {
+//            if (partnerIdx == null) {
+//                throw new ClassNotFoundException(String.format("IDX[%s] not found", partnerIdx));
+//            }
+//            wellPartnerService.update(multiRequest, partnerIdx, updateDTO);
+//            return ResponseEntity.status(HttpStatus.CREATED).body("거래처가 성공적으로 수정되었습니다.");
+//        } catch (ClassNotFoundException e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("거래처를 찾을 수 없습니다. IDX: %s", partnerIdx));
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("거래처 수정 중 오류가 발생하였습니다.");
+//        }
+//    }
 
     // 거래처 검색
     @GetMapping("business/search")

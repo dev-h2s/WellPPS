@@ -24,13 +24,6 @@ public class WellApiKeyDetailDTO {
     private List<String> apiServerIp;
     private String memo;
 
-    private boolean home;
-    private boolean dream;
-    private boolean valueCom;
-    private boolean iz;
-    private boolean asia;
-    private boolean PDS;
-
     public WellApiKeyDetailDTO(WellApikeyInEntity apikey, String partnerName) {
 
 
@@ -51,13 +44,5 @@ public class WellApiKeyDetailDTO {
         this.apiServerIp = apikey.getApiServerIp();
         this.issuer = apikey.getIssuer();
         this.memo = apikey.getMemo();
-
-
-        this.home = apikey.isHome();
-        this.dream = apikey.isDream();
-        this.valueCom = apikey.isValueCom();
-        this.iz = apikey.isIz();
-        this.asia = apikey.isAsia();
-        this.PDS = apikey.isPDS();
     }
 }

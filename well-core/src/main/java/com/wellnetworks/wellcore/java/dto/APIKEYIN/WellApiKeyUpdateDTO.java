@@ -22,12 +22,5 @@ public class WellApiKeyUpdateDTO {
     private String memo;
     private String partnerIdx;
 
-    private boolean home;
-    private boolean dream;
-    private boolean valueCom;
-    private boolean iz;
-    private boolean asia;
-    private boolean PDS;
-
     private boolean expire; // 만료여부판단
 }

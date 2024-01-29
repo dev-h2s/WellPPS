@@ -4,8 +4,7 @@ import com.wellnetworks.wellcore.java.domain.apikeyIn.WellApikeyIssueEntity;
 import com.wellnetworks.wellcore.java.dto.APIKEYIN.*;
 import com.wellnetworks.wellcore.java.service.apiKey.WellApiKeyService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,20 +13,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(("/apikey/"))
-@ComponentScan(basePackages={"com.wellnetworks.wellcore"})
+@RequiredArgsConstructor
 public class ApiKeyController {
 
-    @Autowired private WellApiKeyService apiKeyService;
+    private final WellApiKeyService apiKeyService;
 
     //1개 조회
     @GetMapping("info/{apiKeyInIdx}")
     public Optional<WellApiKeyInfoDTO> getApikey(@PathVariable String apiKeyInIdx) throws ClassNotFoundException {
         Optional<WellApiKeyInfoDTO> apikey = apiKeyService.getApikeyByApikeyIdx(apiKeyInIdx);
-        if (apikey == null) {
+        if (apikey.isEmpty()) {
             throw new ClassNotFoundException(String.format("IDX[%s] not found", apiKeyInIdx));
         }
         return apikey;
@@ -57,7 +59,7 @@ public class ApiKeyController {
     @GetMapping("info/detail/{apiKeyInIdx}")
     public Optional<WellApiKeyDetailDTO> getDetailApiKeyByApiKeyInIdx(@PathVariable String apiKeyInIdx) throws ClassNotFoundException {
         Optional<WellApiKeyDetailDTO> apiKeyDetailDTO = apiKeyService.getDetailApiKeyByApiKeyInIdx(apiKeyInIdx);
-        if (apiKeyDetailDTO == null) {
+        if (apiKeyDetailDTO.isEmpty()) {
             throw new ClassNotFoundException(String.format("IDX[%s] not found", apiKeyInIdx));
         }
         return apiKeyDetailDTO;
@@ -66,26 +68,16 @@ public class ApiKeyController {
     //발급
     @PostMapping("issue")
     public ResponseEntity<String> apiKeyIssue(@Valid WellApikeyIssueEntity issueEntity) {
-        try {
-            String generatedApiKey = apiKeyService.issue(issueEntity);
-            return ResponseEntity.ok(generatedApiKey);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("API 키 생성 중 오류 발생: " + e.getMessage());
-        }
+        String generatedApiKey = apiKeyService.issue(issueEntity);
+        return ResponseEntity.ok(generatedApiKey);
     }
 
 
     // 생성
     @PostMapping("generate")
     public ResponseEntity<String> generateApiKey(@Valid WellApikeyInCreateDTO createDTO) {
-        try {
-            apiKeyService.join(createDTO);
-            return ResponseEntity.ok("API 키 생성 및 저장 완료");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("API 키 생성 및 저장 중 오류 발생: " + e.getMessage());
-        }
+        apiKeyService.join(createDTO);
+        return ResponseEntity.ok("API 키 생성 및 저장 완료");
     }
 
     //수정
@@ -103,25 +95,15 @@ public class ApiKeyController {
     //만료 처리
     @PatchMapping("expire/{apiKeyInIdx}")
     public ResponseEntity<String> expireApiKey(@Valid WellApikeyExpireDTO expireDTO) {
-        try {
-            apiKeyService.expireApikey(expireDTO);
-            return ResponseEntity.ok("API 키 만료 처리 완료");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("API 키 만료 중 오류 발생: " + e.getMessage());
-        }
+        apiKeyService.expireApikey(expireDTO);
+        return ResponseEntity.ok("API 키 만료 처리 완료");
     }
 
     //삭제
     @DeleteMapping("delete/{apiKeyInIdx}")
     public ResponseEntity<String> deleteApiKey(@Valid WellApiKeyDeleteDTO deleteDTO) throws Exception {
-        try {
         apiKeyService.deleteApiKey(deleteDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body("ApiKey가 성공적으로 삭제되었습니다.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("API 키 삭제 중 오류 발생: " + e.getMessage());
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body("ApiKey가 성공적으로 삭제되었습니다.");
     }
 
     //검색
@@ -135,19 +117,17 @@ public class ApiKeyController {
             , @RequestParam(defaultValue = "0") int page
             , @RequestParam(defaultValue = "10") int size
     ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "apiKeyInRegisterDate"));
+        Page<WellApiKeyInfoDTO> result = apiKeyService.searchApiKeyList(issuer, apiKeyIn, serverUrl, apiServerIp, partnerNames, pageable);
 
-            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "apiKeyInRegisterDate"));
-            Page<WellApiKeyInfoDTO> result = apiKeyService.searchApiKeyList(issuer, apiKeyIn, serverUrl, apiServerIp, partnerNames, pageable);
+        Map<String, Object> response = new HashMap<>();
+        response.put("currentPage", result.getNumber());
+        response.put("items", result.getContent());
+        response.put("message", "");
+        response.put("status", "OK");
+        response.put("totalItems", result.getTotalElements());
+        response.put("totalPages", result.getTotalPages());
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("currentPage", result.getNumber());
-            response.put("items", result.getContent());
-            response.put("message", "");
-            response.put("status", "OK");
-            response.put("totalItems", result.getTotalElements());
-            response.put("totalPages", result.getTotalPages());
-
-            return ResponseEntity.ok(response);
-
+        return ResponseEntity.ok(response);
     }
 }

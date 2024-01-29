@@ -7,6 +7,7 @@ import com.wellnetworks.wellcore.java.dto.partner.sign.WellPartnerSignInfoDTO;
 import com.wellnetworks.wellcore.java.dto.partner.sign.WellPartnerSignSearchDTO;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.service.partner.WellPartnerService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -25,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Tag(name = "거래처 리스트", description = "거래처 관리 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin/hr/")

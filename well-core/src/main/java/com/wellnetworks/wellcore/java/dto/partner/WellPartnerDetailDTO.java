@@ -92,10 +92,16 @@ public class WellPartnerDetailDTO {
 
     @Schema(description = "메모")
     private String partnerMemo;
+
+    @Schema(description = "사업자등록증")
     private WellPartnerFIleStorageEntity businessLicenseFile;
+    @Schema(description = "계약서")
     private WellPartnerFIleStorageEntity contractDocumentFile;
+    @Schema(description = "대표자신분증")
     private WellPartnerFIleStorageEntity idCardFile;
+    @Schema(description = "매장사진")
     private WellPartnerFIleStorageEntity storePhotoFile;
+    @Schema(description = "대표자명함")
     private WellPartnerFIleStorageEntity businessCardFile;
 
     public WellPartnerDetailDTO(WellPartnerEntity entity, WellDipositEntity diposit, String partnerUpperName

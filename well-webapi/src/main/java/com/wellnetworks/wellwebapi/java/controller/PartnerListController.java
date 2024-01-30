@@ -158,23 +158,6 @@ public class PartnerListController {
             return ResponseEntity.status(HttpStatus.CREATED).body("거래처가 성공적으로 수정되었습니다.");
         }
 
-//    //거래처 수정
-//    @PatchMapping("business/update/sign/{partnerIdx}")
-//    public ResponseEntity<String> patchPartnerSign(HttpServletRequest httpServletRequest, @RequestPart(value = "updateDTO") @Valid WellPartnerUpdateDTO updateDTO,
-//                                                   @PathVariable String partnerIdx) {
-//        MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) httpServletRequest;
-//        try {
-//            if (partnerIdx == null) {
-//                throw new ClassNotFoundException(String.format("IDX[%s] not found", partnerIdx));
-//            }
-//            wellPartnerService.update(multiRequest, partnerIdx, updateDTO);
-//            return ResponseEntity.status(HttpStatus.CREATED).body("거래처가 성공적으로 수정되었습니다.");
-//        } catch (ClassNotFoundException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("거래처를 찾을 수 없습니다. IDX: %s", partnerIdx));
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("거래처 수정 중 오류가 발생하였습니다.");
-//        }
-//    }
 
     // 거래처 검색
     @GetMapping("business/search")

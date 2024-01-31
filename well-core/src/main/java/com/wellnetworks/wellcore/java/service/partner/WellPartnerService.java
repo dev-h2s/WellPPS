@@ -385,6 +385,7 @@ public class WellPartnerService {
                     .openingProgress(createDTO.getOpeningProgress())//개통점진행도
                     .openingStatus(createDTO.getOpeningStatus())//개통점전환여부
                     .openingNote(createDTO.getOpeningNote())//개통점신청비고
+                    .deleteStatus(false)
                     .build();
 
             //p_code

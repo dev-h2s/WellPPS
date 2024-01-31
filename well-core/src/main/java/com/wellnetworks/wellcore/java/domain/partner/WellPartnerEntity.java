@@ -120,7 +120,7 @@ public class WellPartnerEntity {
     private String discountCategory;
 
     @Column(name = "subdt") //가입승인일자
-    private LocalDateTime subscriptionDate;
+    private LocalDate subscriptionDate;
 
     @Column(name = "special_policy_opening") //특수정책개통
     private Boolean specialPolicyOpening;
@@ -212,7 +212,7 @@ public class WellPartnerEntity {
     @Builder
     public WellPartnerEntity(String partnerIdx, String partnerCode, String partnerName, String partnerType, Boolean specialPolicyOpening, Boolean specialPolicyCharge
                             , WellPartnerGroupEntity partnerGroup, String discountCategory, String salesManager
-                            , boolean inApiFlag, WellApikeyInEntity apiKey, String preApprovalNumber, LocalDateTime subscriptionDate
+                            , boolean inApiFlag, WellApikeyInEntity apiKey, String preApprovalNumber, LocalDate subscriptionDate
                             , String transactionStatus,String partnerUpperIdx, String ceoName, String ceoTelephone
                             , String partnerTelephone, String commissionBankName, String commissionDepositAccount, String commissionBankHolder
                             , String emailAddress, String registrationNumber
@@ -282,7 +282,7 @@ public class WellPartnerEntity {
         this.discountCategory = updateDTO.getDiscountCategory();
         this.inApiFlag = updateDTO.isInApiFlag();
         this.preApprovalNumber = updateDTO.getPreApprovalNumber();
-        this.subscriptionDate = updateDTO.getSubscriptionDate();
+        this.subscriptionDate = LocalDate.from(updateDTO.getSubscriptionDate());
         this.transactionStatus = updateDTO.getTransactionStatus();
         this.partnerUpperIdx = updateDTO.getPartnerUpperIdx();
         this.salesManager = updateDTO.getSalesManager();

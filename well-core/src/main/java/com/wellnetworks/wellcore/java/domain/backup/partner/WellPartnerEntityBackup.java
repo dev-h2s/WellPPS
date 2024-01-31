@@ -102,7 +102,7 @@ public class WellPartnerEntityBackup {
     private String region;
 
     @Column(name = "subdt") //가입승인일자
-    private LocalDateTime subscriptionDate;
+    private LocalDate subscriptionDate;
 
     @Column(name = "special_policy_opening") //특수정책개통
     private Boolean specialPolicyOpening;

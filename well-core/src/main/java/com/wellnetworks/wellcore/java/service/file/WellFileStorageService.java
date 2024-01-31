@@ -40,6 +40,7 @@ public class WellFileStorageService {
         processFiles(files.getFiles("idCardFile"), "대표자신분증", partnerIdx, fileIds, result);
         processFiles(files.getFiles("storePhotoFile"), "매장사진", partnerIdx, fileIds, result);
         processFiles(files.getFiles("businessCardFile"), "대표자명함", partnerIdx, fileIds, result);
+
     }
 
     @Transactional

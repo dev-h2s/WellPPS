@@ -484,7 +484,7 @@ public class WellPartnerService {
 
     //거래처 수정
     @Transactional(rollbackOn = Exception.class)
-    public void update(MultipartHttpServletRequest request, String partnerIdx, WellPartnerUpdateDTO updateDTO) throws Exception {
+    public void update(MultipartHttpServletRequest request, String partnerIdx, WellPartnerUpdateDTO updateDTO)  {
         try {
             // DTO를 통해 엔티티 업데이트
             WellPartnerEntity partner = wellPartnerRepository.findByPartnerIdx(partnerIdx);

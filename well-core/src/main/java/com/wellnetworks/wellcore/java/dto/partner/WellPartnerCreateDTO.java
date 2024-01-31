@@ -16,7 +16,6 @@ public class WellPartnerCreateDTO {
     private String partnerCode;
     @Schema(description = "거래처 이름", example = "탄현 통신")
     private String partnerName;
-    //    @NotBlank(message = "거래처 출력은 필수 입력 항목입니다.")
     @Schema(description = "거래처 타입", example = "대리점")
     private String partnerType;
     @Schema(description = "특수정책 계통", example = "true")

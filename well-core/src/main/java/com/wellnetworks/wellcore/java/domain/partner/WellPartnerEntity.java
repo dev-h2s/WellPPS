@@ -300,6 +300,7 @@ public class WellPartnerEntity {
         this.locationDetailAddress = updateDTO.getLocationDetailAddress();
         this.partnerMemo = updateDTO.getPartnerMemo();
         this.rejectionReason = updateDTO.getRejectionReason();
+        this.registrationStatus = updateDTO.getRegistrationStatus();
         this.writer = updateDTO.getWriter();
         this.event = updateDTO.getEvent();
         this.visitStatus = updateDTO.getVisitStatus();
@@ -308,12 +309,12 @@ public class WellPartnerEntity {
         this.openingProgress = updateDTO.getOpeningProgress();
         this.openingStatus = updateDTO.getOpeningStatus();
         this.openingNote = updateDTO.getOpeningNote();
-        this.reviewDate = reviewDate;
-        this.reviewer = reviewer;
-        this.termsOfUse = termsOfUse;
-        this.signRequestDate = signRequestDate;
-        this.desiredDate = desiredDate;
-        this.deleteStatus = deleteStatus;
+        this.reviewDate = updateDTO.getReviewDate();
+        this.reviewer = updateDTO.getReviewer();
+        this.termsOfUse = updateDTO.getTermsOfUse();
+        this.signRequestDate = updateDTO.getSignRequestDate();
+        this.desiredDate = updateDTO.getDesiredDate();
+        this.deleteStatus = updateDTO.getDeleteStatus();
 
     }
 

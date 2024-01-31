@@ -54,10 +54,7 @@ public class WellPartnerService {
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
-    // 거래처 상세 조회
-    @Transactional
     public Optional<WellPartnerDetailDTO> getDetailPartnerByPartnerIdx(String partnerIdx) {
-
         WellPartnerEntity entity = wellPartnerRepository.findByPartnerIdx(partnerIdx);
         if (entity == null) {
             throw new EntityNotFoundException("해당 파트너를 찾을 수 없습니다. 파트너 ID: " + partnerIdx);
@@ -73,11 +70,9 @@ public class WellPartnerService {
 
         WellApikeyInEntity apikeyInEntity = entity.getApiKey();
 
-        WellPartnerDetailDTO dto = new WellPartnerDetailDTO(entity, depositEntity, partnerUpperName
-                , entity.getPartnerGroup(), apikeyInEntity, subPartnerEntities, partnerGroupName, fileStorages);
+        WellPartnerDetailDTO dto = new WellPartnerDetailDTO(entity, fileStorages, depositEntity, partnerUpperName, entity.getPartnerGroup(), apikeyInEntity, subPartnerEntities, partnerGroupName);
 
         return Optional.of(dto);
-
     }
 
     // 거래처 검색

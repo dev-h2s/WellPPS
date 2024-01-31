@@ -5,7 +5,6 @@ import com.wellnetworks.wellcore.java.domain.partner.WellPartnerEntity;
 import com.wellnetworks.wellcore.java.domain.pin.WellPinEntity;
 import com.wellnetworks.wellcore.java.domain.product.WellProductEntity;
 import com.wellnetworks.wellcore.java.dto.PIN.*;
-import com.wellnetworks.wellcore.java.exception.MyResourceNotFoundException;
 import com.wellnetworks.wellcore.java.repository.Partner.WellPartnerRepository;
 import com.wellnetworks.wellcore.java.repository.operator.WellOperatorRepository;
 import com.wellnetworks.wellcore.java.repository.pin.WellPinRepository;

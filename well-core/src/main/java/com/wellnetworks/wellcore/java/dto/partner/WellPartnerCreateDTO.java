@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -34,8 +35,8 @@ public class WellPartnerCreateDTO {
     private String apiKeyInIdx;
     @Schema(description = "사전승낙번호", example = "????")
     private String preApprovalNumber;
-    @Schema(description = "가입승인날짜", example = "2024-01-17T12:34:56")
-    private LocalDateTime subscriptionDate;
+    @Schema(description = "가입승인날짜", example = "2024-01-17")
+    private LocalDate subscriptionDate;
     @Schema(description = "거래유무", example = "관리대상")
     private String transactionStatus;
     @Schema(description = "상부점idx", example = "상부점 idx")
@@ -127,7 +128,7 @@ public class WellPartnerCreateDTO {
     @QueryProjection
     public WellPartnerCreateDTO(String partnerCode, String partnerName, String partnerType, Boolean specialPolicyOpening, Boolean specialPolicyCharge, Long partnerGroupId
             , String discountCategory, String salesManager, boolean inApiFlag, String apiKeyInIdx, String preApprovalNumber
-            , LocalDateTime subscriptionDate, String transactionStatus, String partnerUpperIdx, String ceoName, String ceoTelephone
+            , LocalDate subscriptionDate, String transactionStatus, String partnerUpperIdx, String ceoName, String ceoTelephone
             , String partnerTelephone, String emailAddress, String commissionDepositAccount, String commissionBankName, String commissionBankHolder
             , String registrationNumber, String registrationAddress, String registrationDetailAddress, String locationAddress, String locationDetailAddress
             , String partnerMemo            , String partnerManagerGroupKey, String partnerIdentification, String partnerUserPwd, String permissions

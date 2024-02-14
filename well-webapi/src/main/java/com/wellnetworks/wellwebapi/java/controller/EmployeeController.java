@@ -5,7 +5,6 @@ import com.wellnetworks.wellcore.java.dto.member.WellEmployeeInfoDetailDTO;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeJoinDTO;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeUpdateDTO;
 import com.wellnetworks.wellcore.java.service.member.WellEmployeeService;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,22 +39,10 @@ public class EmployeeController {
     // 사원 상세 조회
     @GetMapping("employee/{employeeIdx}")
     public ResponseEntity<?> getEmployee(@PathVariable String employeeIdx) {
-        try {
-            Optional<WellEmployeeInfoDetailDTO> wellEmployeeInfoDetailDTO = wellEmployeeService.getEmployeeByEmployeeIdx(employeeIdx);
+        Optional<WellEmployeeInfoDetailDTO> wellEmployeeInfoDetailDTO = wellEmployeeService.getEmployeeByEmployeeIdx(employeeIdx);
 
-            if (wellEmployeeInfoDetailDTO.isPresent()) {
-                return ResponseEntity.ok(wellEmployeeInfoDetailDTO.get());
-            } else {
-                // 데이터가 없는 경우 404 Not Found 반환
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("사원 상세 정보를 찾을 수 없습니다. IDX: %s", employeeIdx));
-            }
-        } catch (EntityNotFoundException e) {
-            // EntityNotFoundException이 발생한 경우 404 Not Found 반환
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("사원 상세 정보를 찾을 수 없습니다. IDX: %s", employeeIdx));
-        } catch (Exception e) {
-            // 다른 예외가 발생한 경우 500 Internal Server Error 반환
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생: " + e.getMessage());
-        }
+        return ResponseEntity.ok(wellEmployeeInfoDetailDTO.get());
+
     }
 
     //사원 리스트 조회
@@ -64,7 +51,7 @@ public class EmployeeController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        try {
+
             Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "employeeUserRegisterDate"));
             Page<WellEmployeeInfoDTO> employeePage = wellEmployeeService.getAllEmployees(pageable);
 
@@ -77,13 +64,10 @@ public class EmployeeController {
             response.put("totalPages", employeePage.getTotalPages());
 
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            // 예외가 발생하면 500 Internal Server Error 응답을 반환
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("message", "서버 오류 발생: " + e.getMessage());
-            errorResponse.put("status", "ERROR");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-        }
+
+
+
+
     }
 
     //사원 생성
@@ -92,15 +76,11 @@ public class EmployeeController {
     @PostMapping(value = "employee/signUp")
     public ResponseEntity<String> createEmployeeUser(HttpServletRequest httpServletRequest, @RequestPart("createDTO") @Valid WellEmployeeJoinDTO createDTO) throws Exception {
         MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) httpServletRequest;
-        try {
+
             String tempPassword = wellEmployeeService.employeeJoin(multiRequest, createDTO);
             // 콘솔에 임시 비밀번호 출력
             System.out.println("생성된 임시 비밀번호: " + tempPassword);
             return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 완료되었습니다. 임시 비밀번호: " + tempPassword);
-        } catch (Exception e) {
-            e.printStackTrace(); // 서버 로그에 예외 정보를 기록합니다.
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
     }
 
 
@@ -135,7 +115,7 @@ public class EmployeeController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        try {
+
             Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "employeeUserRegisterDate"));
             Page<WellEmployeeInfoDTO> employeePage = wellEmployeeService.searchEmployeeList(belong, employmentState, employeeName, employeeIdentification, position, telPrivate, department, pageable);
             // 서비스 레이어의 검색 메서드 호출
@@ -149,13 +129,7 @@ public class EmployeeController {
             response.put("totalPages", employeePage.getTotalPages());
 
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            // 예외가 발생하면 500 Internal Server Error 응답을 반환
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("message", "서버 오류 발생: " + e.getMessage());
-            errorResponse.put("status", "ERROR");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-        }
+
     }
 
 

@@ -1,6 +1,7 @@
 package com.wellnetworks.wellcore.java.domain.employee;
 //직원 테이블
 
+import com.wellnetworks.wellcore.java.domain.BaseEntity;
 import com.wellnetworks.wellcore.java.domain.file.WellEmployeeFileStorageEntity;
 import com.wellnetworks.wellcore.java.dto.member.WellEmployeeUpdateDTO;
 import jakarta.persistence.*;
@@ -19,8 +20,7 @@ import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @NoArgsConstructor
-public class WellEmployeeEntity {
-
+public class WellEmployeeEntity extends BaseEntity {
     @Id
     @Column(name = "em_idx")
     private String employeeIdx;

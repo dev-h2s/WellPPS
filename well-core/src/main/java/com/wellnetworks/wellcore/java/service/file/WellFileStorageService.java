@@ -41,7 +41,7 @@ public class WellFileStorageService {
         processFiles(files.getFiles("storePhotoFile"), "매장사진", partnerIdx, fileIds, result);
         processFiles(files.getFiles("businessCardFile"), "대표자명함", partnerIdx, fileIds, result);
 
-    }
+     }
 
     @Transactional
     public void saveSignFiles(MultipartHttpServletRequest files, String partnerIdx) {

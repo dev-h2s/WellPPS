@@ -58,21 +58,31 @@ public class WellEmployeeFileStorageService {
 
     // 각 파일 업로드 필드를 처리하는 메서드 saveFiles에서 사용
     private void processFiles(List<MultipartFile> files, String fileKind, String employeeIdx, List<Long> fileIds, Map<String, Object> result) {
-
+        // 파일 리스트를 체크하여 빈 파일이 아닌 경우에만 처리한다.
         if (files != null) {
             for (MultipartFile file : files) {
+                // 파일 존재 여부와 비어 있지 않은지 확인한다.
                 if (file != null && !file.isEmpty()) {
+                    // 원본 파일 이름을 가져온다
                     String originalFileName = file.getOriginalFilename();
                     assert originalFileName != null;
+                    // 파일 확장자를 추출합니다. 예를 들어 "image.jpg"의 경우 ".jpg"가 된다.
                     String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-                    String savedFileName = employeeIdx + File.separator + UUID.randomUUID().toString().substring(0, 5) + "-" + file.getOriginalFilename();
+                    // 저장할 파일 이름을 설정합니다. UUID를 사용하여 고유한 문자열을 생성하고,
+                    // 파일 이름 앞에 employeeIdx와 구분자를 추가하여 경로를 만든다
+                    String savedFileName = UUID.randomUUID().toString().substring(0, 5) + "-" + originalFileName;
+                    // 저장될 전체 경로를 포함한 디렉토리 경로를 설정합니다.
+                    String employeeDir = uploadDir + File.separator + employeeIdx;
 
-                    File targetFile = new File(uploadDir + savedFileName);
-                    File targetFolder = new File(uploadDir + employeeIdx);
+                    // 파일을 저장할 디렉토리 객체를 생성합니다.
+                    File targetFolder = new File(employeeDir);
                     if (!targetFolder.exists()) {
                         targetFolder.mkdirs();
                     }
-                    targetFolder.setWritable(true);
+                    // 파일을 저장할 전체 경로를 포함한 파일 객체를 생성합니다.
+                    File targetFile = new File(targetFolder, savedFileName);
+
+
 
                     WellFIleCreateDTO fileDto = WellFIleCreateDTO.builder()
                             .originFileName(originalFileName)
@@ -84,27 +94,38 @@ public class WellEmployeeFileStorageService {
                             .fileKind(fileKind)
                             .build();
 
+                    // DTO를 이용하여 파일 엔티티 객체를 생성합니다.
                     WellFileStorageEntity fileEntity = fileDto.toEntity();
+                    // 파일 엔티티를 저장하고, 생성된 ID를 반환받습니다.
                     Long fileId = insertFile(fileEntity);
 
                     try {
+                        // 파일의 내용을 읽어서 스트림을 가져옵니다.
                         InputStream fileStream = file.getInputStream();
+                        // 스트림을 이용하여 파일을 실제로 저장합니다.
                         FileUtils.copyInputStreamToFile(fileStream, targetFile);
+                        // 파일 ID를 리스트에 추가합니다.
                         fileIds.add(fileId);
+                        // 결과 Map에 파일 인덱스와 결과 상태를 추가합니다.
                         result.put("fileIdxs", fileIds.toString());
                         result.put("result", "OK");
                     } catch (Exception e) {
+                        // 오류 발생 시 저장된 파일을 삭제합니다.
                         FileUtils.deleteQuietly(targetFile);
                         e.printStackTrace();
+                        // 결과 Map에 실패 상태를 추가합니다.
                         result.put("result", "FAIL");
                         break;
                     }
 
+                    // 직원 파일 정보를 담을 DTO 객체를 생성합니다.
                     WellEmployeeFileCreateDTO employeefileDto = WellEmployeeFileCreateDTO.builder()
                             .emIdx(employeeIdx)
                             .build();
 
+                    // DTO를 이용하여 직원 파일 엔티티 객체를 생성합니다.
                     WellEmployeeFileStorageEntity employeeFileEntity = employeefileDto.toEntity(fileEntity);
+                    // 직원 파일 엔티티를 저장합니다.
                     insertEmployeeFile(employeeFileEntity);
                 }
             }

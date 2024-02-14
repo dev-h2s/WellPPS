@@ -253,7 +253,7 @@ public class WellEmployeeService {
 
             employeeUser.setEmployeeGroup(employeeGroup);
             employeeUser.setEmployeeUserModifyDate(LocalDateTime.now());
-            employeeFileService.deleteFileByEmployeeIdx(employeeIdx);
+//            employeeFileService.deleteFileByEmployeeIdx(employeeIdx);
             employeeFileService.saveFiles(request, employeeIdx);
 
             // 엔티티의 업데이트 메서드 호출

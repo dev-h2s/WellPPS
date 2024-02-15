@@ -52,7 +52,7 @@ public class PartnerListController {
 
 
     //상세 거래처 idx 조회
-    @GetMapping("businessSign/detail/{partnerIdx}")
+    @GetMapping("business/sign/detail/{partnerIdx}")
     public ResponseEntity<?> getDetailPartnerSign(@PathVariable String partnerIdx) {
 
         Optional<WellPartnerDetailDTO> partnerDetailDTO = wellPartnerService.getDetailPartnerByPartnerIdx(partnerIdx);

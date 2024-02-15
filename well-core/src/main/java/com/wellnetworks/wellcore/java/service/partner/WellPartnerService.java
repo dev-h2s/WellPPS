@@ -486,7 +486,7 @@ public class WellPartnerService {
     //거래처 수정
     @Transactional(rollbackOn = Exception.class)
     public void update(MultipartHttpServletRequest request, String partnerIdx, WellPartnerUpdateDTO updateDTO)  {
-        try {
+
             // DTO를 통해 엔티티 업데이트
             WellPartnerEntity partner = wellPartnerRepository.findByPartnerIdx(partnerIdx);
             BeanUtils.copyProperties(updateDTO, partner);
@@ -514,10 +514,7 @@ public class WellPartnerService {
             // 엔티티의 업데이트 메서드 호출
             partner.updateFromDTO(updateDTO);
 
-        } catch (Exception e) {
-            // 롤백을 위해 예외 발생
-            throw new RuntimeException("거래처 수정 중 오류 발생", e);
-        }
+
     }
 
 

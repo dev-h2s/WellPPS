@@ -290,6 +290,23 @@ public class WellPartnerService {
         return new PageImpl<>(partnerInfoList, pageable, totalPartnerCount);
     }
 
+    // 개통점 신청 리스트에서 조건
+    public static Specification<WellPartnerEntity> registrationStatusIsNotAndDeleteStatusIsFalseOpeningStatus() {
+        return (root, query, criteriaBuilder) -> {
+            Predicate statusRefusal = criteriaBuilder.equal(root.get("registrationStatus"), "거부");
+            Predicate statusAtmosphere = criteriaBuilder.equal(root.get("registrationStatus"), "대기");
+            Predicate statusApproved2 = criteriaBuilder.equal(root.get("registrationStatus"), "승인");
+            Predicate statusApproved3 = criteriaBuilder.equal(root.get("openingStatus"), "승인");
+            Predicate registrationStatus = criteriaBuilder.or(statusApproved2, statusRefusal, statusAtmosphere, statusApproved3);
+
+            Predicate deleteStatusFalse = criteriaBuilder.equal(root.get("deleteStatus"), false); // 삭제되지않음
+
+            return criteriaBuilder.and(deleteStatusFalse, registrationStatus);
+        };
+    }
+
+
+
     //거래처 생성
     //p_code 랜덤 값
     public String generateUniquePartnerCode() {

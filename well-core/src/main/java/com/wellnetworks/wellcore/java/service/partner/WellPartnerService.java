@@ -297,7 +297,9 @@ public class WellPartnerService {
             Predicate statusAtmosphere = criteriaBuilder.equal(root.get("registrationStatus"), "대기");
             Predicate statusApproved2 = criteriaBuilder.equal(root.get("registrationStatus"), "승인");
             Predicate statusApproved3 = criteriaBuilder.equal(root.get("openingStatus"), "승인");
-            Predicate registrationStatus = criteriaBuilder.or(statusApproved2, statusRefusal, statusAtmosphere, statusApproved3);
+            Predicate statusApproved4 = criteriaBuilder.equal(root.get("openingStatus"), "대기");
+
+            Predicate registrationStatus = criteriaBuilder.or(statusApproved2, statusRefusal, statusAtmosphere, statusApproved3,statusApproved4);
 
             Predicate deleteStatusFalse = criteriaBuilder.equal(root.get("deleteStatus"), false); // 삭제되지않음
 

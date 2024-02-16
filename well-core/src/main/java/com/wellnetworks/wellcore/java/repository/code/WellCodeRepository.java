@@ -11,4 +11,6 @@ import java.util.List;
 public interface WellCodeRepository extends JpaRepository<WellCodeEntity, Long> {
     @Query("SELECT DISTINCT c.cType FROM WellCodeEntity c")
     List<String> findAllDistinctCType();
+
+    List<WellCodeEntity> findByCType(String cType);
 }

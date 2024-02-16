@@ -19,8 +19,8 @@ public interface WellOperatorRepository extends JpaRepository<WellOperatorEntity
     Long operatorAllCount();
 
     //운영통신사
-    @Query("SELECT COUNT(p) FROM WellOperatorEntity p WHERE p.isRunFlag = true")
-    Long isRunFlagCount();
+//    @Query("SELECT COUNT(p) FROM WellOperatorEntity p WHERE p.isRunFlag = true")
+//    Long isRunFlagCount();
 
     //버전
     @Query("SELECT DISTINCT o.versionId, o.versionName FROM WellOperatorEntity o")

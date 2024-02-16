@@ -50,7 +50,7 @@ public class OperatorController {
             response.put("totalPages", listDTOS.getTotalPages());
 
             response.put("operatorAllCount", operatorRepository.operatorAllCount());
-            response.put("isRunFlagCount", operatorRepository.isRunFlagCount());
+//            response.put("isRunFlagCount", operatorRepository.isRunFlagCount());
             response.put("productAllCount", productRepository.productAllCount());
 
             return ResponseEntity.ok(response);

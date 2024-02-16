@@ -290,6 +290,23 @@ public class WellPartnerService {
         return new PageImpl<>(partnerInfoList, pageable, totalPartnerCount);
     }
 
+    // 개통점 신청 리스트에서 조건
+    public static Specification<WellPartnerEntity> registrationStatusIsNotAndDeleteStatusIsFalseOpeningStatus() {
+        return (root, query, criteriaBuilder) -> {
+            Predicate statusRefusal = criteriaBuilder.equal(root.get("registrationStatus"), "거부");
+            Predicate statusAtmosphere = criteriaBuilder.equal(root.get("registrationStatus"), "대기");
+            Predicate statusApproved2 = criteriaBuilder.equal(root.get("registrationStatus"), "승인");
+            Predicate statusApproved3 = criteriaBuilder.equal(root.get("openingStatus"), "승인");
+            Predicate registrationStatus = criteriaBuilder.or(statusApproved2, statusRefusal, statusAtmosphere, statusApproved3);
+
+            Predicate deleteStatusFalse = criteriaBuilder.equal(root.get("deleteStatus"), false); // 삭제되지않음
+
+            return criteriaBuilder.and(deleteStatusFalse, registrationStatus);
+        };
+    }
+
+
+
     //거래처 생성
     //p_code 랜덤 값
     public String generateUniquePartnerCode() {
@@ -486,7 +503,7 @@ public class WellPartnerService {
     //거래처 수정
     @Transactional(rollbackOn = Exception.class)
     public void update(MultipartHttpServletRequest request, String partnerIdx, WellPartnerUpdateDTO updateDTO)  {
-        try {
+
             // DTO를 통해 엔티티 업데이트
             WellPartnerEntity partner = wellPartnerRepository.findByPartnerIdx(partnerIdx);
             BeanUtils.copyProperties(updateDTO, partner);
@@ -514,10 +531,7 @@ public class WellPartnerService {
             // 엔티티의 업데이트 메서드 호출
             partner.updateFromDTO(updateDTO);
 
-        } catch (Exception e) {
-            // 롤백을 위해 예외 발생
-            throw new RuntimeException("거래처 수정 중 오류 발생", e);
-        }
+
     }
 
 

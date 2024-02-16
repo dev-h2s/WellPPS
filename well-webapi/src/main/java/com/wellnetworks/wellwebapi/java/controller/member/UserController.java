@@ -88,20 +88,11 @@ public class UserController {
     @PostMapping(value = "/updatePwd")
     public ResponseEntity<ApiResponse> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
         // 비밀번호 변경 시도
-        try {
+
             detailService.changePassword(changePasswordRequest); // 서비스를 호출하여 비밀번호 변경 처리
             // 비밀번호 변경 성공 응답 반환
             return ResponseEntity.ok(new ApiResponse("비밀번호가 성공적으로 변경되었습니다.", null));
-        } catch (IllegalArgumentException e) {
-            // 비밀번호 불일치 등 잘못된 요청의 경우 400 응답
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(e.getMessage(), null));
-        } catch (UsernameNotFoundException e) {
-            // 사용자를 찾을 수 없는 경우 404 응답
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
-        } catch (Exception e) {
-//            // 다른 오류가 발생한 경우 500 응답
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("비밀번호 변경 중 오류가 발생했습니다.", null));
-        }
+
     }
 
     // 로그아웃

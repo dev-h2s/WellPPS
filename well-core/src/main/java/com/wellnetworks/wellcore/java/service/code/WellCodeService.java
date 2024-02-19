@@ -28,17 +28,17 @@ public class WellCodeService {
     }
 
     //타입별 조회
-    public List<WellCodeDetailDTO> getCodesByCType(String cType) {
-        List<WellCodeEntity> codes = codeRepository.findByCType(cType);
+    public List<WellCodeDetailDTO> getCodesByCType(String codeType) {
+        List<WellCodeEntity> codes = codeRepository.findByCodeType(codeType);
         return codes.stream()
-                .map(code -> new WellCodeDetailDTO(code.getCType(), code.getName(), code.getSort()))
+                .map(code -> new WellCodeDetailDTO(code.getCodeType(), code.getName(), code.getSort()))
                 .collect(Collectors.toList());
     }
 
     //타입 생성
     public WellCodeCreateDTO createCode(WellCodeCreateDTO codeDetail) {
-        WellCodeEntity newCode = codeRepository.save(new WellCodeEntity(null, codeDetail.getCType(), codeDetail.getName(), codeDetail.getSort()));
-        return new WellCodeCreateDTO(newCode.getCType(), newCode.getName(), newCode.getSort());
+        WellCodeEntity newCode = codeRepository.save(new WellCodeEntity(null, codeDetail.getCodeType(), codeDetail.getName(), codeDetail.getSort()));
+        return new WellCodeCreateDTO(newCode.getCodeType(), newCode.getName(), newCode.getSort());
     }
 
     //타입 수정
@@ -46,16 +46,21 @@ public class WellCodeService {
         WellCodeEntity existingCode = codeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Code not found"));
 
-        // Builder를 사용한 엔티티 업데이트
-        WellCodeEntity updatedCode = existingCode.toBuilder()
-                .name(codeUpdateDTO.getName())
-                .sort(codeUpdateDTO.getSort())
-                .build();
+        WellCodeEntity.WellCodeEntityBuilder builder = existingCode.toBuilder();
 
+        if (codeUpdateDTO.getName() != null) {
+            builder.name(codeUpdateDTO.getName());
+        }
+
+        if (codeUpdateDTO.getSort() != null) {
+            builder.sort(codeUpdateDTO.getSort());
+        }
+
+        WellCodeEntity updatedCode = builder.build();
         codeRepository.save(updatedCode);
-
         return new WellCodeUpdateDTO(updatedCode.getName(), updatedCode.getSort());
     }
+
 
     //타입 정렬 변경
     //타입 삭제

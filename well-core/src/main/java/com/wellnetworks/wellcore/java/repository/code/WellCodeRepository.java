@@ -9,8 +9,8 @@ import java.util.List;
 
 @Repository
 public interface WellCodeRepository extends JpaRepository<WellCodeEntity, Long> {
-    @Query("SELECT DISTINCT c.cType FROM WellCodeEntity c")
+    @Query("SELECT DISTINCT c.codeType FROM WellCodeEntity c")
     List<String> findAllDistinctCType();
 
-    List<WellCodeEntity> findByCType(String cType);
+    List<WellCodeEntity> findByCodeType(String codeType);
 }

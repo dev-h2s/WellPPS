@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class WellCodeDetailDTO {
     @Schema(description = "코드 구분", example = "은행명, 국적...")
-    private String cType;
+    private String codeType;
 
     @Schema(description = "코드명", example = "신한은행, 국민은행...")
     private String name;
@@ -19,8 +19,8 @@ public class WellCodeDetailDTO {
     @Schema(description = "정렬 순서", example = "1, 2...")
     private Long sort;
 
-    public WellCodeDetailDTO(String cType, String name, Long sort) {
-        this.cType = cType;
+    public WellCodeDetailDTO(String codeType, String name, Long sort) {
+        this.codeType = codeType;
         this.name = name;
         this.sort = sort;
     }

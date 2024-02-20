@@ -301,11 +301,15 @@ public class WellPartnerService {
             Predicate statusApproved5 = criteriaBuilder.equal(root.get("openingStatus"), "거부");
 
 
-            Predicate registrationStatus = criteriaBuilder.or(statusApproved2, statusRefusal, statusAtmosphere, statusApproved3,statusApproved4,statusApproved5);
+            Predicate registrationStatus = criteriaBuilder.or(statusApproved2, statusRefusal, statusAtmosphere,
+                    statusApproved3,statusApproved4
+                    ,statusApproved5
+            );
 
             Predicate deleteStatusFalse = criteriaBuilder.equal(root.get("deleteStatus"), false); // 삭제되지않음
+            Predicate visitStatus = criteriaBuilder.equal(root.get("visitStatus"), true); // 삭제되지않음
 
-            return criteriaBuilder.and(deleteStatusFalse, registrationStatus);
+            return criteriaBuilder.and(deleteStatusFalse, registrationStatus, visitStatus);
         };
     }
 

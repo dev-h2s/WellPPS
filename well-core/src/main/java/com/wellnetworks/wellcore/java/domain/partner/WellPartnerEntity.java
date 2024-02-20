@@ -187,13 +187,11 @@ public class WellPartnerEntity {
 
     @Column(name = "opening_status") //개통점전환여부
     private String openingStatus;
-
     @Column(name = "opening_note") //개통점신청비고
     private String openingNote;
 
     @Column(name = "review_date") //회원가입 관리 검수일자
     private LocalDate reviewDate;
-
     @Column(name = "reviwer") //회원가입 관리 검수자
     private String reviewer;
 

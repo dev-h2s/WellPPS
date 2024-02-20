@@ -298,13 +298,49 @@ public class WellPartnerService {
             Predicate statusApproved2 = criteriaBuilder.equal(root.get("registrationStatus"), "승인");
             Predicate statusApproved3 = criteriaBuilder.equal(root.get("openingStatus"), "승인");
             Predicate statusApproved4 = criteriaBuilder.equal(root.get("openingStatus"), "대기");
+            Predicate statusApproved5 = criteriaBuilder.equal(root.get("openingStatus"), "거부");
 
-            Predicate registrationStatus = criteriaBuilder.or(statusApproved2, statusRefusal, statusAtmosphere, statusApproved3,statusApproved4);
+
+            Predicate registrationStatus = criteriaBuilder.or(statusApproved2, statusRefusal, statusAtmosphere, statusApproved3,statusApproved4,statusApproved5);
 
             Predicate deleteStatusFalse = criteriaBuilder.equal(root.get("deleteStatus"), false); // 삭제되지않음
 
             return criteriaBuilder.and(deleteStatusFalse, registrationStatus);
         };
+    }
+
+    //거래처 개통점 신청 리스트 조회
+    public Page<WellPartnerSignInfoDTO> getAllPartnerOpening(Pageable pageable) {
+
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "productRegisterDate"));
+        Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(registrationStatusIsNotAndDeleteStatusIsFalseOpeningStatus(), pageable);
+        List<WellPartnerSignInfoDTO> partnerInfoList = new ArrayList<>();
+
+
+        for (WellPartnerEntity partnerEntity : partners) {
+            List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerEntity.getPartnerIdx());
+
+            WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
+            WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
+
+
+            String partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
+            String partnerUpperName = null;
+            if (partnerEntity.getPartnerUpperIdx() != null) {
+                partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx);
+            }
+
+
+            WellPartnerSignInfoDTO partnerSignInfo = new WellPartnerSignInfoDTO(partnerEntity, fileStorages, dipositEntity
+                    , partnerUpperName
+            );
+            partnerInfoList.add(partnerSignInfo);
+
+        }
+
+        Long totalPartnerCount = partners.getTotalElements();
+
+        return new PageImpl<>(partnerInfoList, pageable, totalPartnerCount);
     }
 
 

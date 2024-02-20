@@ -26,18 +26,18 @@ public class CodeController {
     }
 
     @Operation(summary = "코드 관리 상세 조회")
-    @GetMapping("/{cType}")
-    public List<WellCodeDetailDTO> getCodesByCType(@PathVariable String cType) {
-        return codeService.getCodesByCType(cType);
+    @GetMapping("/{codeType}")
+    public List<WellCodeDetailDTO> getCodesByCType(@PathVariable String codeType) {
+        return codeService.getCodesByCType(codeType);
     }
 
     @PostMapping
-    public WellCodeCreateDTO createCode(@RequestBody WellCodeCreateDTO codeDetail) {
+    public WellCodeCreateDTO createCode(WellCodeCreateDTO codeDetail) {
         return codeService.createCode(codeDetail);
     }
 
     @PutMapping("/{id}")
-    public WellCodeUpdateDTO updateCode(@PathVariable Long id, @RequestBody WellCodeUpdateDTO codeDetail) {
+    public WellCodeUpdateDTO updateCode(@PathVariable Long id, WellCodeUpdateDTO codeDetail) {
         return codeService.updateCode(id, codeDetail);
     }
 }

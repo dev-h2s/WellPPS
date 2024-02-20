@@ -17,7 +17,7 @@ public class WellCodeEntity extends BaseEntity {
     private Long Id;
 
     @Column(name = "c_type") //관리 구분
-    private String cType;
+    private String codeType;
 
     @Column(name = "name") //코드명
     private String name;

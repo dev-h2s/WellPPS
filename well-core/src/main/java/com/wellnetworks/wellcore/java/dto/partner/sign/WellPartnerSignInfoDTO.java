@@ -32,13 +32,20 @@ public class WellPartnerSignInfoDTO {
     private String rejectionReason; // 회원가입 거부사유
     private LocalDate reviewDate;// 검수일자
     private String reviewer;//검수자
-    private String partnerUpperIdx;
-    private String partnerUpperName;
-    private Integer dipositBalance;
+    private String partnerUpperIdx; //상부점 idx
+    private String partnerUpperName; //상부점 이름
+    private Integer dipositBalance; //예치금 잔액
 
     //검색시 필요
     private String ceoTelephone;
-    private String openingStatus;
+    private String openingStatus; // 개통점 전환여부
+
+    //개통점 신청시
+
+    private LocalDateTime openingVisitDecideDate;
+    private String salesManager;
+    private String openingProgress;
+
 
     //리스트
     public WellPartnerSignInfoDTO(WellPartnerEntity entity, List<WellPartnerFIleStorageEntity> fileStorages, WellDipositEntity diposit
@@ -56,6 +63,9 @@ public class WellPartnerSignInfoDTO {
         this.reviewer = entity.getReviewer();
         this.openingStatus = entity.getOpeningStatus();
         this.partnerUpperIdx = entity.getPartnerUpperIdx();
+        this.openingVisitDecideDate = entity.getOpeningVisitDecideDate();
+        this.salesManager = entity.getSalesManager();
+        this.openingProgress = entity.getOpeningProgress();
         if (partnerUpperIdx != null) {
             this.partnerUpperName = partnerUpperName;
         }
@@ -89,5 +99,6 @@ public class WellPartnerSignInfoDTO {
 
         // 중복 제거
         this.fileDetails = this.fileDetails.stream().distinct().collect(Collectors.toList());
+
     }
 }

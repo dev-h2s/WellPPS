@@ -8,6 +8,7 @@ import com.wellnetworks.wellcore.java.service.code.WellCodeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,13 +32,22 @@ public class CodeController {
         return codeService.getCodesByCType(codeType);
     }
 
+    @Operation(summary = "코드 관리 생성")
     @PostMapping
     public WellCodeCreateDTO createCode(WellCodeCreateDTO codeDetail) {
         return codeService.createCode(codeDetail);
     }
 
+    @Operation(summary = "코드 관리 수정")
     @PutMapping("/{id}")
     public WellCodeUpdateDTO updateCode(@PathVariable Long id, WellCodeUpdateDTO codeDetail) {
         return codeService.updateCode(id, codeDetail);
+    }
+
+    @Operation(summary = "코드 관리 삭제")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteCode(@PathVariable Long id) {
+        codeService.deleteCode(id);
+        return ResponseEntity.ok("코드가 삭제되었습니다.");
     }
 }

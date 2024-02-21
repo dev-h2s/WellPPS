@@ -307,7 +307,7 @@ public class WellPartnerService {
             );
 
             Predicate deleteStatusFalse = criteriaBuilder.equal(root.get("deleteStatus"), false); // 삭제되지않음
-            Predicate visitStatus = criteriaBuilder.equal(root.get("visitStatus"), true); // 삭제되지않음
+            Predicate visitStatus = criteriaBuilder.equal(root.get("visitStatus"), true); // 방문 true
 
             return criteriaBuilder.and(deleteStatusFalse, registrationStatus, visitStatus);
         };

@@ -13,4 +13,6 @@ public interface WellCodeRepository extends JpaRepository<WellCodeEntity, Long> 
     List<String> findAllDistinctCType();
 
     List<WellCodeEntity> findByCodeType(String codeType);
+
+    List<WellCodeEntity> findByCodeTypeOrderBySortAsc(String codeType);
 }

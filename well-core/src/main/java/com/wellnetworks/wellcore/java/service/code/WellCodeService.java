@@ -7,6 +7,7 @@ import com.wellnetworks.wellcore.java.dto.code.WellCodeListDTO;
 import com.wellnetworks.wellcore.java.dto.code.WellCodeUpdateDTO;
 import com.wellnetworks.wellcore.java.repository.code.WellCodeRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,7 @@ public class WellCodeService {
 
     //타입별 조회
     public List<WellCodeDetailDTO> getCodesByCType(String codeType) {
-        List<WellCodeEntity> codes = codeRepository.findByCodeType(codeType);
+        List<WellCodeEntity> codes = codeRepository.findByCodeTypeOrderBySortAsc(codeType);
         return codes.stream()
                 .map(code -> new WellCodeDetailDTO(code.getId(), code.getCodeType(), code.getName(), code.getSort()))
                 .collect(Collectors.toList());
@@ -52,17 +53,43 @@ public class WellCodeService {
             builder.name(codeUpdateDTO.getName());
         }
 
-        if (codeUpdateDTO.getSort() != null) {
-            builder.sort(codeUpdateDTO.getSort());
-        }
-
         WellCodeEntity updatedCode = builder.build();
         codeRepository.save(updatedCode);
-        return new WellCodeUpdateDTO(updatedCode.getName(), updatedCode.getSort());
+        return new WellCodeUpdateDTO(updatedCode.getName());
+    }
+
+    @Transactional
+    public void changeSortOrder(Long id, boolean moveUp) {
+        WellCodeEntity targetEntity = codeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Code not found"));
+        List<WellCodeEntity> entities = codeRepository.findByCodeTypeOrderBySortAsc(targetEntity.getCodeType());
+
+        int currentIndex = entities.indexOf(targetEntity);
+        if (currentIndex == -1) {
+            throw new IllegalStateException("Target entity is not in the list");
+        }
+
+        int newIndex = moveUp ? currentIndex - 1 : currentIndex + 1;
+        if (newIndex < 0 || newIndex >= entities.size()) {
+            return;
+        }
+
+        WellCodeEntity swapEntity = entities.get(newIndex);
+        Long tempSort = targetEntity.getSort();
+
+        WellCodeEntity updatedTargetEntity = targetEntity.toBuilder()
+                .sort(swapEntity.getSort())
+                .build();
+
+        WellCodeEntity updatedSwapEntity = swapEntity.toBuilder()
+                .sort(tempSort)
+                .build();
+
+        codeRepository.save(updatedTargetEntity);
+        codeRepository.save(updatedSwapEntity);
     }
 
 
-    //타입 정렬 변경
     //타입 삭제
     public void deleteCode(Long id) {
         WellCodeEntity codeEntity = codeRepository.findById(id)

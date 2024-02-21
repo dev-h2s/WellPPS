@@ -13,11 +13,8 @@ public class WellCodeUpdateDTO {
     @Schema(description = "코드명", example = "신한은행, 국민은행...")
     private String name;
 
-    @Schema(description = "정렬 순서", example = "1, 2...")
-    private Long sort;
 
-    public WellCodeUpdateDTO(String name, Long sort) {
+    public WellCodeUpdateDTO(String name) {
         this.name = name;
-        this.sort = sort;
     }
 }

@@ -31,7 +31,7 @@ public class WellCodeService {
     public List<WellCodeDetailDTO> getCodesByCType(String codeType) {
         List<WellCodeEntity> codes = codeRepository.findByCodeType(codeType);
         return codes.stream()
-                .map(code -> new WellCodeDetailDTO(code.getCodeType(), code.getName(), code.getSort()))
+                .map(code -> new WellCodeDetailDTO(code.getId(), code.getCodeType(), code.getName(), code.getSort()))
                 .collect(Collectors.toList());
     }
 
@@ -64,4 +64,9 @@ public class WellCodeService {
 
     //타입 정렬 변경
     //타입 삭제
+    public void deleteCode(Long id) {
+        WellCodeEntity codeEntity = codeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("코드가 존재하지 않습니다."));
+        codeRepository.delete(codeEntity);
+    }
 }

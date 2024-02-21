@@ -34,7 +34,7 @@ public class WellPartnerUpdateDTO {
     @Schema(description = "사전승낙번호", example = "????")
     private String preApprovalNumber;
     @Schema(description = "가입승인날짜", example = "2024-01-17T12:34:56")
-    private LocalDateTime subscriptionDate;
+    private LocalDate subscriptionDate;
     @Schema(description = "거래유무", example = "관리대상")
     private String transactionStatus;
     @Schema(description = "상부점idx", example = "상부점 idx")

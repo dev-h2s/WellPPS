@@ -44,6 +44,15 @@ public class CodeController {
         return codeService.updateCode(id, codeDetail);
     }
 
+    @Operation(summary = "코드 순서 변경")
+    @PatchMapping("/{id}/move")
+    public ResponseEntity<Void> moveCode(@PathVariable Long id, @RequestParam boolean moveUp) {
+        codeService.changeSortOrder(id, moveUp);
+        return ResponseEntity.ok().build();
+    }
+
+
+
     @Operation(summary = "코드 관리 삭제")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCode(@PathVariable Long id) {

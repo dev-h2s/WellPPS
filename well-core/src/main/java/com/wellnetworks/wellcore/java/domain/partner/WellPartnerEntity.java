@@ -280,7 +280,7 @@ public class WellPartnerEntity {
         this.discountCategory = updateDTO.getDiscountCategory();
         this.inApiFlag = updateDTO.isInApiFlag();
         this.preApprovalNumber = updateDTO.getPreApprovalNumber();
-        this.subscriptionDate = LocalDate.from(updateDTO.getSubscriptionDate());
+        this.subscriptionDate = updateDTO.getSubscriptionDate();
         this.transactionStatus = updateDTO.getTransactionStatus();
         this.partnerUpperIdx = updateDTO.getPartnerUpperIdx();
         this.salesManager = updateDTO.getSalesManager();

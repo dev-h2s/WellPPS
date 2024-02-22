@@ -255,6 +255,16 @@ public class PartnerSpecification {
             }
         };
     }
+//개통점 신청
+    public static Specification<WellPartnerEntity> openingStatusContains(String searchKeyword) {
+        return (root, query, criteriaBuilder) -> {
+            if (searchKeyword == null || searchKeyword.isEmpty()) {
+                return criteriaBuilder.conjunction();
+            } else {
+                return criteriaBuilder.equal(root.get("openingStatus"), searchKeyword);
+            }
+        };
+    }
 
 //    public static Specification<WellPartnerEntity> registrationStatusContains(String searchKeyword) {
 //        return (root, query, criteriaBuilder) -> {

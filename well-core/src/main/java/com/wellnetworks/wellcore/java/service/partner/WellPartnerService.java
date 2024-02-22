@@ -181,10 +181,63 @@ public class WellPartnerService {
         }
 
         return new PageImpl<>(partnerInfoList, pageable, partners.getTotalElements());
-//        } catch (Exception e) {
-//            // 여기에 예외 처리 로직 추가
-//            throw new RuntimeException("거래처 검색 중 오류 발생: " + e.getMessage(), e);
-//        }
+
+    }
+
+
+    //거래처 회원가입 검색 조회
+    public Page<WellPartnerSignSearchDTO> getAllPartnerOpeningSearch(Pageable pageable, String ceoTelephone,
+                                                                     String ceoName, String partnerName,
+                                                                     String discountCategory, String registrationStatus
+                                                                     ,String openingStatus
+    ) {
+//        try {
+        Specification<WellPartnerEntity> approvedStatusSpec = registrationStatusIsNotAndDeleteStatusIsFalseOpeningStatus();
+
+        // 검색 Like 조건
+        Specification<WellPartnerEntity> spec = Specification.where(PartnerSpecification.partnerCeoNameContains(ceoName))
+                .and(PartnerSpecification.partnerNameContains(partnerName))
+                .and(PartnerSpecification.partnerCeoTelephoneContains(ceoTelephone))
+                .and(PartnerSpecification.discountCategoryEquals(discountCategory))
+                .and(PartnerSpecification.registrationStatusContains(registrationStatus))
+                .and(PartnerSpecification.openingStatusContains(openingStatus))
+                .and(approvedStatusSpec);
+
+        if (discountCategory != null) {
+            spec = spec.and(PartnerSpecification.discountCategoryEquals(discountCategory));
+        }
+        if (registrationStatus != null) {
+            spec = spec.and(PartnerSpecification.registrationStatusContains(registrationStatus));
+        }
+
+
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "productRegisterDate"));
+
+        Page<WellPartnerEntity> partners = wellPartnerRepository.findAll(spec, pageable);
+
+        List<WellPartnerSignSearchDTO> partnerInfoList = new ArrayList<>();
+
+        for (WellPartnerEntity partnerEntity : partners) {
+            List<WellPartnerFIleStorageEntity> fileStorages = partnerFileRepository.findByPartnerIdx(partnerEntity.getPartnerIdx());
+
+            WellVirtualAccountEntity virtualAccountEntity = partnerEntity.getVirtualAccount();
+            WellDipositEntity dipositEntity = virtualAccountEntity != null ? virtualAccountEntity.getDeposit() : null;
+
+            Integer dipositBalance = dipositEntity != null && dipositEntity.getDipositBalance() != null ? dipositEntity.getDipositBalance() : 0;
+
+            String partnerUpperIdx = partnerEntity.getPartnerUpperIdx();
+            String partnerUpperName = null;
+            if (partnerEntity.getPartnerUpperIdx() != null) {
+                partnerUpperName = wellPartnerRepository.findPartnerNameByPartnerIdxSafely(partnerUpperIdx);
+            }
+            WellPartnerSignSearchDTO partnerInfo = new WellPartnerSignSearchDTO(partnerEntity, fileStorages, dipositBalance, partnerUpperName);
+            partnerInfoList.add(partnerInfo);
+            System.out.println(partnerEntity.getRegistrationStatus());
+
+        }
+
+        return new PageImpl<>(partnerInfoList, pageable, partners.getTotalElements());
+
     }
 
     // 거래처 리스트에서 회원가입이 승인된 것만 나올수 있게끔

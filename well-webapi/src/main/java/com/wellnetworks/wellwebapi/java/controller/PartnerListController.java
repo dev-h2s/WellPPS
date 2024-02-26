@@ -276,8 +276,8 @@ public class PartnerListController {
 
     }
 
-    //거래처 개통점 신청 검색리스트
-    @GetMapping("business/sign/serch")
+//    //거래처 개통점 신청 검색리스트
+    @GetMapping("business/opening/serch")
     public ResponseEntity<Map<String, Object>> getPartnerOpeningList(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size

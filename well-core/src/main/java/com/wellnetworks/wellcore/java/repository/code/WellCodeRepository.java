@@ -12,7 +12,5 @@ public interface WellCodeRepository extends JpaRepository<WellCodeEntity, Long> 
     @Query("SELECT DISTINCT c.codeType FROM WellCodeEntity c")
     List<String> findAllDistinctCType();
 
-    List<WellCodeEntity> findByCodeType(String codeType);
-
     List<WellCodeEntity> findByCodeTypeOrderBySortAsc(String codeType);
 }
